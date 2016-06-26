@@ -11,12 +11,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Frame.c" />
     <ClCompile Include="src\main.c" />
+    <ClCompile Include="src\OAMManager.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\common\Makefile" />
     <None Include="src\galaxy._c" />
     <None Include="src\Makefile" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Frame.h" />
+    <ClInclude Include="include\OAMManager.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{30CB6750-87A0-4CAD-ADA9-F9888C797BA0}</ProjectGuid>

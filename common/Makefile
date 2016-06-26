@@ -4,7 +4,7 @@ BINDIR = ../bin
 LCC = c:/gbdk/bin/lcc.exe
 BGB = c:/gbdk/bin/bgb/bgb.exe
 
-CFLAGS = -DUSE_SFR_FOR_REG
+CFLAGS = -DUSE_SFR_FOR_REG -I..\include
 #-Wa-l -Wl-m -Wl-j 
 LFLAGS = -DUSE_SFR_FOR_REG
 CC = $(LCC)

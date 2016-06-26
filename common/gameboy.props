@@ -10,7 +10,7 @@ C:\gbdk\bin\make-3.81-bin\bin\make clean
 C:\gbdk\bin\make-3.81-bin\bin\make</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>cd src
 C:\gbdk\bin\make-3.81-bin\bin\make clean</NMakeCleanCommandLine>
-    <NMakeIncludeSearchPath>C:\gbdk\include;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath>C:\gbdk\include;.\include;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
   </PropertyGroup>
   <ItemDefinitionGroup />
   <ItemGroup />
