@@ -1,5 +1,5 @@
-PROJECT_NAME = Galaxy
+PROJECT_NAME = Common
 
-all: build_gb
+all: build_lib
 
 include ../../common/src/MakefileCommon

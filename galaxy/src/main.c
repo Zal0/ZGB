@@ -18,7 +18,6 @@ enable_interrupts();*/
 
 int p = 0;
 int x = 0;
-struct Frame frame0, frame1;
 void FixedUpdate() 
 {
 	oam_idx = 0;
@@ -26,15 +25,13 @@ void FixedUpdate()
 	p++;
 	x++;
 	if ((p % 100u) < (50u)) {
-		DrawFrame(&frame0, x, 0u);
+		DrawFrame(FRAME_16x16, 0, x, 1u);
 	} else {
-		DrawFrame(&frame1, x, 0u);
+		DrawFrame(FRAME_16x16, 1, x, 1u);
 	}
 }
 
 void Start() {
-	InitFrame(&frame0, FRAME_16x16, 0, 0, 16);
-	InitFrame(&frame1, FRAME_16x16, 4, 0, 16);
 }
 
 void main() {
