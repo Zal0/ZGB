@@ -5,14 +5,21 @@ LCC = c:/gbdk/bin/lcc.exe
 SDCC = c:/gbdk/bin/sdcc.exe
 BGB = c:/gbdk/bin/bgb/bgb.exe
 
+ifneq ($(strip $(N_BANKS)),)
+	LFLAGS_NBANKS = -Wl-yt1 -Wl-yo$(N_BANKS)
+endif
+
 CFLAGS = -DUSE_SFR_FOR_REG -I..\include -I..\..\common\include
 #-Wa-l -Wl-m -Wl-j 
-LFLAGS = -DUSE_SFR_FOR_REG
+LFLAGS = -DUSE_SFR_FOR_REG $(LFLAGS_NBANKS)
 CC = $(LCC)
 
 current_dir = $(shell pwd)
+
 CLASSES := $(foreach dir,.,$(notdir $(wildcard $(dir)/*.c)))
-OBJS = $(CLASSES:%.c=$(OBJDIR)/%.o) 
+OBJS = $(CLASSES:%.c=$(OBJDIR)/%.o)
+
+#until I can find a way to create a .lib I'll be linking the.o files from my common library
 COMMON_OBJS = $(wildcard ../../common/Release/*.o)
 
 $(BINDIR):
@@ -23,6 +30,9 @@ $(OBJDIR):
 
 %.s: %.ms
 	maccer -o $@ $<
+
+$(OBJDIR)/%.b2.o: %.b2.c
+	$(CC) $(CFLAGS) -Wf-bo2 -c -o $@ $<
 
 $(OBJDIR)/%.o: %.c $(OBJDIR)
 	$(CC) $(CFLAGS) -c -o $@ $<

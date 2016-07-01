@@ -5,7 +5,7 @@
 #include "Sprite.h"
 #include "Keys.h"
 
-#include "smile.c"
+#include "smile.h"
 
 #include <gb/drawing.h>
 
@@ -14,6 +14,7 @@ struct Sprite sprite;
 
 void Start() {
 	SPRITES_8x16;
+	SWITCH_ROM_MBC1(2);
 	set_sprite_data(0, 8, smile);
 	SHOW_SPRITES;
 
