@@ -29,6 +29,6 @@ void DrawSprite(struct Sprite* sprite) {
 			sprite->accum_ticks -= sprite->ticks_per_frame;
 		}
 
-		DrawFrame(sprite->size, sprite->data[1 + sprite->current_frame], sprite->x, sprite->y);
+		DrawFrame(sprite->size, sprite->first_tile + sprite->data[1 + sprite->current_frame], sprite->x, sprite->y);
 	}
 }
