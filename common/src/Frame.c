@@ -4,7 +4,7 @@
 void DrawFrame(FrameSize size, int idx, UINT8 x, UINT8 y){
 	switch(size) {
 		case FRAME_8x8:
-			DrawOAMSprite(idx << size, OAM_SIZE_8x8, x, y);
+			DrawOAMSprite(idx, OAM_SIZE_8x8, x + 16u, y + 16u);
 			break;
 
 		//case FRAME_8x16:
@@ -12,8 +12,8 @@ void DrawFrame(FrameSize size, int idx, UINT8 x, UINT8 y){
 		//	break;
 
 		case FRAME_16x16:
-			DrawOAMSprite(idx << size,       OAM_SIZE_16x16, x,      y);
-			DrawOAMSprite((idx << size) + 2, OAM_SIZE_16x16, x + 8u, y);
+			DrawOAMSprite((idx << 2u),      OAM_SIZE_16x16, x + 16u,      y + 16u);
+			DrawOAMSprite((idx << 2u) + 2u, OAM_SIZE_16x16, x + 8u + 16u, y + 16u);
 			break;
 
 		//case FRAME_32x32:

@@ -9,5 +9,5 @@ void DrawOAMSprite(UINT8 idx, OAMSize size, UINT8 x, UINT8 y) {
 
 	move_sprite(oam_idx, x, y);
 	set_sprite_tile(oam_idx, idx);
-	oam_idx += (size == OAM_SIZE_8x8) ? 1 : 2;
+	oam_idx ++;
 }

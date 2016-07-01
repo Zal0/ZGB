@@ -13,10 +13,12 @@
   <ItemGroup>
     <ClInclude Include="include\Frame.h" />
     <ClInclude Include="include\OAMManager.h" />
+    <ClInclude Include="include\Sprite.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Frame.c" />
     <ClCompile Include="src\OAMManager.c" />
+    <ClCompile Include="src\Sprite.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Makefile" />

@@ -4,6 +4,8 @@
 
 #include "OAMManager.h"
 #include "Frame.h"
+#include "Sprite.h"
+
 
 /*UWORD count;
 void timer_isr(void)
@@ -16,22 +18,22 @@ add_VBL(timer_isr);
 set_interrupts(VBL_IFLAG);
 enable_interrupts();*/
 
-int p = 0;
-int x = 0;
-void FixedUpdate() 
-{
-	oam_idx = 0;
-	
-	p++;
-	x++;
-	if ((p % 100u) < (50u)) {
-		DrawFrame(FRAME_16x16, 0, x, 1u);
-	} else {
-		DrawFrame(FRAME_16x16, 1, x, 1u);
-	}
+UINT8 anim[] = {2, 0, 1};
+struct Sprite sprite;
+void FixedUpdate() {
+	sprite.x ++;
+	DrawSprite(&sprite);
+
+	DrawFrame(FRAME_16x16, 1, 50u, 50u);
+	DrawFrame(FRAME_16x16, 1, 30u, 70u);
+	DrawFrame(FRAME_16x16, 1, 80u, 100u);
 }
 
 void Start() {
+	InitSprite(&sprite, FRAME_16x16, 0);
+	SetSpriteAnim(&sprite, anim);
+	sprite.x = 0u;
+	sprite.y = 0u;
 }
 
 void main() {
@@ -42,6 +44,8 @@ void main() {
 	Start();
 	while (1) {
 		wait_vbl_done();
+		
+		oam_idx = 0;
 		FixedUpdate();
 	}
 }

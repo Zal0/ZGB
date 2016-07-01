@@ -27,7 +27,7 @@ $(OBJDIR):
 $(OBJDIR)/%.o: %.c $(OBJDIR)
 	$(CC) $(CFLAGS) -c -o $@ $<
 	
-$(BINDIR)/$(PROJECT_NAME).gb: $(OBJS) $(BINDIR)
+$(BINDIR)/$(PROJECT_NAME).gb: $(OBJS) $(COMMON_OBJS) $(BINDIR)
 	$(CC) $(LFLAGS) -o $(BINDIR)/$(PROJECT_NAME).gb $(OBJS) $(COMMON_OBJS)
 
 build_lib: $(OBJDIR) $(OBJS)
