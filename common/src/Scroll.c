@@ -1,6 +1,11 @@
 #include "Scroll.h"
 #include "Sprite.h"
 
+#define SCREEN_TILES_W       20u // 160 >> 3 = 20
+#define SCREEN_TILES_H       18u // 144 >> 3 = 18
+#define SCREEN_TILE_REFRES_W 21u
+#define SCREEN_TILE_REFRES_H 19u
+
 //This function was thought for updating a whole square... can't find a better one that updates one tile only!
 #define UPDATE_TILE(X, Y, T) set_bkg_tiles(0x1F & (UINT8)X, 0x1F & (UINT8)Y, 1, 1, T)
 
@@ -25,10 +30,10 @@ void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT16 x, UINT16
 	scroll_h = map_h << 3;
 
 	move_bkg(scroll_x, scroll_y);
-	for(i = 0u; i != 19u && i != scroll_tiles_h; ++i) {
+	for(i = 0u; i != SCREEN_TILE_REFRES_H && i != scroll_tiles_h; ++i) {
 		ScrollUpdateRow((scroll_x >> 3), (scroll_y >> 3) + i);
 	}
-	/*for(i = 0u; i != 21u && i != scroll_tiles_w; ++i) {
+	/*for(i = 0u; i != SCREEN_TILE_REFRES_W && i != scroll_tiles_w; ++i) {
 		ScrollUpdateColumn((scroll_x >> 3) + i, scroll_y >> 3);
 	}*/
 }
@@ -37,7 +42,7 @@ void ScrollUpdateRow(UINT16 x, UINT16 y) {
 	UINT8 i = 0u;
 	
 	unsigned char* map = &scroll_map[scroll_tiles_w * y + x];
-	for(i = 0u; i != 21u; ++i) {
+	for(i = 0u; i != SCREEN_TILE_REFRES_W; ++i) {
 		UPDATE_TILE(x + i, y, map);
 		map += 1;
 	}
@@ -47,7 +52,7 @@ void ScrollUpdateColumn(UINT16 x, UINT16 y) {
 	UINT8 i = 0u;
 
 	unsigned char* map = &scroll_map[scroll_tiles_w * y + x];
-	for(i = 0u; i != 19u; ++i) {
+	for(i = 0u; i != SCREEN_TILE_REFRES_H; ++i) {
 		UPDATE_TILE(x, y + i, map);
 		map += scroll_tiles_w;
 	}
@@ -82,15 +87,15 @@ void MoveScroll(UINT16 x, UINT16 y) {
 
 	if(current_column != new_column) {
 		if(new_column > current_column) {
-			ScrollUpdateColumn(new_column + 20u, scroll_y >> 3);
+			ScrollUpdateColumn(new_column + SCREEN_TILE_REFRES_W, scroll_y >> 3);
 		} else {
-			ScrollUpdateColumn(new_column, scroll_y >> 3);
+			ScrollUpdateColumn(new_column - 1, scroll_y >> 3);
 		}
 	}
 	
 	if(current_row != new_row) {
 		if(new_row > current_row) {
-			ScrollUpdateRow(scroll_x >> 3, new_row + 18u);
+			ScrollUpdateRow(scroll_x >> 3, new_row + SCREEN_TILE_REFRES_H);
 		} else {
 			ScrollUpdateRow(scroll_x >> 3, new_row);
 		}
