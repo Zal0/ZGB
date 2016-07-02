@@ -38,6 +38,29 @@ void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT16 x, UINT16
 	}*/
 }
 
+UINT16 pending_w_x, pending_w_y;
+UINT8 pending_w_i;
+unsigned char* pending_w_map = 0;
+void ScrollUpdateRowR() {
+	UINT8 i = 0u;
+	
+	for(i = 0u; i != 1, pending_w_i != SCREEN_TILE_REFRES_W; ++i, ++ pending_w_i) {
+		UPDATE_TILE(pending_w_x + pending_w_i, pending_w_y, pending_w_map);
+		pending_w_map += 1;
+	}
+
+	if(pending_w_i == SCREEN_TILE_REFRES_W) {
+		pending_w_map = 0;
+	}
+}
+
+void ScrollUpdateRowWithDelay(UINT16 x, UINT16 y) {
+	pending_w_x = x;
+	pending_w_y = y;
+	pending_w_i = 0u;
+	pending_w_map = &scroll_map[scroll_tiles_w * y + x];
+}
+
 void ScrollUpdateRow(UINT16 x, UINT16 y) {
 	UINT8 i = 0u;
 	
@@ -46,7 +69,29 @@ void ScrollUpdateRow(UINT16 x, UINT16 y) {
 		UPDATE_TILE(x + i, y, map);
 		map += 1;
 	}
-	//set_bkg_tiles(0x1F & (UINT8)x, 0x1F & (UINT8)y, SCREEN_TILE_REFRES_W, 1, map);
+}
+
+UINT16 pending_h_x, pending_h_y;
+UINT8 pending_h_i;
+unsigned char* pending_h_map = 0;
+void ScrollUpdateColumnR() {
+	UINT8 i = 0u;
+
+	for(i = 0u; i != 5 && pending_h_i != SCREEN_TILE_REFRES_H; ++i, pending_h_i ++) {
+		UPDATE_TILE(pending_h_x, pending_h_y + pending_h_i, pending_h_map);
+		pending_h_map += scroll_tiles_w;
+	}
+
+	if(pending_h_i == SCREEN_TILE_REFRES_H) {
+		pending_h_map = 0;
+	}
+}
+
+void ScrollUpdateColumnWithDelay(UINT16 x, UINT16 y) {
+	pending_h_x = x;
+	pending_h_y = y;
+	pending_h_i = 0u;
+	pending_h_map = &scroll_map[scroll_tiles_w * y + x];
 }
 
 void ScrollUpdateColumn(UINT16 x, UINT16 y) {
@@ -88,21 +133,28 @@ void MoveScroll(UINT16 x, UINT16 y) {
 
 	if(current_column != new_column) {
 		if(new_column > current_column) {
-			ScrollUpdateColumn(new_column + SCREEN_TILES_W, scroll_y >> 3);
+			ScrollUpdateColumnWithDelay(new_column + SCREEN_TILES_W, scroll_y >> 3);
 		} else {
-			ScrollUpdateColumn(new_column, scroll_y >> 3);
+			ScrollUpdateColumnWithDelay(new_column, scroll_y >> 3);
 		}
 	}
 	
 	if(current_row != new_row) {
 		if(new_row > current_row) {
-			ScrollUpdateRow(scroll_x >> 3, new_row + SCREEN_TILES_H);
+			ScrollUpdateRowWithDelay(scroll_x >> 3, new_row + SCREEN_TILES_H);
 		} else {
-			ScrollUpdateRow(scroll_x >> 3, new_row);
+			ScrollUpdateRowWithDelay(scroll_x >> 3, new_row);
 		}
 	}
 
 	scroll_x = x;
 	scroll_y = y;
 	move_bkg(scroll_x, scroll_y);
+
+	if(pending_w_map) {
+		ScrollUpdateRowR();
+	}
+	if(pending_h_map) {
+		ScrollUpdateColumnR();
+	}
 }
