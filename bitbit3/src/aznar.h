@@ -1,6 +1,6 @@
 /*
 
- PRINCESS.H
+ AZNAR.H
 
  Include File.
 
@@ -10,7 +10,7 @@
   Compression          : None.
   Counter              : None.
   Tile size            : 16 x 16
-  Tiles                : 0 to 9
+  Tiles                : 0 to 4
 
   Palette colors       : None.
   SGB Palette          : None.
@@ -24,8 +24,8 @@
 
 
 /* Bank of tiles. */
-#define princessBank 0
+#define aznarBank 0
 /* Start of tile array. */
-extern unsigned char princess[];
+extern unsigned char aznar[];
 
-/* End of PRINCESS.H */
+/* End of AZNAR.H */

@@ -8,7 +8,7 @@
    Section       : 
    Bank          : 0
    Map size      : 200 x 36
-   Tile set      : C:\Users\Sergio\Desktop\gb-2016-07-02\gb\gbtd22\carnage.gbr
+   Tile set      : carnage.gbr
    Plane count   : 1 plane (8 bits)
    Plane order   : Tiles are continues
    Tile offset   : 0
