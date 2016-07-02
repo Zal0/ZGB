@@ -46,6 +46,7 @@ void ScrollUpdateRow(UINT16 x, UINT16 y) {
 		UPDATE_TILE(x + i, y, map);
 		map += 1;
 	}
+	//set_bkg_tiles(0x1F & (UINT8)x, 0x1F & (UINT8)y, SCREEN_TILE_REFRES_W, 1, map);
 }
 
 void ScrollUpdateColumn(UINT16 x, UINT16 y) {
@@ -87,15 +88,15 @@ void MoveScroll(UINT16 x, UINT16 y) {
 
 	if(current_column != new_column) {
 		if(new_column > current_column) {
-			ScrollUpdateColumn(new_column + SCREEN_TILE_REFRES_W, scroll_y >> 3);
+			ScrollUpdateColumn(new_column + SCREEN_TILES_W, scroll_y >> 3);
 		} else {
-			ScrollUpdateColumn(new_column - 1, scroll_y >> 3);
+			ScrollUpdateColumn(new_column, scroll_y >> 3);
 		}
 	}
 	
 	if(current_row != new_row) {
 		if(new_row > current_row) {
-			ScrollUpdateRow(scroll_x >> 3, new_row + SCREEN_TILE_REFRES_H);
+			ScrollUpdateRow(scroll_x >> 3, new_row + SCREEN_TILES_H);
 		} else {
 			ScrollUpdateRow(scroll_x >> 3, new_row);
 		}
