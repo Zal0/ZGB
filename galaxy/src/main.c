@@ -19,7 +19,6 @@ struct Sprite sprite;
 void Start() {
 	UINT8 i = 0;
 	UINT16 cnt = 0;
-	UINT8* scroll_transfer[32];
 
 	SWITCH_ROM_MBC1(2);
 

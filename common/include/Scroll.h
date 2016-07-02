@@ -4,10 +4,11 @@
 #include <gb/gb.h> 
 
 extern unsigned char* scroll_map;
-extern UINT16 scroll_w;
-extern UINT16 scroll_h;
 extern UINT16 scroll_x;
 extern UINT16 scroll_y;
+extern UINT16 scroll_tiles_w;
+extern UINT16 scroll_tiles_h;
+
 
 
 void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT16 x, UINT16 y);
