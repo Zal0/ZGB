@@ -6,6 +6,8 @@
 #define SCREEN_TILE_REFRES_W 21u
 #define SCREEN_TILE_REFRES_H 19u
 
+#define DELAY_REFRESH_TILE 10u
+
 //This function was thought for updating a whole square... can't find a better one that updates one tile only!
 #define UPDATE_TILE(X, Y, T) set_bkg_tiles(0x1F & (UINT8)X, 0x1F & (UINT8)Y, 1, 1, T)
 
@@ -44,7 +46,7 @@ unsigned char* pending_w_map = 0;
 void ScrollUpdateRowR() {
 	UINT8 i = 0u;
 	
-	for(i = 0u; i != 1, pending_w_i != SCREEN_TILE_REFRES_W; ++i, ++ pending_w_i) {
+	for(i = 0u; i != DELAY_REFRESH_TILE, pending_w_i != SCREEN_TILE_REFRES_W; ++i, ++ pending_w_i) {
 		UPDATE_TILE(pending_w_x + pending_w_i, pending_w_y, pending_w_map);
 		pending_w_map += 1;
 	}
@@ -77,7 +79,7 @@ unsigned char* pending_h_map = 0;
 void ScrollUpdateColumnR() {
 	UINT8 i = 0u;
 
-	for(i = 0u; i != 5 && pending_h_i != SCREEN_TILE_REFRES_H; ++i, pending_h_i ++) {
+	for(i = 0u; i != DELAY_REFRESH_TILE && pending_h_i != SCREEN_TILE_REFRES_H; ++i, pending_h_i ++) {
 		UPDATE_TILE(pending_h_x, pending_h_y + pending_h_i, pending_h_map);
 		pending_h_map += scroll_tiles_w;
 	}
