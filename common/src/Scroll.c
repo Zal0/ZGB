@@ -1,4 +1,5 @@
 #include "Scroll.h"
+#include "Sprite.h"
 
 //This function was thought for updating a whole square... can't find a better one that updates one tile only!
 #define UPDATE_TILE(X, Y, T) set_bkg_tiles(0x1F & (UINT8)X, 0x1F & (UINT8)Y, 1, 1, T)
@@ -10,6 +11,7 @@ UINT16 scroll_w;
 UINT16 scroll_h;
 UINT16 scroll_tiles_w;
 UINT16 scroll_tiles_h;
+struct Sprite* scroll_target = 0;
 
 void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT16 x, UINT16 y) {
 	UINT8 i;
@@ -48,6 +50,12 @@ void ScrollUpdateColumn(UINT16 x, UINT16 y) {
 	for(i = 0u; i != 19u; ++i) {
 		UPDATE_TILE(x, y + i, map);
 		map += scroll_tiles_w;
+	}
+}
+
+void RefreshScroll() {
+	if(scroll_target) {
+		MoveScroll(scroll_target->x - (SCREENWIDTH >> 1), scroll_target->y - (SCREENHEIGHT >> 1));
 	}
 }
 
