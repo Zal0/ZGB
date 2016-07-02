@@ -17,8 +17,9 @@ UINT16 scroll_h;
 UINT16 scroll_tiles_w;
 UINT16 scroll_tiles_h;
 struct Sprite* scroll_target = 0;
+UINT8 scroll_collisions[128];
 
-void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT16 x, UINT16 y) {
+void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT16 x, UINT16 y, UINT8* coll_list) {
 	UINT8 i;
 	
 	scroll_tiles_w = map_w;
@@ -28,6 +29,13 @@ void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT16 x, UINT16
 	scroll_y = y;
 	scroll_w = map_w << 3;
 	scroll_h = map_h << 3;
+
+	for(i = 0u; i != 128; ++i) {
+		scroll_collisions[i] = 0u;
+	}
+	for(i = 0u; coll_list[i] != 0u; ++i) {
+		scroll_collisions[coll_list[i]] = 1u;
+	}
 
 	move_bkg(scroll_x, scroll_y);
 	for(i = 0u; i != SCREEN_TILE_REFRES_H && i != scroll_tiles_h; ++i) {
@@ -157,4 +165,8 @@ void MoveScroll(UINT16 x, UINT16 y) {
 	if(pending_h_map) {
 		ScrollUpdateColumnR();
 	}
+}
+
+UINT8* GetScrollTilePtr(UINT16 x, UINT16 y) {
+	return scroll_map + (scroll_tiles_w * y + x);
 }
