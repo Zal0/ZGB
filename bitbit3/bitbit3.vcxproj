@@ -15,6 +15,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.c" />
+    <ClCompile Include="src\map.b2.c" />
+    <ClCompile Include="src\princess.b2.c" />
+    <ClCompile Include="src\tilemap.b2.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\map.h" />
+    <ClInclude Include="src\princess.h" />
+    <ClInclude Include="src\tilemap.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{567BA24E-A974-432F-BD16-A2F5043954FF}</ProjectGuid>

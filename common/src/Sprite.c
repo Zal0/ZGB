@@ -4,7 +4,7 @@ void InitSprite(struct Sprite* sprite, FrameSize size, UINT8 first_tile) {
 	sprite->size = size;
 	sprite->first_tile = first_tile;
 	sprite->data = 0u;
-	sprite->ticks_per_frame = 50u;
+	sprite->ticks_per_frame = 3u;
 
 	sprite->x = 0;
 	sprite->y = 0;
