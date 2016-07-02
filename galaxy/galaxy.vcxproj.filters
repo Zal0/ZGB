@@ -9,10 +9,22 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Source Files\resources">
+      <UniqueIdentifier>{3def3907-48b8-463a-ae9f-e8b581d253f7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.c">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tileTest.b2.c">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\map.b2.c">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\smile.b2.c">
+      <Filter>Source Files\resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -24,6 +36,15 @@
     </ClInclude>
     <ClInclude Include="include\Frame.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\map.h">
+      <Filter>Source Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\smile.h">
+      <Filter>Source Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tileTest.h">
+      <Filter>Source Files\resources</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

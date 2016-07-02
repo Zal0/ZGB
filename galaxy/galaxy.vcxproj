@@ -12,6 +12,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.c" />
+    <ClCompile Include="src\map.b2.c" />
+    <ClCompile Include="src\smile.b2.c" />
+    <ClCompile Include="src\tileTest.b2.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Makefile" />
@@ -19,6 +22,9 @@
   <ItemGroup>
     <ClInclude Include="include\Frame.h" />
     <ClInclude Include="include\OAMManager.h" />
+    <ClInclude Include="src\map.h" />
+    <ClInclude Include="src\smile.h" />
+    <ClInclude Include="src\tileTest.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{30CB6750-87A0-4CAD-ADA9-F9888C797BA0}</ProjectGuid>
