@@ -6,8 +6,8 @@ void InitSprite(struct Sprite* sprite, FrameSize size, UINT8 first_tile) {
 	sprite->data = 0u;
 	sprite->ticks_per_frame = 50u;
 
-	sprite->x = 0u;
-	sprite->y = 0u;
+	sprite->x = 0;
+	sprite->y = 0;
 }
 
 void SetSpriteAnim(struct Sprite* sprite, UINT8* data) {

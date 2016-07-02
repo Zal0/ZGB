@@ -54,7 +54,7 @@ void Update() {
 	DrawFrame(FRAME_16x16, 0, 80u, 100u);
 
 	//gotogxy(0, 0);
-	//gprintf("%u,%u", sprite.x, sprite.y);
+	//gprintf("%d,%d", scroll_x, scroll_y);
 }
 
 void main() {
@@ -62,9 +62,10 @@ void main() {
 	while (1) {
 		wait_vbl_done();
 		
-		oam_idx = 0;
+		ResetOAM();
 		UPDATE_KEYS();
 
 		Update();
+		FlushOAM();
 	}
 }

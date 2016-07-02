@@ -10,6 +10,6 @@ typedef enum {
 	FRAME_32x32
 } FrameSize;
 
-void DrawFrame(FrameSize size, int idx, UINT8 x, UINT8 y);
+void DrawFrame(FrameSize size, int idx, UINT16 x, UINT16 y);
 
 #endif

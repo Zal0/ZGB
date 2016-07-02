@@ -14,9 +14,8 @@ struct Sprite {
 	UINT8 accum_ticks;
 	UINT8 ticks_per_frame;
 
-	//Screen coordinates
-	UINT8 x;
-	UINT8 y;
+	UINT16 x;
+	UINT16 y;
 };
 
 void InitSprite(struct Sprite* sprite, FrameSize size, UINT8 first_tile);
