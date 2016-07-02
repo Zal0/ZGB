@@ -46,6 +46,7 @@ void ScrollUpdateRow(UINT16 x, UINT16 y) {
 		UPDATE_TILE(x + i, y, map);
 		map += 1;
 	}
+	//set_bkg_tiles(0x1F & (UINT8)x, 0x1F & (UINT8)y, SCREEN_TILE_REFRES_W, 1, map);
 }
 
 void ScrollUpdateColumn(UINT16 x, UINT16 y) {
