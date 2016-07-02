@@ -14,12 +14,14 @@
     <ClInclude Include="include\Frame.h" />
     <ClInclude Include="include\Keys.h" />
     <ClInclude Include="include\OAMManager.h" />
+    <ClInclude Include="include\Scroll.h" />
     <ClInclude Include="include\Sprite.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Frame.c" />
     <ClCompile Include="src\Keys.c" />
     <ClCompile Include="src\OAMManager.c" />
+    <ClCompile Include="src\Scroll.c" />
     <ClCompile Include="src\Sprite.c" />
   </ItemGroup>
   <ItemGroup>

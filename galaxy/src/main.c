@@ -4,6 +4,7 @@
 #include "Frame.h"
 #include "Sprite.h"
 #include "Keys.h"
+#include "Scroll.h"
 
 #include <gb/drawing.h>
 
@@ -12,32 +13,6 @@
 #include "map.h"
 
 #include "string.h"
-
-#define UPDATE_TILE(X, Y, T) set_bkg_tiles(X, Y, 1, 1, T)
-
-
-
-
-void ScrollUpdateRow(UINT16 x, UINT16 y, unsigned char* map, UINT8 map_w) {
-	UINT8 i = 0;
-
-	map = &map[map_w * y + x];
-	for(i = 0; i != 21u; ++i) {
-		UPDATE_TILE(x + i, y, map);
-		map += 1;
-	}
-}
-
-void ScrollUpdateColumn(UINT16 x, UINT16 y, unsigned char* map, UINT8 map_w) {
-	UINT8 i = 0;
-
-	map = &map[map_w * y + x];
-	for(i = 0; i != 19; ++i) {
-		UPDATE_TILE(x, y + i, map);
-		map += map_w;
-	}
-}
-
 
 UINT8 anim[] = {2, 0, 1};
 struct Sprite sprite;
@@ -53,12 +28,7 @@ void Start() {
 	SHOW_SPRITES;
 
 	set_bkg_data(0, 4, TileLabel);
-	/*for(i = 0u; i != 19u && i != mapTestHeight; ++i) {
-		ScrollUpdateRow(40u, i, mapTest, mapTestWidth);
-	}*/
-	for(i = 0u; i != 21u && i != mapTestWidth; ++i) {
-		ScrollUpdateColumn(i, 0u, mapTest, mapTestWidth);
-	}
+	InitScroll(mapTestWidth, mapTestHeight, mapTest, 0, 0);
 	SHOW_BKG;
 
 	InitSprite(&sprite, FRAME_16x16, 0);
@@ -69,13 +39,13 @@ void Start() {
 
 void Update() {
 	if(KEY_PRESSED(J_RIGHT))
-		sprite.x ++;
+		MoveScroll(scroll_x + 1, scroll_y);
 	if(KEY_PRESSED(J_LEFT))
-		sprite.x --;
+		MoveScroll(scroll_x - 1, scroll_y);
 	if(KEY_PRESSED(J_UP))
-		sprite.y --;
+		MoveScroll(scroll_x, scroll_y - 1);
 	if(KEY_PRESSED(J_DOWN))
-		sprite.y ++;
+		MoveScroll(scroll_x, scroll_y + 1);
 
 	DrawSprite(&sprite);
 
