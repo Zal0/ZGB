@@ -54,7 +54,7 @@ void Update() {
 	DrawFrame(FRAME_16x16, 0, 30u, 70u);
 	DrawFrame(FRAME_16x16, 0, 80u, 100u);
 
-	RefreshScroll();
+	
 
 	//gotogxy(0, 0);
 	//gprintf("%d,%d", scroll_x, scroll_y);
@@ -64,6 +64,7 @@ void main() {
 	Start();
 	while (1) {
 		wait_vbl_done();
+		RefreshScroll();
 		
 		ResetOAM();
 		UPDATE_KEYS();
