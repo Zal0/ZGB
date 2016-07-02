@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bitbit3", "bitbit3.vcxproj", "{567BA24E-A974-432F-BD16-A2F5043954FF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A820F4AF-3BAD-4781-86FB-C055E213A91D} = {A820F4AF-3BAD-4781-86FB-C055E213A91D}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "common", "..\common\common.vcxproj", "{A820F4AF-3BAD-4781-86FB-C055E213A91D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{567BA24E-A974-432F-BD16-A2F5043954FF}.Debug|x86.ActiveCfg = Debug|Win32
+		{567BA24E-A974-432F-BD16-A2F5043954FF}.Debug|x86.Build.0 = Debug|Win32
+		{567BA24E-A974-432F-BD16-A2F5043954FF}.Release|x86.ActiveCfg = Release|Win32
+		{567BA24E-A974-432F-BD16-A2F5043954FF}.Release|x86.Build.0 = Release|Win32
+		{A820F4AF-3BAD-4781-86FB-C055E213A91D}.Debug|x86.ActiveCfg = Debug|Win32
+		{A820F4AF-3BAD-4781-86FB-C055E213A91D}.Debug|x86.Build.0 = Debug|Win32
+		{A820F4AF-3BAD-4781-86FB-C055E213A91D}.Release|x86.ActiveCfg = Release|Win32
+		{A820F4AF-3BAD-4781-86FB-C055E213A91D}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
