@@ -17,5 +17,4 @@ void StartStateTests() {
 void UpdateStateTests() {
 	UINT8 tmp = -1;
 	TranslateSpriteT(-1, -1);
-	
 }

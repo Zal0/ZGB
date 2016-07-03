@@ -14,6 +14,7 @@
 UINT8 collision_tiles[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 47, 48, 0};
 UINT8 anim_walk[] = {12, 0, 1, 2, 3, 2, 1, 0, 4, 5, 6, 5, 4};
 UINT8 anim_idle[] = {4, 0, 0, 0, 7};
+UINT8 anim_jump[] = {1, 6};
 struct Sprite sprite_princess;
 
 typedef enum  {
@@ -52,32 +53,48 @@ void StartStateGame() {
 	princes_state = PRINCESS_STATE_NORMAL;
 }
 
-
-void UpdatePrincess() {
+void MovePrincess() {
 	if(KEY_PRESSED(J_RIGHT)) {
 		TranslateSprite(&sprite_princess, 1, 0);
 		sprite_princess.flags = 0u;
-
-		SetSpriteAnim(&sprite_princess, anim_walk, 33u);
-	}else if(KEY_PRESSED(J_LEFT)) {
+	} else if(KEY_PRESSED(J_LEFT)) {
 		TranslateSprite(&sprite_princess, -1, 0);
 		sprite_princess.flags = OAM_VERTICAL_FLAG;
-
-		SetSpriteAnim(&sprite_princess, anim_walk, 33u);
-	} else {
-		SetSpriteAnim(&sprite_princess, anim_idle, 3u);
 	}
-	
-	if(princes_state == PRINCESS_STATE_NORMAL) {
-		if(KEY_TICKED(J_B)) {
-			princess_accel_y = -50;
-			princes_state = PRINCESS_STATE_JUMPING;
-		}
-		if((princess_accel_y >> 4) > 1) {
-			princes_state = PRINCESS_STATE_JUMPING;
-		}
+}
+
+void UpdatePrincess() {
+	switch(princes_state) {
+		case PRINCESS_STATE_NORMAL:
+			MovePrincess();
+
+			//Choose odle anim or walk
+			if(KEY_PRESSED(J_RIGHT) || KEY_PRESSED(J_LEFT) ) {
+				SetSpriteAnim(&sprite_princess, anim_walk, 33u);
+			} else {
+				SetSpriteAnim(&sprite_princess, anim_idle, 3u);
+			}
+
+			//Check jumping
+			if(KEY_TICKED(J_B)) {
+				princess_accel_y = -50;
+				princes_state = PRINCESS_STATE_JUMPING;
+			}
+
+			//Check falling
+			if((princess_accel_y >> 4) > 1) {
+				princes_state = PRINCESS_STATE_JUMPING;
+			}
+			break;
+
+		case PRINCESS_STATE_JUMPING:
+			MovePrincess();
+			SetSpriteAnim(&sprite_princess, anim_jump, 33u);
+			break;
 	}
 
+
+	//Simple gravity physics 
 	if(princess_accel_y < 40) {
 		princess_accel_y += 2;	
 	}
