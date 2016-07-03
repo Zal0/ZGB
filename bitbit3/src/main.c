@@ -36,8 +36,8 @@ void Start() {
 
 	sprite.coll_x += 4u;
 	sprite.coll_w -= 8u;
-	sprite.coll_y += 2u;
-	sprite.coll_h -= 2u;
+	//sprite.coll_y += 2u;
+	//sprite.coll_h -= 2u;
 
 	scroll_target = &sprite;
 }
@@ -45,13 +45,13 @@ void Start() {
 //#include <stdio.h>
 void Update() {
 	if(KEY_PRESSED(J_RIGHT))
-		TranslateSprite(&sprite, 4, 0);
+		TranslateSprite(&sprite, 1, 0);
 	if(KEY_PRESSED(J_LEFT))
-		TranslateSpriteNEG(&sprite, 4, 0);
+		TranslateSpriteNEG(&sprite, 1, 0);
 	if(KEY_PRESSED(J_UP))
 		sprite.y -= 1;
 	if(KEY_PRESSED(J_DOWN))
-		sprite.y += 1;
+		TranslateSprite(&sprite, 0, 4);
 
 	DrawSprite(&sprite);
 

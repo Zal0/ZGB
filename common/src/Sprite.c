@@ -64,6 +64,18 @@ void TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 				}
 			}
 		}
+		if(y > 0) {
+			start_x = (sprite->x + sprite->coll_x);
+			start_y = (sprite->y + sprite->coll_y + sprite->coll_h + y);
+			n_its = ((start_x + sprite->coll_w - 1u) >> 3) - (start_x >> 3) + 1u;
+			tile = GetScrollTilePtr(start_x >> 3, start_y >> 3);
+			
+			for(i = 0u; i != n_its; ++i, tile += 1u) {
+				if(scroll_collisions[*tile] == 1u) {
+					y -= (start_y % (UINT16)8u);
+				}
+			}
+		}
 	}
 
 	sprite->x += x;
