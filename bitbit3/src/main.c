@@ -36,8 +36,8 @@ void Start() {
 
 	sprite.coll_x += 4u;
 	sprite.coll_w -= 8u;
-	//sprite.coll_y += 2u;
-	//sprite.coll_h -= 2u;
+	sprite.coll_y += 2u;
+	sprite.coll_h -= 2u;
 
 	scroll_target = &sprite;
 }
@@ -49,9 +49,9 @@ void Update() {
 	if(KEY_PRESSED(J_LEFT))
 		TranslateSpriteNEG(&sprite, 1, 0);
 	if(KEY_PRESSED(J_UP))
-		sprite.y -= 1;
+		TranslateSpriteNEG(&sprite, 0, 4);
 	if(KEY_PRESSED(J_DOWN))
-		TranslateSprite(&sprite, 0, 4);
+		TranslateSprite(&sprite, 0, 1);
 
 	DrawSprite(&sprite);
 
