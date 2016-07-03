@@ -58,6 +58,8 @@ void main() {
 		}
 
 		DISPLAY_OFF
+		ResetOAM();
+		FlushOAM();
 		last_sprite_loaded = 0;
 		state_running = 1;
 		current_state = next_state;
