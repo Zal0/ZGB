@@ -55,6 +55,7 @@ void main() {
 		}
 
 		DISPLAY_OFF
+		last_sprite_loaded = 0;
 		state_running = 1;
 		current_state = next_state;
 		Start();	
