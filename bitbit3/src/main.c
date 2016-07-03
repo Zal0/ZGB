@@ -8,7 +8,7 @@
 #include "StateMenu.h"
 #include "StateGame.h"
 
-STATE next_state = STATE_GAME;
+STATE next_state = STATE_MENU;
 
 STATE current_state = N_STATES;
 UINT8 state_running = 0;
@@ -29,7 +29,7 @@ void Update() {
 
 void SetState(STATE state) {
 	state_running = 0;
-	next_state = current_state;
+	next_state = state;
 }
 
 void main() {

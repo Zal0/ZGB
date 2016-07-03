@@ -30,11 +30,13 @@ void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT16 x, UINT16
 	scroll_w = map_w << 3;
 	scroll_h = map_h << 3;
 
-	for(i = 0u; i != 128; ++i) {
-		scroll_collisions[i] = 0u;
-	}
-	for(i = 0u; coll_list[i] != 0u; ++i) {
-		scroll_collisions[coll_list[i]] = 1u;
+	if(coll_list) {
+		for(i = 0u; i != 128; ++i) {
+			scroll_collisions[i] = 0u;
+		}
+		for(i = 0u; coll_list[i] != 0u; ++i) {
+			scroll_collisions[coll_list[i]] = 1u;
+		}
 	}
 
 	move_bkg(scroll_x, scroll_y);

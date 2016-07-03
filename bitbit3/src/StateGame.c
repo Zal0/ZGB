@@ -15,9 +15,6 @@ UINT8 collision_tiles[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 34, 35, 36, 37
 UINT8 anim[] = {12, 0, 1, 2, 3, 2, 1, 0, 4, 5, 6, 5, 4};
 struct Sprite sprite;
 void StartStateGame() {
-	UINT8 i = 0;
-	UINT16 cnt = 0;
-
 	SWITCH_ROM_MBC1(2);
 
 	SPRITES_8x16;
@@ -53,7 +50,7 @@ void UpdateStateGame() {
 		TranslateSprite(&sprite, 0, 4);
 
 	if(KEY_TICKED(J_SELECT)) {
-		SetState(STATE_GAME);
+		SetState(STATE_MENU);
 	}
 
 	DrawSprite(&sprite);
