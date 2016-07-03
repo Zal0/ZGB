@@ -2,6 +2,7 @@
 #define MAIN_H
 
 typedef enum {
+	STATE_DISCLAIMER,
 	STATE_MENU,
 	STATE_GAME,
 	STATE_TESTS,
