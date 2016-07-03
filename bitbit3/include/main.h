@@ -4,6 +4,7 @@
 typedef enum {
 	STATE_MENU,
 	STATE_GAME,
+	STATE_TESTS,
 
 	N_STATES
 } STATE;
