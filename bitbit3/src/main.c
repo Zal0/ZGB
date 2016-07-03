@@ -10,7 +10,7 @@
 #include "StateGame.h"
 #include "StateTests.h"
 
-STATE next_state = STATE_DISCLAIMER;
+STATE next_state = STATE_GAME;//STATE_DISCLAIMER;
 
 STATE current_state = N_STATES;
 UINT8 state_running = 0;

@@ -17,6 +17,8 @@ UINT16 scroll_h;
 UINT16 scroll_tiles_w;
 UINT16 scroll_tiles_h;
 struct Sprite* scroll_target = 0;
+INT16 scroll_target_offset_x = 0;
+INT16 scroll_target_offset_y = 0;
 UINT8 scroll_collisions[128];
 UINT8 scroll_bank;
 
@@ -131,7 +133,7 @@ void FinishPendingScrollUpdates() {
 
 void RefreshScroll() {
 	if(scroll_target) {
-		MoveScroll(scroll_target->x - (SCREENWIDTH >> 1), scroll_target->y - (SCREENHEIGHT >> 1));
+		MoveScroll(scroll_target->x + scroll_target_offset_x - (SCREENWIDTH >> 1), scroll_target->y + scroll_target_offset_y - (SCREENHEIGHT >> 1));
 	}
 }
 

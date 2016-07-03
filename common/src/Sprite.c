@@ -5,7 +5,7 @@ void InitSprite(struct Sprite* sprite, FrameSize size, UINT8 first_tile) {
 	sprite->size = size;
 	sprite->first_tile = first_tile;
 	sprite->data = 0u;
-	sprite->ticks_per_frame = 3u;
+	sprite->anim_speed = 33u;
 
 	sprite->x = 0;
 	sprite->y = 0;
@@ -30,24 +30,25 @@ void SetSpriteAnim(struct Sprite* sprite, UINT8* data) {
 void DrawSprite(struct Sprite* sprite) {
 	if(sprite->data) {
 		
-		sprite->accum_ticks ++;
-		if(sprite->accum_ticks > sprite->ticks_per_frame) {
+		sprite->accum_ticks += sprite->anim_speed;
+		if(sprite->accum_ticks > 100u) {
 			sprite->current_frame ++;
 			if(sprite->current_frame == sprite->data[0]){
 				sprite->current_frame = 0;
 			}
 
-			sprite->accum_ticks -= sprite->ticks_per_frame;
+			sprite->accum_ticks -= 100u;
 		}
 
 		DrawFrame(sprite->size, sprite->first_tile + sprite->data[1 + sprite->current_frame], sprite->x, sprite->y);
 	}
 }
 
-void TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
+UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 	UINT16 start_x, start_y, n_its;
 	unsigned char* tile;
 	UINT8 i;
+	UINT8 ret = 0;
 
 	if(scroll_map) {
 		if(x > 0) {
@@ -59,6 +60,7 @@ void TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 			for(i = 0u; i != n_its; ++i, tile += scroll_tiles_w) {
 				if(scroll_collisions[*tile] == 1u) {
 					x -= (start_x % (UINT16)8u) + 1;
+					ret = 1;
 				}
 			}
 		}
@@ -71,6 +73,7 @@ void TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 			for(i = 0u; i != n_its; ++i, tile += scroll_tiles_w) {
 				if(scroll_collisions[*tile] == 1u) {
 					x = (INT16)x + (8u - (start_x % (UINT16)8u));
+					ret = 1;
 				}
 			}
 		}
@@ -83,6 +86,7 @@ void TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 			for(i = 0u; i != n_its; ++i, tile += 1u) {
 				if(scroll_collisions[*tile] == 1u) {
 					y -= (start_y % (UINT16)8u);
+					ret = 1;
 				}
 			}
 		}
@@ -95,6 +99,7 @@ void TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 			for(i = 0u; i != n_its; ++i, tile += 1u) {
 				if(scroll_collisions[*tile] == 1u) {
 					y = (INT16)y + (8u - (start_y % (UINT16)8u));
+					ret = 1;
 				}
 			}
 		}
@@ -102,4 +107,5 @@ void TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 
 	sprite->x += (INT16)x;
 	sprite->y += (INT16)y;
+	return ret;
 }
