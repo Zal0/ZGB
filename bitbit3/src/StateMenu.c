@@ -11,7 +11,7 @@
 void StartStateMenu() {
 	SWITCH_ROM_MBC1(2);
 
-	set_bkg_data(0, 75, splashtiles);
+	set_bkg_data(0, 76, splashtiles);
 	InitScroll(splashmapWidth, splashmapHeight, splashmap, 0, 0, 0);
 	SHOW_BKG;
 }
