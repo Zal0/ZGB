@@ -70,7 +70,7 @@ void StartStateGame() {
 	InitSprite(&sprite_princess, FRAME_16x16, 0);
 	SetSpriteAnim(&sprite_princess, anim_idle, 3u);
 	sprite_princess.x = 32u;
-	sprite_princess.y = 32u;
+	sprite_princess.y = 112u;
 	sprite_princess.coll_x += 4u;
 	sprite_princess.coll_w -= 8u;
 	sprite_princess.coll_y += 2u;
