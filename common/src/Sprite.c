@@ -21,10 +21,13 @@ void InitSprite(struct Sprite* sprite, FrameSize size, UINT8 first_tile) {
 
 }
 
-void SetSpriteAnim(struct Sprite* sprite, UINT8* data) {
-	sprite->data = data;
-	sprite->current_frame = 0;
-	sprite->accum_ticks = 0;
+void SetSpriteAnim(struct Sprite* sprite, UINT8* data, UINT8 speed) {
+	if(sprite->data !=  data) {
+		sprite->data = data;
+		sprite->current_frame = 0;
+		sprite->accum_ticks = 0;
+		sprite->anim_speed = speed;
+	}
 }
 
 void DrawSprite(struct Sprite* sprite) {
@@ -109,3 +112,6 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 	sprite->y += (INT16)y;
 	return ret;
 }
+
+
+

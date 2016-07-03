@@ -12,7 +12,8 @@
 #include "main.h"
 
 UINT8 collision_tiles[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 47, 48, 0};
-UINT8 anim[] = {12, 0, 1, 2, 3, 2, 1, 0, 4, 5, 6, 5, 4};
+UINT8 anim_walk[] = {12, 0, 1, 2, 3, 2, 1, 0, 4, 5, 6, 5, 4};
+UINT8 anim_idle[] = {2, 0, 7};
 struct Sprite sprite_princess;
 
 typedef enum  {
@@ -27,7 +28,7 @@ void StartStateGame() {
 	SWITCH_ROM_MBC1(2);
 
 	SPRITES_8x16;
-	set_sprite_data(0, 7 * 4, princess);
+	set_sprite_data(0, 9 * 4, princess);
 	SHOW_SPRITES;
 
 	set_bkg_data(0, 54, tilemap);
@@ -35,7 +36,7 @@ void StartStateGame() {
 	SHOW_BKG;
 
 	InitSprite(&sprite_princess, FRAME_16x16, 0);
-	SetSpriteAnim(&sprite_princess, anim);
+	SetSpriteAnim(&sprite_princess, anim_idle, 3u);
 	sprite_princess.x = 32u;
 	sprite_princess.y = 32u;
 
@@ -55,14 +56,16 @@ void StartStateGame() {
 void UpdatePrincess() {
 	if(KEY_PRESSED(J_RIGHT)) {
 		TranslateSprite(&sprite_princess, 1, 0);
-		sprite_princess.anim_speed = 33u;
 		sprite_princess.flags = 0u;
+
+		SetSpriteAnim(&sprite_princess, anim_walk, 33u);
 	}else if(KEY_PRESSED(J_LEFT)) {
 		TranslateSprite(&sprite_princess, -1, 0);
-		sprite_princess.anim_speed = 33u;
 		sprite_princess.flags = OAM_VERTICAL_FLAG;
+
+		SetSpriteAnim(&sprite_princess, anim_walk, 33u);
 	} else {
-		sprite_princess.anim_speed = 0u;
+		SetSpriteAnim(&sprite_princess, anim_idle, 3u);
 	}
 	
 	if(princes_state == PRINCESS_STATE_NORMAL) {
