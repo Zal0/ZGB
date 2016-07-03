@@ -26,6 +26,12 @@
     <ClCompile Include="src\tilemap.b2.c">
       <Filter>Source Files\resources</Filter>
     </ClCompile>
+    <ClCompile Include="src\StateGame.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StateMenu.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Makefile" />
@@ -39,6 +45,15 @@
     </ClInclude>
     <ClInclude Include="src\tilemap.h">
       <Filter>Source Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\StateGame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\StateMenu.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

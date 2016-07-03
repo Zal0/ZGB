@@ -17,9 +17,14 @@
     <ClCompile Include="src\main.c" />
     <ClCompile Include="src\map.b2.c" />
     <ClCompile Include="src\princess.b2.c" />
+    <ClCompile Include="src\StateGame.c" />
+    <ClCompile Include="src\StateMenu.c" />
     <ClCompile Include="src\tilemap.b2.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\main.h" />
+    <ClInclude Include="include\StateGame.h" />
+    <ClInclude Include="include\StateMenu.h" />
     <ClInclude Include="src\map.h" />
     <ClInclude Include="src\princess.h" />
     <ClInclude Include="src\tilemap.h" />
