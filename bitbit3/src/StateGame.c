@@ -13,7 +13,7 @@
 
 UINT8 collision_tiles[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 47, 48, 0};
 UINT8 anim_walk[] = {12, 0, 1, 2, 3, 2, 1, 0, 4, 5, 6, 5, 4};
-UINT8 anim_idle[] = {2, 0, 7};
+UINT8 anim_idle[] = {4, 0, 0, 0, 7};
 struct Sprite sprite_princess;
 
 typedef enum  {
@@ -70,7 +70,7 @@ void UpdatePrincess() {
 	
 	if(princes_state == PRINCESS_STATE_NORMAL) {
 		if(KEY_TICKED(J_B)) {
-			princess_accel_y = -40;
+			princess_accel_y = -50;
 			princes_state = PRINCESS_STATE_JUMPING;
 		}
 		if((princess_accel_y >> 4) > 1) {
