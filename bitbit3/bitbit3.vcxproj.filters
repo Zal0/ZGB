@@ -38,6 +38,24 @@
     <ClCompile Include="src\StateDisclaimer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\splashtiles.b2.c">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\zurrapa.c">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\aznar.b2.c">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gameovermap.b2.c">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gameovertiles.b2.c">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\splash.b2.c">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Makefile" />
@@ -66,6 +84,24 @@
     </ClInclude>
     <ClInclude Include="include\StateDisclaimer.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\splashtiles.h">
+      <Filter>Source Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zurrapa.h">
+      <Filter>Source Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\aznar.h">
+      <Filter>Source Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gameovermap.h">
+      <Filter>Source Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gameovertiles.h">
+      <Filter>Source Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\splash.h">
+      <Filter>Source Files\resources</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
