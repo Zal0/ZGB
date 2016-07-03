@@ -18,8 +18,9 @@ UINT16 scroll_tiles_w;
 UINT16 scroll_tiles_h;
 struct Sprite* scroll_target = 0;
 UINT8 scroll_collisions[128];
+UINT8 scroll_bank;
 
-void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT16 x, UINT16 y, UINT8* coll_list) {
+void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT16 x, UINT16 y, UINT8* coll_list, UINT8 bank) {
 	UINT8 i;
 	
 	scroll_tiles_w = map_w;
@@ -29,6 +30,7 @@ void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT16 x, UINT16
 	scroll_y = y;
 	scroll_w = map_w << 3;
 	scroll_h = map_h << 3;
+	scroll_bank = bank;
 
 	if(coll_list) {
 		for(i = 0u; i != 128; ++i) {
@@ -183,5 +185,6 @@ void MoveScroll(UINT16 x, UINT16 y) {
 }
 
 UINT8* GetScrollTilePtr(UINT16 x, UINT16 y) {
+	SWITCH_ROM_MBC1(scroll_bank); //does this have any performance hit?
 	return scroll_map + (scroll_tiles_w * y + x); //TODO: fix this mult!!
 }

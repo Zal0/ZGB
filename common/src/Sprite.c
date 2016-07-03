@@ -48,8 +48,6 @@ void TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 	UINT16 start_x, start_y, n_its;
 	unsigned char* tile;
 	UINT8 i;
-	
-	SWITCH_ROM_MBC1(2);
 
 	if(scroll_map) {
 		if(x > 0) {

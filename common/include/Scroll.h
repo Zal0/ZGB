@@ -14,7 +14,7 @@ extern UINT8  scroll_collisions[128];
 
 extern struct Sprite* scroll_target;
 
-void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT16 x, UINT16 y, UINT8* coll_list);
+void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT16 x, UINT16 y, UINT8* coll_list, UINT8 bank);
 void ScrollUpdateRow(UINT16 x, UINT16 y);
 void ScrollUpdateColumn(UINT16 x, UINT16 y);
 void MoveScroll(UINT16 x, UINT16 y);

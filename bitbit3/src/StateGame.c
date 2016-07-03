@@ -22,7 +22,7 @@ void StartStateGame() {
 	SHOW_SPRITES;
 
 	set_bkg_data(0, 54, tilemap);
-	InitScroll(level1Width, level1Height, level1, 0, 0, collision_tiles);
+	InitScroll(level1Width, level1Height, level1, 0, 0, collision_tiles, 2);
 	SHOW_BKG;
 
 	InitSprite(&sprite, FRAME_16x16, 0);
