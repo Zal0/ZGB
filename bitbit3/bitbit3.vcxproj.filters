@@ -59,6 +59,9 @@
     <ClCompile Include="src\StateGameOver.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\StateWin.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Makefile" />
@@ -107,6 +110,9 @@
       <Filter>Source Files\resources</Filter>
     </ClInclude>
     <ClInclude Include="include\StateGameOver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\StateWin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

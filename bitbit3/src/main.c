@@ -10,8 +10,9 @@
 #include "StateGame.h"
 #include "StateTests.h"
 #include "StateGameOver.h"
+#include "StateWin.h"
 
-STATE next_state = STATE_GAME;//STATE_DISCLAIMER;
+STATE next_state = STATE_GAME; //STATE_DISCLAIMER;
 
 STATE current_state = N_STATES;
 UINT8 state_running = 0;
@@ -22,6 +23,7 @@ void Start() {
 		case STATE_MENU:       StartStateMenu();       break;
 		case STATE_GAME:       StartStateGame();       break;
 		case STATE_GAME_OVER:  StartStateGameOver();   break;
+		case STATE_WIN:        StartStateWin();        break;
 		case STATE_TESTS:      StartStateTests();      break;
 	}
 }
@@ -32,6 +34,7 @@ void Update() {
 		case STATE_MENU:       UpdateStateMenu();       break;
 		case STATE_GAME:       UpdateStateGame();       break;
 		case STATE_GAME_OVER:  UpdateStateGameOver();   break;
+		case STATE_WIN:				 UpdateStateWin();        break;
 		case STATE_TESTS:      UpdateStateTests();      break;
 	}
 }
@@ -59,6 +62,7 @@ void main() {
 		state_running = 1;
 		current_state = next_state;
 		Start();	
+		wait_vbl_done();
 		DISPLAY_ON;
 	}
 }

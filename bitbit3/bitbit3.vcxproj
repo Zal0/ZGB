@@ -27,6 +27,7 @@
     <ClCompile Include="src\StateGameOver.c" />
     <ClCompile Include="src\StateMenu.c" />
     <ClCompile Include="src\StateTests.c" />
+    <ClCompile Include="src\StateWin.c" />
     <ClCompile Include="src\tilemap.b2.c" />
     <ClCompile Include="src\zurrapa.c" />
   </ItemGroup>
@@ -37,6 +38,7 @@
     <ClInclude Include="include\StateGameOver.h" />
     <ClInclude Include="include\StateMenu.h" />
     <ClInclude Include="include\StateTests.h" />
+    <ClInclude Include="include\StateWin.h" />
     <ClInclude Include="src\aznar.h" />
     <ClInclude Include="src\gameovermap.h" />
     <ClInclude Include="src\gameovertiles.h" />
