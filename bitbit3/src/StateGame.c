@@ -110,6 +110,6 @@ void UpdateStateGame() {
 	UpdatePrincess();
 
 	if(KEY_TICKED(J_SELECT)) {
-		SetState(STATE_MENU);
+		SetState(STATE_GAME_OVER);
 	}
 }

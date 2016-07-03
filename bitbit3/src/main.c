@@ -9,6 +9,7 @@
 #include "StateMenu.h"
 #include "StateGame.h"
 #include "StateTests.h"
+#include "StateGameOver.h"
 
 STATE next_state = STATE_GAME;//STATE_DISCLAIMER;
 
@@ -20,6 +21,7 @@ void Start() {
 		case STATE_DISCLAIMER: StartStateDisclaimer(); break;
 		case STATE_MENU:       StartStateMenu();       break;
 		case STATE_GAME:       StartStateGame();       break;
+		case STATE_GAME_OVER:  StartStateGameOver();   break;
 		case STATE_TESTS:      StartStateTests();      break;
 	}
 }
@@ -29,6 +31,7 @@ void Update() {
 		case STATE_DISCLAIMER: UpdateStateDisclaimer(); break;
 		case STATE_MENU:       UpdateStateMenu();       break;
 		case STATE_GAME:       UpdateStateGame();       break;
+		case STATE_GAME_OVER:  UpdateStateGameOver();   break;
 		case STATE_TESTS:      UpdateStateTests();      break;
 	}
 }

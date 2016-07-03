@@ -56,6 +56,9 @@
     <ClCompile Include="src\splash.b2.c">
       <Filter>Source Files\resources</Filter>
     </ClCompile>
+    <ClCompile Include="src\StateGameOver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Makefile" />
@@ -102,6 +105,9 @@
     </ClInclude>
     <ClInclude Include="src\splash.h">
       <Filter>Source Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\StateGameOver.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
