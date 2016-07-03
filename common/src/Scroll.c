@@ -183,5 +183,5 @@ void MoveScroll(UINT16 x, UINT16 y) {
 }
 
 UINT8* GetScrollTilePtr(UINT16 x, UINT16 y) {
-	return scroll_map + (scroll_tiles_w * y + x);
+	return scroll_map + (scroll_tiles_w * y + x); //TODO: fix this mult!!
 }
