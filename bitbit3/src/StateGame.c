@@ -43,9 +43,9 @@ void UpdateStateGame() {
 	if(KEY_PRESSED(J_RIGHT))
 		TranslateSprite(&sprite, 4, 0);
 	if(KEY_PRESSED(J_LEFT))
-		TranslateSpriteNEG(&sprite, 4, 0);
+		TranslateSprite(&sprite, -4, 0);
 	if(KEY_PRESSED(J_UP))
-		TranslateSpriteNEG(&sprite, 0, 4);
+		TranslateSprite(&sprite, 0, -4);
 	if(KEY_PRESSED(J_DOWN))
 		TranslateSprite(&sprite, 0, 4);
 

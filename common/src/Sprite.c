@@ -64,6 +64,18 @@ void TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 				}
 			}
 		}
+		if(x < 0) {
+			start_x = (sprite->x + sprite->coll_x + (INT16)x);
+			start_y = (sprite->y + sprite->coll_y);
+			n_its = ((start_y + sprite->coll_h - 1u) >> 3) - (start_y >> 3) + 1u;
+			tile = GetScrollTilePtr(start_x >> 3, start_y >> 3);
+			
+			for(i = 0u; i != n_its; ++i, tile += scroll_tiles_w) {
+				if(scroll_collisions[*tile] == 1u) {
+					x = (INT16)x + (8u - (start_x % (UINT16)8u));
+				}
+			}
+		}
 		if(y > 0) {
 			start_x = (sprite->x + sprite->coll_x);
 			start_y = (sprite->y + sprite->coll_y + sprite->coll_h + y);
@@ -76,47 +88,20 @@ void TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 				}
 			}
 		}
-	}
-
-	sprite->x += x;
-	sprite->y += y;
-}
-
-//for some reason I cannot pass a negative value to the previous function
-void TranslateSpriteNEG(struct Sprite* sprite, INT8 x, INT8 y) {
-	UINT16 start_x, start_y, n_its;
-	unsigned char* tile;
-	UINT8 i;
-	
-	SWITCH_ROM_MBC1(2);
-
-	if(scroll_map) {
-		if(x > 0) {
-			start_x = (sprite->x + sprite->coll_x - x);
-			start_y = (sprite->y + sprite->coll_y);
-			n_its = ((start_y + sprite->coll_h - 1u) >> 3) - (start_y >> 3) + 1u;
-			tile = GetScrollTilePtr(start_x >> 3, start_y >> 3);
-			
-			for(i = 0u; i != n_its; ++i, tile += scroll_tiles_w) {
-				if(scroll_collisions[*tile] == 1u) {
-					x -= (8u - (start_x % (UINT16)8u));
-				}
-			}
-		}
-		if(y > 0) {
+		if(y < 0) {
 			start_x = (sprite->x + sprite->coll_x);
-			start_y = (sprite->y + sprite->coll_y - y);
+			start_y = (sprite->y + sprite->coll_y + (INT16)y);
 			n_its = ((start_x + sprite->coll_w - 1u) >> 3) - (start_x >> 3) + 1u;
 			tile = GetScrollTilePtr(start_x >> 3, start_y >> 3);
 			
 			for(i = 0u; i != n_its; ++i, tile += 1u) {
 				if(scroll_collisions[*tile] == 1u) {
-					y -= (8u - (start_y % (UINT16)8u));
+					y = (INT16)y + (8u - (start_y % (UINT16)8u));
 				}
 			}
 		}
 	}
 
-	sprite->x -= x;
-	sprite->y -= y;
+	sprite->x += (INT16)x;
+	sprite->y += (INT16)y;
 }

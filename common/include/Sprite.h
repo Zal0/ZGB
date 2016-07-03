@@ -25,7 +25,6 @@ void SetSpriteAnim(struct Sprite* sprite, UINT8* data);
 void DrawSprite(struct Sprite* sprite);
 
 void TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y);
-void TranslateSpriteNEG(struct Sprite* sprite, INT8 x, INT8 y);
 
 
 #endif
