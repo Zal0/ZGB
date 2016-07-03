@@ -2,6 +2,7 @@
 #define FRAME_H
 
 #include <gb/gb.h>
+#include "OAMManager.h"
 
 typedef enum {
 	FRAME_8x8,
@@ -10,6 +11,6 @@ typedef enum {
 	FRAME_32x32
 } FrameSize;
 
-void DrawFrame(FrameSize size, int idx, UINT16 x, UINT16 y);
+void DrawFrame(FrameSize size, int idx, UINT16 x, UINT16 y, UINT8 flags);
 
 #endif

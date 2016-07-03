@@ -6,10 +6,16 @@ typedef enum {
 	OAM_SIZE_8x8,
 	OAM_SIZE_16x16
 } OAMSize;
+
+typedef enum {
+	OAM_VERTICAL_FLAG   = 0x20,
+	OAM_HORIZONTAL_FLAG = 0x40
+} OAMFLAGS;
+
 extern UINT8 oam_idx;
 
 void ResetOAM();
 void FlushOAM();
-void DrawOAMSprite(UINT8 idx, OAMSize size, UINT8 x, UINT8 y);
+void DrawOAMSprite(UINT8 idx, OAMSize size, UINT8 x, UINT8 y, UINT8 flags);
 
 #endif

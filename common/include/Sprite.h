@@ -2,6 +2,7 @@
 #define SPRITE_H
 
 #include "Frame.h"
+#include "OAMManager.h"
 
 struct Sprite {
 	//Frame info
@@ -16,6 +17,8 @@ struct Sprite {
 
 	UINT16 x;
 	UINT16 y;
+
+	UINT8 flags;
 
 	UINT8 coll_x, coll_y, coll_w, coll_h;
 };

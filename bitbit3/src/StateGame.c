@@ -56,9 +56,11 @@ void UpdatePrincess() {
 	if(KEY_PRESSED(J_RIGHT)) {
 		TranslateSprite(&sprite_princess, 1, 0);
 		sprite_princess.anim_speed = 33u;
+		sprite_princess.flags = 0u;
 	}else if(KEY_PRESSED(J_LEFT)) {
 		TranslateSprite(&sprite_princess, -1, 0);
 		sprite_princess.anim_speed = 33u;
+		sprite_princess.flags = OAM_VERTICAL_FLAG;
 	} else {
 		sprite_princess.anim_speed = 0u;
 	}

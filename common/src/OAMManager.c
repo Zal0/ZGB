@@ -15,7 +15,7 @@ void FlushOAM() {
 	}
 }
 
-void DrawOAMSprite(UINT8 idx, OAMSize size, UINT8 x, UINT8 y) {
+void DrawOAMSprite(UINT8 idx, OAMSize size, UINT8 x, UINT8 y, UINT8 flags) {
 	if(size == OAM_SIZE_8x8)
 		SPRITES_8x8;
 	else
@@ -23,5 +23,7 @@ void DrawOAMSprite(UINT8 idx, OAMSize size, UINT8 x, UINT8 y) {
 
 	move_sprite(oam_idx, x, y);
 	set_sprite_tile(oam_idx, idx);
+	set_sprite_prop(oam_idx, flags);
+
 	oam_idx ++;
 }
