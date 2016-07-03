@@ -5,28 +5,31 @@
 #include "Scroll.h"
 #include "Keys.h"
 
+#include "StateDisclaimer.h"
 #include "StateMenu.h"
 #include "StateGame.h"
 #include "StateTests.h"
 
-STATE next_state = STATE_GAME;// STATE_TESTS;// STATE_MENU;
+STATE next_state = STATE_DISCLAIMER;
 
 STATE current_state = N_STATES;
 UINT8 state_running = 0;
 
 void Start() {
 	switch(current_state) {
-		case STATE_MENU:  StartStateMenu();  break;
-		case STATE_GAME:  StartStateGame();  break;
-		case STATE_TESTS: StartStateTests(); break;
+		case STATE_DISCLAIMER: StartStateDisclaimer(); break;
+		case STATE_MENU:       StartStateMenu();       break;
+		case STATE_GAME:       StartStateGame();       break;
+		case STATE_TESTS:      StartStateTests();      break;
 	}
 }
 
 void Update() {
 	switch(current_state) {
-		case STATE_MENU:  UpdateStateMenu(); break;
-		case STATE_GAME:  UpdateStateGame(); break;
-		case STATE_TESTS: UpdateStateTests(); break;
+		case STATE_DISCLAIMER: UpdateStateDisclaimer(); break;
+		case STATE_MENU:       UpdateStateMenu();       break;
+		case STATE_GAME:       UpdateStateGame();       break;
+		case STATE_TESTS:      UpdateStateTests();      break;
 	}
 }
 

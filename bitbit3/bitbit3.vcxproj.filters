@@ -35,6 +35,9 @@
     <ClCompile Include="src\StateTests.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\StateDisclaimer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Makefile" />
@@ -59,6 +62,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\StateTests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\StateDisclaimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

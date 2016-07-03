@@ -17,6 +17,7 @@
     <ClCompile Include="src\main.c" />
     <ClCompile Include="src\map.b2.c" />
     <ClCompile Include="src\princess.b2.c" />
+    <ClCompile Include="src\StateDisclaimer.c" />
     <ClCompile Include="src\StateGame.c" />
     <ClCompile Include="src\StateMenu.c" />
     <ClCompile Include="src\StateTests.c" />
@@ -24,6 +25,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\main.h" />
+    <ClInclude Include="include\StateDisclaimer.h" />
     <ClInclude Include="include\StateGame.h" />
     <ClInclude Include="include\StateMenu.h" />
     <ClInclude Include="include\StateTests.h" />
