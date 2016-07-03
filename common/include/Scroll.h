@@ -19,6 +19,7 @@ void ScrollUpdateRow(UINT16 x, UINT16 y);
 void ScrollUpdateColumn(UINT16 x, UINT16 y);
 void MoveScroll(UINT16 x, UINT16 y);
 void RefreshScroll();
+void FinishPendingScrollUpdates();
 
 UINT8* GetScrollTilePtr(UINT16 x, UINT16 y);
 

@@ -63,6 +63,8 @@ void ScrollUpdateRowR() {
 }
 
 void ScrollUpdateRowWithDelay(UINT16 x, UINT16 y) {
+	FinishPendingScrollUpdates();
+
 	pending_w_x = x;
 	pending_w_y = y;
 	pending_w_i = 0u;
@@ -96,6 +98,8 @@ void ScrollUpdateColumnR() {
 }
 
 void ScrollUpdateColumnWithDelay(UINT16 x, UINT16 y) {
+	FinishPendingScrollUpdates();
+
 	pending_h_x = x;
 	pending_h_y = y;
 	pending_h_i = 0u;
@@ -109,6 +113,15 @@ void ScrollUpdateColumn(UINT16 x, UINT16 y) {
 	for(i = 0u; i != SCREEN_TILE_REFRES_H; ++i) {
 		UPDATE_TILE(x, y + i, map);
 		map += scroll_tiles_w;
+	}
+}
+
+void FinishPendingScrollUpdates() {
+	while(pending_w_map) {
+		ScrollUpdateRowR();
+	}
+	while(pending_h_map) {
+		ScrollUpdateColumnR();
 	}
 }
 

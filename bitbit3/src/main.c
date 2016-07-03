@@ -45,13 +45,13 @@ void Start() {
 //#include <stdio.h>
 void Update() {
 	if(KEY_PRESSED(J_RIGHT))
-		TranslateSprite(&sprite, 1, 0);
+		TranslateSprite(&sprite, 4, 0);
 	if(KEY_PRESSED(J_LEFT))
-		TranslateSpriteNEG(&sprite, 1, 0);
+		TranslateSpriteNEG(&sprite, 4, 0);
 	if(KEY_PRESSED(J_UP))
 		TranslateSpriteNEG(&sprite, 0, 4);
 	if(KEY_PRESSED(J_DOWN))
-		TranslateSprite(&sprite, 0, 1);
+		TranslateSprite(&sprite, 0, 4);
 
 	DrawSprite(&sprite);
 
