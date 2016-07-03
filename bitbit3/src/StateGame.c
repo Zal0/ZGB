@@ -26,7 +26,7 @@ const UINT8 anim_zurrapa_idle[] = {2, 0, 1};
 
 struct Sprite sprite_princess;
 
-#define N_ZURRAPAS 0
+#define N_ZURRAPAS 1
 struct Sprite sprite_zurrapa[N_ZURRAPAS];
 const UINT16 zurrapas_pos[] = { 15, 8,    
 																30, 10,
@@ -47,7 +47,7 @@ typedef enum  {
 	PRINCESS_STATE_DEAD
 }PRINCESS_STATE;
 PRINCESS_STATE princes_state;
-INT16 princess_accel_y = 0;
+INT16 princess_accel_y;
 
 UINT8 particles_idx;
 UINT8 zurrapa_idx;
@@ -75,6 +75,8 @@ void StartStateGame() {
 	sprite_princess.coll_w -= 8u;
 	sprite_princess.coll_y += 2u;
 	sprite_princess.coll_h -= 2u;
+
+	princess_accel_y = 0;
 
 	for(i = 0; i < N_ZURRAPAS; ++i) {
 		InitSprite(&sprite_zurrapa[i], FRAME_16x16, zurrapa_idx >> 2);
