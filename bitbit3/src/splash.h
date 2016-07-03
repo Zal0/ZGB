@@ -7,9 +7,9 @@
  Info:
    Section       : 
    Bank          : 0
-   Map size      : 18 x 20
-   Tile set      : D:\Bitbitjam2016\bitbit3\res\title8.gbr
-   Plane count   : 0.5 plane (4 bits)
+   Map size      : 20 x 18
+   Tile set      : title8.gbr
+   Plane count   : 1 plane (8 bits)
    Plane order   : Tiles are continues
    Tile offset   : 0
    Split data    : No
@@ -18,8 +18,8 @@
 
 */
 
-#define splashmapWidth 18
-#define splashmapHeight 20
+#define splashmapWidth 20
+#define splashmapHeight 18
 #define splashmapBank 0
 
 extern unsigned char splashmap[];
