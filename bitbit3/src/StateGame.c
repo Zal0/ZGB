@@ -109,7 +109,9 @@ void UpdatePrincess() {
 			break;
 
 		case PRINCESS_STATE_DEAD:
-
+			if(sprite_princess.current_frame == 4) {
+				SetState(STATE_GAME_OVER);
+			}
 			break;
 	}
 
