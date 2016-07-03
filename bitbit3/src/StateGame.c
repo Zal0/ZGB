@@ -8,18 +8,38 @@
 #include "map.h"
 #include "princess.h"
 #include "particles.h"
+#include "zurrapa.h"
 #include "tilemap.h"
 
 #include "main.h"
 
-UINT8 collision_tiles[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 47, 48, 0};
+const UINT8 collision_tiles[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 47, 48, 0};
 
-UINT8 anim_walk[] = {12, 0, 1, 2, 3, 2, 1, 0, 4, 5, 6, 5, 4};
-UINT8 anim_idle[] = {4, 0, 0, 0, 7};
-UINT8 anim_jump[] = {1, 6};
-UINT8 anim_explosion[] = {5, 10, 11, 12, 13, 14};
+//Princes anims
+const UINT8 anim_walk[] = {12, 0, 1, 2, 3, 2, 1, 0, 4, 5, 6, 5, 4};
+const UINT8 anim_idle[] = {4, 0, 0, 0, 7};
+const UINT8 anim_jump[] = {1, 6};
+const UINT8 anim_explosion[] = {5, 10, 11, 12, 13, 14};
+
+//Zurrapa anims
+const UINT8 anim_zurrapa_idle[] = {2, 0, 1};
 
 struct Sprite sprite_princess;
+
+#define N_ZURRAPAS 3
+struct Sprite sprite_zurrapa[N_ZURRAPAS];
+const UINT16 zurrapas_pos[] = { 15, 8,    
+																30, 10,
+																57, 2,
+																101, 4,
+																143, 6,
+																151, 31,
+																196, 31,
+																122, 25,
+																118, 27,
+																	4, 21
+};
+
 
 typedef enum  {
 	PRINCESS_STATE_NORMAL,
@@ -30,13 +50,17 @@ PRINCESS_STATE princes_state;
 INT16 princess_accel_y = 0;
 
 UINT8 particles_idx;
+UINT8 zurrapa_idx;
 
 void StartStateGame() {
+	UINT8 i;
+
 	SWITCH_ROM_MBC1(2);
 
 	SPRITES_8x16;
 	LoadSprite(9 * 4, princess);
 	particles_idx = LoadSprite(5 * 4, particles);
+	zurrapa_idx = LoadSprite(2 * 4, zurrapa);
 	SHOW_SPRITES;
 
 	set_bkg_data(0, 54, tilemap);
@@ -47,11 +71,18 @@ void StartStateGame() {
 	SetSpriteAnim(&sprite_princess, anim_idle, 3u);
 	sprite_princess.x = 32u;
 	sprite_princess.y = 32u;
-
 	sprite_princess.coll_x += 4u;
 	sprite_princess.coll_w -= 8u;
 	sprite_princess.coll_y += 2u;
 	sprite_princess.coll_h -= 2u;
+
+	for(i = 0; i < N_ZURRAPAS; ++i) {
+		InitSprite(&sprite_zurrapa[i], FRAME_16x16, zurrapa_idx >> 2);
+		SetSpriteAnim(&sprite_zurrapa[i], anim_zurrapa_idle, 5u);
+
+		sprite_zurrapa[i].x = zurrapas_pos[i << 1] << 3;
+		sprite_zurrapa[i].y = zurrapas_pos[(i << 1) + 1] << 3;
+	}
 
 	scroll_target = &sprite_princess;
 	scroll_target_offset_x = 0;
@@ -134,8 +165,17 @@ void UpdatePrincess() {
 	DrawSprite(&sprite_princess);
 }
 
+void UpdateZurrapas() {
+	UINT8 i;
+	//Draw Zurrapas
+	for(i = 0; i != N_ZURRAPAS; ++i) {
+		DrawSprite(&sprite_zurrapa[i]);
+	}
+}
+
 void UpdateStateGame() {
 	UpdatePrincess();
+	UpdateZurrapas();
 
 	if(KEY_TICKED(J_SELECT)) {
 		SetState(STATE_GAME_OVER);
