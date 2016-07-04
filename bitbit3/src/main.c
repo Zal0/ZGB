@@ -52,10 +52,10 @@ extern const unsigned char * start_mod[];
 extern const unsigned char * gameover_mod[];
 
 void main() {
-	disable_interrupts();       // desactiva las interrupciones
+	/*disable_interrupts();       // desactiva las interrupciones
 	add_VBL(gbt_update);        // actualiza el player, ha de ejecutarse cada frame (cambia a banco 1)
 	set_interrupts(VBL_IFLAG);  // añade la interrupcion VBL
-	enable_interrupts();        // activa las interrupciones
+	enable_interrupts();        // activa las interrupciones*/
 
 	while(1) {
 		while (state_running) {
@@ -64,11 +64,11 @@ void main() {
 			ResetOAM();
 			UPDATE_KEYS();
 
-			Update();
 			RefreshScroll();
+			gbt_update();
+			Update();
+			
 			FlushOAM();
-
-			//gbt_update();
 		}
 
 		DISPLAY_OFF
