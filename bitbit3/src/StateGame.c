@@ -1,3 +1,5 @@
+#pragma bank=2
+
 #include "StateGame.h"
 
 #include "Scroll.h"

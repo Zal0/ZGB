@@ -1,3 +1,5 @@
+#pragma bank=2
+
 #include "StateMenu.h"
 
 #include <gb/gb.h>

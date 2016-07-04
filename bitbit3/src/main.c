@@ -18,6 +18,7 @@ STATE current_state = N_STATES;
 UINT8 state_running = 0;
 
 void Start() {
+	SWITCH_ROM_MBC1(2);
 	switch(current_state) {
 		case STATE_DISCLAIMER: StartStateDisclaimer(); break;
 		case STATE_MENU:       StartStateMenu();       break;
@@ -26,9 +27,11 @@ void Start() {
 		case STATE_WIN:        StartStateWin();        break;
 		case STATE_TESTS:      StartStateTests();      break;
 	}
+	SWITCH_ROM_MBC1(0);
 }
 
 void Update() {
+	SWITCH_ROM_MBC1(2);
 	switch(current_state) {
 		case STATE_DISCLAIMER: UpdateStateDisclaimer(); break;
 		case STATE_MENU:       UpdateStateMenu();       break;
@@ -37,6 +40,7 @@ void Update() {
 		case STATE_WIN:				 UpdateStateWin();        break;
 		case STATE_TESTS:      UpdateStateTests();      break;
 	}
+	SWITCH_ROM_MBC1(0);
 }
 
 void SetState(STATE state) {

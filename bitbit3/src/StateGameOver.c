@@ -1,3 +1,6 @@
+#pragma bank=2
+
+
 #include "StateGameOver.h"
 
 #include <gb/gb.h>
