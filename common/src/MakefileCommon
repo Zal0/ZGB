@@ -16,8 +16,9 @@ CC = $(LCC)
 
 current_dir = $(shell pwd)
 
-CLASSES := $(foreach dir,.,$(notdir $(wildcard $(dir)/*.c)))
-OBJS = $(CLASSES:%.c=$(OBJDIR)/%.o)
+ASMS = $(foreach dir,.,$(notdir $(wildcard $(dir)/*.s)))
+CLASSES = $(foreach dir,.,$(notdir $(wildcard $(dir)/*.c)))
+OBJS = $(CLASSES:%.c=$(OBJDIR)/%.o) $(ASMS:%.s=$(OBJDIR)/%.o)
 
 #until I can find a way to create a .lib I'll be linking the.o files from my common library
 COMMON_OBJS = $(wildcard ../../common/Release/*.o)
@@ -28,8 +29,8 @@ $(BINDIR):
 $(OBJDIR):
 	mkdir $(OBJDIR)
 
-%.s: %.ms
-	maccer -o $@ $<
+$(OBJDIR)/%.o: %.s $(OBJDIR)
+	$(CC) $(CFLAGS) -Wf-bo2 -c -o $@ $<
 
 $(OBJDIR)/%.b2.o: %.b2.c
 	$(CC) $(CFLAGS) -Wf-bo2 -c -o $@ $<
