@@ -35,6 +35,9 @@ $(OBJDIR)/%.o: %.s $(OBJDIR)
 $(OBJDIR)/%.b2.o: %.b2.c
 	$(CC) $(CFLAGS) -Wf-bo2 -c -o $@ $<
 
+$(OBJDIR)/%.b3.o: %.b3.c
+	$(CC) $(CFLAGS) -Wf-bo3 -c -o $@ $<
+
 $(OBJDIR)/%.o: %.c $(OBJDIR)
 	$(CC) $(CFLAGS) -c -o $@ $<
 	

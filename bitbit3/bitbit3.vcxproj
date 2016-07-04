@@ -17,6 +17,7 @@
     <ClCompile Include="src\aznar.b2.c" />
     <ClCompile Include="src\gameovermap.b2.c" />
     <ClCompile Include="src\gameovertiles.b2.c" />
+    <ClCompile Include="src\level.mod.c" />
     <ClCompile Include="src\main.c" />
     <ClCompile Include="src\map.b2.c" />
     <ClCompile Include="src\princess.b2.c" />
