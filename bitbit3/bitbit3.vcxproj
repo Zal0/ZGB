@@ -15,6 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\aznar.b2.c" />
+    <ClCompile Include="src\gameover.mod.c" />
     <ClCompile Include="src\gameovermap.b2.c" />
     <ClCompile Include="src\gameovertiles.b2.c" />
     <ClCompile Include="src\level.mod.c" />
@@ -23,6 +24,7 @@
     <ClCompile Include="src\princess.b2.c" />
     <ClCompile Include="src\splash.b2.c" />
     <ClCompile Include="src\splashtiles.b2.c" />
+    <ClCompile Include="src\start.mod.c" />
     <ClCompile Include="src\StateDisclaimer.c" />
     <ClCompile Include="src\StateGame.c" />
     <ClCompile Include="src\StateGameOver.c" />

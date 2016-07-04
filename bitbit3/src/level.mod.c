@@ -338,7 +338,7 @@ const unsigned char song4[] = {
   0x00, 0x00, 0x20, 0x20
 };
 
-const unsigned char * song_Data[] = {
+const unsigned char * level_mod[] = {
     song0,
     song1,
     song0,

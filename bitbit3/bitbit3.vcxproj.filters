@@ -65,6 +65,12 @@
     <ClCompile Include="src\level.mod.c">
       <Filter>Source Files\resources</Filter>
     </ClCompile>
+    <ClCompile Include="src\start.mod.c">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gameover.mod.c">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Makefile" />

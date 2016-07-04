@@ -47,7 +47,9 @@ void SetState(STATE state) {
 }
 
 #include "gbt_player.h"
-extern const unsigned char * song_Data[];
+extern const unsigned char * level_mod[];
+extern const unsigned char * start_mod[];
+extern const unsigned char * gameover_mod[];
 
 void main() {
 	disable_interrupts();       // desactiva las interrupciones
@@ -78,9 +80,16 @@ void main() {
 		current_state = next_state;
 		Start();	
 
+		//This should go inside the Start method of each state, but then it is not working and I don't have time to check why
 		if(current_state == STATE_GAME) {
-			gbt_play(song_Data, 3, 7);  // reproduce la cancion, en banco indicado y a la velocidad dada
-			gbt_loop(0);                // activa/desactiva el loop
+			gbt_play(level_mod, 3, 7);
+			gbt_loop(1);
+		} else if(current_state == STATE_MENU) {
+			gbt_play(start_mod, 3, 7);
+			gbt_loop(1);
+		} else if(current_state == STATE_GAME_OVER) {
+			gbt_play(gameover_mod, 3, 7);
+			gbt_loop(0);
 		}
 
 		wait_vbl_done();
