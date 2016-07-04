@@ -12,7 +12,7 @@
 #include "StateGameOver.h"
 #include "StateWin.h"
 
-STATE next_state = STATE_GAME; //STATE_DISCLAIMER;
+STATE next_state = STATE_MENU;//STATE_DISCLAIMER;// STATE_GAME;
 
 STATE current_state = N_STATES;
 UINT8 state_running = 0;
@@ -27,7 +27,6 @@ void Start() {
 		case STATE_WIN:        StartStateWin();        break;
 		case STATE_TESTS:      StartStateTests();      break;
 	}
-	SWITCH_ROM_MBC1(0);
 }
 
 void Update() {
@@ -40,7 +39,6 @@ void Update() {
 		case STATE_WIN:				 UpdateStateWin();        break;
 		case STATE_TESTS:      UpdateStateTests();      break;
 	}
-	SWITCH_ROM_MBC1(0);
 }
 
 void SetState(STATE state) {
