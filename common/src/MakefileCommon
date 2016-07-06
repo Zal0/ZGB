@@ -41,7 +41,7 @@ $(OBJDIR)/%.o: resources/%.c
 	sed -i "s/unsigned char/const unsigned  char/g" $<
 	$(CC) $(CFLAGS) $(filter -Wf-bo%, $(subst .b,-Wf-bo,$(suffix $(<:%.c=%)))) -c -o $@ $<
 	
-$(BINDIR)/$(PROJECT_NAME).gb: $(OBJS) $(COMMON_OBJS) $(BINDIR)
+$(BINDIR)/$(PROJECT_NAME).gb: $(OBJDIR) $(BINDIR) $(OBJS) $(COMMON_OBJS)
 	$(CC) $(LFLAGS) -o $(BINDIR)/$(PROJECT_NAME).gb $(OBJS) $(COMMON_OBJS)
 
 build_lib: $(OBJDIR) $(OBJS)
