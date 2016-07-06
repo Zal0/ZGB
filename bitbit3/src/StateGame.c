@@ -190,7 +190,9 @@ void UpdateStateGame() {
 	UpdatePrincess();
 	UpdateZurrapas();
 
+#ifndef NDEBUG
 	if(KEY_TICKED(J_SELECT)) {
 		SetState(STATE_GAME_OVER);
 	}
+#endif
 }

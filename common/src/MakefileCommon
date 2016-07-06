@@ -1,4 +1,11 @@
-OBJDIR = ../Release
+#--- Default build will be release. Can be overiden passing BUILD_TYPE = debug as a parameter
+BUILD_TYPE = Release
+
+ifeq ($(BUILD_TYPE), Release)
+	BUILD_DEFS += -DNDEBUG
+endif
+
+OBJDIR = ../$(BUILD_TYPE)
 BINDIR = ../bin
 
 LCC = c:/gbdk/bin/lcc.exe
@@ -9,7 +16,7 @@ ifneq ($(strip $(N_BANKS)),)
 	LFLAGS_NBANKS = -Wl-yt1 -Wl-yo$(N_BANKS)
 endif
 
-CFLAGS = -DUSE_SFR_FOR_REG -I..\include -I..\..\common\include
+CFLAGS = -DUSE_SFR_FOR_REG $(BUILD_DEFS) -I..\include -I..\..\common\include
 #-Wa-l -Wl-m -Wl-j 
 LFLAGS = -DUSE_SFR_FOR_REG $(LFLAGS_NBANKS)
 CC = $(LCC)

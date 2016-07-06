@@ -61,13 +61,13 @@
     <NMakeOutput>common.exe</NMakeOutput>
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>cd src
-C:\gbdk\bin\make-3.81-bin\bin\make</NMakeBuildCommandLine>
+C:\gbdk\bin\make-3.81-bin\bin\make BUILD_TYPE=$(Configuration)</NMakeBuildCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeOutput>common.exe</NMakeOutput>
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>cd src
-C:\gbdk\bin\make-3.81-bin\bin\make</NMakeBuildCommandLine>
+C:\gbdk\bin\make-3.81-bin\bin\make BUILD_TYPE=$(Configuration)</NMakeBuildCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
