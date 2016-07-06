@@ -7,8 +7,8 @@
 #include "Scroll.h"
 #include "Keys.h"
 
-#include "splash.h"
-#include "splashtiles.h"
+#include "resources/splash.h"
+#include "resources/splashtiles.h"
 
 extern const unsigned char * start_mod[];
 

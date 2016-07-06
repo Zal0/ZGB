@@ -16,9 +16,10 @@ CC = $(LCC)
 
 current_dir = $(shell pwd)
 
-ASMS    = $(foreach dir,.,$(notdir $(wildcard $(dir)/*.s)))
-CLASSES = $(foreach dir,.,$(notdir $(wildcard $(dir)/*.c)))
-OBJS = $(CLASSES:%.c=$(OBJDIR)/%.o) $(ASMS:%.s=$(OBJDIR)/%.o)
+ASMS      = $(foreach dir,.,$(notdir $(wildcard $(dir)/*.s)))
+CLASSES   = $(foreach dir,.,$(notdir $(wildcard $(dir)/*.c)))
+RESOURCES = $(foreach dir,./resources,$(notdir $(wildcard $(dir)/*.c)))
+OBJS = $(CLASSES:%.c=$(OBJDIR)/%.o) $(RESOURCES:%.c=$(OBJDIR)/%.o) $(ASMS:%.s=$(OBJDIR)/%.o)
 
 
 #until I can find a way to create a .lib I'll be linking the.o files from my common library
@@ -30,10 +31,14 @@ $(BINDIR):
 $(OBJDIR):
 	mkdir $(OBJDIR)
 
-$(OBJDIR)/%.o: %.s $(OBJDIR)
+$(OBJDIR)/%.o: %.s
 	$(CC) $(CFLAGS) $(filter -Wf-bo%, $(subst .b,-Wf-bo,$(suffix $(<:%.s=%)))) -c -o $@ $<
 
-$(OBJDIR)/%.o: %.c $(OBJDIR)
+$(OBJDIR)/%.o: %.c
+	$(CC) $(CFLAGS) $(filter -Wf-bo%, $(subst .b,-Wf-bo,$(suffix $(<:%.c=%)))) -c -o $@ $<
+
+$(OBJDIR)/%.o: resources/%.c
+	sed -i "s/unsigned char/const unsigned  char/g" $<
 	$(CC) $(CFLAGS) $(filter -Wf-bo%, $(subst .b,-Wf-bo,$(suffix $(<:%.c=%)))) -c -o $@ $<
 	
 $(BINDIR)/$(PROJECT_NAME).gb: $(OBJS) $(COMMON_OBJS) $(BINDIR)

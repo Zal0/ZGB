@@ -7,11 +7,11 @@
 #include "Sprite.h"
 #include "Keys.h"
 
-#include "map.h"
-#include "princess.h"
-#include "particles.h"
-#include "zurrapa.h"
-#include "tilemap.h"
+#include "resources/map.h"
+#include "resources/princess.h"
+#include "resources/particles.h"
+#include "resources/zurrapa.h"
+#include "resources/tilemap.h"
 
 #include "main.h"
 

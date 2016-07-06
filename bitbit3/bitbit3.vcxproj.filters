@@ -12,19 +12,13 @@
     <Filter Include="Source Files\resources">
       <UniqueIdentifier>{c4d70f5c-5f6e-41ef-89f4-e51a7e355896}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\music">
+      <UniqueIdentifier>{bd78c753-cd8d-4566-9578-dcae625c9851}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.c">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\map.b2.c">
-      <Filter>Source Files\resources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\princess.b2.c">
-      <Filter>Source Files\resources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\tilemap.b2.c">
-      <Filter>Source Files\resources</Filter>
     </ClCompile>
     <ClCompile Include="src\StateGame.c">
       <Filter>Source Files</Filter>
@@ -38,37 +32,52 @@
     <ClCompile Include="src\StateDisclaimer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\splashtiles.b2.c">
-      <Filter>Source Files\resources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\zurrapa.c">
-      <Filter>Source Files\resources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\aznar.b2.c">
-      <Filter>Source Files\resources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gameovermap.b2.c">
-      <Filter>Source Files\resources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gameovertiles.b2.c">
-      <Filter>Source Files\resources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\splash.b2.c">
-      <Filter>Source Files\resources</Filter>
-    </ClCompile>
     <ClCompile Include="src\StateGameOver.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\StateWin.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\gameover.mod.c">
+      <Filter>Source Files\music</Filter>
+    </ClCompile>
     <ClCompile Include="src\level.mod.c">
-      <Filter>Source Files\resources</Filter>
+      <Filter>Source Files\music</Filter>
     </ClCompile>
     <ClCompile Include="src\start.mod.c">
+      <Filter>Source Files\music</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\aznar.b2.c">
       <Filter>Source Files\resources</Filter>
     </ClCompile>
-    <ClCompile Include="src\gameover.mod.c">
+    <ClCompile Include="src\resources\gameovermap.b2.c">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\gameovertiles.b2.c">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\map.b2.c">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\particles.b2.c">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\princess.b2.c">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\splash.b2.c">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\splashtiles.b2.c">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\tilemap.b2.c">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\winmap.b2.c">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\zurrapa.b2.c">
       <Filter>Source Files\resources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -76,15 +85,6 @@
     <None Include="src\Makefile" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\map.h">
-      <Filter>Source Files\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="src\princess.h">
-      <Filter>Source Files\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="src\tilemap.h">
-      <Filter>Source Files\resources</Filter>
-    </ClInclude>
     <ClInclude Include="include\StateGame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -100,29 +100,44 @@
     <ClInclude Include="include\StateDisclaimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\splashtiles.h">
-      <Filter>Source Files\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="src\zurrapa.h">
-      <Filter>Source Files\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="src\aznar.h">
-      <Filter>Source Files\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="src\gameovermap.h">
-      <Filter>Source Files\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="src\gameovertiles.h">
-      <Filter>Source Files\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="src\splash.h">
-      <Filter>Source Files\resources</Filter>
-    </ClInclude>
     <ClInclude Include="include\StateGameOver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\StateWin.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\aznar.h">
+      <Filter>Source Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\gameovermap.h">
+      <Filter>Source Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\gameovertiles.h">
+      <Filter>Source Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\map.h">
+      <Filter>Source Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\particles.h">
+      <Filter>Source Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\princess.h">
+      <Filter>Source Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\splash.h">
+      <Filter>Source Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\splashtiles.h">
+      <Filter>Source Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\tilemap.h">
+      <Filter>Source Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\winmap.h">
+      <Filter>Source Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\zurrapa.h">
+      <Filter>Source Files\resources</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

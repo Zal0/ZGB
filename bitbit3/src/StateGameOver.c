@@ -8,8 +8,8 @@
 #include "Scroll.h"
 #include "Keys.h"
 
-#include "gameovertiles.h"
-#include "gameovermap.h"
+#include "resources/gameovertiles.h"
+#include "resources/gameovermap.h"
 
 extern const unsigned char * gameover_mod[];
 

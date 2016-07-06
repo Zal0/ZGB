@@ -7,8 +7,8 @@
 #include "Scroll.h"
 #include "Keys.h"
 
-#include "winmap.h"
-#include "splashtiles.h"
+#include "resources/winmap.h"
+#include "resources/splashtiles.h"
 
 void StartStateWin() {
 	SWITCH_ROM_MBC1(2);
