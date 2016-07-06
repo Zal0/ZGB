@@ -17,6 +17,8 @@
 
 #include "gbt_player.h"
 
+extern const unsigned char * level_mod[];
+
 const UINT8 collision_tiles[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 47, 48, 53, 0};
 
 //Princes anims
@@ -95,6 +97,8 @@ void StartStateGame() {
 	scroll_target_offset_y = -32;
 
 	princes_state = PRINCESS_STATE_NORMAL;
+
+	SET_MUSIC(level_mod, 3, 1);
 }
 
 UINT8 tile_collision;

@@ -11,12 +11,16 @@
 #include "gameovertiles.h"
 #include "gameovermap.h"
 
+extern const unsigned char * gameover_mod[];
+
 void StartStateGameOver() {
 	SWITCH_ROM_MBC1(2);
 
 	set_bkg_data(0, 81, tilesgameover);
 	InitScroll(gameoverWidth, gameoverHeight, gameover, 0, 0, 0, 2);
 	SHOW_BKG;
+
+	SET_MUSIC(gameover_mod, 3, 0);
 }
 
 void UpdateStateGameOver() {

@@ -47,16 +47,11 @@ void SetState(STATE state) {
 }
 
 #include "gbt_player.h"
-extern const unsigned char * level_mod[];
-extern const unsigned char * start_mod[];
-extern const unsigned char * gameover_mod[];
+unsigned char* current_music;
+UINT8 current_music_bank;
+UINT8 current_music_loop;
 
 void main() {
-	/*disable_interrupts();       // desactiva las interrupciones
-	add_VBL(gbt_update);        // actualiza el player, ha de ejecutarse cada frame (cambia a banco 1)
-	set_interrupts(VBL_IFLAG);  // añade la interrupcion VBL
-	enable_interrupts();        // activa las interrupciones*/
-
 	while(1) {
 		while (state_running) {
 			wait_vbl_done();
@@ -72,6 +67,7 @@ void main() {
 		}
 
 		DISPLAY_OFF
+		current_music = 0;
 		gbt_stop();
 		ResetOAM();
 		FlushOAM();
@@ -80,19 +76,11 @@ void main() {
 		current_state = next_state;
 		Start();	
 
-		//This should go inside the Start method of each state, but then it is not working and I don't have time to check why
-		if(current_state == STATE_GAME) {
-			gbt_play(level_mod, 3, 7);
-			gbt_loop(1);
-		} else if(current_state == STATE_MENU) {
-			gbt_play(start_mod, 3, 7);
-			gbt_loop(1);
-		} else if(current_state == STATE_GAME_OVER) {
-			gbt_play(gameover_mod, 3, 7);
-			gbt_loop(0);
+		if(current_music) {
+			gbt_play(current_music, current_music_bank, 7);
+			gbt_loop(current_music_loop);
 		}
 
-		wait_vbl_done();
 		DISPLAY_ON;
 	}
 }
