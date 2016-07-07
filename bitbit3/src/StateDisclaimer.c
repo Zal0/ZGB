@@ -1,5 +1,3 @@
-#pragma bank=2
-
 #include "StateDisclaimer.h"
 
 #include <gb/gb.h>
