@@ -10,7 +10,7 @@
 #include "resources/splash.h"
 #include "resources/splashtiles.h"
 
-extern const unsigned char * start_mod[];
+extern const unsigned char * start_mod_Data[];
 
 void StartStateMenu() {
 	SWITCH_ROM_MBC1(2);
@@ -19,7 +19,7 @@ void StartStateMenu() {
 	InitScroll(splashmapWidth, splashmapHeight, splashmap, 0, 0, 0, 2);
 	SHOW_BKG;
 
-	SET_MUSIC(start_mod, 3, 1);
+	SET_MUSIC(start_mod_Data, 3, 1);
 }
 
 void UpdateStateMenu() {

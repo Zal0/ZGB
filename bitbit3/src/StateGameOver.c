@@ -11,7 +11,7 @@
 #include "resources/gameovertiles.h"
 #include "resources/gameovermap.h"
 
-extern const unsigned char * gameover_mod[];
+extern const unsigned char * gameover_mod_Data[];
 
 void StartStateGameOver() {
 	SWITCH_ROM_MBC1(2);
@@ -20,7 +20,7 @@ void StartStateGameOver() {
 	InitScroll(gameoverWidth, gameoverHeight, gameover, 0, 0, 0, 2);
 	SHOW_BKG;
 
-	SET_MUSIC(gameover_mod, 3, 0);
+	SET_MUSIC(gameover_mod_Data, 3, 0);
 }
 
 void UpdateStateGameOver() {
