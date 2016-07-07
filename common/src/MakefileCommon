@@ -47,7 +47,9 @@ $(OBJDIR)/%.o: %.c
 	$(CC) $(CFLAGS) $(filter -Wf-bo%, $(subst .b,-Wf-bo,$(suffix $(<:%.c=%)))) -c -o $@ $<
 
 $(OBJDIR)/%.o: resources/%.c
-	sed -i "s/unsigned char/const unsigned  char/g" $<
+	@if grep -q "unsigned char" $<; then \
+		sed -i "s/unsigned char/const unsigned  char/g" $<; \
+	fi
 	$(CC) $(CFLAGS) $(filter -Wf-bo%, $(subst .b,-Wf-bo,$(suffix $(<:%.c=%)))) -c -o $@ $<
 
 $(OBJDIR)/%.mod.o: music/%.mod
