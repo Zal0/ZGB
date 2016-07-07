@@ -19,7 +19,7 @@ void StartStateMenu() {
 	InitScroll(splashmapWidth, splashmapHeight, splashmap, 0, 0, 0, 2);
 	SHOW_BKG;
 
-	SET_MUSIC(start_mod_Data, 3, 1);
+	PlayMusic(start_mod_Data, 3, 1);
 }
 
 void UpdateStateMenu() {

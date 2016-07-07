@@ -98,7 +98,7 @@ void StartStateGame() {
 
 	princes_state = PRINCESS_STATE_NORMAL;
 
-	SET_MUSIC(level_mod_Data, 3, 1);
+	PlayMusic(level_mod_Data, 3, 1);
 }
 
 UINT8 tile_collision;

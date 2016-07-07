@@ -4,6 +4,7 @@
 #include "OAMManager.h"
 #include "Scroll.h"
 #include "Keys.h"
+#include "gbt_player.h"
 
 #include "StateDisclaimer.h"
 #include "StateMenu.h"
@@ -46,20 +47,24 @@ void SetState(STATE state) {
 	next_state = state;
 }
 
-#include "gbt_player.h"
-unsigned char* current_music;
-UINT8 current_music_bank;
-UINT8 current_music_loop;
+
+void PlayMusic(unsigned char* music, unsigned char bank, unsigned char loop) {
+	SWITCH_ROM_MBC1(1);
+	gbt_play(music, bank, 7);
+	gbt_loop(loop);
+	SWITCH_ROM_MBC1(2);
+}
 
 void main() {
 	while(1) {
 		while (state_running) {
 			wait_vbl_done();
+			RefreshScroll();
 
 			ResetOAM();
 			UPDATE_KEYS();
 
-			RefreshScroll();
+			
 			gbt_update();
 			Update();
 			
@@ -67,20 +72,13 @@ void main() {
 		}
 
 		DISPLAY_OFF
-		current_music = 0;
 		gbt_stop();
 		ResetOAM();
 		FlushOAM();
 		last_sprite_loaded = 0;
 		state_running = 1;
 		current_state = next_state;
-		Start();	
-
-		if(current_music) {
-			gbt_play(current_music, current_music_bank, 7);
-			gbt_loop(current_music_loop);
-		}
-
+		Start();
 		DISPLAY_ON;
 	}
 }

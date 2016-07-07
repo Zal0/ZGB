@@ -20,7 +20,7 @@ void StartStateGameOver() {
 	InitScroll(gameoverWidth, gameoverHeight, gameover, 0, 0, 0, 2);
 	SHOW_BKG;
 
-	SET_MUSIC(gameover_mod_Data, 3, 0);
+	PlayMusic(gameover_mod_Data, 3, 0);
 }
 
 void UpdateStateGameOver() {
