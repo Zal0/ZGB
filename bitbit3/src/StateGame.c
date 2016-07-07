@@ -32,18 +32,18 @@ const UINT8 anim_zurrapa_idle[] = {2, 0, 1};
 
 struct Sprite sprite_princess;
 
-#define N_ZURRAPAS 1
+#define N_ZURRAPAS 5
 struct Sprite sprite_zurrapa[N_ZURRAPAS];
 const UINT16 zurrapas_pos[] = { 15, 8,    
-																30, 10,
-																57, 2,
-																101, 4,
-																143, 6,
-																151, 31,
-																196, 31,
-																122, 25,
-																118, 27,
-																	4, 21
+																17, 8,
+																19, 8,
+																15, 6,
+																17, 6,
+																19, 6,
+																15, 4,
+																17, 4,
+																19, 4,
+																15, 2
 };
 
 
