@@ -11,7 +11,12 @@ C:\gbdk\bin\make-3.81-bin\bin\make BUILD_TYPE=$(Configuration)</NMakeReBuildComm
     <NMakeCleanCommandLine>cd src
 C:\gbdk\bin\make-3.81-bin\bin\make clean BUILD_TYPE=$(Configuration)</NMakeCleanCommandLine>
     <NMakeIncludeSearchPath>C:\gbdk\include;.\include;..\common\include;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <OutDir>$(SolutionDir)bin\</OutDir>
   </PropertyGroup>
-  <ItemDefinitionGroup />
+  <ItemDefinitionGroup>
+    <BuildLog>
+      <Path />
+    </BuildLog>
+  </ItemDefinitionGroup>
   <ItemGroup />
 </Project>

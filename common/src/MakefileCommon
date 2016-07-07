@@ -35,41 +35,52 @@ OBJS = $(CLASSES:%.c=$(OBJDIR)/%.o) $(RESOURCES:%.c=$(OBJDIR)/%.o) $(ASMS:%.s=$(
 COMMON_OBJS = $(wildcard ../../common/Release/*.o)
 
 $(BINDIR):
-	mkdir $(BINDIR)
+	@echo Creating folder $(BINDIR)
+	@mkdir $(BINDIR)
 	
 $(OBJDIR):
-	mkdir $(OBJDIR)
+	@echo Creating folder $(OBJDIR)
+	@mkdir $(OBJDIR)
 
 $(OBJDIR)/%.o: %.s
-	$(CC) $(CFLAGS) $(filter -Wf-bo%, $(subst .b,-Wf-bo,$(suffix $(<:%.s=%)))) -c -o $@ $<
+	@echo compiling $<
+	@$(CC) $(CFLAGS) $(filter -Wf-bo%, $(subst .b,-Wf-bo,$(suffix $(<:%.s=%)))) -c -o $@ $<
 
 $(OBJDIR)/%.o: %.c
-	$(CC) $(CFLAGS) $(filter -Wf-bo%, $(subst .b,-Wf-bo,$(suffix $(<:%.c=%)))) -c -o $@ $<
+	@echo compiling $<
+	@$(CC) $(CFLAGS) $(filter -Wf-bo%, $(subst .b,-Wf-bo,$(suffix $(<:%.c=%)))) -c -o $@ $<
 
 $(OBJDIR)/%.o: resources/%.c
+	@echo compiling resource: $<
 	@if grep -q "unsigned char" $<; then \
 		sed -i "s/unsigned char/const unsigned  char/g" $<; \
 	fi
-	$(CC) $(CFLAGS) $(filter -Wf-bo%, $(subst .b,-Wf-bo,$(suffix $(<:%.c=%)))) -c -o $@ $<
+	@$(CC) $(CFLAGS) $(filter -Wf-bo%, $(subst .b,-Wf-bo,$(suffix $(<:%.c=%)))) -c -o $@ $<
 
 $(OBJDIR)/%.mod.o: music/%.mod
-	$(MOD2GBT) $< $(basename $(basename $(notdir $<)))_mod -c $(subst .b,,$(suffix $(<:%.mod=%)))
-	mv output.c $(OBJDIR)/music_tmp.c
-	$(CC) $(CFLAGS) -c -o $@ $(OBJDIR)/music_tmp.c
+	@echo compiling music: $<
+	@$(MOD2GBT) $< $(basename $(basename $(notdir $<)))_mod -c $(subst .b,,$(suffix $(<:%.mod=%))) > /dev/null
+	@mv output.c $(OBJDIR)/music_tmp.c
+	@$(CC) $(CFLAGS) -c -o $@ $(OBJDIR)/music_tmp.c
 	
 $(BINDIR)/$(PROJECT_NAME).gb: $(OBJDIR) $(BINDIR) $(OBJS) $(COMMON_OBJS)
-	$(CC) $(LFLAGS) -o $(BINDIR)/$(PROJECT_NAME).gb $(OBJS) $(COMMON_OBJS)
+	@echo Linking
+	@$(CC) $(LFLAGS) -o $(BINDIR)/$(PROJECT_NAME).gb $(OBJS) $(COMMON_OBJS)
 
 build_lib: $(OBJDIR) $(OBJS)
 
 build_gb: $(BINDIR)/$(PROJECT_NAME).gb
 
 clean:
-	rm -rf $(BINDIR)/*.gb
-	rm -rf $(OBJDIR)/*.o
-	rm -rf .map
-	rm -rf .lst
+	@echo Cleaning $(PROJECT_NAME)
+	@rm -rf $(BINDIR)
+	@rm -rf $(OBJDIR)
+	@rm -rf .map
+	@rm -rf .lst
 	
-run: $(BINDIR)/$(PROJECT_NAME).gb
-	$(BGB) $(BINDIR)/$(PROJECT_NAME).gb
+run: all
+	@if test -f $(BINDIR)/$(PROJECT_NAME).gb; then \
+		echo Running $(BINDIR)/$(PROJECT_NAME).gb; \
+		$(BGB) $(BINDIR)/$(PROJECT_NAME).gb; \
+	fi
 	
