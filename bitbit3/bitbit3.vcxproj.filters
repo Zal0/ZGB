@@ -12,9 +12,6 @@
     <Filter Include="Source Files\resources">
       <UniqueIdentifier>{c4d70f5c-5f6e-41ef-89f4-e51a7e355896}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\music">
-      <UniqueIdentifier>{bd78c753-cd8d-4566-9578-dcae625c9851}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.c">
@@ -37,15 +34,6 @@
     </ClCompile>
     <ClCompile Include="src\StateWin.c">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gameover.mod.c">
-      <Filter>Source Files\music</Filter>
-    </ClCompile>
-    <ClCompile Include="src\level.mod.c">
-      <Filter>Source Files\music</Filter>
-    </ClCompile>
-    <ClCompile Include="src\start.mod.c">
-      <Filter>Source Files\music</Filter>
     </ClCompile>
     <ClCompile Include="src\resources\aznar.b2.c">
       <Filter>Source Files\resources</Filter>

@@ -14,8 +14,6 @@
     <None Include="src\Makefile" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\gameover.mod.c" />
-    <ClCompile Include="src\level.mod.c" />
     <ClCompile Include="src\main.c" />
     <ClCompile Include="src\resources\aznar.b2.c" />
     <ClCompile Include="src\resources\gameovermap.b2.c" />
@@ -28,7 +26,6 @@
     <ClCompile Include="src\resources\tilemap.b2.c" />
     <ClCompile Include="src\resources\winmap.b2.c" />
     <ClCompile Include="src\resources\zurrapa.b2.c" />
-    <ClCompile Include="src\start.mod.c" />
     <ClCompile Include="src\StateDisclaimer.c" />
     <ClCompile Include="src\StateGame.c" />
     <ClCompile Include="src\StateGameOver.c" />
