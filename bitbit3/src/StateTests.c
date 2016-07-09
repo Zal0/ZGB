@@ -1,22 +1,31 @@
-#pragma bank=2
-
 #include "StateTests.h"
 
 #include <gb/gb.h>
-#include <gb/drawing.h>
 
-void TranslateSpriteT(INT8 x, INT8 y) {
-	SWITCH_ROM_MBC1(2);
+#include "Vector.h"
+#include <stdio.h>
 
-	gotogxy(0, 0);
-	gprintf("%d, %d", x, y);
-}
+DECLARE_VECTOR(v_test, 10)
 
 void StartStateTests() {
+	UINT8 i;
 
+	VectorAdd(v_test, 0u);
+	VectorAdd(v_test, 3u);
+	VectorAdd(v_test, 2u);
+	VectorAdd(v_test, 1u);
+	PRINT_VECTOR(v_test);
+
+	VectorRemovePos(v_test, 2);
+	PRINT_VECTOR(v_test);
+
+	VectorRemovePos(v_test, 0);
+	PRINT_VECTOR(v_test);
+
+	VectorAdd(v_test, 5);
+	PRINT_VECTOR(v_test);
 }
 
 void UpdateStateTests() {
-	UINT8 tmp = -1;
-	TranslateSpriteT(-1, -1);
+
 }

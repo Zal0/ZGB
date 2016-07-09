@@ -26,6 +26,9 @@
     <ClInclude Include="include\Scroll.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Frame.c">
@@ -41,6 +44,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Scroll.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Vector.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
