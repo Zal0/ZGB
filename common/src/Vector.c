@@ -3,7 +3,7 @@
 #include <string.h>
 
 void VectorAdd(UINT8* v, UINT8 elem) {
-	v[(v[0] ++) + 1u] = elem;
+	v[++ v[0]] = elem;
 }
 
 void VectorRemovePos(UINT8* v, UINT8 pos) {
