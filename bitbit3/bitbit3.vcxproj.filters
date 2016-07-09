@@ -68,6 +68,12 @@
     <ClCompile Include="src\resources\zurrapa.b2.c">
       <Filter>Source Files\resources</Filter>
     </ClCompile>
+    <ClCompile Include="src\SpriteManager.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SpritePrincess.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Makefile" />
@@ -126,6 +132,12 @@
     </ClInclude>
     <ClInclude Include="src\resources\zurrapa.h">
       <Filter>Source Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SpriteManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SpritePrincess.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

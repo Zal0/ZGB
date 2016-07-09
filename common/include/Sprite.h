@@ -18,9 +18,14 @@ struct Sprite {
 	UINT16 x;
 	UINT16 y;
 
+	//Flags, currentlu used for mirror
 	UINT8 flags;
 
+	//Collider
 	UINT8 coll_x, coll_y, coll_w, coll_h;
+
+	//For the sprite manager
+	UINT8 type;
 };
 
 void InitSprite(struct Sprite* sprite, FrameSize size, UINT8 first_tile);

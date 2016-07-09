@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\bitbit3\include\Princess.h" />
     <ClInclude Include="include\Frame.h" />
     <ClInclude Include="include\Keys.h" />
     <ClInclude Include="include\OAMManager.h" />
@@ -20,6 +21,7 @@
     <ClInclude Include="include\Vector.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\bitbit3\src\Princess.c" />
     <ClCompile Include="src\Frame.c" />
     <ClCompile Include="src\Keys.c" />
     <ClCompile Include="src\OAMManager.c" />

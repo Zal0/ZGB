@@ -26,6 +26,8 @@
     <ClCompile Include="src\resources\tilemap.b2.c" />
     <ClCompile Include="src\resources\winmap.b2.c" />
     <ClCompile Include="src\resources\zurrapa.b2.c" />
+    <ClCompile Include="src\SpriteManager.c" />
+    <ClCompile Include="src\SpritePrincess.c" />
     <ClCompile Include="src\StateDisclaimer.c" />
     <ClCompile Include="src\StateGame.c" />
     <ClCompile Include="src\StateGameOver.c" />
@@ -35,6 +37,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\main.h" />
+    <ClInclude Include="include\SpriteManager.h" />
+    <ClInclude Include="include\SpritePrincess.h" />
     <ClInclude Include="include\StateDisclaimer.h" />
     <ClInclude Include="include\StateGame.h" />
     <ClInclude Include="include\StateGameOver.h" />

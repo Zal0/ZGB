@@ -32,6 +32,9 @@
     <ClInclude Include="include\Stack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\bitbit3\include\Princess.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Frame.c">
@@ -53,6 +56,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Stack.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bitbit3\src\Princess.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

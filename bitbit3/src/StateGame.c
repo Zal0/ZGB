@@ -6,6 +6,7 @@
 #include "Frame.h"
 #include "Sprite.h"
 #include "Keys.h"
+#include "SpriteManager.h"
 #include "SpritePrincess.h"
 
 #include "resources/map.h"
@@ -47,9 +48,10 @@ void StartStateGame() {
 	UINT8 i;
 
 	SWITCH_ROM_MBC1(2);
+	SpriteManagerReset();
 
 	SPRITES_8x16;
-	StartPrincess();
+	SpriteManagerAdd(SPRITE_TYPE_PRINCESS);
 	particles_idx = LoadSprite(5 * 4, particles);
 	zurrapa_idx = LoadSprite(2 * 4, zurrapa);
 	SHOW_SPRITES;
@@ -57,8 +59,6 @@ void StartStateGame() {
 	set_bkg_data(0, 54, tilemap);
 	InitScroll(level1Width, level1Height, level1, 0, 0, collision_tiles, 2);
 	SHOW_BKG;
-
-	
 
 	for(i = 0; i < N_ZURRAPAS; ++i) {
 		InitSprite(&sprite_zurrapa[i], FRAME_16x16, zurrapa_idx >> 2);
@@ -82,7 +82,7 @@ void UpdateZurrapas() {
 }
 
 void UpdateStateGame() {
-	UpdatePrincess();
+	SpriteManagerUpdate();
 	UpdateZurrapas();
 
 #ifndef NDEBUG
