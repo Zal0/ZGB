@@ -29,9 +29,8 @@ INT16 princess_accel_y;
 
 void StartPrincess() {
 	SPRITES_8x16;
-	LoadSprite(9 * 4, princess);
 
-	InitSprite(&sprite_princess, FRAME_16x16, 0);
+	InitSprite(&sprite_princess, FRAME_16x16, LoadSprite(9 * 4, princess) >> 2);
 	SetSpriteAnim(&sprite_princess, anim_idle, 3u);
 	sprite_princess.x = 32u;
 	sprite_princess.y = 112u;
