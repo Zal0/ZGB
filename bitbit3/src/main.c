@@ -5,6 +5,7 @@
 #include "Scroll.h"
 #include "Keys.h"
 #include "gbt_player.h"
+#include "SpriteManager.h"
 
 #include "StateDisclaimer.h"
 #include "StateMenu.h"
@@ -55,7 +56,16 @@ void PlayMusic(unsigned char* music, unsigned char bank, unsigned char loop) {
 	SWITCH_ROM_MBC1(2);
 }
 
+/*void vbl_update() {
+	
+}*/
+
 void main() {
+	/*disable_interrupts();
+	add_VBL(vbl_update);
+	set_interrupts(VBL_IFLAG);
+	enable_interrupts();*/
+
 	while(1) {
 		while (state_running) {
 			wait_vbl_done();
@@ -63,7 +73,6 @@ void main() {
 
 			ResetOAM();
 			UPDATE_KEYS();
-
 			
 			gbt_update();
 			Update();
@@ -76,6 +85,7 @@ void main() {
 		ResetOAM();
 		FlushOAM();
 		last_sprite_loaded = 0;
+		SpriteManagerReset();
 		state_running = 1;
 		current_state = next_state;
 		Start();

@@ -13,8 +13,6 @@
 extern const unsigned char * start_mod_Data[];
 
 void StartStateMenu() {
-	SWITCH_ROM_MBC1(2);
-
 	set_bkg_data(0, 102, splashtiles);
 	InitScroll(splashmapWidth, splashmapHeight, splashmap, 0, 0, 0, 2);
 	SHOW_BKG;

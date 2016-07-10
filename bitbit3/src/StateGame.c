@@ -31,9 +31,6 @@ void StartStateGame() {
 	UINT8 i;
 	struct Sprite* sprite;
 
-	SWITCH_ROM_MBC1(2);
-	SpriteManagerReset();
-
 	SPRITES_8x16;
 	princess_idx = LoadSprite(9 * 4, princess);
 	particles_idx = LoadSprite(5 * 4, particles);

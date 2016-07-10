@@ -11,8 +11,6 @@
 #include "resources/splashtiles.h"
 
 void StartStateWin() {
-	SWITCH_ROM_MBC1(2);
-
 	set_bkg_data(0, 104, splashtiles);
 	InitScroll(winmapWidth, winmapHeight, winmap, 0, 0, 0, 2);
 	SHOW_BKG;
