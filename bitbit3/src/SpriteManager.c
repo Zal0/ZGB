@@ -1,5 +1,7 @@
 #include "SpriteManager.h"
 
+#include "Scroll.h"
+
 #include "SpritePrincess.h"
 #include "SpriteZurrapa.h"
 #include "SpriteParticle.h"
@@ -58,7 +60,13 @@ void SpriteManagerUpdate() {
 			case SPRITE_TYPE_DEAD_PARTICLE: UpdateParticle(sprite, i); break;
 		}
 
-		//Draw Sprite
-		DrawSprite(sprite);
+		if( (scroll_x + 10000u - sprite->x > 10032u) || (sprite->x + 10000u - scroll_x - SCREENWIDTH > 10032u) ||
+				(scroll_y + 10000u - sprite->y > 10032u) || (sprite->y + 10000u - scroll_y - SCREENHEIGHT > 10032u)
+			) {
+			SpriteManagerRemove(i);
+		} else {
+			//Draw Sprite
+			DrawSprite(sprite);
+		}
 	}
 }

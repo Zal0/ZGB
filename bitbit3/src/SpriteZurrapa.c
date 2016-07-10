@@ -14,7 +14,5 @@ void StartZurrapa(struct Sprite* sprite) {
 }
 
 void UpdateZurrapa(struct Sprite* sprite, UINT8 idx) {
-	if((scroll_x + 10000u - sprite->x > 10032u) || (sprite->x + 10000u - scroll_x - SCREENWIDTH > 10032u)) {
-		SpriteManagerRemove(idx);
-	}
+	
 }
