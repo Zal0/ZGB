@@ -28,6 +28,7 @@
     <ClCompile Include="src\resources\zurrapa.b2.c" />
     <ClCompile Include="src\SpriteManager.c" />
     <ClCompile Include="src\SpritePrincess.c" />
+    <ClCompile Include="src\SpriteZurrapa.c" />
     <ClCompile Include="src\StateDisclaimer.c" />
     <ClCompile Include="src\StateGame.c" />
     <ClCompile Include="src\StateGameOver.c" />
@@ -39,6 +40,7 @@
     <ClInclude Include="include\main.h" />
     <ClInclude Include="include\SpriteManager.h" />
     <ClInclude Include="include\SpritePrincess.h" />
+    <ClInclude Include="include\SpriteZurrapa.h" />
     <ClInclude Include="include\StateDisclaimer.h" />
     <ClInclude Include="include\StateGame.h" />
     <ClInclude Include="include\StateGameOver.h" />

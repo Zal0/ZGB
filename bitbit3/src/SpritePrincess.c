@@ -1,3 +1,5 @@
+#pragma bank=2
+
 #include "SpritePrincess.h"
 
 #include "gb/gb.h"
@@ -26,10 +28,11 @@ typedef enum  {
 PRINCESS_STATE princes_state;
 INT16 princess_accel_y;
 
+extern UINT8 princess_idx;
 
 void StartPrincess(struct Sprite* sprite) {
 	SPRITES_8x16;
-	InitSprite(sprite, FRAME_16x16, LoadSprite(9 * 4, princess) >> 2);
+	InitSprite(sprite, FRAME_16x16, princess_idx);
 	SetSpriteAnim(sprite, anim_idle, 3u);
 	sprite->x = 32u;
 	sprite->y = 112u;
@@ -69,7 +72,9 @@ void MovePrincess(struct Sprite* sprite) {
 	}
 }
 
-void UpdatePrincess(struct Sprite* sprite) {
+void UpdatePrincess(struct Sprite* sprite, UINT8 idx) {
+	struct Sprite* sprite_test;
+
 	switch(princes_state) {
 		case PRINCESS_STATE_NORMAL:
 			MovePrincess(sprite);
@@ -118,6 +123,12 @@ void UpdatePrincess(struct Sprite* sprite) {
 
 			CheckCollisionTile(sprite);
 		}
+	}
+
+	if(KEY_TICKED(J_A) ) {
+		sprite_test = SpriteManagerAdd(SPRITE_TYPE_ZURRAPA);
+		sprite_test->x = sprite->x;
+		sprite_test->y = sprite->y;
 	}
 }
 

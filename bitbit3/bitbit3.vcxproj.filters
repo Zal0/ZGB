@@ -74,6 +74,9 @@
     <ClCompile Include="src\SpritePrincess.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\SpriteZurrapa.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Makefile" />
@@ -137,6 +140,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\SpritePrincess.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SpriteZurrapa.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

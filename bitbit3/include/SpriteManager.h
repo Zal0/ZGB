@@ -17,11 +17,14 @@ struct Sprite sprite_manager_sprites[N_SPRITE_MANAGER_SPRITES];
 DECLARE_STACK(sprite_manager_sprites_pool, N_SPRITE_MANAGER_SPRITES);
 
 //Current sprites
-DECLARE_VECTOR(sprite_manager_updatable_sprites, N_SPRITE_MANAGER_SPRITES);
+DECLARE_VECTOR(sprite_manager_updatables, N_SPRITE_MANAGER_SPRITES);
+DECLARE_VECTOR(sprite_manager_updatables_copy, N_SPRITE_MANAGER_SPRITES);
 
 void SpriteManagerReset();
 
 struct Sprite* SpriteManagerAdd(SPRITE_TYPE sprite_type);
+void SpriteManagerRemove(int idx);
+
 void SpriteManagerUpdate();
 
 
