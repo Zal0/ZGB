@@ -17,10 +17,12 @@
 const UINT8 anim_walk[] = {12, 0, 1, 2, 3, 2, 1, 0, 4, 5, 6, 5, 4};
 const UINT8 anim_idle[] = {4, 0, 0, 0, 7};
 const UINT8 anim_jump[] = {1, 6};
+const UINT8 anim_fire[] = {2, 8, 8};
 
 typedef enum  {
 	PRINCESS_STATE_NORMAL,
-	PRINCESS_STATE_JUMPING
+	PRINCESS_STATE_JUMPING,
+	PRINCESS_STATE_FIRE
 }PRINCESS_STATE;
 PRINCESS_STATE princes_state;
 INT16 princess_accel_y;
@@ -87,10 +89,10 @@ void UpdatePrincess(struct Sprite* sprite, UINT8 idx) {
 			}
 
 			//Check jumping
-			if(KEY_TICKED(J_B)) {
+			if(KEY_TICKED(J_A)) {
 				princess_accel_y = -50;
 				princes_state = PRINCESS_STATE_JUMPING;
-			}
+			} 
 
 			//Check falling
 			if((princess_accel_y >> 4) > 1) {
@@ -99,8 +101,20 @@ void UpdatePrincess(struct Sprite* sprite, UINT8 idx) {
 			break;
 
 		case PRINCESS_STATE_JUMPING:
-			SetSpriteAnim(sprite, anim_jump, 33u);
-			MovePrincess(sprite, idx);
+			if(princess_accel_y == 0) {
+				princes_state = PRINCESS_STATE_NORMAL;
+			} else {
+				SetSpriteAnim(sprite, anim_jump, 33u);
+				MovePrincess(sprite, idx);
+			}
+			break;
+
+		case PRINCESS_STATE_FIRE:
+			if(sprite->current_frame == 1) {
+				princes_state = PRINCESS_STATE_NORMAL;
+			} else {
+				MovePrincess(sprite, idx);
+			}
 			break;
 	}
 
@@ -108,20 +122,22 @@ void UpdatePrincess(struct Sprite* sprite, UINT8 idx) {
 	if(princess_accel_y < 40) {
 		princess_accel_y += 2;	
 	}
-
 	if(tile_collision = TranslateSprite(sprite, 0, (princess_accel_y >> 4))) {
 		princess_accel_y = 0;
-		princes_state = PRINCESS_STATE_NORMAL;		
-
 		CheckCollisionTile(sprite, idx);
 	}
 
+	if(KEY_TICKED(J_B) && princes_state != PRINCESS_STATE_FIRE) {
+		SetSpriteAnim(sprite, anim_fire, 15u);
+		princes_state = PRINCESS_STATE_FIRE;
+	}
 
-	if(KEY_TICKED(J_A) ) {
+
+	/*if(KEY_TICKED(J_A) ) {
 		sprite_test = SpriteManagerAdd(SPRITE_TYPE_ZURRAPA);
 		sprite_test->x = sprite->x;
 		sprite_test->y = sprite->y;
-	}
+	}*/
 }
 
 
