@@ -54,13 +54,17 @@ void StartPrincess(struct Sprite* sprite) {
 	axe_sprite = 0;
 }
 
+void Die(struct Sprite* sprite, UINT8 idx) {
+	SpriteManagerRemove(idx);
+	game_over_particle = SpriteManagerAdd(SPRITE_TYPE_DEAD_PARTICLE);
+	game_over_particle->x = sprite->x;
+	game_over_particle->y = sprite->y;
+}
+
 UINT8 tile_collision;
 void CheckCollisionTile(struct Sprite* sprite, UINT8 idx) {
 	if(tile_collision == 33u) {
-		SpriteManagerRemove(idx);
-		game_over_particle = SpriteManagerAdd(SPRITE_TYPE_DEAD_PARTICLE);
-		game_over_particle->x = sprite->x;
-		game_over_particle->y = sprite->y;
+		Die(sprite, idx);
 	} else if(tile_collision == 53u) {
 		SetState(STATE_WIN);
 	}
@@ -88,7 +92,8 @@ void UpdateAxePos(struct Sprite* sprite) {
 }
 
 void UpdatePrincess(struct Sprite* sprite, UINT8 idx) {
-	//struct Sprite* sprite_test;
+	UINT8 i;
+	struct Sprite* spr;
 
 	switch(princes_state) {
 		case PRINCESS_STATE_NORMAL:
@@ -140,6 +145,16 @@ void UpdatePrincess(struct Sprite* sprite, UINT8 idx) {
 	if(tile_collision = TranslateSprite(sprite, 0, (princess_accel_y >> 4))) {
 		princess_accel_y = 0;
 		CheckCollisionTile(sprite, idx);
+	}
+
+	//Check enemy collision
+	for(i = 0u; i != SpriteManagerUpdatables(0); ++i) {
+		spr = SpriteManagerSprites(SpriteManagerUpdatables(i + 1u));
+		if(spr->type == SPRITE_TYPE_ZURRAPA) {
+			if(CheckCollision(sprite, spr)) {
+				Die(sprite, idx);
+			}
+		}
 	}
 
 	if(KEY_TICKED(J_B) && princes_state != PRINCESS_STATE_FIRE) {
