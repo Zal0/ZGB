@@ -78,6 +78,15 @@ void MovePrincess(struct Sprite* sprite, UINT8 idx) {
 	}
 }
 
+void UpdateAxePos(struct Sprite* sprite) {
+	axe_sprite->flags = sprite->flags;
+	if(sprite->flags & OAM_VERTICAL_FLAG) 
+		axe_sprite->x = sprite->x - 16u;
+	else
+		axe_sprite->x = sprite->x + 16u; 
+	axe_sprite->y = sprite->y;
+}
+
 void UpdatePrincess(struct Sprite* sprite, UINT8 idx) {
 	//struct Sprite* sprite_test;
 
@@ -119,12 +128,7 @@ void UpdatePrincess(struct Sprite* sprite, UINT8 idx) {
 				SpriteManagerRemoveSprite(axe_sprite);
 			} else {
 				MovePrincess(sprite, idx);
-				axe_sprite->flags = sprite->flags;
-				if(sprite->flags & OAM_VERTICAL_FLAG) 
-					axe_sprite->x = sprite->x - 16u;
-				else
-					axe_sprite->x = sprite->x + 16u; 
-				axe_sprite->y = sprite->y;
+				UpdateAxePos(sprite);
 			}
 			break;
 	}
@@ -143,10 +147,11 @@ void UpdatePrincess(struct Sprite* sprite, UINT8 idx) {
 		princes_state = PRINCESS_STATE_FIRE;
 
 		axe_sprite = SpriteManagerAdd(SPRITE_TYPE_AXE);
+		UpdateAxePos(sprite);
 	}
 
 
-	/*if(KEY_TICKED(J_A) ) {
+	/*if(KEY_TICKED(J_B) ) {
 		sprite_test = SpriteManagerAdd(SPRITE_TYPE_ZURRAPA);
 		sprite_test->x = sprite->x;
 		sprite_test->y = sprite->y;

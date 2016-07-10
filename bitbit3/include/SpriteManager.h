@@ -29,5 +29,7 @@ void SpriteManagerRemoveSprite(struct Sprite* sprite);
 
 void SpriteManagerUpdate();
 
+struct Sprite*  SpriteManagerSprites(int idx);
+UINT8 SpriteManagerUpdatables(int idx);
 
 #endif

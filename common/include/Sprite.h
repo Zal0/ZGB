@@ -35,4 +35,6 @@ void DrawSprite(struct Sprite* sprite);
 
 UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y);
 
+UINT8 CheckCollision(struct Sprite* sprite1, struct Sprite* sprite2);
+
 #endif

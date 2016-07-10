@@ -11,6 +11,14 @@
 
 UINT8 sprite_manager_removal_check;
 
+struct Sprite* SpriteManagerSprites(int idx) {
+	return &sprite_manager_sprites[idx];
+}
+
+UINT8 SpriteManagerUpdatables(int idx) {
+	return sprite_manager_updatables[idx];
+}
+
 void SpriteManagerReset() {
 	UINT8 i;
 

@@ -30,6 +30,8 @@ UINT8 zurrapa_idx;
 struct Sprite* game_over_particle;
 
 void StartStateGame() {
+	struct Sprite* spr_tmp;
+
 	game_over_particle = 0;
 
 	SPRITES_8x16;
@@ -39,6 +41,10 @@ void StartStateGame() {
 	SHOW_SPRITES;
 
 	SpriteManagerAdd(SPRITE_TYPE_PRINCESS);
+
+	spr_tmp = SpriteManagerAdd(SPRITE_TYPE_ZURRAPA);
+	spr_tmp->x = 100u;
+	spr_tmp->y = 110u;
 
 	set_bkg_data(0, 54, tilemap);
 	InitScroll(level1Width, level1Height, level1, 0, 0, collision_tiles, 2);

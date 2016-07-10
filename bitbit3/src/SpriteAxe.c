@@ -1,6 +1,10 @@
+#pragma bank=2
+
 #include "SpriteAxe.h"
 
 #include <gb/gb.h>
+
+#include "SpriteManager.h"
 
 extern UINT8 princess_idx;
 const UINT8 anim_axe[] = {1, 9};
@@ -11,5 +15,20 @@ void StartAxe(struct Sprite* sprite) {
 }
 
 void UpdateAxe(struct Sprite* sprite, UINT8 idx) {
-	//Check collisions
+	UINT8 i;
+	struct Sprite* spr;
+	struct Sprite* spr2;
+
+	for(i = 0u; i != SpriteManagerUpdatables(0); ++i) {
+		spr = SpriteManagerSprites(SpriteManagerUpdatables(i + 1u));
+		if(spr->type == SPRITE_TYPE_ZURRAPA) {
+			if(CheckCollision(sprite, spr)) {
+				spr2 = SpriteManagerAdd(SPRITE_TYPE_DEAD_PARTICLE);
+				spr2->x = spr->x;
+				spr2->y = spr->y;
+				
+				SpriteManagerRemove(i);
+			}
+		}
+	}
 }

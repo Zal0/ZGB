@@ -13,5 +13,7 @@ void StartParticle(struct Sprite* sprite) {
 }
 
 void UpdateParticle(struct Sprite* sprite, UINT8 idx) {
-
+	if(sprite->current_frame == 5) {
+		SpriteManagerRemove(idx);
+	}
 }
