@@ -80,6 +80,9 @@
     <ClCompile Include="src\SpriteParticle.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\SpriteAxe.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Makefile" />
@@ -149,6 +152,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\SpriteParticle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SpriteAxe.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

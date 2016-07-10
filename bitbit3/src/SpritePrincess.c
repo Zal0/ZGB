@@ -27,6 +27,8 @@ typedef enum  {
 PRINCESS_STATE princes_state;
 INT16 princess_accel_y;
 
+struct Sprite* axe_sprite;
+
 extern UINT8 princess_idx;
 extern struct Sprite* game_over_particle;
 
@@ -48,6 +50,8 @@ void StartPrincess(struct Sprite* sprite) {
 	scroll_target_offset_y = -32;
 
 	princes_state = PRINCESS_STATE_NORMAL;
+
+	axe_sprite = 0;
 }
 
 UINT8 tile_collision;
@@ -75,7 +79,7 @@ void MovePrincess(struct Sprite* sprite, UINT8 idx) {
 }
 
 void UpdatePrincess(struct Sprite* sprite, UINT8 idx) {
-	struct Sprite* sprite_test;
+	//struct Sprite* sprite_test;
 
 	switch(princes_state) {
 		case PRINCESS_STATE_NORMAL:
@@ -112,8 +116,15 @@ void UpdatePrincess(struct Sprite* sprite, UINT8 idx) {
 		case PRINCESS_STATE_FIRE:
 			if(sprite->current_frame == 1) {
 				princes_state = PRINCESS_STATE_NORMAL;
+				SpriteManagerRemoveSprite(axe_sprite);
 			} else {
 				MovePrincess(sprite, idx);
+				axe_sprite->flags = sprite->flags;
+				if(sprite->flags & OAM_VERTICAL_FLAG) 
+					axe_sprite->x = sprite->x - 16u;
+				else
+					axe_sprite->x = sprite->x + 16u; 
+				axe_sprite->y = sprite->y;
 			}
 			break;
 	}
@@ -130,6 +141,8 @@ void UpdatePrincess(struct Sprite* sprite, UINT8 idx) {
 	if(KEY_TICKED(J_B) && princes_state != PRINCESS_STATE_FIRE) {
 		SetSpriteAnim(sprite, anim_fire, 15u);
 		princes_state = PRINCESS_STATE_FIRE;
+
+		axe_sprite = SpriteManagerAdd(SPRITE_TYPE_AXE);
 	}
 
 

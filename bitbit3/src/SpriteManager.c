@@ -5,6 +5,7 @@
 #include "SpritePrincess.h"
 #include "SpriteZurrapa.h"
 #include "SpriteParticle.h"
+#include "SpriteAxe.h"
 
 #include <string.h>
 
@@ -35,6 +36,7 @@ struct Sprite* SpriteManagerAdd(SPRITE_TYPE sprite_type) {
 		case SPRITE_TYPE_PRINCESS:      StartPrincess(sprite); break;
 		case SPRITE_TYPE_ZURRAPA:       StartZurrapa(sprite);  break;
 		case SPRITE_TYPE_DEAD_PARTICLE: StartParticle(sprite); break;
+		case SPRITE_TYPE_AXE:           StartAxe(sprite);      break;
 	}
 
 	return sprite;
@@ -42,6 +44,18 @@ struct Sprite* SpriteManagerAdd(SPRITE_TYPE sprite_type) {
 
 void SpriteManagerRemove(int idx) {
 	VectorRemovePos(sprite_manager_updatables, idx);
+}
+
+void SpriteManagerRemoveSprite(struct Sprite* sprite) {
+	UINT8 i;
+	struct Sprite* s;
+	for(i = 0u; i != sprite_manager_updatables[0]; ++i) {
+		s = &sprite_manager_sprites[sprite_manager_updatables[i + 1]];
+		if(s == sprite) {
+			SpriteManagerRemove(i);
+			break;
+		}
+	}
 }
 
 void SpriteManagerUpdate() {
@@ -58,6 +72,7 @@ void SpriteManagerUpdate() {
 			case SPRITE_TYPE_PRINCESS:      UpdatePrincess(sprite, i); break;
 			case SPRITE_TYPE_ZURRAPA:       UpdateZurrapa(sprite, i);  break;
 			case SPRITE_TYPE_DEAD_PARTICLE: UpdateParticle(sprite, i); break;
+			case SPRITE_TYPE_AXE:           UpdateAxe(sprite, i);      break;
 		}
 
 		if( (scroll_x + 10000u - sprite->x > 10032u) || (sprite->x + 10000u - scroll_x - SCREENWIDTH > 10032u) ||

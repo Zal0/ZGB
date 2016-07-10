@@ -33,7 +33,7 @@ void StartStateGame() {
 	game_over_particle = 0;
 
 	SPRITES_8x16;
-	princess_idx = LoadSprite(9 * 4, princess);
+	princess_idx = LoadSprite(10 * 4, princess);
 	zurrapa_idx = LoadSprite(2 * 4, zurrapa);
 	particles_idx = LoadSprite(5 * 4, particles);
 	SHOW_SPRITES;

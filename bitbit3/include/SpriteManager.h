@@ -10,7 +10,8 @@
 typedef enum {
 	SPRITE_TYPE_PRINCESS,
 	SPRITE_TYPE_ZURRAPA,
-	SPRITE_TYPE_DEAD_PARTICLE
+	SPRITE_TYPE_DEAD_PARTICLE,
+	SPRITE_TYPE_AXE
 } SPRITE_TYPE;
 
 //Pool
@@ -25,6 +26,7 @@ void SpriteManagerReset();
 
 struct Sprite* SpriteManagerAdd(SPRITE_TYPE sprite_type);
 void SpriteManagerRemove(int idx);
+void SpriteManagerRemoveSprite(struct Sprite* sprite);
 
 void SpriteManagerUpdate();
 

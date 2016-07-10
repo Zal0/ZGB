@@ -26,6 +26,7 @@
     <ClCompile Include="src\resources\tilemap.b2.c" />
     <ClCompile Include="src\resources\winmap.b2.c" />
     <ClCompile Include="src\resources\zurrapa.b2.c" />
+    <ClCompile Include="src\SpriteAxe.c" />
     <ClCompile Include="src\SpriteManager.c" />
     <ClCompile Include="src\SpriteParticle.c" />
     <ClCompile Include="src\SpritePrincess.c" />
@@ -39,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\main.h" />
+    <ClInclude Include="include\SpriteAxe.h" />
     <ClInclude Include="include\SpriteManager.h" />
     <ClInclude Include="include\SpriteParticle.h" />
     <ClInclude Include="include\SpritePrincess.h" />
