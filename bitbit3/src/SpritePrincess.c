@@ -77,7 +77,7 @@ void UpdatePrincess(struct Sprite* sprite, UINT8 idx) {
 
 	switch(princes_state) {
 		case PRINCESS_STATE_NORMAL:
-			MovePrincess(sprite);
+			MovePrincess(sprite, idx);
 	
 			//Choose idle anim or walk
 			if(KEY_PRESSED(J_RIGHT) || KEY_PRESSED(J_LEFT) ) {
@@ -113,7 +113,7 @@ void UpdatePrincess(struct Sprite* sprite, UINT8 idx) {
 		princess_accel_y = 0;
 		princes_state = PRINCESS_STATE_NORMAL;		
 
-		CheckCollisionTile(sprite);
+		CheckCollisionTile(sprite, idx);
 	}
 
 
