@@ -20,7 +20,6 @@ DECLARE_STACK(sprite_manager_sprites_pool, N_SPRITE_MANAGER_SPRITES);
 
 //Current sprites
 DECLARE_VECTOR(sprite_manager_updatables, N_SPRITE_MANAGER_SPRITES);
-DECLARE_VECTOR(sprite_manager_updatables_copy, N_SPRITE_MANAGER_SPRITES);
 
 void SpriteManagerReset();
 

@@ -9,6 +9,8 @@
 
 #include <string.h>
 
+UINT8 sprite_manager_removal_check;
+
 void SpriteManagerReset() {
 	UINT8 i;
 
@@ -20,6 +22,7 @@ void SpriteManagerReset() {
 
 	//Clear the list of updatable spritess
 	sprite_manager_updatables[0] = 0;
+	sprite_manager_removal_check = 0;
 }
 
 struct Sprite* SpriteManagerAdd(SPRITE_TYPE sprite_type) {
@@ -29,6 +32,7 @@ struct Sprite* SpriteManagerAdd(SPRITE_TYPE sprite_type) {
 	sprite_idx = StackPop(sprite_manager_sprites_pool);
 	sprite = &sprite_manager_sprites[sprite_idx];
 	sprite->type = sprite_type;
+	sprite->marked_for_removal = 0;
 
 	VectorAdd(sprite_manager_updatables, sprite_idx);
 
@@ -43,7 +47,8 @@ struct Sprite* SpriteManagerAdd(SPRITE_TYPE sprite_type) {
 }
 
 void SpriteManagerRemove(int idx) {
-	VectorRemovePos(sprite_manager_updatables, idx);
+	sprite_manager_removal_check = 1;
+	sprite_manager_sprites[sprite_manager_updatables[idx + 1]].marked_for_removal = 1;
 }
 
 void SpriteManagerRemoveSprite(struct Sprite* sprite) {
@@ -62,26 +67,34 @@ void SpriteManagerUpdate() {
 	UINT8 i;
 	struct Sprite* sprite;
 
-	//Copy the array because objects might be destroyed during the Update
-	memcpy(sprite_manager_updatables_copy, sprite_manager_updatables, sprite_manager_updatables[0] + 1);
+	for(i = 0u; i != sprite_manager_updatables[0]; ++i) {
+		sprite = &sprite_manager_sprites[sprite_manager_updatables[i + 1]];
+		if(!sprite->marked_for_removal) {
+			switch((SPRITE_TYPE)sprite->type) {
+				case SPRITE_TYPE_PRINCESS:      UpdatePrincess(sprite, i); break;
+				case SPRITE_TYPE_ZURRAPA:       UpdateZurrapa(sprite, i);  break;
+				case SPRITE_TYPE_DEAD_PARTICLE: UpdateParticle(sprite, i); break;
+				case SPRITE_TYPE_AXE:           UpdateAxe(sprite, i);      break;
+			}
 
-	for(i = 0u; i != sprite_manager_updatables_copy[0]; ++i) {
-		sprite = &sprite_manager_sprites[sprite_manager_updatables_copy[i + 1]];
-		
-		switch((SPRITE_TYPE)sprite->type) {
-			case SPRITE_TYPE_PRINCESS:      UpdatePrincess(sprite, i); break;
-			case SPRITE_TYPE_ZURRAPA:       UpdateZurrapa(sprite, i);  break;
-			case SPRITE_TYPE_DEAD_PARTICLE: UpdateParticle(sprite, i); break;
-			case SPRITE_TYPE_AXE:           UpdateAxe(sprite, i);      break;
+			if( (scroll_x + 10000u - sprite->x > 10032u) || (sprite->x + 10000u - scroll_x - SCREENWIDTH > 10032u) ||
+					(scroll_y + 10000u - sprite->y > 10032u) || (sprite->y + 10000u - scroll_y - SCREENHEIGHT > 10032u)
+				) {
+				SpriteManagerRemove(i);
+			} else {
+				DrawSprite(sprite);
+			}
 		}
+	}
 
-		if( (scroll_x + 10000u - sprite->x > 10032u) || (sprite->x + 10000u - scroll_x - SCREENWIDTH > 10032u) ||
-				(scroll_y + 10000u - sprite->y > 10032u) || (sprite->y + 10000u - scroll_y - SCREENHEIGHT > 10032u)
-			) {
-			SpriteManagerRemove(i);
-		} else {
-			//Draw Sprite
-			DrawSprite(sprite);
+	if(sprite_manager_removal_check) {
+		for(i = 0u; i != sprite_manager_updatables[0]; ++i) {
+			sprite = &sprite_manager_sprites[sprite_manager_updatables[i + 1u]];
+			if(sprite->marked_for_removal) {
+				StackPush(sprite_manager_sprites_pool, sprite_manager_updatables[i + 1u]);
+				VectorRemovePos(sprite_manager_updatables, i);
+			}
 		}
+		sprite_manager_removal_check = 0;
 	}
 }
