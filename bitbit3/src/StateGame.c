@@ -27,14 +27,15 @@ UINT8 princess_idx;
 UINT8 particles_idx;
 UINT8 zurrapa_idx;
 
+struct Sprite* game_over_particle;
+
 void StartStateGame() {
-	UINT8 i;
-	struct Sprite* sprite;
+	game_over_particle = 0;
 
 	SPRITES_8x16;
 	princess_idx = LoadSprite(9 * 4, princess);
-	particles_idx = LoadSprite(5 * 4, particles);
 	zurrapa_idx = LoadSprite(2 * 4, zurrapa);
+	particles_idx = LoadSprite(5 * 4, particles);
 	SHOW_SPRITES;
 
 	SpriteManagerAdd(SPRITE_TYPE_PRINCESS);
@@ -48,4 +49,8 @@ void StartStateGame() {
 
 void UpdateStateGame() {
 	SpriteManagerUpdate();
+
+	if(game_over_particle && game_over_particle->current_frame == 5) {
+		SetState(STATE_GAME_OVER);
+	}
 }

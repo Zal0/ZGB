@@ -2,6 +2,7 @@
 
 #include "SpritePrincess.h"
 #include "SpriteZurrapa.h"
+#include "SpriteParticle.h"
 
 #include <string.h>
 
@@ -29,8 +30,9 @@ struct Sprite* SpriteManagerAdd(SPRITE_TYPE sprite_type) {
 	VectorAdd(sprite_manager_updatables, sprite_idx);
 
 	switch((SPRITE_TYPE)sprite->type) {
-		case SPRITE_TYPE_PRINCESS: StartPrincess(sprite); break;
-		case SPRITE_TYPE_ZURRAPA:  StartZurrapa(sprite);        break;
+		case SPRITE_TYPE_PRINCESS:      StartPrincess(sprite); break;
+		case SPRITE_TYPE_ZURRAPA:       StartZurrapa(sprite);  break;
+		case SPRITE_TYPE_DEAD_PARTICLE: StartParticle(sprite); break;
 	}
 
 	return sprite;
@@ -51,8 +53,9 @@ void SpriteManagerUpdate() {
 		sprite = &sprite_manager_sprites[sprite_manager_updatables_copy[i + 1]];
 		
 		switch((SPRITE_TYPE)sprite->type) {
-			case SPRITE_TYPE_PRINCESS: UpdatePrincess(sprite, i); break;
-			case SPRITE_TYPE_ZURRAPA:  UpdateZurrapa(sprite, i);  break;
+			case SPRITE_TYPE_PRINCESS:      UpdatePrincess(sprite, i); break;
+			case SPRITE_TYPE_ZURRAPA:       UpdateZurrapa(sprite, i);  break;
+			case SPRITE_TYPE_DEAD_PARTICLE: UpdateParticle(sprite, i); break;
 		}
 
 		//Draw Sprite
