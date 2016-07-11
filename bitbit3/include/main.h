@@ -12,6 +12,7 @@ typedef enum {
 	N_STATES
 } STATE;
 
+extern STATE current_state;
 void SetState(STATE state);
 
 void PlayMusic(unsigned char* music, unsigned char bank, unsigned char loop);

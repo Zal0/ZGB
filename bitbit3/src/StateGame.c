@@ -30,7 +30,7 @@ UINT8 zurrapa_idx;
 struct Sprite* game_over_particle;
 
 void StartStateGame() {
-	struct Sprite* spr_tmp;
+	//struct Sprite* spr_tmp;
 
 	game_over_particle = 0;
 
@@ -42,7 +42,7 @@ void StartStateGame() {
 
 	SpriteManagerAdd(SPRITE_TYPE_PRINCESS);
 
-	spr_tmp = SpriteManagerAdd(SPRITE_TYPE_ZURRAPA);
+	/*spr_tmp = SpriteManagerAdd(SPRITE_TYPE_ZURRAPA);
 	spr_tmp->x = 100u;
 	spr_tmp->y = 110u;
 
@@ -52,7 +52,7 @@ void StartStateGame() {
 
 	spr_tmp = SpriteManagerAdd(SPRITE_TYPE_ZURRAPA);
 	spr_tmp->x = 140u;
-	spr_tmp->y = 110u;
+	spr_tmp->y = 110u;*/
 
 	set_bkg_data(0, 55, tilemap);
 	InitScroll(level1Width, level1Height, level1, 0, 0, collision_tiles, 2);
@@ -67,4 +67,24 @@ void UpdateStateGame() {
 	if(game_over_particle && game_over_particle->current_frame == 5) {
 		SetState(STATE_GAME_OVER);
 	}
+}
+
+void UPDATE_TILE(UINT8 x, UINT8 y, UINT8* t) {
+	UINT8 t_replace = *t;
+	struct Sprite* s = 0; 
+	
+	if(current_state == STATE_GAME) {
+		switch(t_replace) {
+			case 54: s = SpriteManagerAdd(SPRITE_TYPE_ZURRAPA); break;
+		}
+
+		if(s) {
+			t_replace = 0u;
+
+			s->x = x << 3;
+			s->y = (y - 1) << 3;
+		}
+	}
+
+	set_bkg_tiles(0x1F & x, 0x1F & y, 1, 1, &t_replace);
 }
