@@ -99,7 +99,8 @@ void SpriteManagerUpdate() {
 	}
 
 	if(sprite_manager_removal_check) {
-		for(i = 0u; i != sprite_manager_updatables[0]; ++i) {
+		//We must remove sprites in inverse order because everytime we remove one the vector shrinks and displaces all elements
+		for(i = sprite_manager_updatables[0] - 1; i + 1 != 0u; i -= 1u) {
 			sprite = &sprite_manager_sprites[sprite_manager_updatables[i + 1u]];
 			if(sprite->marked_for_removal) {
 				StackPush(sprite_manager_sprites_pool, sprite_manager_updatables[i + 1u]);
