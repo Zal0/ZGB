@@ -19,10 +19,10 @@ void DrawFrame(UINT8 oam_idx, FrameSize size, int idx, UINT16 x, UINT16 y, UINT8
 
 			case FRAME_16x16:
 				if(flags & OAM_VERTICAL_FLAG){
-					DrawOAMSprite(oam_idx, (idx << 2u) + 2u, OAM_SIZE_16x16, x + 8u,      y + 16u, flags);
+					DrawOAMSprite(oam_idx,     (idx << 2u) + 2u, OAM_SIZE_16x16, x + 8u,      y + 16u, flags);
 					DrawOAMSprite(oam_idx + 1, (idx << 2u),      OAM_SIZE_16x16, x + 8u + 8u, y + 16u, flags);
 				} else {
-					DrawOAMSprite(oam_idx, (idx << 2u),      OAM_SIZE_16x16, x + 8u,      y + 16u, flags);
+					DrawOAMSprite(oam_idx,     (idx << 2u),      OAM_SIZE_16x16, x + 8u,      y + 16u, flags);
 					DrawOAMSprite(oam_idx + 1, (idx << 2u) + 2u, OAM_SIZE_16x16, x + 8u + 8u, y + 16u, flags);
 				}
 				break;

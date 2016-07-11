@@ -14,7 +14,7 @@
 #include "StateGameOver.h"
 #include "StateWin.h"
 
-STATE next_state = STATE_GAME;//STATE_DISCLAIMER;// STATE_GAME; //STATE_MENU;
+STATE next_state = STATE_DISCLAIMER;// STATE_GAME; //STATE_MENU;
 
 STATE current_state = N_STATES;
 UINT8 state_running = 0;
@@ -59,6 +59,8 @@ void PlayMusic(unsigned char* music, unsigned char bank, unsigned char loop) {
 UINT8 vbl_count;
 void vbl_update() {
 	vbl_count ++;
+	gbt_update();
+	SWITCH_ROM_MBC1(2);
 }
 
 void main() {
@@ -75,8 +77,6 @@ void main() {
 			RefreshScroll();
 
 			UPDATE_KEYS();
-			
-			gbt_update();
 			Update();
 		}
 
