@@ -6,6 +6,7 @@
 
 struct Sprite {
 	//Frame info
+	UINT8 oam_idx;
 	FrameSize size;
 	UINT8 first_tile;
 

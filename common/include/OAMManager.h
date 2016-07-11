@@ -12,13 +12,9 @@ typedef enum {
 	OAM_HORIZONTAL_FLAG = 0x40
 } OAMFLAGS;
 
-extern UINT8 oam_idx;
 extern UINT8 last_sprite_loaded;
 
-void ResetOAM();
-void FlushOAM();
-
 UINT8 LoadSprite(UINT8 n_tiles, unsigned char* data);
-void DrawOAMSprite(UINT8 idx, OAMSize size, UINT8 x, UINT8 y, UINT8 flags);
+void DrawOAMSprite(UINT8 oam_idx, UINT8 idx, OAMSize size, UINT8 x, UINT8 y, UINT8 flags);
 
 #endif

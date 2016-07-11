@@ -25,6 +25,10 @@ void SpriteManagerReset() {
 	sprite_manager_sprites_pool[0] = N_SPRITE_MANAGER_SPRITES;
 	for(i = 0; i != N_SPRITE_MANAGER_SPRITES; ++i) {
 		sprite_manager_sprites_pool[i + 1] = i;
+
+		sprite_manager_sprites[i].oam_idx = i << 1;
+		move_sprite(i << 1, 200, 200);
+		move_sprite((i << 1) + 1, 200, 200);
 	}
 
 	//Clear the list of updatable spritess
@@ -100,6 +104,8 @@ void SpriteManagerUpdate() {
 			if(sprite->marked_for_removal) {
 				StackPush(sprite_manager_sprites_pool, sprite_manager_updatables[i + 1u]);
 				VectorRemovePos(sprite_manager_updatables, i);
+				move_sprite(sprite->oam_idx, 200, 200);
+				move_sprite(sprite->oam_idx + 1, 200, 200);
 			}
 		}
 		sprite_manager_removal_check = 0;

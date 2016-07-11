@@ -14,7 +14,7 @@
 #include "StateGameOver.h"
 #include "StateWin.h"
 
-STATE next_state = STATE_DISCLAIMER;// STATE_GAME; //STATE_MENU;
+STATE next_state = STATE_GAME;//STATE_DISCLAIMER;// STATE_GAME; //STATE_MENU;
 
 STATE current_state = N_STATES;
 UINT8 state_running = 0;
@@ -56,34 +56,32 @@ void PlayMusic(unsigned char* music, unsigned char bank, unsigned char loop) {
 	SWITCH_ROM_MBC1(2);
 }
 
-/*void vbl_update() {
-	
-}*/
+UINT8 vbl_count;
+void vbl_update() {
+	vbl_count ++;
+}
 
 void main() {
-	/*disable_interrupts();
+	disable_interrupts();
 	add_VBL(vbl_update);
 	set_interrupts(VBL_IFLAG);
-	enable_interrupts();*/
+	enable_interrupts();
 
 	while(1) {
 		while (state_running) {
-			wait_vbl_done();
+			if(!vbl_count)
+				wait_vbl_done();
+			vbl_count = 0;
 			RefreshScroll();
 
-			ResetOAM();
 			UPDATE_KEYS();
 			
 			gbt_update();
 			Update();
-			
-			FlushOAM();
 		}
 
 		DISPLAY_OFF
 		gbt_stop();
-		ResetOAM();
-		FlushOAM();
 		last_sprite_loaded = 0;
 		SpriteManagerReset();
 		state_running = 1;

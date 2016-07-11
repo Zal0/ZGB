@@ -42,7 +42,7 @@ void DrawSprite(struct Sprite* sprite) {
 			sprite->accum_ticks -= 100u;
 		}
 
-		DrawFrame(sprite->size, sprite->first_tile + sprite->data[1 + sprite->current_frame], sprite->x, sprite->y, sprite->flags);
+		DrawFrame(sprite->oam_idx, sprite->size, sprite->first_tile + sprite->data[1 + sprite->current_frame], sprite->x, sprite->y, sprite->flags);
 	}
 }
 

@@ -1,21 +1,6 @@
 #include "OAMManager.h"
 
-UINT8 oam_idx = 0;
-UINT8 oams_enabled = 0;
-
 UINT8 last_sprite_loaded = 0;
-
-void ResetOAM() {
-	oams_enabled = oam_idx;
-	oam_idx = 0;
-}
-
-void FlushOAM() {
-	UINT8 i;
-	for(i = oam_idx; i < oams_enabled; ++i) {
-		move_sprite(i, 200, 200);
-	}
-}
 
 UINT8 LoadSprite(UINT8 n_tiles, unsigned char* data) {
 	set_sprite_data(last_sprite_loaded, n_tiles, data);
@@ -25,7 +10,7 @@ UINT8 LoadSprite(UINT8 n_tiles, unsigned char* data) {
 }
 
 
-void DrawOAMSprite(UINT8 idx, OAMSize size, UINT8 x, UINT8 y, UINT8 flags) {
+void DrawOAMSprite(UINT8 oam_idx, UINT8 idx, OAMSize size, UINT8 x, UINT8 y, UINT8 flags) {
 	if(size == OAM_SIZE_8x8)
 		SPRITES_8x8;
 	else

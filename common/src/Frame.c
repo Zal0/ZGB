@@ -2,7 +2,7 @@
 #include "OAMManager.h"
 #include "Scroll.h"
 
-void DrawFrame(FrameSize size, int idx, UINT16 x, UINT16 y, UINT8 flags){
+void DrawFrame(UINT8 oam_idx, FrameSize size, int idx, UINT16 x, UINT16 y, UINT8 flags){
 	x = x - scroll_x;
 	y = y - scroll_y;
 
@@ -10,7 +10,7 @@ void DrawFrame(FrameSize size, int idx, UINT16 x, UINT16 y, UINT8 flags){
 	if((x + 32 < SCREENWIDTH + 32) && (y + 32 < SCREENHEIGHT + 32)) {
 		switch(size) {
 			case FRAME_8x8:
-				DrawOAMSprite(idx, OAM_SIZE_8x8, x + 8u, y + 16u, flags);
+				DrawOAMSprite(oam_idx, idx, OAM_SIZE_8x8, x + 8u, y + 16u, flags);
 				break;
 
 			//case FRAME_8x16:
@@ -19,11 +19,11 @@ void DrawFrame(FrameSize size, int idx, UINT16 x, UINT16 y, UINT8 flags){
 
 			case FRAME_16x16:
 				if(flags & OAM_VERTICAL_FLAG){
-					DrawOAMSprite((idx << 2u) + 2u, OAM_SIZE_16x16, x + 8u,      y + 16u, flags);
-					DrawOAMSprite((idx << 2u),      OAM_SIZE_16x16, x + 8u + 8u, y + 16u, flags);
+					DrawOAMSprite(oam_idx, (idx << 2u) + 2u, OAM_SIZE_16x16, x + 8u,      y + 16u, flags);
+					DrawOAMSprite(oam_idx + 1, (idx << 2u),      OAM_SIZE_16x16, x + 8u + 8u, y + 16u, flags);
 				} else {
-					DrawOAMSprite((idx << 2u),      OAM_SIZE_16x16, x + 8u,      y + 16u, flags);
-					DrawOAMSprite((idx << 2u) + 2u, OAM_SIZE_16x16, x + 8u + 8u, y + 16u, flags);
+					DrawOAMSprite(oam_idx, (idx << 2u),      OAM_SIZE_16x16, x + 8u,      y + 16u, flags);
+					DrawOAMSprite(oam_idx + 1, (idx << 2u) + 2u, OAM_SIZE_16x16, x + 8u + 8u, y + 16u, flags);
 				}
 				break;
 
