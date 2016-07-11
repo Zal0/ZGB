@@ -9,15 +9,14 @@
 
 #include <string.h>
 
+//Pool
+struct Sprite sprite_manager_sprites[N_SPRITE_MANAGER_SPRITES];
+DECLARE_STACK(sprite_manager_sprites_pool, N_SPRITE_MANAGER_SPRITES);
+
+//Current sprites
+DECLARE_VECTOR(sprite_manager_updatables, N_SPRITE_MANAGER_SPRITES);
+
 UINT8 sprite_manager_removal_check;
-
-struct Sprite* SpriteManagerSprites(int idx) {
-	return &sprite_manager_sprites[idx];
-}
-
-UINT8 SpriteManagerUpdatables(int idx) {
-	return sprite_manager_updatables[idx];
-}
 
 void SpriteManagerReset() {
 	UINT8 i;

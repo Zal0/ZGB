@@ -15,11 +15,11 @@ typedef enum {
 } SPRITE_TYPE;
 
 //Pool
-struct Sprite sprite_manager_sprites[N_SPRITE_MANAGER_SPRITES];
-DECLARE_STACK(sprite_manager_sprites_pool, N_SPRITE_MANAGER_SPRITES);
+extern struct Sprite sprite_manager_sprites[];
+extern UINT8 sprite_manager_sprites_pool[];
 
 //Current sprites
-DECLARE_VECTOR(sprite_manager_updatables, N_SPRITE_MANAGER_SPRITES);
+extern UINT8 sprite_manager_updatables[];
 
 void SpriteManagerReset();
 
@@ -28,8 +28,5 @@ void SpriteManagerRemove(int idx);
 void SpriteManagerRemoveSprite(struct Sprite* sprite);
 
 void SpriteManagerUpdate();
-
-struct Sprite*  SpriteManagerSprites(int idx);
-UINT8 SpriteManagerUpdatables(int idx);
 
 #endif
