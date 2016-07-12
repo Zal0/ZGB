@@ -28,6 +28,7 @@ struct Sprite {
 	//For the sprite manager
 	UINT8 type;
 	UINT8 marked_for_removal;
+	UINT16 lim_x, lim_y;
 };
 
 void InitSprite(struct Sprite* sprite, FrameSize size, UINT8 first_tile);

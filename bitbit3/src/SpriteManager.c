@@ -31,7 +31,7 @@ void SpriteManagerReset() {
 		move_sprite((i << 1) + 1, 200, 200);
 	}
 
-	//Clear the list of updatable spritess
+	//Clear the list of updatable sprites
 	sprite_manager_updatables[0] = 0;
 	sprite_manager_removal_check = 0;
 }
@@ -44,6 +44,8 @@ struct Sprite* SpriteManagerAdd(SPRITE_TYPE sprite_type) {
 	sprite = &sprite_manager_sprites[sprite_idx];
 	sprite->type = sprite_type;
 	sprite->marked_for_removal = 0;
+	sprite->lim_x = 32u;
+	sprite->lim_y = 32u;
 
 	VectorAdd(sprite_manager_updatables, sprite_idx);
 
@@ -88,12 +90,14 @@ void SpriteManagerUpdate() {
 				case SPRITE_TYPE_AXE:           UpdateAxe(sprite, i);      break;
 			}
 
-			if( (scroll_x + 10000u - sprite->x > 10032u) || (sprite->x + 10000u - scroll_x - SCREENWIDTH > 10032u) ||
-					(scroll_y + 10000u - sprite->y > 10032u) || (sprite->y + 10000u - scroll_y - SCREENHEIGHT > 10032u)
-				) {
-				SpriteManagerRemove(i);
-			} else {
+			if( ((scroll_x - sprite->x - 16u - sprite->lim_x)          & 0x8000u) &&
+			    ((sprite->x - scroll_x - SCREENWIDTH - sprite->lim_x)  & 0x8000u) &&
+					((scroll_y - sprite->y - 16u - sprite->lim_y)          & 0x8000u) &&
+					((sprite->y - scroll_y - SCREENHEIGHT - sprite->lim_y) & 0x8000u)
+			) { 
 				DrawSprite(sprite);
+			} else {
+				SpriteManagerRemove(i);
 			}
 		}
 	}
