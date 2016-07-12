@@ -80,6 +80,14 @@ void MovePrincess(struct Sprite* sprite, UINT8 idx) {
 		sprite->flags = OAM_VERTICAL_FLAG;
 		CheckCollisionTile(sprite, idx);
 	}
+	
+	/*if(KEY_PRESSED(J_UP)) {
+		tile_collision = TranslateSprite(sprite, 0, -1);
+		CheckCollisionTile(sprite, idx);
+	} else if(KEY_PRESSED(J_DOWN)) {
+		tile_collision = TranslateSprite(sprite, 0, 1);
+		CheckCollisionTile(sprite, idx);
+	}*/
 }
 
 void UpdateAxePos(struct Sprite* sprite) {
