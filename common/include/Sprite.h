@@ -6,9 +6,9 @@
 
 struct Sprite {
 	//Frame info
-	UINT8 oam_idx;
+	UINT8 oam_idx; //oam assigned to this sprite
 	FrameSize size;
-	UINT8 first_tile;
+	UINT8 first_tile; //tile offset, for animation indices
 
 	//Anim data
 	UINT8* data;
@@ -22,13 +22,13 @@ struct Sprite {
 	//Flags, currentlu used for mirror
 	UINT8 flags;
 
-	//Collider
+	//Collider (box)
 	UINT8 coll_x, coll_y, coll_w, coll_h;
 
 	//For the sprite manager
-	UINT8 type;
+	UINT8 type; //Customizable per game
 	UINT8 marked_for_removal;
-	UINT16 lim_x, lim_y;
+	UINT16 lim_x, lim_y; //limits offscren where the sprite will be deleted (0 means inmediatelly)
 };
 
 void InitSprite(struct Sprite* sprite, FrameSize size, UINT8 first_tile);
