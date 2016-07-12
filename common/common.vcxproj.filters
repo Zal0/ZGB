@@ -58,9 +58,6 @@
     <ClCompile Include="src\Stack.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\bitbit3\src\Princess.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Makefile" />
