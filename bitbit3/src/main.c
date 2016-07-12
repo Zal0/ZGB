@@ -90,3 +90,40 @@ void main() {
 		DISPLAY_ON;
 	}
 }
+
+void UPDATE_TILE(UINT16 x, UINT16 y, UINT8* t) {
+	UINT8 i = *t;
+	struct Sprite* s = 0;
+	SPRITE_TYPE type = N_SPRITE_TYPES;
+	UINT16 id = 0u;
+	UINT16 tmp_y;
+	
+	if(current_state == STATE_GAME) {
+		switch(*t) {
+			case 54: type = SPRITE_TYPE_ZURRAPA; break;
+		}
+
+		if(type != N_SPRITE_TYPES) {
+			tmp_y = y << 8;
+			id = (0x00FF & x) | ((0xFF00 & tmp_y)); // (y >> 3) << 8 == y << 5
+			for(i = 0u; i != sprite_manager_updatables[0]; ++i) {
+				s = &sprite_manager_sprites[sprite_manager_updatables[i + 1]];
+				if(s->unique_id == id && s->type == type) {
+					s = 0;
+					break;
+				}
+			}
+
+			if(s) {
+				s = SpriteManagerAdd(type);
+				s->x = x << 3;
+				s->y = (y - 1) << 3;
+				s->unique_id = id;
+			}
+
+			i = 0u;
+		}
+	}
+
+	set_bkg_tiles(0x1F & x, 0x1F & y, 1, 1, &i); //i pointing to zero will replace the tile by the deafault one
+}
