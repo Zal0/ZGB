@@ -14,7 +14,7 @@
 #include "StateGameOver.h"
 #include "StateWin.h"
 
-STATE next_state = STATE_DISCLAIMER;// STATE_GAME; //STATE_MENU;
+STATE next_state = STATE_MENU;// STATE_GAME; //STATE_MENU;
 
 STATE current_state = N_STATES;
 UINT8 state_running = 0;
