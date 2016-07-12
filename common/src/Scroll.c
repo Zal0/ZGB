@@ -8,7 +8,7 @@
 
 //This function was thought for updating a whole square... can't find a better one that updates one tile only!
 //#define UPDATE_TILE(X, Y, T) set_bkg_tiles(0x1F & (UINT8)X, 0x1F & (UINT8)Y, 1, 1, T)
-void UPDATE_TILE(UINT8 x, UINT8 y, UINT8* t);
+void UPDATE_TILE(UINT16 x, UINT16 y, UINT8* t);
 
 unsigned char* scroll_map = 0;
 UINT16 scroll_x;

@@ -54,6 +54,14 @@ void StartStateGame() {
 	spr_tmp->x = 140u;
 	spr_tmp->y = 110u;
 
+	spr_tmp = SpriteManagerAdd(SPRITE_TYPE_ZURRAPA);
+	spr_tmp->x = 160u;
+	spr_tmp->y = 110u;
+
+	spr_tmp = SpriteManagerAdd(SPRITE_TYPE_ZURRAPA);
+	spr_tmp->x = 180u;
+	spr_tmp->y = 110u;
+
 	set_bkg_data(0, 55, tilemap);
 	InitScroll(level1Width, level1Height, level1, 0, 0, collision_tiles, 2);
 	SHOW_BKG;
@@ -69,7 +77,7 @@ void UpdateStateGame() {
 	}
 }
 
-void UPDATE_TILE(UINT8 x, UINT8 y, UINT8* t) {
+void UPDATE_TILE(UINT16 x, UINT16 y, UINT8* t) {
 	UINT8 t_replace = *t;
 	struct Sprite* s = 0; 
 	
