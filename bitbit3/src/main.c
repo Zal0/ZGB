@@ -50,7 +50,6 @@ void SetState(STATE state) {
 
 
 void PlayMusic(unsigned char* music, unsigned char bank, unsigned char loop) {
-	SWITCH_ROM_MBC1(1);
 	gbt_play(music, bank, 7);
 	gbt_loop(loop);
 	SWITCH_ROM_MBC1(2);
