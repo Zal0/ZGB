@@ -1,5 +1,6 @@
 #include "Scroll.h"
 #include "Sprite.h"
+#include "SpriteManager.h"
 #include "BankManager.h"
 
 #define SCREEN_TILES_W       20u // 160 >> 3 = 20
@@ -7,9 +8,8 @@
 #define SCREEN_TILE_REFRES_W 21u
 #define SCREEN_TILE_REFRES_H 19u
 
-//This function was thought for updating a whole square... can't find a better one that updates one tile only!
-//#define UPDATE_TILE(X, Y, T) set_bkg_tiles(0x1F & (UINT8)X, 0x1F & (UINT8)Y, 1, 1, T)
-void UPDATE_TILE(UINT16 x, UINT16 y, UINT8* t);
+//To be defined on the main app
+UINT8 GetTileReplacement(UINT8 t);
 
 unsigned char* scroll_map = 0;
 UINT16 scroll_x;
@@ -23,6 +23,40 @@ INT16 scroll_target_offset_x = 0;
 INT16 scroll_target_offset_y = 0;
 UINT8 scroll_collisions[128];
 UINT8 scroll_bank;
+
+//This function was thought for updating a whole square... can't find a better one that updates one tile only!
+//#define UPDATE_TILE(X, Y, T) set_bkg_tiles(0x1F & (UINT8)X, 0x1F & (UINT8)Y, 1, 1, T)
+void UPDATE_TILE(UINT16 x, UINT16 y, UINT8* t) {
+	UINT8 i = *t;
+	struct Sprite* s = 0;
+	UINT8 type = 255u;
+	UINT16 id = 0u;
+	UINT16 tmp_y;
+	
+	type = GetTileReplacement(*t);
+	if(type != 255u) {
+		tmp_y = y << 8;
+		id = (0x00FF & x) | ((0xFF00 & tmp_y)); // (y >> 3) << 8 == y << 5
+		for(i = 0u; i != sprite_manager_updatables[0]; ++i) {
+			s = &sprite_manager_sprites[sprite_manager_updatables[i + 1]];
+			if(s->unique_id == id && s->type == type) {
+				s = 0;
+				break;
+			}
+		}
+
+		if(s) {
+			s = SpriteManagerAdd(type);
+			s->x = x << 3;
+			s->y = (y - 1) << 3;
+			s->unique_id = id;
+		}
+
+		i = 0u;
+	}
+
+	set_bkg_tiles(0x1F & x, 0x1F & y, 1, 1, &i); //i pointing to zero will replace the tile by the deafault one
+}
 
 void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT16 x, UINT16 y, UINT8* coll_list, UINT8 bank) {
 	UINT8 i;
@@ -45,6 +79,7 @@ void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT16 x, UINT16
 		}
 	}
 
+	//Change bank now, after copying the collision array (it can be in a different bank)
 	PUSH_BANK(bank);
 	move_bkg(scroll_x, scroll_y);
 	for(i = 0u; i != SCREEN_TILE_REFRES_H && i != scroll_tiles_h; ++i) {

@@ -2,11 +2,6 @@
 
 #include "Scroll.h"
 
-#include "SpritePrincess.h"
-#include "SpriteZurrapa.h"
-#include "SpriteParticle.h"
-#include "SpriteAxe.h"
-
 #include "BankManager.h"
 
 #include <string.h>
@@ -19,6 +14,10 @@ DECLARE_STACK(sprite_manager_sprites_pool, N_SPRITE_MANAGER_SPRITES);
 DECLARE_VECTOR(sprite_manager_updatables, N_SPRITE_MANAGER_SPRITES);
 
 UINT8 sprite_manager_removal_check;
+
+//To be defined on the main app
+void StartSprite(UINT8 type, struct Sprite* sprite);
+void UpdateSprite();
 
 void SpriteManagerReset() {
 	UINT8 i;
@@ -51,14 +50,7 @@ struct Sprite* SpriteManagerAdd(SPRITE_TYPE sprite_type) {
 
 	VectorAdd(sprite_manager_updatables, sprite_idx);
 
-	PUSH_BANK(2);
-	switch((SPRITE_TYPE)sprite->type) {
-		case SPRITE_TYPE_PRINCESS:      StartPrincess(sprite); break;
-		case SPRITE_TYPE_ZURRAPA:       StartZurrapa(sprite);  break;
-		case SPRITE_TYPE_DEAD_PARTICLE: StartParticle(sprite); break;
-		case SPRITE_TYPE_AXE:           StartAxe(sprite);      break;
-	}
-	POP_BANK;
+	StartSprite(sprite_type, sprite);
 
 	return sprite;
 }
@@ -86,14 +78,7 @@ void SpriteManagerUpdate() {
 	for(sprite_manager_current_index = 0u; sprite_manager_current_index != sprite_manager_updatables[0]; ++sprite_manager_current_index) {
 		sprite_manager_current_sprite = &sprite_manager_sprites[sprite_manager_updatables[sprite_manager_current_index + 1]];
 		if(!sprite_manager_current_sprite->marked_for_removal) {
-			PUSH_BANK(2);
-			switch((SPRITE_TYPE)sprite_manager_current_sprite->type) {
-				case SPRITE_TYPE_PRINCESS:      UpdatePrincess(); break;
-				case SPRITE_TYPE_ZURRAPA:       UpdateZurrapa();  break;
-				case SPRITE_TYPE_DEAD_PARTICLE: UpdateParticle(); break;
-				case SPRITE_TYPE_AXE:           UpdateAxe();      break;
-			}
-			POP_BANK;
+			UpdateSprite();
 
 			if( ((scroll_x - sprite_manager_current_sprite->x - 16u - sprite_manager_current_sprite->lim_x)          & 0x8000u) &&
 			    ((sprite_manager_current_sprite->x - scroll_x - SCREENWIDTH - sprite_manager_current_sprite->lim_x)  & 0x8000u) &&

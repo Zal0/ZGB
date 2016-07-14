@@ -18,6 +18,7 @@
     <ClInclude Include="include\OAMManager.h" />
     <ClInclude Include="include\Scroll.h" />
     <ClInclude Include="include\Sprite.h" />
+    <ClInclude Include="include\SpriteManager.h" />
     <ClInclude Include="include\Stack.h" />
     <ClInclude Include="include\Vector.h" />
   </ItemGroup>
@@ -28,6 +29,7 @@
     <ClCompile Include="src\OAMManager.c" />
     <ClCompile Include="src\Scroll.c" />
     <ClCompile Include="src\Sprite.c" />
+    <ClCompile Include="src\SpriteManager.c" />
     <ClCompile Include="src\Stack.c" />
     <ClCompile Include="src\Vector.c" />
   </ItemGroup>

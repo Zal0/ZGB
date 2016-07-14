@@ -15,12 +15,15 @@
 #include "StateGameOver.h"
 #include "StateWin.h"
 
+#include "SpriteAxe.h"
+#include "SpriteParticle.h"
+#include "SpritePrincess.h"
+#include "SpriteZurrapa.h"
+
 STATE next_state = STATE_MENU;// STATE_GAME; //STATE_MENU;
 
 STATE current_state = N_STATES;
 UINT8 state_running = 0;
-
-const UINT8 collision_tiles[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 47, 48, 53, 0};
 
 void Start() {
 	PUSH_BANK(2);
@@ -48,11 +51,41 @@ void Update() {
 	POP_BANK;
 }
 
+UINT8 GetTileReplacement(UINT8 t) {
+	if(current_state == STATE_GAME) {
+		switch(t) {
+				case 54: return SPRITE_TYPE_ZURRAPA;
+		}
+	}
+	return 255u;
+}
+
+void StartSprite(UINT8 type, struct Sprite* sprite) {
+	PUSH_BANK(2);
+	switch((SPRITE_TYPE)sprite->type) {
+		case SPRITE_TYPE_PRINCESS:      StartPrincess(sprite); break;
+		case SPRITE_TYPE_ZURRAPA:       StartZurrapa(sprite);  break;
+		case SPRITE_TYPE_DEAD_PARTICLE: StartParticle(sprite); break;
+		case SPRITE_TYPE_AXE:           StartAxe(sprite);      break;
+	}
+	POP_BANK;
+}
+
+void UpdateSprite() {
+	PUSH_BANK(2);
+	switch((SPRITE_TYPE)sprite_manager_current_sprite->type) {
+		case SPRITE_TYPE_PRINCESS:      UpdatePrincess(); break;
+		case SPRITE_TYPE_ZURRAPA:       UpdateZurrapa();  break;
+		case SPRITE_TYPE_DEAD_PARTICLE: UpdateParticle(); break;
+		case SPRITE_TYPE_AXE:           UpdateAxe();      break;
+	}
+	POP_BANK;
+}
+
 void SetState(STATE state) {
 	state_running = 0;
 	next_state = state;
 }
-
 
 void PlayMusic(unsigned char* music, unsigned char bank, unsigned char loop) {
 	gbt_play(music, bank, 7);
@@ -95,45 +128,3 @@ void main() {
 	}
 }
 
-UINT8 GetTileReplacement(UINT8 t) {
-	switch(t) {
-			case 54: return SPRITE_TYPE_ZURRAPA;
-	}
-	return 255u;
-}
-
-
-void UPDATE_TILE(UINT16 x, UINT16 y, UINT8* t) {
-	UINT8 i = *t;
-	struct Sprite* s = 0;
-	SPRITE_TYPE type = 255u;
-	UINT16 id = 0u;
-	UINT16 tmp_y;
-	
-	if(current_state == STATE_GAME) {
-		type = GetTileReplacement(*t);
-
-		if(type != 255u) {
-			tmp_y = y << 8;
-			id = (0x00FF & x) | ((0xFF00 & tmp_y)); // (y >> 3) << 8 == y << 5
-			for(i = 0u; i != sprite_manager_updatables[0]; ++i) {
-				s = &sprite_manager_sprites[sprite_manager_updatables[i + 1]];
-				if(s->unique_id == id && s->type == type) {
-					s = 0;
-					break;
-				}
-			}
-
-			if(s) {
-				s = SpriteManagerAdd(type);
-				s->x = x << 3;
-				s->y = (y - 1) << 3;
-				s->unique_id = id;
-			}
-
-			i = 0u;
-		}
-	}
-
-	set_bkg_tiles(0x1F & x, 0x1F & y, 1, 1, &i); //i pointing to zero will replace the tile by the deafault one
-}
