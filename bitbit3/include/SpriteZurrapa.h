@@ -4,6 +4,6 @@
 #include "Sprite.h"
 
 void StartZurrapa(struct Sprite* sprite);
-void UpdateZurrapa(struct Sprite* sprite, UINT8 idx);
+void UpdateZurrapa();
 
 #endif

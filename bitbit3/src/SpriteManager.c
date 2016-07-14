@@ -80,43 +80,42 @@ void SpriteManagerRemoveSprite(struct Sprite* sprite) {
 	}
 }
 
+UINT8 sprite_manager_current_index;
+struct Sprite* sprite_manager_current_sprite;
 void SpriteManagerUpdate() {
-	UINT8 i;
-	struct Sprite* sprite;
-
-	for(i = 0u; i != sprite_manager_updatables[0]; ++i) {
-		sprite = &sprite_manager_sprites[sprite_manager_updatables[i + 1]];
-		if(!sprite->marked_for_removal) {
+	for(sprite_manager_current_index = 0u; sprite_manager_current_index != sprite_manager_updatables[0]; ++sprite_manager_current_index) {
+		sprite_manager_current_sprite = &sprite_manager_sprites[sprite_manager_updatables[sprite_manager_current_index + 1]];
+		if(!sprite_manager_current_sprite->marked_for_removal) {
 			PUSH_BANK(2);
-			switch((SPRITE_TYPE)sprite->type) {
-				case SPRITE_TYPE_PRINCESS:      UpdatePrincess(sprite, i); break;
-				case SPRITE_TYPE_ZURRAPA:       UpdateZurrapa(sprite, i);  break;
-				case SPRITE_TYPE_DEAD_PARTICLE: UpdateParticle(sprite, i); break;
-				case SPRITE_TYPE_AXE:           UpdateAxe(sprite, i);      break;
+			switch((SPRITE_TYPE)sprite_manager_current_sprite->type) {
+				case SPRITE_TYPE_PRINCESS:      UpdatePrincess(); break;
+				case SPRITE_TYPE_ZURRAPA:       UpdateZurrapa();  break;
+				case SPRITE_TYPE_DEAD_PARTICLE: UpdateParticle(); break;
+				case SPRITE_TYPE_AXE:           UpdateAxe();      break;
 			}
 			POP_BANK;
 
-			if( ((scroll_x - sprite->x - 16u - sprite->lim_x)          & 0x8000u) &&
-			    ((sprite->x - scroll_x - SCREENWIDTH - sprite->lim_x)  & 0x8000u) &&
-					((scroll_y - sprite->y - 16u - sprite->lim_y)          & 0x8000u) &&
-					((sprite->y - scroll_y - SCREENHEIGHT - sprite->lim_y) & 0x8000u)
+			if( ((scroll_x - sprite_manager_current_sprite->x - 16u - sprite_manager_current_sprite->lim_x)          & 0x8000u) &&
+			    ((sprite_manager_current_sprite->x - scroll_x - SCREENWIDTH - sprite_manager_current_sprite->lim_x)  & 0x8000u) &&
+					((scroll_y - sprite_manager_current_sprite->y - 16u - sprite_manager_current_sprite->lim_y)          & 0x8000u) &&
+					((sprite_manager_current_sprite->y - scroll_y - SCREENHEIGHT - sprite_manager_current_sprite->lim_y) & 0x8000u)
 			) { 
-				DrawSprite(sprite);
+				DrawSprite(sprite_manager_current_sprite);
 			} else {
-				SpriteManagerRemove(i);
+				SpriteManagerRemove(sprite_manager_current_index);
 			}
 		}
 	}
 
 	if(sprite_manager_removal_check) {
 		//We must remove sprites in inverse order because everytime we remove one the vector shrinks and displaces all elements
-		for(i = sprite_manager_updatables[0] - 1; i + 1 != 0u; i -= 1u) {
-			sprite = &sprite_manager_sprites[sprite_manager_updatables[i + 1u]];
-			if(sprite->marked_for_removal) {
-				StackPush(sprite_manager_sprites_pool, sprite_manager_updatables[i + 1u]);
-				VectorRemovePos(sprite_manager_updatables, i);
-				move_sprite(sprite->oam_idx, 200, 200);
-				move_sprite(sprite->oam_idx + 1, 200, 200);
+		for(sprite_manager_current_index = sprite_manager_updatables[0] - 1; sprite_manager_current_index + 1 != 0u; sprite_manager_current_index -= 1u) {
+			sprite_manager_current_sprite = &sprite_manager_sprites[sprite_manager_updatables[sprite_manager_current_index + 1u]];
+			if(sprite_manager_current_sprite->marked_for_removal) {
+				StackPush(sprite_manager_sprites_pool, sprite_manager_updatables[sprite_manager_current_index + 1u]);
+				VectorRemovePos(sprite_manager_updatables, sprite_manager_current_index);
+				move_sprite(sprite_manager_current_sprite->oam_idx, 200, 200);
+				move_sprite(sprite_manager_current_sprite->oam_idx + 1, 200, 200);
 			}
 		}
 		sprite_manager_removal_check = 0;

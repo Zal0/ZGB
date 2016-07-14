@@ -12,8 +12,8 @@ void StartParticle(struct Sprite* sprite) {
 	sprite->anim_speed = 33u;
 }
 
-void UpdateParticle(struct Sprite* sprite, UINT8 idx) {
-	if(sprite->current_frame == 5) {
-		SpriteManagerRemove(idx);
+void UpdateParticle() {
+	if(sprite_manager_current_sprite->current_frame == 5) {
+		SpriteManagerRemove(sprite_manager_current_index);
 	}
 }

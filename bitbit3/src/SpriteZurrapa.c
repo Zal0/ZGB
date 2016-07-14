@@ -15,6 +15,6 @@ void StartZurrapa(struct Sprite* sprite) {
 	SetSpriteAnim(sprite, anim_zurrapa_idle, 5u);
 }
 
-void UpdateZurrapa(struct Sprite* sprite, UINT8 idx) {
+void UpdateZurrapa() {
 	
 }

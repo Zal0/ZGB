@@ -14,7 +14,7 @@ void StartAxe(struct Sprite* sprite) {
 	SetSpriteAnim(sprite, anim_axe, 5u);
 }
 
-void UpdateAxe(struct Sprite* sprite, UINT8 idx) {
+void UpdateAxe() {
 	UINT8 i;
 	struct Sprite* spr;
 	struct Sprite* spr2;
@@ -22,7 +22,7 @@ void UpdateAxe(struct Sprite* sprite, UINT8 idx) {
 	for(i = 0u; i != sprite_manager_updatables[0]; ++i) {
 		spr = &sprite_manager_sprites[sprite_manager_updatables[i + 1u]];
 		if(spr->type == SPRITE_TYPE_ZURRAPA) {
-			if(CheckCollision(sprite, spr)) {
+			if(CheckCollision(sprite_manager_current_sprite, spr)) {
 				spr2 = SpriteManagerAdd(SPRITE_TYPE_DEAD_PARTICLE);
 				spr2->x = spr->x;
 				spr2->y = spr->y;

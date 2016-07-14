@@ -4,6 +4,6 @@
 #include "Sprite.h"
 
 void StartAxe(struct Sprite* sprite);
-void UpdateAxe(struct Sprite* sprite, UINT8 idx);
+void UpdateAxe();
 
 #endif
