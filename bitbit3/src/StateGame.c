@@ -21,7 +21,7 @@
 
 extern const unsigned char * level_mod_Data[];
 
-const UINT8 collision_tiles[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 47, 48, 53, 0};
+extern UINT8 collision_tiles[];
 
 UINT8 princess_idx;
 UINT8 particles_idx;
@@ -63,7 +63,7 @@ void StartStateGame() {
 	spr_tmp->y = 110u;*/
 
 	set_bkg_data(0, 55, tilemap);
-	InitScroll(level1Width, level1Height, level1, 0, 0, collision_tiles, 2);
+	InitScroll(level1Width, level1Height, level1, 0, 0, collision_tiles, 3);
 	SHOW_BKG;
 
 	PlayMusic(level_mod_Data, 3, 1);

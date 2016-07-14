@@ -1,5 +1,6 @@
 #include "Scroll.h"
 #include "Sprite.h"
+#include "BankManager.h"
 
 #define SCREEN_TILES_W       20u // 160 >> 3 = 20
 #define SCREEN_TILES_H       18u // 144 >> 3 = 18
@@ -26,6 +27,7 @@ UINT8 scroll_bank;
 void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT16 x, UINT16 y, UINT8* coll_list, UINT8 bank) {
 	UINT8 i;
 	
+	PUSH_BANK(bank);
 	scroll_tiles_w = map_w;
 	scroll_tiles_h = map_h;
 	scroll_map = map;
@@ -51,6 +53,8 @@ void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT16 x, UINT16
 	/*for(i = 0u; i != SCREEN_TILE_REFRES_W && i != scroll_tiles_w; ++i) {
 		ScrollUpdateColumn((scroll_x >> 3) + i, scroll_y >> 3);
 	}*/
+
+	POP_BANK;
 }
 
 UINT16 pending_w_x, pending_w_y;
@@ -133,9 +137,11 @@ void FinishPendingScrollUpdates() {
 }
 
 void RefreshScroll() {
+	PUSH_BANK(scroll_bank);
 	if(scroll_target) {
 		MoveScroll(scroll_target->x + scroll_target_offset_x - (SCREENWIDTH >> 1), scroll_target->y + scroll_target_offset_y - (SCREENHEIGHT >> 1));
 	}
+	POP_BANK;
 }
 
 void MoveScroll(UINT16 x, UINT16 y) {
@@ -188,6 +194,8 @@ void MoveScroll(UINT16 x, UINT16 y) {
 }
 
 UINT8* GetScrollTilePtr(UINT16 x, UINT16 y) {
-	SWITCH_ROM_MBC1(scroll_bank); //does this have any performance hit?
+	//Ensure you have selected scroll_bank before calling this function
+	//And it is returning a pointer so don't swap banks after you get the value
+
 	return scroll_map + (scroll_tiles_w * y + x); //TODO: fix this mult!!
 }

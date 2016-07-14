@@ -35,6 +35,9 @@
     <ClInclude Include="..\bitbit3\include\Princess.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\BankManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Frame.c">
@@ -56,6 +59,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Stack.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BankManager.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

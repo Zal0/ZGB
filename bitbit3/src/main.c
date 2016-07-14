@@ -6,6 +6,7 @@
 #include "Keys.h"
 #include "gbt_player.h"
 #include "SpriteManager.h"
+#include "BankManager.h"
 
 #include "StateDisclaimer.h"
 #include "StateMenu.h"
@@ -19,8 +20,10 @@ STATE next_state = STATE_MENU;// STATE_GAME; //STATE_MENU;
 STATE current_state = N_STATES;
 UINT8 state_running = 0;
 
+const UINT8 collision_tiles[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 47, 48, 53, 0};
+
 void Start() {
-	SWITCH_ROM_MBC1(2);
+	PUSH_BANK(2);
 	switch(current_state) {
 		case STATE_DISCLAIMER: StartStateDisclaimer(); break;
 		case STATE_MENU:       StartStateMenu();       break;
@@ -29,10 +32,11 @@ void Start() {
 		case STATE_WIN:        StartStateWin();        break;
 		case STATE_TESTS:      StartStateTests();      break;
 	}
+	POP_BANK;
 }
 
 void Update() {
-	SWITCH_ROM_MBC1(2);
+	PUSH_BANK(2);
 	switch(current_state) {
 		case STATE_DISCLAIMER: UpdateStateDisclaimer(); break;
 		case STATE_MENU:       UpdateStateMenu();       break;
@@ -41,6 +45,7 @@ void Update() {
 		case STATE_WIN:				 UpdateStateWin();        break;
 		case STATE_TESTS:      UpdateStateTests();      break;
 	}
+	POP_BANK;
 }
 
 void SetState(STATE state) {
@@ -52,14 +57,14 @@ void SetState(STATE state) {
 void PlayMusic(unsigned char* music, unsigned char bank, unsigned char loop) {
 	gbt_play(music, bank, 7);
 	gbt_loop(loop);
-	SWITCH_ROM_MBC1(2);
+	REFRESH_BANK;
 }
 
 UINT8 vbl_count;
 void vbl_update() {
 	vbl_count ++;
 	gbt_update();
-	SWITCH_ROM_MBC1(2);
+	REFRESH_BANK;
 }
 
 void main() {
@@ -90,19 +95,25 @@ void main() {
 	}
 }
 
+UINT8 GetTileReplacement(UINT8 t) {
+	switch(t) {
+			case 54: return SPRITE_TYPE_ZURRAPA;
+	}
+	return 255u;
+}
+
+
 void UPDATE_TILE(UINT16 x, UINT16 y, UINT8* t) {
 	UINT8 i = *t;
 	struct Sprite* s = 0;
-	SPRITE_TYPE type = N_SPRITE_TYPES;
+	SPRITE_TYPE type = 255u;
 	UINT16 id = 0u;
 	UINT16 tmp_y;
 	
 	if(current_state == STATE_GAME) {
-		switch(*t) {
-			case 54: type = SPRITE_TYPE_ZURRAPA; break;
-		}
+		type = GetTileReplacement(*t);
 
-		if(type != N_SPRITE_TYPES) {
+		if(type != 255u) {
 			tmp_y = y << 8;
 			id = (0x00FF & x) | ((0xFF00 & tmp_y)); // (y >> 3) << 8 == y << 5
 			for(i = 0u; i != sprite_manager_updatables[0]; ++i) {

@@ -1,5 +1,6 @@
 #include "Sprite.h"
 #include "Scroll.h"
+#include "BankManager.h"
 
 void InitSprite(struct Sprite* sprite, FrameSize size, UINT8 first_tile) {
 	sprite->size = size;
@@ -52,6 +53,7 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 	UINT8 i;
 	UINT8 ret = 0;
 
+	PUSH_BANK(scroll_bank);
 	if(scroll_map) {
 		if(x > 0) {
 			start_x = (sprite->x + sprite->coll_x + sprite->coll_w + x);
@@ -114,6 +116,7 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 			}
 		}
 	}
+	POP_BANK;
 
 	sprite->x += (INT16)x;
 	sprite->y += (INT16)y;

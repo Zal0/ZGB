@@ -7,6 +7,8 @@
 #include "SpriteParticle.h"
 #include "SpriteAxe.h"
 
+#include "BankManager.h"
+
 #include <string.h>
 
 //Pool
@@ -49,12 +51,14 @@ struct Sprite* SpriteManagerAdd(SPRITE_TYPE sprite_type) {
 
 	VectorAdd(sprite_manager_updatables, sprite_idx);
 
+	PUSH_BANK(2);
 	switch((SPRITE_TYPE)sprite->type) {
 		case SPRITE_TYPE_PRINCESS:      StartPrincess(sprite); break;
 		case SPRITE_TYPE_ZURRAPA:       StartZurrapa(sprite);  break;
 		case SPRITE_TYPE_DEAD_PARTICLE: StartParticle(sprite); break;
 		case SPRITE_TYPE_AXE:           StartAxe(sprite);      break;
 	}
+	POP_BANK;
 
 	return sprite;
 }
@@ -83,12 +87,14 @@ void SpriteManagerUpdate() {
 	for(i = 0u; i != sprite_manager_updatables[0]; ++i) {
 		sprite = &sprite_manager_sprites[sprite_manager_updatables[i + 1]];
 		if(!sprite->marked_for_removal) {
+			PUSH_BANK(2);
 			switch((SPRITE_TYPE)sprite->type) {
 				case SPRITE_TYPE_PRINCESS:      UpdatePrincess(sprite, i); break;
 				case SPRITE_TYPE_ZURRAPA:       UpdateZurrapa(sprite, i);  break;
 				case SPRITE_TYPE_DEAD_PARTICLE: UpdateParticle(sprite, i); break;
 				case SPRITE_TYPE_AXE:           UpdateAxe(sprite, i);      break;
 			}
+			POP_BANK;
 
 			if( ((scroll_x - sprite->x - 16u - sprite->lim_x)          & 0x8000u) &&
 			    ((sprite->x - scroll_x - SCREENWIDTH - sprite->lim_x)  & 0x8000u) &&
