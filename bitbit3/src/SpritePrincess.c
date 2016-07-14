@@ -72,20 +72,20 @@ void CheckCollisionTile(struct Sprite* sprite, UINT8 idx) {
 
 void MovePrincess(struct Sprite* sprite, UINT8 idx) {
 	if(KEY_PRESSED(J_RIGHT)) {
-		tile_collision = TranslateSprite(sprite, 1, 0);
+		tile_collision = TranslateSprite(sprite, 1 << delta_time, 0);
 		sprite->flags = 0u;
 		CheckCollisionTile(sprite, idx);
 	} else if(KEY_PRESSED(J_LEFT)) {
-		tile_collision = TranslateSprite(sprite, -1, 0);
+		tile_collision = TranslateSprite(sprite, -1 << delta_time, 0);
 		sprite->flags = OAM_VERTICAL_FLAG;
 		CheckCollisionTile(sprite, idx);
 	}
 	
 	if(KEY_PRESSED(J_UP)) {
-		tile_collision = TranslateSprite(sprite, 0, -1);
+		tile_collision = TranslateSprite(sprite, 0, -1 << delta_time);
 		CheckCollisionTile(sprite, idx);
 	} else if(KEY_PRESSED(J_DOWN)) {
-		tile_collision = TranslateSprite(sprite, 0, 1);
+		tile_collision = TranslateSprite(sprite, 0, 1 << delta_time);
 		CheckCollisionTile(sprite, idx);
 	}
 }
@@ -147,13 +147,13 @@ void UpdatePrincess() {
 	}
 
 	//Simple gravity physics 
-	/*if(princess_accel_y < 40) {
-		princess_accel_y += 2;	
+	if(princess_accel_y < 40) {
+		princess_accel_y += 2 << delta_time;
 	}
-	if(tile_collision = TranslateSprite(sprite_manager_current_sprite, 0, (princess_accel_y >> 4))) {
+	if(tile_collision = TranslateSprite(sprite_manager_current_sprite, 0, (princess_accel_y >> 4) << delta_time)) {
 		princess_accel_y = 0;
 		CheckCollisionTile(sprite_manager_current_sprite, sprite_manager_current_index);
-	}*/
+	}
 
 	//Check enemy collision
 	for(i = 0u; i != sprite_manager_updatables[0]; ++i) {

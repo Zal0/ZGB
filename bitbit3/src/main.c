@@ -20,6 +20,8 @@
 #include "SpritePrincess.h"
 #include "SpriteZurrapa.h"
 
+UINT8 delta_time;
+
 STATE next_state = STATE_MENU;// STATE_GAME; //STATE_MENU;
 
 STATE current_state = N_STATES;
@@ -110,6 +112,7 @@ void main() {
 		while (state_running) {
 			if(!vbl_count)
 				wait_vbl_done();
+			delta_time = vbl_count == 1u ? 0u : 1u;
 			vbl_count = 0;
 			RefreshScroll();
 
