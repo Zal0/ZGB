@@ -27,7 +27,6 @@ UINT8 scroll_bank;
 void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT16 x, UINT16 y, UINT8* coll_list, UINT8 bank) {
 	UINT8 i;
 	
-	PUSH_BANK(bank);
 	scroll_tiles_w = map_w;
 	scroll_tiles_h = map_h;
 	scroll_map = map;
@@ -46,6 +45,7 @@ void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT16 x, UINT16
 		}
 	}
 
+	PUSH_BANK(bank);
 	move_bkg(scroll_x, scroll_y);
 	for(i = 0u; i != SCREEN_TILE_REFRES_H && i != scroll_tiles_h; ++i) {
 		ScrollUpdateRow((scroll_x >> 3), (scroll_y >> 3) + i);
