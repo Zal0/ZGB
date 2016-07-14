@@ -5,7 +5,7 @@
 #include "Stack.h"
 #include "Sprite.h"
 
-#define N_SPRITE_MANAGER_SPRITES 10
+#define N_SPRITE_MANAGER_SPRITES 20
 
 typedef enum {
 	SPRITE_TYPE_PRINCESS,
