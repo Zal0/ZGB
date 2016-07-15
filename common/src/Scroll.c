@@ -37,8 +37,7 @@ void UPDATE_TILE(UINT16 x, UINT16 y, UINT8* t) {
 	if(type != 255u) {
 		tmp_y = y << 8;
 		id = (0x00FF & x) | ((0xFF00 & tmp_y)); // (y >> 3) << 8 == y << 5
-		for(i = 0u; i != sprite_manager_updatables[0]; ++i) {
-			s = &sprite_manager_sprites[sprite_manager_updatables[i + 1]];
+		for(i = 0u, s = &sprite_manager_sprites[sprite_manager_updatables[i + 1]]; i != sprite_manager_updatables[0]; ++i) {
 			if(s->unique_id == id && s->type == type) {
 				s = 0;
 				break;
@@ -47,9 +46,11 @@ void UPDATE_TILE(UINT16 x, UINT16 y, UINT8* t) {
 
 		if(s) {
 			s = SpriteManagerAdd(type);
-			s->x = x << 3;
-			s->y = (y - 1) << 3;
-			s->unique_id = id;
+			if(s) {
+				s->x = x << 3;
+				s->y = (y - 1) << 3;
+				s->unique_id = id;
+			}
 		}
 
 		i = 0u;
