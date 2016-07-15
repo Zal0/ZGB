@@ -30,10 +30,11 @@ void SetSpriteAnim(struct Sprite* sprite, UINT8* data, UINT8 speed) {
 	}
 }
 
+extern UINT8 delta_time;
 void DrawSprite(struct Sprite* sprite) {
 	if(sprite->data) {
 		
-		sprite->accum_ticks += sprite->anim_speed;
+		sprite->accum_ticks += sprite->anim_speed << delta_time;
 		if(sprite->accum_ticks > 100u) {
 			sprite->current_frame ++;
 			if(sprite->current_frame == sprite->data[0]){
