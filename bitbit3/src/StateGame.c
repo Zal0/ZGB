@@ -42,26 +42,6 @@ void StartStateGame() {
 
 	SpriteManagerAdd(SPRITE_TYPE_PRINCESS);
 
-	/*spr_tmp = SpriteManagerAdd(SPRITE_TYPE_ZURRAPA);
-	spr_tmp->x = 100u;
-	spr_tmp->y = 110u;
-
-	spr_tmp = SpriteManagerAdd(SPRITE_TYPE_ZURRAPA);
-	spr_tmp->x = 120u;
-	spr_tmp->y = 110u;
-
-	spr_tmp = SpriteManagerAdd(SPRITE_TYPE_ZURRAPA);
-	spr_tmp->x = 140u;
-	spr_tmp->y = 110u;
-
-	spr_tmp = SpriteManagerAdd(SPRITE_TYPE_ZURRAPA);
-	spr_tmp->x = 160u;
-	spr_tmp->y = 110u;
-
-	spr_tmp = SpriteManagerAdd(SPRITE_TYPE_ZURRAPA);
-	spr_tmp->x = 180u;
-	spr_tmp->y = 110u;*/
-
 	set_bkg_data(0, 55, tilemap);
 	InitScroll(level1Width, level1Height, level1, 0, 0, collision_tiles, 3);
 	SHOW_BKG;
