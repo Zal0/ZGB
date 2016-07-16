@@ -12,6 +12,7 @@
 
 #include "resources/princess.h"
 
+//#define DEBUG_CONTROLS
 
 //Princes anims
 const UINT8 anim_walk[] = {12, 0, 1, 2, 3, 2, 1, 0, 4, 5, 6, 5, 4};
@@ -80,6 +81,7 @@ void MovePrincess(struct Sprite* sprite, UINT8 idx) {
 		CheckCollisionTile(sprite, idx);
 	}
 	
+#ifdef DEBUG_CONTROLS
 	if(KEY_PRESSED(J_UP)) {
 		tile_collision = TranslateSprite(sprite, 0, -1 << delta_time);
 		CheckCollisionTile(sprite, idx);
@@ -87,6 +89,7 @@ void MovePrincess(struct Sprite* sprite, UINT8 idx) {
 		tile_collision = TranslateSprite(sprite, 0, 1 << delta_time);
 		CheckCollisionTile(sprite, idx);
 	}
+#endif
 }
 
 void UpdateAxePos(struct Sprite* sprite) {
@@ -145,6 +148,7 @@ void UpdatePrincess() {
 			break;
 	}
 
+#ifndef DEBUG_CONTROLS
 	//Simple gravity physics 
 	if(princess_accel_y < 40) {
 		princess_accel_y += 2 << delta_time;
@@ -153,6 +157,7 @@ void UpdatePrincess() {
 		princess_accel_y = 0;
 		CheckCollisionTile(sprite_manager_current_sprite, sprite_manager_current_index);
 	}
+#endif
 
 	//Check enemy collision
 	for(i = 0u; i != sprite_manager_updatables[0]; ++i) {
