@@ -27,29 +27,30 @@ STATE next_state = STATE_MENU;// STATE_GAME; //STATE_MENU;
 STATE current_state = N_STATES;
 UINT8 state_running = 0;
 
+typedef void (*Void_Func_Void)();
+UINT8 stateBanks[N_STATES];
+Void_Func_Void startFuncs[N_STATES];
+Void_Func_Void updateFuncs[N_STATES];
+#define DEF_STATE(STATE_IDX, BANK, START_FUNC, UPDATE_FUNC) stateBanks[STATE_IDX] = BANK; startFuncs[STATE_IDX] = START_FUNC; updateFuncs[STATE_IDX] = UPDATE_FUNC;
+
+void InitStates() {
+	DEF_STATE(STATE_DISCLAIMER, 0, StartStateDisclaimer, UpdateStateDisclaimer);
+	DEF_STATE(STATE_MENU,       2, StartStateMenu,       UpdateStateMenu);
+	DEF_STATE(STATE_GAME,       2, StartStateGame,       UpdateStateGame);
+	DEF_STATE(STATE_GAME_OVER,  2, StartStateGameOver,   UpdateStateGameOver);
+	DEF_STATE(STATE_WIN,        2, StartStateWin,        UpdateStateWin);
+	DEF_STATE(STATE_TESTS,      0, StartStateTests,      UpdateStateTests);
+}
+
 void Start() {
-	PUSH_BANK(2);
-	switch(current_state) {
-		case STATE_DISCLAIMER: StartStateDisclaimer(); break;
-		case STATE_MENU:       StartStateMenu();       break;
-		case STATE_GAME:       StartStateGame();       break;
-		case STATE_GAME_OVER:  StartStateGameOver();   break;
-		case STATE_WIN:        StartStateWin();        break;
-		case STATE_TESTS:      StartStateTests();      break;
-	}
+	PUSH_BANK(stateBanks[current_state]);
+		(startFuncs[current_state])();
 	POP_BANK;
 }
 
 void Update() {
-	PUSH_BANK(2);
-	switch(current_state) {
-		case STATE_DISCLAIMER: UpdateStateDisclaimer(); break;
-		case STATE_MENU:       UpdateStateMenu();       break;
-		case STATE_GAME:       UpdateStateGame();       break;
-		case STATE_GAME_OVER:  UpdateStateGameOver();   break;
-		case STATE_WIN:				 UpdateStateWin();        break;
-		case STATE_TESTS:      UpdateStateTests();      break;
-	}
+	PUSH_BANK(stateBanks[current_state]);
+		updateFuncs[current_state]();
 	POP_BANK;
 }
 
@@ -103,6 +104,8 @@ void vbl_update() {
 }
 
 void main() {
+	InitStates();
+
 	disable_interrupts();
 	add_VBL(vbl_update);
 	set_interrupts(VBL_IFLAG);
