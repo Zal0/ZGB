@@ -26,7 +26,7 @@ void SpriteManagerReset() {
 	//place all sprites on the pool
 	sprite_manager_sprites_pool[0] = N_SPRITE_MANAGER_SPRITES;
 	for(i = 0; i != N_SPRITE_MANAGER_SPRITES; ++i) {
-		sprite_manager_sprites[i] = &sprite_manager_sprites_mem[sizeof(struct Sprite) * i];
+		sprite_manager_sprites[i] = &sprite_manager_sprites_mem[sizeof(struct Sprite) * (UINT16)i];
 
 		sprite_manager_sprites_pool[i + 1] = i;
 
