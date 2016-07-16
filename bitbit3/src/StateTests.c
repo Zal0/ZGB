@@ -7,6 +7,8 @@
 
 #include "Vector.h"
 #include "Stack.h"
+#include "SpriteManager.h"
+extern UINT8 sprite_manager_sprites_mem[];
 
 void StartStateTests() {
 	/*UINT8 i;
@@ -22,6 +24,15 @@ void StartStateTests() {
 	}
 	PRINT_STACK(s_test);
 	PRINT_VECTOR(v_test);*/
+
+	/*UINT8 i;
+	SpriteManagerReset();
+	for(i = 0; i != 20; ++i) {
+		SpriteManagerAdd(0);
+	}
+	for(i = 0; i != 20; ++i) {
+		printf("%u %u xx", (UINT16)(sprite_manager_sprites[i]), (UINT16)(sprite_manager_sprites[i]->oam_idx));
+	}*/
 }
 
 void UpdateStateTests() {
