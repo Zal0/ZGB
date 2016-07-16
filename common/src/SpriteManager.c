@@ -24,13 +24,12 @@ void SpriteManagerReset() {
 	UINT8 i;
 
 	//place all sprites on the pool
-	sprite_manager_sprites_pool[0] = N_SPRITE_MANAGER_SPRITES;
+	sprite_manager_sprites_pool[0] = 0;
 	for(i = 0; i != N_SPRITE_MANAGER_SPRITES; ++i) {
 		sprite_manager_sprites[i] = &sprite_manager_sprites_mem[sizeof(struct Sprite) * (UINT16)i];
-
-		sprite_manager_sprites_pool[i + 1] = i;
-
 		sprite_manager_sprites[i]->oam_idx = i << 1;
+
+		StackPush(sprite_manager_sprites_pool, i);		
 		move_sprite(i << 1, 200, 200);
 		move_sprite((i << 1) + 1, 200, 200);
 	}
@@ -40,7 +39,7 @@ void SpriteManagerReset() {
 	sprite_manager_removal_check = 0;
 }
 
-struct Sprite* SpriteManagerAdd(SPRITE_TYPE sprite_type) {
+struct Sprite* SpriteManagerAdd(UINT8 sprite_type) {
 	UINT8 sprite_idx;
 	struct Sprite* sprite;
 
