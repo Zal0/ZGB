@@ -30,8 +30,6 @@ UINT8 zurrapa_idx;
 struct Sprite* game_over_particle;
 
 void StartStateGame() {
-	struct Sprite* spr_tmp;
-
 	game_over_particle = 0;
 
 	SPRITES_8x16;

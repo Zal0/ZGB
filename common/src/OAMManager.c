@@ -10,12 +10,7 @@ UINT8 LoadSprite(UINT8 n_tiles, unsigned char* data) {
 }
 
 
-void DrawOAMSprite(UINT8 oam_idx, UINT8 idx, OAMSize size, UINT8 x, UINT8 y, UINT8 flags) {
-	if(size == OAM_SIZE_8x8)
-		SPRITES_8x8;
-	else
-		SPRITES_8x16;
-
+void DrawOAMSprite(UINT8 oam_idx, UINT8 idx, UINT8 x, UINT8 y, UINT8 flags) {
 	move_sprite(oam_idx, x, y);
 	set_sprite_tile(oam_idx, idx);
 	set_sprite_prop(oam_idx, flags);

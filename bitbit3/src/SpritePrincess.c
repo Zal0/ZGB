@@ -33,7 +33,6 @@ extern UINT8 princess_idx;
 extern struct Sprite* game_over_particle;
 
 void StartPrincess(struct Sprite* sprite) {
-	SPRITES_8x16;
 	InitSprite(sprite, FRAME_16x16, princess_idx >> 2);
 	SetSpriteAnim(sprite, anim_idle, 3u);
 	sprite->x = 32u;

@@ -17,7 +17,7 @@ DECLARE_VECTOR(sprite_manager_updatables, N_SPRITE_MANAGER_SPRITES);
 UINT8 sprite_manager_removal_check;
 
 //To be defined on the main app
-void StartSprite(UINT8 type, struct Sprite* sprite);
+void StartSprite(struct Sprite* sprite);
 void UpdateSprite();
 
 void SpriteManagerReset() {
@@ -53,7 +53,7 @@ struct Sprite* SpriteManagerAdd(SPRITE_TYPE sprite_type) {
 
 	VectorAdd(sprite_manager_updatables, sprite_idx);
 
-	StartSprite(sprite_type, sprite);
+	StartSprite(sprite);
 
 	return sprite;
 }

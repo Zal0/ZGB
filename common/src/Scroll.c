@@ -174,9 +174,9 @@ void FinishPendingScrollUpdates() {
 
 void RefreshScroll() {
 	PUSH_BANK(scroll_bank);
-	/*if(scroll_target) {
+	if(scroll_target) {
 		MoveScroll(scroll_target->x + scroll_target_offset_x - (SCREENWIDTH >> 1), scroll_target->y + scroll_target_offset_y - (SCREENHEIGHT >> 1));
-	}*/
+	}
 	POP_BANK;
 }
 

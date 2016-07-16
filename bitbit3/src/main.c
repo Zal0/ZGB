@@ -62,7 +62,7 @@ UINT8 GetTileReplacement(UINT8 t) {
 	return 255u;
 }
 
-void StartSprite(UINT8 type, struct Sprite* sprite) {
+void StartSprite(struct Sprite* sprite) {
 	PUSH_BANK(2);
 	switch((SPRITE_TYPE)sprite->type) {
 		case SPRITE_TYPE_PRINCESS:      StartPrincess(sprite); break;
