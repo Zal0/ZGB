@@ -37,7 +37,7 @@ void UPDATE_TILE(UINT16 x, UINT16 y, UINT8* t) {
 	if(type != 255u) {
 		tmp_y = y << 8;
 		id = (0x00FF & x) | ((0xFF00 & tmp_y)); // (y >> 3) << 8 == y << 5
-		for(i = 0u, s = &sprite_manager_sprites[sprite_manager_updatables[i + 1]]; i != sprite_manager_updatables[0]; ++i) {
+		for(i = 0u, s = sprite_manager_sprites[sprite_manager_updatables[i + 1]]; i != sprite_manager_updatables[0]; ++i) {
 			if(s->unique_id == id && s->type == type) {
 				s = 0;
 				break;
@@ -174,9 +174,9 @@ void FinishPendingScrollUpdates() {
 
 void RefreshScroll() {
 	PUSH_BANK(scroll_bank);
-	if(scroll_target) {
+	/*if(scroll_target) {
 		MoveScroll(scroll_target->x + scroll_target_offset_x - (SCREENWIDTH >> 1), scroll_target->y + scroll_target_offset_y - (SCREENHEIGHT >> 1));
-	}
+	}*/
 	POP_BANK;
 }
 
