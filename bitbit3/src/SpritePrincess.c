@@ -66,7 +66,7 @@ void CheckCollisionTile(struct Sprite* sprite, UINT8 idx) {
 	if(tile_collision == 33u) {
 		Die(sprite, idx);
 	} else if(tile_collision == 53u) {
-		SetState(STATE_WIN);
+		SetState(StateWin);
 	}
 }
 

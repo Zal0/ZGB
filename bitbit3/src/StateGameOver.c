@@ -23,6 +23,6 @@ void StartStateGameOver() {
 
 void UpdateStateGameOver() {
 	if(KEY_TICKED(J_START)) {
-		SetState(STATE_MENU);
+		SetState(StateMenu);
 	}
 }

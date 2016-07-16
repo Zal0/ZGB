@@ -22,6 +22,6 @@ void StartStateMenu() {
 
 void UpdateStateMenu() {
 	if(KEY_TICKED(J_START)) {
-		SetState(STATE_GAME);
+		SetState(StateGame);
 	}
 }

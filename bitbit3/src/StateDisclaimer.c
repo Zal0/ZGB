@@ -29,6 +29,6 @@ void StartStateDisclaimer() {
 void UpdateStateDisclaimer() {
 	/*if(KEY_TICKED(J_START)) {
 		disable_interrupts();
-		SetState(STATE_MENU);
+		SetState(StateMenu);
 	}*/
 }

@@ -4,12 +4,12 @@
 #include <gb/gb.h>
 
 typedef enum {
-	STATE_DISCLAIMER,
-	STATE_MENU,
-	STATE_GAME,
-	STATE_GAME_OVER,
-	STATE_WIN,
-	STATE_TESTS,
+	StateDisclaimer,
+	StateMenu,
+	StateGame,
+	StateGameOver,
+	StateWin,
+	StateTests,
 
 	N_STATES
 } STATE;

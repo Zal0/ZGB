@@ -18,6 +18,6 @@ void StartStateWin() {
 
 void UpdateStateWin() {
 	if(KEY_TICKED(J_START)) {
-		SetState(STATE_MENU);
+		SetState(StateMenu);
 	}
 }

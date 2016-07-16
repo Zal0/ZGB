@@ -22,7 +22,7 @@
 
 UINT8 delta_time;
 
-STATE next_state = STATE_MENU;// STATE_GAME; //STATE_MENU;
+STATE next_state = StateMenu;// StateGame; //StateMenu;
 
 STATE current_state = N_STATES;
 UINT8 state_running = 0;
@@ -31,31 +31,19 @@ typedef void (*Void_Func_Void)();
 UINT8 stateBanks[N_STATES];
 Void_Func_Void startFuncs[N_STATES];
 Void_Func_Void updateFuncs[N_STATES];
-#define DEF_STATE(STATE_IDX, BANK, START_FUNC, UPDATE_FUNC) stateBanks[STATE_IDX] = BANK; startFuncs[STATE_IDX] = START_FUNC; updateFuncs[STATE_IDX] = UPDATE_FUNC;
+#define DEF_STATE(STATE_IDX, BANK) stateBanks[STATE_IDX] = BANK; startFuncs[STATE_IDX] = Start##STATE_IDX; updateFuncs[STATE_IDX] = Update##STATE_IDX;
 
 void InitStates() {
-	DEF_STATE(STATE_DISCLAIMER, 0, StartStateDisclaimer, UpdateStateDisclaimer);
-	DEF_STATE(STATE_MENU,       2, StartStateMenu,       UpdateStateMenu);
-	DEF_STATE(STATE_GAME,       2, StartStateGame,       UpdateStateGame);
-	DEF_STATE(STATE_GAME_OVER,  2, StartStateGameOver,   UpdateStateGameOver);
-	DEF_STATE(STATE_WIN,        2, StartStateWin,        UpdateStateWin);
-	DEF_STATE(STATE_TESTS,      0, StartStateTests,      UpdateStateTests);
-}
-
-void Start() {
-	PUSH_BANK(stateBanks[current_state]);
-		(startFuncs[current_state])();
-	POP_BANK;
-}
-
-void Update() {
-	PUSH_BANK(stateBanks[current_state]);
-		updateFuncs[current_state]();
-	POP_BANK;
+	DEF_STATE(StateDisclaimer, 0);
+	DEF_STATE(StateMenu,       2);
+	DEF_STATE(StateGame,       2);
+	DEF_STATE(StateGameOver,   2);
+	DEF_STATE(StateWin,        2);
+	DEF_STATE(StateTests,      0);
 }
 
 UINT8 GetTileReplacement(UINT8 t) {
-	if(current_state == STATE_GAME) {
+	if(current_state == StateGame) {
 		switch(t) {
 				case 54: return SPRITE_TYPE_ZURRAPA;
 		}
@@ -120,7 +108,10 @@ void main() {
 			RefreshScroll();
 
 			UPDATE_KEYS();
-			Update();
+			
+			PUSH_BANK(stateBanks[current_state]);
+				updateFuncs[current_state]();
+			POP_BANK;
 		}
 
 		DISPLAY_OFF
@@ -129,7 +120,11 @@ void main() {
 		SpriteManagerReset();
 		state_running = 1;
 		current_state = next_state;
-		Start();
+		
+		PUSH_BANK(stateBanks[current_state]);
+			(startFuncs[current_state])();
+		POP_BANK;
+
 		DISPLAY_ON;
 	}
 }
