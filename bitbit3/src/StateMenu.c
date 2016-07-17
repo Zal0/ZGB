@@ -3,7 +3,7 @@
 #include "StateMenu.h"
 
 #include <gb/gb.h>
-#include "main.h"
+#include "BitBit3.h"
 #include "Scroll.h"
 #include "Keys.h"
 

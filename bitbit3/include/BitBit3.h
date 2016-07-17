@@ -1,7 +1,7 @@
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef BITBIT3_H
+#define BITBIT3_H
 
-#include <gb/gb.h>
+#include "main.h"
 
 typedef enum {
 	STATE_DISCLAIMER,
@@ -22,11 +22,5 @@ typedef enum {
 
 	N_SPRITE_TYPES
 } SPRITE_TYPE;
-
-extern STATE current_state;
-void SetState(STATE state);
-extern UINT8 delta_time;
-
-void PlayMusic(unsigned char* music, unsigned char bank, unsigned char loop);
 
 #endif

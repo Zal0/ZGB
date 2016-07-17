@@ -4,7 +4,7 @@
 
 #include "gb/gb.h"
 
-#include "main.h"
+#include "BitBit3.h"
 #include "Sprite.h"
 #include "Keys.h"
 #include "Scroll.h"

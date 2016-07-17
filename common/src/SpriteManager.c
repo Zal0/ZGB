@@ -1,10 +1,13 @@
 #include "SpriteManager.h"
 
 #include "Scroll.h"
-
 #include "BankManager.h"
-
 #include <string.h>
+#include "main.h"
+
+extern UINT8 spriteBanks[];
+extern Void_Func_SpritePtr spriteStartFuncs[];
+extern Void_Func_Void spriteUpdateFuncs[];
 
 //Pool
 UINT8 sprite_manager_sprites_mem[N_SPRITE_MANAGER_SPRITES * sizeof(struct Sprite)];
@@ -15,12 +18,6 @@ DECLARE_STACK(sprite_manager_sprites_pool, N_SPRITE_MANAGER_SPRITES);
 DECLARE_VECTOR(sprite_manager_updatables, N_SPRITE_MANAGER_SPRITES);
 
 UINT8 sprite_manager_removal_check;
-
-typedef void (*Void_Func_Void)();
-typedef void (*Void_Func_SpritePtr)(struct Sprite*);
-extern UINT8 spriteBanks[];
-extern Void_Func_SpritePtr spriteStartFuncs[];
-extern Void_Func_Void spriteUpdateFuncs[];
 
 void SpriteManagerReset() {
 	UINT8 i;

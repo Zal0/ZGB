@@ -14,7 +14,7 @@
     <None Include="src\Makefile" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.c" />
+    <ClCompile Include="src\BitBit3.c" />
     <ClCompile Include="src\resources\aznar.b2.c" />
     <ClCompile Include="src\resources\gameovermap.b2.c" />
     <ClCompile Include="src\resources\gameovertiles.b2.c" />
@@ -39,7 +39,7 @@
     <ClCompile Include="src\StateWin.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\main.h" />
+    <ClInclude Include="include\BitBit3.h" />
     <ClInclude Include="include\SpriteAxe.h" />
     <ClInclude Include="include\SpriteAznar.h" />
     <ClInclude Include="include\SpriteParticle.h" />

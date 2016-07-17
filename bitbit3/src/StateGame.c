@@ -15,7 +15,7 @@
 #include "resources/zurrapa.h"
 #include "resources/tilemap.h"
 
-#include "main.h"
+#include "BitBit3.h"
 
 #include "gbt_player.h"
 

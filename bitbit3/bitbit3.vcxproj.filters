@@ -14,9 +14,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\StateGame.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -83,15 +80,15 @@
     <ClCompile Include="src\SpriteAznar.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\BitBit3.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Makefile" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\StateGame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\main.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\StateMenu.h">
@@ -155,6 +152,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\SpriteAznar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BitBit3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

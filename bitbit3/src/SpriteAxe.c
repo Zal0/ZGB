@@ -5,7 +5,7 @@
 #include <gb/gb.h>
 
 #include "SpriteManager.h"
-#include "main.h"
+#include "BitBit3.h"
 
 extern UINT8 princess_idx;
 const UINT8 anim_axe[] = {1, 9};
