@@ -59,6 +59,12 @@ void UPDATE_TILE(UINT16 x, UINT16 y, UINT8* t) {
 	set_bkg_tiles(0x1F & x, 0x1F & y, 1, 1, &i); //i pointing to zero will replace the tile by the deafault one
 }
 
+void InitScrollTiles(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 tile_bank) {
+	PUSH_BANK(tile_bank);
+	set_bkg_data(first_tile, n_tiles, tile_data);
+	POP_BANK;
+}
+
 void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT16 x, UINT16 y, UINT8* coll_list, UINT8 bank) {
 	UINT8 i;
 	

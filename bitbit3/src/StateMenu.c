@@ -13,7 +13,7 @@
 extern const unsigned char * start_mod_Data[];
 
 void StartStateMenu() {
-	set_bkg_data(0, 102, splashtiles);
+	InitScrollTiles(0, 102, splashtiles, 2);
 	InitScroll(splashmapWidth, splashmapHeight, splashmap, 0, 0, 0, 2);
 	SHOW_BKG;
 
