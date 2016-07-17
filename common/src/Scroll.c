@@ -5,7 +5,7 @@
 
 #define SCREEN_TILES_W       20u // 160 >> 3 = 20
 #define SCREEN_TILES_H       18u // 144 >> 3 = 18
-#define SCREEN_TILE_REFRES_W 21u
+#define SCREEN_TILE_REFRES_W 23u
 #define SCREEN_TILE_REFRES_H 19u
 
 //To be defined on the main app
@@ -89,9 +89,9 @@ void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT16 x, UINT16
 	//Change bank now, after copying the collision array (it can be in a different bank)
 	PUSH_BANK(bank);
 	move_bkg(scroll_x, scroll_y);
-	for(i = 0u; i != SCREEN_TILE_REFRES_H && i != scroll_tiles_h; ++i) {
-		ScrollUpdateRow((scroll_x >> 3), (scroll_y >> 3) + i);
-	}
+	/*for(i = 0u; i != SCREEN_TILE_REFRES_H && i != scroll_tiles_h; ++i) {
+		ScrollUpdateRow((scroll_x >> 3) - 1u, (scroll_y >> 3) + i);
+	}*/
 	/*for(i = 0u; i != SCREEN_TILE_REFRES_W && i != scroll_tiles_w; ++i) {
 		ScrollUpdateColumn((scroll_x >> 3) + i, scroll_y >> 3);
 	}*/
@@ -203,23 +203,23 @@ void MoveScroll(UINT16 x, UINT16 y) {
 	}
 
 	current_column = scroll_x >> 3;
-	new_column = x >> 3;
+	new_column = (x >> 3);
 	current_row = scroll_y >> 3;
 	new_row = y >> 3;
 
 	if(current_column != new_column) {
 		if(new_column > current_column) {
-			ScrollUpdateColumnWithDelay(new_column + SCREEN_TILES_W, scroll_y >> 3);
+			ScrollUpdateColumnWithDelay(new_column - 2u + SCREEN_TILE_REFRES_W, new_row);
 		} else {
-			ScrollUpdateColumnWithDelay(new_column, scroll_y >> 3);
+			ScrollUpdateColumnWithDelay(new_column - 1u, new_row);
 		}
 	}
 	
 	if(current_row != new_row) {
 		if(new_row > current_row) {
-			ScrollUpdateRowWithDelay(scroll_x >> 3, new_row + SCREEN_TILES_H);
+			ScrollUpdateRowWithDelay((UINT16)new_column - 1u, new_row + SCREEN_TILE_REFRES_H - 1u);
 		} else {
-			ScrollUpdateRowWithDelay(scroll_x >> 3, new_row);
+			ScrollUpdateRowWithDelay((UINT16)new_column - 1u, new_row);
 		}
 	}
 
