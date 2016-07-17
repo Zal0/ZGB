@@ -38,7 +38,7 @@ void StartStateGame() {
 	particles_idx = LoadSprite(5 * 4, particles);
 	SHOW_SPRITES;
 
-	SpriteManagerAdd(SPRITE_TYPE_PRINCESS);
+	SpriteManagerAdd(SPRITE_PRINCESS);
 
 	set_bkg_data(0, 55, tilemap);
 	InitScroll(level1Width, level1Height, level1, 0, 0, collision_tiles, 3);

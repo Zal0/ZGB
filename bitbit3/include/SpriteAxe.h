@@ -3,7 +3,7 @@
 
 #include "Sprite.h"
 
-void StartAxe(struct Sprite* sprite);
-void UpdateAxe();
+void Start_SPRITE_AXE(struct Sprite* sprite);
+void Update_SPRITE_AXE();
 
 #endif

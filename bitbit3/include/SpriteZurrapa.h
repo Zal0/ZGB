@@ -3,7 +3,7 @@
 
 #include "Sprite.h"
 
-void StartZurrapa(struct Sprite* sprite);
-void UpdateZurrapa();
+void Start_SPRITE_ZURRAPA(struct Sprite* sprite);
+void Update_SPRITE_ZURRAPA();
 
 #endif

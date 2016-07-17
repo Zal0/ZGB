@@ -16,9 +16,11 @@ DECLARE_VECTOR(sprite_manager_updatables, N_SPRITE_MANAGER_SPRITES);
 
 UINT8 sprite_manager_removal_check;
 
-//To be defined on the main app
-void StartSprite(struct Sprite* sprite);
-void UpdateSprite();
+typedef void (*Void_Func_Void)();
+typedef void (*Void_Func_SpritePtr)(struct Sprite*);
+extern UINT8 spriteBanks[];
+extern Void_Func_SpritePtr spriteStartFuncs[];
+extern Void_Func_Void spriteUpdateFuncs[];
 
 void SpriteManagerReset() {
 	UINT8 i;
@@ -52,7 +54,9 @@ struct Sprite* SpriteManagerAdd(UINT8 sprite_type) {
 
 	VectorAdd(sprite_manager_updatables, sprite_idx);
 
-	StartSprite(sprite);
+	PUSH_BANK(spriteBanks[sprite->type]);
+		spriteStartFuncs[sprite->type](sprite);
+	POP_BANK;
 
 	return sprite;
 }
@@ -80,7 +84,10 @@ void SpriteManagerUpdate() {
 	for(sprite_manager_current_index = 0u; sprite_manager_current_index != sprite_manager_updatables[0]; ++sprite_manager_current_index) {
 		sprite_manager_current_sprite = sprite_manager_sprites[sprite_manager_updatables[sprite_manager_current_index + 1]];
 		if(!sprite_manager_current_sprite->marked_for_removal) {
-			UpdateSprite();
+
+			PUSH_BANK(spriteBanks[sprite_manager_current_sprite->type]);
+				spriteUpdateFuncs[sprite_manager_current_sprite->type]();
+			POP_BANK;
 
 			if( ((scroll_x - sprite_manager_current_sprite->x - 16u - sprite_manager_current_sprite->lim_x)          & 0x8000u) &&
 			    ((sprite_manager_current_sprite->x - scroll_x - SCREENWIDTH - sprite_manager_current_sprite->lim_x)  & 0x8000u) &&

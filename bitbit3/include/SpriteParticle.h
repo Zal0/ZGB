@@ -3,7 +3,7 @@
 
 #include "Sprite.h"
 
-void StartParticle(struct Sprite* sprite);
-void UpdateParticle();
+void Start_SPRITE_DEAD_PARTICLE(struct Sprite* sprite);
+void Update_SPRITE_DEAD_PARTICLE();
 
 #endif

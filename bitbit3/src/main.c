@@ -19,6 +19,7 @@
 #include "SpriteParticle.h"
 #include "SpritePrincess.h"
 #include "SpriteZurrapa.h"
+#include "SpriteAznar.h"
 
 UINT8 delta_time;
 
@@ -33,6 +34,12 @@ Void_Func_Void startFuncs[N_STATES];
 Void_Func_Void updateFuncs[N_STATES];
 #define DEF_STATE(STATE_IDX, BANK) stateBanks[STATE_IDX] = BANK; startFuncs[STATE_IDX] = Start##STATE_IDX; updateFuncs[STATE_IDX] = Update##STATE_IDX;
 
+typedef void (*Void_Func_SpritePtr)(struct Sprite*);
+UINT8 spriteBanks[N_SPRITE_TYPES];
+Void_Func_SpritePtr spriteStartFuncs[N_SPRITE_TYPES];
+Void_Func_Void spriteUpdateFuncs[N_SPRITE_TYPES];
+#define DEF_SPRITE(SPRITE_IDX, BANK) spriteBanks[SPRITE_IDX] = BANK; spriteStartFuncs[SPRITE_IDX] = Start_##SPRITE_IDX; spriteUpdateFuncs[SPRITE_IDX] = Update_##SPRITE_IDX;
+
 void InitStates() {
 	DEF_STATE(StateDisclaimer, 0);
 	DEF_STATE(StateMenu,       2);
@@ -45,32 +52,17 @@ void InitStates() {
 UINT8 GetTileReplacement(UINT8 t) {
 	if(current_state == StateGame) {
 		switch(t) {
-				case 54: return SPRITE_TYPE_ZURRAPA;
+				case 54: return SPRITE_ZURRAPA;
 		}
 	}
 	return 255u;
 }
 
-void StartSprite(struct Sprite* sprite) {
-	PUSH_BANK(2);
-	switch((SPRITE_TYPE)sprite->type) {
-		case SPRITE_TYPE_PRINCESS:      StartPrincess(sprite); break;
-		case SPRITE_TYPE_ZURRAPA:       StartZurrapa(sprite);  break;
-		case SPRITE_TYPE_DEAD_PARTICLE: StartParticle(sprite); break;
-		case SPRITE_TYPE_AXE:           StartAxe(sprite);      break;
-	}
-	POP_BANK;
-}
-
-void UpdateSprite() {
-	PUSH_BANK(2);
-	switch((SPRITE_TYPE)sprite_manager_current_sprite->type) {
-		case SPRITE_TYPE_PRINCESS:      UpdatePrincess(); break;
-		case SPRITE_TYPE_ZURRAPA:       UpdateZurrapa();  break;
-		case SPRITE_TYPE_DEAD_PARTICLE: UpdateParticle(); break;
-		case SPRITE_TYPE_AXE:           UpdateAxe();      break;
-	}
-	POP_BANK;
+void InitSprites() {
+	DEF_SPRITE(SPRITE_PRINCESS, 2);
+	DEF_SPRITE(SPRITE_ZURRAPA, 2);
+	DEF_SPRITE(SPRITE_DEAD_PARTICLE, 2);
+	DEF_SPRITE(SPRITE_AXE, 2);
 }
 
 void SetState(STATE state) {
@@ -93,6 +85,7 @@ void vbl_update() {
 
 void main() {
 	InitStates();
+	InitSprites();
 
 	disable_interrupts();
 	add_VBL(vbl_update);

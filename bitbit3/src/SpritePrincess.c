@@ -33,7 +33,7 @@ struct Sprite* axe_sprite;
 extern UINT8 princess_idx;
 extern struct Sprite* game_over_particle;
 
-void StartPrincess(struct Sprite* sprite) {
+void Start_SPRITE_PRINCESS(struct Sprite* sprite) {
 	InitSprite(sprite, FRAME_16x16, princess_idx >> 2);
 	SetSpriteAnim(sprite, anim_idle, 3u);
 	sprite->x = 32u;
@@ -56,7 +56,7 @@ void StartPrincess(struct Sprite* sprite) {
 
 void Die(struct Sprite* sprite, UINT8 idx) {
 	SpriteManagerRemove(idx);
-	game_over_particle = SpriteManagerAdd(SPRITE_TYPE_DEAD_PARTICLE);
+	game_over_particle = SpriteManagerAdd(SPRITE_DEAD_PARTICLE);
 	game_over_particle->x = sprite->x;
 	game_over_particle->y = sprite->y;
 }
@@ -101,7 +101,7 @@ void UpdateAxePos(struct Sprite* sprite) {
 	axe_sprite->y = sprite->y;
 }
 
-void UpdatePrincess() {
+void Update_SPRITE_PRINCESS() {
 	UINT8 i;
 	struct Sprite* spr;
 
@@ -162,7 +162,7 @@ void UpdatePrincess() {
 	//Check enemy collision
 	for(i = 0u; i != sprite_manager_updatables[0]; ++i) {
 		spr = sprite_manager_sprites[sprite_manager_updatables[i + 1u]];
-		if(spr->type == SPRITE_TYPE_ZURRAPA) {
+		if(spr->type == SPRITE_ZURRAPA) {
 			if(CheckCollision(sprite_manager_current_sprite, spr)) {
 				Die(sprite_manager_current_sprite, sprite_manager_current_index);
 			}
@@ -173,13 +173,13 @@ void UpdatePrincess() {
 		SetSpriteAnim(sprite_manager_current_sprite, anim_fire, 15u);
 		princes_state = PRINCESS_STATE_FIRE;
 
-		axe_sprite = SpriteManagerAdd(SPRITE_TYPE_AXE);
+		axe_sprite = SpriteManagerAdd(SPRITE_AXE);
 		UpdateAxePos(sprite_manager_current_sprite);
 	}
 
 
 	/*if(KEY_TICKED(J_B) ) {
-		sprite_test = SpriteManagerAdd(SPRITE_TYPE_ZURRAPA);
+		sprite_test = SpriteManagerAdd(SPRITE_ZURRAPA);
 		sprite_test->x = sprite_manager_current_sprite->x;
 		sprite_test->y = sprite_manager_current_sprite->y;
 	}*/

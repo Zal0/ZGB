@@ -3,7 +3,7 @@
 
 #include "Sprite.h"
 
-void StartPrincess(struct Sprite* sprite);
-void UpdatePrincess();
+void Start_SPRITE_PRINCESS(struct Sprite* sprite);
+void Update_SPRITE_PRINCESS();
 
 #endif
