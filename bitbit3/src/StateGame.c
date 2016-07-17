@@ -29,7 +29,7 @@ UINT8 zurrapa_idx;
 
 struct Sprite* game_over_particle;
 
-void StartStateGame() {
+void Start_STATE_GAME() {
 	game_over_particle = 0;
 
 	SPRITES_8x16;
@@ -47,11 +47,11 @@ void StartStateGame() {
 	PlayMusic(level_mod_Data, 3, 1);
 }
 
-void UpdateStateGame() {
+void Update_STATE_GAME() {
 	SpriteManagerUpdate();
 
 	if(game_over_particle && game_over_particle->current_frame == 5) {
-		SetState(StateGameOver);
+		SetState(STATE_GAME_OVER);
 	}
 }
 

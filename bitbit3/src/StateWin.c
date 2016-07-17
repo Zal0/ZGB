@@ -10,14 +10,14 @@
 #include "resources/winmap.h"
 #include "resources/splashtiles.h"
 
-void StartStateWin() {
+void Start_STATE_WIN() {
 	set_bkg_data(0, 104, splashtiles);
 	InitScroll(winmapWidth, winmapHeight, winmap, 0, 0, 0, 2);
 	SHOW_BKG;
 }
 
-void UpdateStateWin() {
+void Update_STATE_WIN() {
 	if(KEY_TICKED(J_START)) {
-		SetState(StateMenu);
+		SetState(STATE_MENU);
 	}
 }

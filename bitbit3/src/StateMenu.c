@@ -12,7 +12,7 @@
 
 extern const unsigned char * start_mod_Data[];
 
-void StartStateMenu() {
+void Start_STATE_MENU() {
 	InitScrollTiles(0, 102, splashtiles, 2);
 	InitScroll(splashmapWidth, splashmapHeight, splashmap, 0, 0, 0, 2);
 	SHOW_BKG;
@@ -20,8 +20,8 @@ void StartStateMenu() {
 	PlayMusic(start_mod_Data, 3, 1);
 }
 
-void UpdateStateMenu() {
+void Update_STATE_MENU() {
 	if(KEY_TICKED(J_START)) {
-		SetState(StateGame);
+		SetState(STATE_GAME);
 	}
 }

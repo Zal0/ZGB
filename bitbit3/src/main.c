@@ -23,7 +23,7 @@
 
 UINT8 delta_time;
 
-STATE next_state = StateMenu;// StateGame; //StateMenu;
+STATE next_state = STATE_MENU;// STATE_GAME; //STATE_MENU;
 
 STATE current_state = N_STATES;
 UINT8 state_running = 0;
@@ -32,7 +32,7 @@ typedef void (*Void_Func_Void)();
 UINT8 stateBanks[N_STATES];
 Void_Func_Void startFuncs[N_STATES];
 Void_Func_Void updateFuncs[N_STATES];
-#define DEF_STATE(STATE_IDX, BANK) stateBanks[STATE_IDX] = BANK; startFuncs[STATE_IDX] = Start##STATE_IDX; updateFuncs[STATE_IDX] = Update##STATE_IDX;
+#define DEF_STATE(STATE_IDX, BANK) stateBanks[STATE_IDX] = BANK; startFuncs[STATE_IDX] = Start_##STATE_IDX; updateFuncs[STATE_IDX] = Update_##STATE_IDX;
 
 typedef void (*Void_Func_SpritePtr)(struct Sprite*);
 UINT8 spriteBanks[N_SPRITE_TYPES];
@@ -41,16 +41,16 @@ Void_Func_Void spriteUpdateFuncs[N_SPRITE_TYPES];
 #define DEF_SPRITE(SPRITE_IDX, BANK) spriteBanks[SPRITE_IDX] = BANK; spriteStartFuncs[SPRITE_IDX] = Start_##SPRITE_IDX; spriteUpdateFuncs[SPRITE_IDX] = Update_##SPRITE_IDX;
 
 void InitStates() {
-	DEF_STATE(StateDisclaimer, 0);
-	DEF_STATE(StateMenu,       2);
-	DEF_STATE(StateGame,       2);
-	DEF_STATE(StateGameOver,   2);
-	DEF_STATE(StateWin,        2);
-	DEF_STATE(StateTests,      0);
+	DEF_STATE(STATE_DISCLAIMER, 0);
+	DEF_STATE(STATE_MENU,       2);
+	DEF_STATE(STATE_GAME,       2);
+	DEF_STATE(STATE_GAME_OVER,   2);
+	DEF_STATE(STATE_WIN,        2);
+	DEF_STATE(STATE_TESTS,      0);
 }
 
 UINT8 GetTileReplacement(UINT8 t) {
-	if(current_state == StateGame) {
+	if(current_state == STATE_GAME) {
 		switch(t) {
 				case 54: return SPRITE_ZURRAPA;
 		}

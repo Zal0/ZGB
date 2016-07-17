@@ -1,7 +1,7 @@
 #ifndef STATE_TESTS_H
 #define STATE_TESTS_H
 
-void StartStateTests();
-void UpdateStateTests();
+void Start_STATE_TESTS();
+void Update_STATE_TESTS();
 
 #endif

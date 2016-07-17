@@ -13,7 +13,7 @@
 
 extern const unsigned char * gameover_mod_Data[];
 
-void StartStateGameOver() {
+void Start_STATE_GAME_OVER() {
 	set_bkg_data(0, 81, tilesgameover);
 	InitScroll(gameoverWidth, gameoverHeight, gameover, 0, 0, 0, 2);
 	SHOW_BKG;
@@ -21,8 +21,8 @@ void StartStateGameOver() {
 	PlayMusic(gameover_mod_Data, 3, 0);
 }
 
-void UpdateStateGameOver() {
+void Update_STATE_GAME_OVER() {
 	if(KEY_TICKED(J_START)) {
-		SetState(StateMenu);
+		SetState(STATE_MENU);
 	}
 }

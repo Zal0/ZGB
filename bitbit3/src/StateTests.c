@@ -10,7 +10,7 @@
 #include "SpriteManager.h"
 extern UINT8 sprite_manager_sprites_mem[];
 
-void StartStateTests() {
+void Start_STATE_TESTS() {
 	/*UINT8 i;
 	DECLARE_STACK(s_test, 20);
 	DECLARE_VECTOR(v_test, 20);
@@ -35,6 +35,6 @@ void StartStateTests() {
 	}*/
 }
 
-void UpdateStateTests() {
+void Update_STATE_TESTS() {
 
 }

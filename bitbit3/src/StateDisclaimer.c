@@ -6,7 +6,7 @@
 #include "main.h"
 #include "Keys.h"
 
-void StartStateDisclaimer() {
+void Start_STATE_DISCLAIMER() {
 /*	printf("                    ");
 	printf("       Warning      ");
 	printf("                    ");
@@ -26,9 +26,9 @@ void StartStateDisclaimer() {
 	printf("  www.bitbitjam.com ");*/
 }
 
-void UpdateStateDisclaimer() {
+void Update_STATE_DISCLAIMER() {
 	/*if(KEY_TICKED(J_START)) {
 		disable_interrupts();
-		SetState(StateMenu);
+		SetState(STATE_MENU);
 	}*/
 }
