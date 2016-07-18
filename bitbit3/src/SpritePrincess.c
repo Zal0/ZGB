@@ -59,6 +59,8 @@ void Die(struct Sprite* sprite, UINT8 idx) {
 	game_over_particle = SpriteManagerAdd(SPRITE_DEAD_PARTICLE);
 	game_over_particle->x = sprite->x;
 	game_over_particle->y = sprite->y;
+
+	scroll_target = 0;
 }
 
 UINT8 tile_collision;
