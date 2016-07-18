@@ -38,7 +38,7 @@ void Start_STATE_GAME() {
 	SPRITES_8x16;
 	princess_idx = LoadSprite(10 * 4, princess);
 	zurrapa_idx = LoadSprite(2 * 4, zurrapa);
-	particles_idx = LoadSprite(5 * 4, particles);
+	particles_idx = LoadSprite(6 * 4, particles);
 	aznar_idx = LoadSprite(5 * 4, aznar);
 	SHOW_SPRITES;
 
