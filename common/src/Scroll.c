@@ -241,3 +241,11 @@ UINT8* GetScrollTilePtr(UINT16 x, UINT16 y) {
 
 	return scroll_map + (scroll_tiles_w * y + x); //TODO: fix this mult!!
 }
+
+UINT8 GetScrollTile(UINT16 x, UINT16 y) {
+	UINT8 ret;
+	PUSH_BANK(scroll_bank);
+		ret = *GetScrollTilePtr(x, y);
+	POP_BANK;
+	return ret;
+}

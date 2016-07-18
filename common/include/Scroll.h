@@ -26,5 +26,6 @@ void RefreshScroll();
 void FinishPendingScrollUpdates();
 
 UINT8* GetScrollTilePtr(UINT16 x, UINT16 y);
+UINT8 GetScrollTile(UINT16 x, UINT16 y);
 
 #endif

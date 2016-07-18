@@ -32,12 +32,14 @@ void InitSprites() {
 	INIT_SPRITE(SPRITE_ZURRAPA);
 	INIT_SPRITE(SPRITE_DEAD_PARTICLE);
 	INIT_SPRITE(SPRITE_AXE);
+	INIT_SPRITE(SPRITE_AZNAR);
 }
 
 UINT8 GetTileReplacement(UINT8 t) {
 	if(current_state == STATE_GAME) {
 		switch(t) {
 				case 54: return SPRITE_ZURRAPA;
+				case 55: return SPRITE_AZNAR;
 		}
 	}
 	return 255u;
