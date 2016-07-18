@@ -37,14 +37,15 @@ void UPDATE_TILE(UINT16 x, UINT16 y, UINT8* t) {
 	if(type != 255u) {
 		tmp_y = y << 8;
 		id = (0x00FF & x) | ((0xFF00 & tmp_y)); // (y >> 3) << 8 == y << 5
-		for(i = 0u, s = sprite_manager_sprites[sprite_manager_updatables[i + 1]]; i != sprite_manager_updatables[0]; ++i) {
+		for(i = 0u; i != sprite_manager_updatables[0]; ++i) {
+			s = sprite_manager_sprites[sprite_manager_updatables[i + 1]];
 			if(s->unique_id == id && s->type == type) {
 				s = 0;
 				break;
 			}
 		}
 
-		if(s) {
+		if( i == sprite_manager_updatables[0]) {
 			s = SpriteManagerAdd(type);
 			if(s) {
 				s->x = x << 3;
