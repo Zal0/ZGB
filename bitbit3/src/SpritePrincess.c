@@ -129,12 +129,8 @@ void Update_SPRITE_PRINCESS() {
 			break;
 
 		case PRINCESS_STATE_JUMPING:
-			if(princess_accel_y == 0) {
-				princes_state = PRINCESS_STATE_NORMAL;
-			} else {
-				SetSpriteAnim(sprite_manager_current_sprite, anim_jump, 33u);
-				MovePrincess(sprite_manager_current_sprite, sprite_manager_current_index);
-			}
+			SetSpriteAnim(sprite_manager_current_sprite, anim_jump, 33u);
+			MovePrincess(sprite_manager_current_sprite, sprite_manager_current_index);
 			break;
 
 		case PRINCESS_STATE_FIRE:
@@ -155,6 +151,10 @@ void Update_SPRITE_PRINCESS() {
 	}
 	if(tile_collision = TranslateSprite(sprite_manager_current_sprite, 0, (princess_accel_y >> 4) << delta_time)) {
 		princess_accel_y = 0;
+		if(princes_state == PRINCESS_STATE_JUMPING) {
+			princes_state = PRINCESS_STATE_NORMAL;
+		}
+
 		CheckCollisionTile(sprite_manager_current_sprite, sprite_manager_current_index);
 	}
 #endif

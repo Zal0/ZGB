@@ -15,6 +15,8 @@ void Start_SPRITE_AZNAR(struct Sprite* sprite) {
 
 	sprite->coll_x += 4;
 	sprite->coll_w -= 8;
+	sprite->lim_x = 96u;
+	sprite->lim_y = 96u;
 }
 
 void Update_SPRITE_AZNAR() {
