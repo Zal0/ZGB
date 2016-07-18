@@ -1,6 +1,6 @@
 #pragma bank=2
-
 #include "SpritePrincess.h"
+UINT8 bank_SPRITE_PRINCESS = 2;
 
 #include "gb/gb.h"
 

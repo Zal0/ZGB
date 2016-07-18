@@ -1,7 +1,6 @@
 #pragma bank=2
-
-
 #include "StateGameOver.h"
+UINT8 bank_STATE_GAME_OVER = 2;
 
 #include <gb/gb.h>
 #include "BitBit3.h"

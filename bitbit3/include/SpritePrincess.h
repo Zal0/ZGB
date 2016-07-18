@@ -1,9 +1,8 @@
 #ifndef SPRITE_PRINCESS_H
 #define SPRITE_PRINCESS_H
 
-#include "Sprite.h"
+#include "main.h"
 
-void Start_SPRITE_PRINCESS(struct Sprite* sprite);
-void Update_SPRITE_PRINCESS();
+DECLARE_SPRITE(SPRITE_PRINCESS);
 
 #endif

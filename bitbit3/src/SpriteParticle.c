@@ -1,6 +1,7 @@
 #pragma bank=2
-
 #include "SpriteParticle.h"
+UINT8 bank_SPRITE_DEAD_PARTICLE = 2;
+
 #include "SpriteManager.h"
 
 const UINT8 anim_explosion[] = {6, 0, 1, 2, 3, 4, 5};

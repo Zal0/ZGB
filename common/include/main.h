@@ -5,8 +5,11 @@
 
 #include "Sprite.h"
 
-#define DEF_STATE(STATE_IDX, BANK) stateBanks[STATE_IDX] = BANK; startFuncs[STATE_IDX] = Start_##STATE_IDX; updateFuncs[STATE_IDX] = Update_##STATE_IDX;
-#define DEF_SPRITE(SPRITE_IDX, BANK) spriteBanks[SPRITE_IDX] = BANK; spriteStartFuncs[SPRITE_IDX] = Start_##SPRITE_IDX; spriteUpdateFuncs[SPRITE_IDX] = Update_##SPRITE_IDX;
+#define DECLARE_STATE(STATE_IDX)   extern UINT8 bank_##STATE_IDX;  void Start_##STATE_IDX();                       void Update_##STATE_IDX()
+#define DECLARE_SPRITE(SPRITE_IDX) extern UINT8 bank_##SPRITE_IDX; void Start_##SPRITE_IDX(struct Sprite* sprite); void Update_##SPRITE_IDX()
+
+#define INIT_STATE(STATE_IDX)   stateBanks[STATE_IDX]   = bank_##STATE_IDX;  startFuncs[STATE_IDX]        = Start_##STATE_IDX;  updateFuncs[STATE_IDX]        = Update_##STATE_IDX
+#define INIT_SPRITE(SPRITE_IDX) spriteBanks[SPRITE_IDX] = bank_##SPRITE_IDX; spriteStartFuncs[SPRITE_IDX] = Start_##SPRITE_IDX; spriteUpdateFuncs[SPRITE_IDX] = Update_##SPRITE_IDX
 
 typedef void (*Void_Func_Void)();
 typedef void (*Void_Func_SpritePtr)(struct Sprite*);

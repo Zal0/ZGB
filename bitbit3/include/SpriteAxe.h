@@ -1,9 +1,8 @@
 #ifndef SPRITE_AXE_H
 #define SPRITE_AXE_H
 
-#include "Sprite.h"
+#include "main.h"
 
-void Start_SPRITE_AXE(struct Sprite* sprite);
-void Update_SPRITE_AXE();
+DECLARE_SPRITE(SPRITE_AXE);
 
 #endif

@@ -1,6 +1,6 @@
 #pragma bank=2
-
 #include "StateMenu.h"
+UINT8 bank_STATE_MENU = 2;
 
 #include <gb/gb.h>
 #include "BitBit3.h"

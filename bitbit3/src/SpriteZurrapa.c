@@ -1,6 +1,6 @@
 #pragma bank=2
-
 #include "SpriteZurrapa.h"
+UINT8 bank_SPRITE_ZURRAPA = 2;
 
 #include <gb/gb.h>
 

@@ -1,6 +1,6 @@
 #pragma bank=2
-
 #include "StateTests.h"
+UINT8 bank_STATE_TESTS = 2;
 
 #include <gb/gb.h>
 #include <stdio.h>

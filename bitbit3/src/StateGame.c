@@ -1,6 +1,6 @@
 #pragma bank=2
-
 #include "StateGame.h"
+UINT8 bank_STATE_GAME = 2;
 
 #include "Scroll.h"
 #include "Frame.h"
