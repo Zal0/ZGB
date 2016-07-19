@@ -46,8 +46,6 @@ void Start_SPRITE_PRINCESS(struct Sprite* sprite) {
 	princess_accel_y = 0;
 
 	scroll_target = sprite;
-	scroll_target_offset_x = 0;
-	scroll_target_offset_y = -32;
 
 	princes_state = PRINCESS_STATE_NORMAL;
 

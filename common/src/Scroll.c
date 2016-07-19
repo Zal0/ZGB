@@ -179,10 +179,23 @@ void FinishPendingScrollUpdates() {
 	}
 }
 
+#define U_LESS_THAN(A, B) ((A) - (B) & 0x8000u)
+
 void RefreshScroll() {
+	UINT8 ny = scroll_y;
+
 	PUSH_BANK(scroll_bank);
 	if(scroll_target) {
-		MoveScroll(scroll_target->x + scroll_target_offset_x - (SCREENWIDTH >> 1), scroll_target->y + scroll_target_offset_y - (SCREENHEIGHT >> 1));
+		if(U_LESS_THAN(100u, scroll_target->y - scroll_y)) {
+			ny = scroll_target->y - 100;
+		} else if(U_LESS_THAN(scroll_target->y - scroll_y, 30u)) {
+			if(U_LESS_THAN(scroll_target->y, 30u))
+				ny = 0;
+			else
+				ny = scroll_target->y - 30;
+		}
+
+		MoveScroll(scroll_target->x - (SCREENWIDTH >> 1), ny);
 	}
 	POP_BANK;
 }
