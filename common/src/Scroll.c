@@ -106,13 +106,8 @@ unsigned char* pending_w_map = 0;
 void ScrollUpdateRowR() {
 	UINT8 i = 0u;
 	
-	for(i = 0u; i != 1, pending_w_i != SCREEN_TILE_REFRES_W; ++i, ++ pending_w_i) {
-		UPDATE_TILE(pending_w_x + pending_w_i, pending_w_y, pending_w_map);
-		pending_w_map += 1;
-	}
-
-	if(pending_w_i == SCREEN_TILE_REFRES_W) {
-		pending_w_map = 0;
+	for(i = 0u; i != SCREEN_TILE_REFRES_W && pending_w_i != 0; ++i, -- pending_w_i) {
+		UPDATE_TILE(pending_w_x ++, pending_w_y, pending_w_map ++);
 	}
 }
 
@@ -121,7 +116,7 @@ void ScrollUpdateRowWithDelay(UINT16 x, UINT16 y) {
 
 	pending_w_x = x;
 	pending_w_y = y;
-	pending_w_i = 0u;
+	pending_w_i = SCREEN_TILE_REFRES_W;
 	pending_w_map = &scroll_map[scroll_tiles_w * y + x];
 }
 
@@ -141,13 +136,9 @@ unsigned char* pending_h_map = 0;
 void ScrollUpdateColumnR() {
 	UINT8 i = 0u;
 
-	for(i = 0u; i != 5 && pending_h_i != SCREEN_TILE_REFRES_H; ++i, pending_h_i ++) {
-		UPDATE_TILE(pending_h_x, pending_h_y + pending_h_i, pending_h_map);
+	for(i = 0u; i != 5 && pending_h_i != 0; ++i, pending_h_i --) {
+		UPDATE_TILE(pending_h_x, pending_h_y ++, pending_h_map);
 		pending_h_map += scroll_tiles_w;
-	}
-
-	if(pending_h_i == SCREEN_TILE_REFRES_H) {
-		pending_h_map = 0;
 	}
 }
 
@@ -156,7 +147,7 @@ void ScrollUpdateColumnWithDelay(UINT16 x, UINT16 y) {
 
 	pending_h_x = x;
 	pending_h_y = y;
-	pending_h_i = 0u;
+	pending_h_i = SCREEN_TILE_REFRES_H;
 	pending_h_map = &scroll_map[scroll_tiles_w * y + x];
 }
 
@@ -171,10 +162,10 @@ void ScrollUpdateColumn(UINT16 x, UINT16 y) {
 }
 
 void FinishPendingScrollUpdates() {
-	while(pending_w_map) {
+	while(pending_w_i) {
 		ScrollUpdateRowR();
 	}
-	while(pending_h_map) {
+	while(pending_h_i) {
 		ScrollUpdateColumnR();
 	}
 }
@@ -241,10 +232,10 @@ void MoveScroll(UINT16 x, UINT16 y) {
 	scroll_y = y;
 	move_bkg(scroll_x, scroll_y);
 
-	if(pending_w_map) {
+	if(pending_w_i) {
 		ScrollUpdateRowR();
 	}
-	if(pending_h_map) {
+	if(pending_h_i) {
 		ScrollUpdateColumnR();
 	}
 }
