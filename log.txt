@@ -1,0 +1,15 @@
+
+D:\Bitbitjam2016>cd common\src 
+
+D:\Bitbitjam2016\common\src>make
+make: Nothing to be done for `all'.
+
+D:\Bitbitjam2016\common\src>cd ..\..\bitbit3\src 
+
+D:\Bitbitjam2016\bitbit3\src>make run 
+compiling music: music/gameover.b3.mod
+
+D:\Bitbitjam2016\bitbit3\src>cd ..\..\ 
+
+D:\Bitbitjam2016>pause
+Presione una tecla para continuar . . . 
