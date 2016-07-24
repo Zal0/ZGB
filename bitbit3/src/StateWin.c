@@ -12,7 +12,7 @@ UINT8 bank_STATE_WIN = 2;
 
 void Start_STATE_WIN() {
 	set_bkg_data(0, 104, splashtiles);
-	InitScroll(winmapWidth, winmapHeight, winmap, 0, 0, 0, 2);
+	InitScroll(winmapWidth, winmapHeight, winmap, 0, 2);
 	SHOW_BKG;
 }
 

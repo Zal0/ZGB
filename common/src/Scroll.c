@@ -86,15 +86,19 @@ void ClampScrollLimits(UINT16* x, UINT16* y) {
 	}
 }
 
-void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT16 x, UINT16 y, UINT8* coll_list, UINT8 bank) {
+void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list, UINT8 bank) {
 	UINT8 i;
 	
 	scroll_tiles_w = map_w;
 	scroll_tiles_h = map_h;
 	scroll_map = map;
-	scroll_x = x;
-	scroll_y = y;
-	ClampScrollLimits(&scroll_x, &scroll_y);
+	scroll_x = 0u;
+	scroll_y = 0u;
+	if(scroll_target) {
+		scroll_x = scroll_target->x - (SCREENWIDTH >> 1);
+		scroll_y = scroll_target->y - (SCREENHEIGHT >> 1) - (BOTTOM_MOVEMENT_LIMIT - TOP_MOVEMENT_LIMIT);
+		ClampScrollLimits(&scroll_x, &scroll_y);
+	}
 
 	scroll_w = map_w << 3;
 	scroll_h = map_h << 3;

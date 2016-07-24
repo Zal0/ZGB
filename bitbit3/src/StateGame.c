@@ -56,8 +56,8 @@ void Start_STATE_GAME() {
 	princess_sprite->y = reset_y;
 
 	set_bkg_data(0, 61, tilemap);
-	//InitScroll(level1Width, level1Height, level1, princess_sprite->x - (SCREENWIDTH >> 1), princess_sprite->y - (SCREENHEIGHT >> 1) - 70u, collision_tiles, 3); //70 is BOTTOM_MOVEMENT_LIMIT - TOP_MOVEMENT_LIMIT
-	InitScroll(level2Width, level2Height, level2, princess_sprite->x - (SCREENWIDTH >> 1), princess_sprite->y - (SCREENHEIGHT >> 1) - 70u, collision_tiles, 3);
+	//InitScroll(level1Width, level1Height, level1 , collision_tiles, 3);
+	InitScroll(level2Width, level2Height, level2, collision_tiles, 3);
 	SHOW_BKG;
 
 	PlayMusic(level_mod_Data, 3, 1);
