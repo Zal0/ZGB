@@ -17,6 +17,7 @@ UINT8 bank_STATE_GAME = 2;
 #include "resources/zurrapa.h"
 #include "resources/tilemap.h"
 #include "resources/aznar.h"
+#include "resources/flag.h"
 
 #include "BitBit3.h"
 
@@ -30,9 +31,10 @@ UINT8 princess_idx;
 UINT8 particles_idx;
 UINT8 zurrapa_idx;
 UINT8 aznar_idx;
+UINT8 flag_idx;
 
-UINT16 reset_x;
-UINT16 reset_y;
+UINT16 reset_x = 32;
+UINT16 reset_y = 80;
 
 struct Sprite* game_over_particle;
 
@@ -46,16 +48,16 @@ void Start_STATE_GAME() {
 	zurrapa_idx = LoadSprite(2 * 4, zurrapa);
 	particles_idx = LoadSprite(6 * 4, particles);
 	aznar_idx = LoadSprite(5 * 4, aznar);
+	flag_idx = LoadSprite(2 * 4, flag);
 	SHOW_SPRITES;
 
 	princess_sprite = SpriteManagerAdd(SPRITE_PRINCESS);
-
-	princess_sprite->x = 600;
-	princess_sprite->y = 112;
+	princess_sprite->x = reset_x;
+	princess_sprite->y = reset_y;
 
 	set_bkg_data(0, 61, tilemap);
-	InitScroll(level1Width, level1Height, level1, princess_sprite->x - (SCREENWIDTH >> 1), princess_sprite->y - (SCREENHEIGHT >> 1), collision_tiles, 3);
-	//InitScroll(level2Width, level2Height, level2, 0, 0, collision_tiles, 3);
+	//InitScroll(level1Width, level1Height, level1, princess_sprite->x - (SCREENWIDTH >> 1), princess_sprite->y - (SCREENHEIGHT >> 1) - 70u, collision_tiles, 3); //70 is BOTTOM_MOVEMENT_LIMIT - TOP_MOVEMENT_LIMIT
+	InitScroll(level2Width, level2Height, level2, princess_sprite->x - (SCREENWIDTH >> 1), princess_sprite->y - (SCREENHEIGHT >> 1) - 70u, collision_tiles, 3);
 	SHOW_BKG;
 
 	PlayMusic(level_mod_Data, 3, 1);

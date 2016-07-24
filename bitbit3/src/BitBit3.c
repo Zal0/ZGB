@@ -12,6 +12,7 @@
 #include "SpritePrincess.h"
 #include "SpriteZurrapa.h"
 #include "SpriteAznar.h"
+#include "SpriteFlag.h"
 
 UINT8 next_state = STATE_MENU;// STATE_GAME; //STATE_MENU;
 
@@ -33,6 +34,7 @@ void InitSprites() {
 	INIT_SPRITE(SPRITE_DEAD_PARTICLE);
 	INIT_SPRITE(SPRITE_AXE);
 	INIT_SPRITE(SPRITE_AZNAR);
+	INIT_SPRITE(SPRITE_FLAG);
 }
 
 UINT8 GetTileReplacement(UINT8 t) {
@@ -40,6 +42,7 @@ UINT8 GetTileReplacement(UINT8 t) {
 		switch(t) {
 				case 54: return SPRITE_ZURRAPA;
 				case 55: return SPRITE_AZNAR;
+				case 60: return SPRITE_FLAG;
 		}
 	}
 	return 255u;

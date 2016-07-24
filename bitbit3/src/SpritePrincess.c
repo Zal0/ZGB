@@ -33,6 +33,9 @@ struct Sprite* axe_sprite;
 extern UINT8 princess_idx;
 extern struct Sprite* game_over_particle;
 
+extern UINT16 reset_x;
+extern UINT16 reset_y;
+
 void Start_SPRITE_PRINCESS(struct Sprite* sprite) {
 	InitSprite(sprite, FRAME_16x16, princess_idx >> 2);
 	SetSpriteAnim(sprite, anim_idle, 3u);
@@ -163,6 +166,11 @@ void Update_SPRITE_PRINCESS() {
 		if(spr->type == SPRITE_ZURRAPA || spr->type == SPRITE_AZNAR) {
 			if(CheckCollision(sprite_manager_current_sprite, spr)) {
 				Die(sprite_manager_current_sprite, sprite_manager_current_index);
+			}
+		} else if(spr->type == SPRITE_FLAG) {
+			if(CheckCollision(sprite_manager_current_sprite, spr)) {
+				reset_x = spr->x;
+				reset_y = spr->y;
 			}
 		}
 	}

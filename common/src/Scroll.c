@@ -8,6 +8,11 @@
 #define SCREEN_TILE_REFRES_W 23u
 #define SCREEN_TILE_REFRES_H 19u
 
+#define U_LESS_THAN(A, B) ((A) - (B) & 0x8000u)
+
+#define TOP_MOVEMENT_LIMIT 30u
+#define BOTTOM_MOVEMENT_LIMIT 100u
+
 //To be defined on the main app
 UINT8 GetTileReplacement(UINT8 t);
 
@@ -66,6 +71,21 @@ void InitScrollTiles(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 ti
 	POP_BANK;
 }
 
+void ClampScrollLimits(UINT16* x, UINT16* y) {
+	if(*x > 60000u) {
+		*x = 0u;		
+	}
+	if(*x > (scroll_w - SCREENWIDTH)) {
+		*x = (scroll_w - SCREENWIDTH);
+	}
+	if(*y > 60000u) {
+		*y = 0u;		
+	}
+	if(*y > (scroll_h - SCREENHEIGHT)) {
+		*y = (scroll_h - SCREENHEIGHT);
+	}
+}
+
 void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT16 x, UINT16 y, UINT8* coll_list, UINT8 bank) {
 	UINT8 i;
 	
@@ -74,6 +94,8 @@ void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT16 x, UINT16
 	scroll_map = map;
 	scroll_x = x;
 	scroll_y = y;
+	ClampScrollLimits(&scroll_x, &scroll_y);
+
 	scroll_w = map_w << 3;
 	scroll_h = map_h << 3;
 	scroll_bank = bank;
@@ -165,20 +187,18 @@ void FinishPendingScrollUpdates() {
 	}
 }
 
-#define U_LESS_THAN(A, B) ((A) - (B) & 0x8000u)
-
 void RefreshScroll() {
 	UINT8 ny = scroll_y;
 
 	PUSH_BANK(scroll_bank);
 	if(scroll_target) {
-		if(U_LESS_THAN(100u, scroll_target->y - scroll_y)) {
-			ny = scroll_target->y - 100;
-		} else if(U_LESS_THAN(scroll_target->y - scroll_y, 30u)) {
-			if(U_LESS_THAN(scroll_target->y, 30u))
+		if(U_LESS_THAN(BOTTOM_MOVEMENT_LIMIT, scroll_target->y - scroll_y)) {
+			ny = scroll_target->y - BOTTOM_MOVEMENT_LIMIT;
+		} else if(U_LESS_THAN(scroll_target->y - scroll_y, TOP_MOVEMENT_LIMIT)) {
+			if(U_LESS_THAN(scroll_target->y, TOP_MOVEMENT_LIMIT))
 				ny = 0;
 			else
-				ny = scroll_target->y - 30;
+				ny = scroll_target->y - TOP_MOVEMENT_LIMIT;
 		}
 
 		MoveScroll(scroll_target->x - (SCREENWIDTH >> 1), ny);
@@ -188,19 +208,8 @@ void RefreshScroll() {
 
 void MoveScroll(UINT16 x, UINT16 y) {
 	UINT8 current_column, new_column, current_row, new_row;
-
-	if(x > 60000u) {
-		x = 0u;		
-	}
-	if(x > (scroll_w - SCREENWIDTH)) {
-		x = (scroll_w - SCREENWIDTH);
-	}
-	if(y > 60000u) {
-		y = 0u;		
-	}
-	if(y > (scroll_h - SCREENHEIGHT)) {
-		y = (scroll_h - SCREENHEIGHT);
-	}
+	
+	ClampScrollLimits(&x, &y);
 
 	current_column = scroll_x >> 3;
 	new_column = (x >> 3);
