@@ -36,6 +36,8 @@ UINT8 flag_idx;
 UINT16 reset_x = 32;
 UINT16 reset_y = 80;
 
+UINT8 level;
+
 struct Sprite* game_over_particle;
 
 void Start_STATE_GAME() {
@@ -56,8 +58,14 @@ void Start_STATE_GAME() {
 	princess_sprite->y = reset_y;
 
 	set_bkg_data(0, 61, tilemap);
-	//InitScroll(level1Width, level1Height, level1 , collision_tiles, 3);
-	InitScroll(level2Width, level2Height, level2, collision_tiles, 3);
+	switch(level) {
+		case 0:
+			InitScroll(level1Width, level1Height, level1 , collision_tiles, 3);
+			break;
+		case 1:
+			InitScroll(level2Width, level2Height, level2, collision_tiles, 3);
+			break;
+	}
 	SHOW_BKG;
 
 	PlayMusic(level_mod_Data, 3, 1);
