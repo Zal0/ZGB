@@ -17,7 +17,7 @@ void Start_STATE_MENU() {
 	InitScroll(splashmapWidth, splashmapHeight, splashmap, 0, 0, 0, 2);
 	SHOW_BKG;
 
-	PlayMusic(start_mod_Data, 3, 1);
+	PlayMusic(start_mod_Data, 2, 1);
 }
 
 void Update_STATE_MENU() {

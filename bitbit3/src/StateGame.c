@@ -11,6 +11,7 @@ UINT8 bank_STATE_GAME = 2;
 #include "SpriteAznar.h"
 
 #include "resources/map.h"
+#include "resources/map2.h"
 #include "resources/princess.h"
 #include "resources/particles.h"
 #include "resources/zurrapa.h"
@@ -23,7 +24,7 @@ UINT8 bank_STATE_GAME = 2;
 
 extern const unsigned char * level_mod_Data[];
 
-const UINT8 collision_tiles[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 47, 48, 53, 0};
+const UINT8 collision_tiles[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 47, 48, 53, 56, 57, 58, 59, 0};
 
 UINT8 princess_idx;
 UINT8 particles_idx;
@@ -44,8 +45,9 @@ void Start_STATE_GAME() {
 
 	SpriteManagerAdd(SPRITE_PRINCESS);
 
-	set_bkg_data(0, 56, tilemap);
-	InitScroll(level1Width, level1Height, level1, 0, 0, collision_tiles, 3);
+	set_bkg_data(0, 61, tilemap);
+	//InitScroll(level1Width, level1Height, level1, 0, 0, collision_tiles, 3);
+	InitScroll(level2Width, level2Height, level2, 0, 0, collision_tiles, 3);
 	SHOW_BKG;
 
 	PlayMusic(level_mod_Data, 3, 1);
