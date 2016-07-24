@@ -31,9 +31,14 @@ UINT8 particles_idx;
 UINT8 zurrapa_idx;
 UINT8 aznar_idx;
 
+UINT16 reset_x;
+UINT16 reset_y;
+
 struct Sprite* game_over_particle;
 
 void Start_STATE_GAME() {
+	struct Sprite* princess_sprite;
+
 	game_over_particle = 0;
 
 	SPRITES_8x16;
@@ -43,11 +48,14 @@ void Start_STATE_GAME() {
 	aznar_idx = LoadSprite(5 * 4, aznar);
 	SHOW_SPRITES;
 
-	SpriteManagerAdd(SPRITE_PRINCESS);
+	princess_sprite = SpriteManagerAdd(SPRITE_PRINCESS);
+
+	princess_sprite->x = 600;
+	princess_sprite->y = 112;
 
 	set_bkg_data(0, 61, tilemap);
-	//InitScroll(level1Width, level1Height, level1, 0, 0, collision_tiles, 3);
-	InitScroll(level2Width, level2Height, level2, 0, 0, collision_tiles, 3);
+	InitScroll(level1Width, level1Height, level1, princess_sprite->x - (SCREENWIDTH >> 1), princess_sprite->y - (SCREENHEIGHT >> 1), collision_tiles, 3);
+	//InitScroll(level2Width, level2Height, level2, 0, 0, collision_tiles, 3);
 	SHOW_BKG;
 
 	PlayMusic(level_mod_Data, 3, 1);
@@ -57,7 +65,7 @@ void Update_STATE_GAME() {
 	SpriteManagerUpdate();
 
 	if(game_over_particle && game_over_particle->current_frame == 5) {
-		SetState(STATE_GAME_OVER);
+		SetState(STATE_GAME);
 	}
 }
 

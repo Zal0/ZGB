@@ -89,14 +89,9 @@ void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT16 x, UINT16
 
 	//Change bank now, after copying the collision array (it can be in a different bank)
 	PUSH_BANK(bank);
-	move_bkg(scroll_x, scroll_y);
 	for(i = 0u; i != SCREEN_TILE_REFRES_H && i != scroll_tiles_h; ++i) {
 		ScrollUpdateRow((scroll_x >> 3) - 1u, (scroll_y >> 3) + i);
 	}
-	/*for(i = 0u; i != SCREEN_TILE_REFRES_W && i != scroll_tiles_w; ++i) {
-		ScrollUpdateColumn((scroll_x >> 3) + i, scroll_y >> 3);
-	}*/
-
 	POP_BANK;
 }
 

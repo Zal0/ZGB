@@ -36,8 +36,6 @@ extern struct Sprite* game_over_particle;
 void Start_SPRITE_PRINCESS(struct Sprite* sprite) {
 	InitSprite(sprite, FRAME_16x16, princess_idx >> 2);
 	SetSpriteAnim(sprite, anim_idle, 3u);
-	sprite->x = 32u;
-	sprite->y = 112u;
 	sprite->coll_x += 4u;
 	sprite->coll_w -= 8u;
 	sprite->coll_y += 2u;
