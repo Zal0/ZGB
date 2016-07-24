@@ -230,7 +230,6 @@ void MoveScroll(UINT16 x, UINT16 y) {
 
 	scroll_x = x;
 	scroll_y = y;
-	move_bkg(scroll_x, scroll_y);
 
 	if(pending_w_i) {
 		ScrollUpdateRowR();
