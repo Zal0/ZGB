@@ -85,6 +85,8 @@ void SpriteManagerUpdate() {
 			PUSH_BANK(spriteBanks[sprite_manager_current_sprite->type]);
 				spriteUpdateFuncs[sprite_manager_current_sprite->type]();
 			POP_BANK;
+			if(scroll_target == sprite_manager_current_sprite)
+				RefreshScroll();
 
 			if( ((scroll_x - sprite_manager_current_sprite->x - 16u - sprite_manager_current_sprite->lim_x)          & 0x8000u) &&
 			    ((sprite_manager_current_sprite->x - scroll_x - SCREENWIDTH - sprite_manager_current_sprite->lim_x)  & 0x8000u) &&

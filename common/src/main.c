@@ -72,7 +72,6 @@ void main() {
 				wait_vbl_done();
 			delta_time = vbl_count == 1u ? 0u : 1u;
 			vbl_count = 0;
-			RefreshScroll();
 
 			UPDATE_KEYS();
 			
