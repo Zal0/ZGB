@@ -86,6 +86,7 @@ void main() {
 		SpriteManagerReset();
 		state_running = 1;
 		current_state = next_state;
+		scroll_target = 0;
 		
 		PUSH_BANK(stateBanks[current_state]);
 			(startFuncs[current_state])();
