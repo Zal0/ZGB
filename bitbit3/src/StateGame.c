@@ -33,8 +33,8 @@ UINT8 zurrapa_idx;
 UINT8 aznar_idx;
 UINT8 flag_idx;
 
-UINT16 reset_x = 32;
-UINT16 reset_y = 80;
+UINT16 reset_x;
+UINT16 reset_y;
 
 UINT8 level;
 

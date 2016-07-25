@@ -35,6 +35,7 @@ extern struct Sprite* game_over_particle;
 
 extern UINT16 reset_x;
 extern UINT16 reset_y;
+extern UINT8 level;
 
 void Start_SPRITE_PRINCESS(struct Sprite* sprite) {
 	InitSprite(sprite, FRAME_16x16, princess_idx >> 2);
@@ -67,7 +68,14 @@ void CheckCollisionTile(struct Sprite* sprite, UINT8 idx) {
 	if(tile_collision == 33u) {
 		Die(sprite, idx);
 	} else if(tile_collision == 53u) {
-		SetState(STATE_WIN);
+		if(level == 1) {
+			SetState(STATE_WIN);
+		} else {
+			level ++;
+			reset_x = 32;
+			reset_y = 112;
+			SetState(STATE_GAME);
+		}
 	}
 }
 
