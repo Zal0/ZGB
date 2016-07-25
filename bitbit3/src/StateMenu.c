@@ -32,10 +32,10 @@ void Update_STATE_MENU() {
 		SetState(STATE_GAME);
 	}
 
-	if(KEY_TICKED(J_UP)) {
+	/*if(KEY_TICKED(J_UP)) {
 		level = 0;
 	}
 	if(KEY_TICKED(J_DOWN)) {
 		level = 1;
-	}
+	}*/
 }
