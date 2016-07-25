@@ -98,7 +98,8 @@ void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list
 	scroll_h = map_h << 3;
 	if(scroll_target) {
 		scroll_x = scroll_target->x - (SCREENWIDTH >> 1);
-		scroll_y = scroll_target->y - (SCREENHEIGHT >> 1) + (BOTTOM_MOVEMENT_LIMIT - TOP_MOVEMENT_LIMIT);
+		scroll_y = scroll_target->y - (SCREENHEIGHT >> 1);
+		scroll_y -= BOTTOM_MOVEMENT_LIMIT - (scroll_target->y - scroll_y); //Move the camera to its bottom limit
 		ClampScrollLimits(&scroll_x, &scroll_y);
 	}
 
