@@ -9,7 +9,7 @@ typedef enum {
 
 extern UINT8 last_sprite_loaded;
 
-UINT8 LoadSprite(UINT8 n_tiles, unsigned char* data);
+UINT8 LoadSprite(UINT8 n_tiles, unsigned char* data, UINT8 bank);
 void DrawOAMSprite(UINT8 oam_idx, UINT8 idx, UINT8 x, UINT8 y, UINT8 flags);
 
 #endif

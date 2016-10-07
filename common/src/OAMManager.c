@@ -1,10 +1,13 @@
 #include "OAMManager.h"
+#include "BankManager.h"
 
 UINT8 last_sprite_loaded = 0;
 
-UINT8 LoadSprite(UINT8 n_tiles, unsigned char* data) {
+UINT8 LoadSprite(UINT8 n_tiles, unsigned char* data, UINT8 bank) {
+	PUSH_BANK(bank);
 	set_sprite_data(last_sprite_loaded, n_tiles, data);
 	last_sprite_loaded += n_tiles;
+	POP_BANK;
 
 	return last_sprite_loaded - n_tiles;
 }
