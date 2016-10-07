@@ -18,7 +18,7 @@ ifneq ($(strip $(N_BANKS)),)
 	LFLAGS_NBANKS = -Wl-yt1 -Wl-yo$(N_BANKS)
 endif
 
-CFLAGS = -DUSE_SFR_FOR_REG $(BUILD_DEFS) -I..\include -I..\..\common\include
+CFLAGS = -DUSE_SFR_FOR_REG $(BUILD_DEFS) -I..\include -I$(ZGB_PATH)\include
 #-Wa-l -Wl-m -Wl-j 
 LFLAGS = -DUSE_SFR_FOR_REG $(LFLAGS_NBANKS)
 CC = $(LCC)
@@ -27,13 +27,13 @@ current_dir = $(shell pwd)
 
 ASMS      = $(foreach dir,.,$(notdir $(wildcard $(dir)/*.s)))
 CLASSES   = $(foreach dir,.,$(notdir $(wildcard $(dir)/*.c)))
-RESOURCES = $(foreach dir,./resources,$(notdir $(wildcard $(dir)/*.c)))
+RESOURCES = $(foreach dir,../res/src,$(notdir $(wildcard $(dir)/*.c)))
 MUSICS    = $(foreach dir,./music,$(notdir $(wildcard $(dir)/*.mod)))
 OBJS = $(RESOURCES:%.c=$(OBJDIR_RES)/%.o) $(MUSICS:%.mod=$(OBJDIR_RES)/%.mod.o) $(CLASSES:%.c=$(OBJDIR)/%.o) $(ASMS:%.s=$(OBJDIR)/%.o)
 
 
 #until I can find a way to create a .lib I'll be linking the.o files from my common library
-COMMON_OBJS = $(wildcard ../../common/Release/*.o)
+COMMON_OBJS = $(wildcard $(ZGB_PATH)/Release/*.o)
 
 $(BINDIR):
 	@echo Creating folder $(BINDIR)
@@ -55,7 +55,7 @@ $(OBJDIR)/%.o: %.c
 	@echo compiling $<
 	@$(CC) $(CFLAGS) $(filter -Wf-bo%, $(subst .b,-Wf-bo,$(suffix $(<:%.c=%)))) -c -o $@ $<
 
-$(OBJDIR_RES)/%.o: resources/%.c
+$(OBJDIR_RES)/%.o: ../res/src/%.c
 	@echo compiling resource: $<
 	@if grep -q "unsigned char" $<; then \
 		sed -i "s/unsigned char/const unsigned  char/g" $<; \
