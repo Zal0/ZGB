@@ -33,7 +33,7 @@ OBJS = $(RESOURCES:%.c=$(OBJDIR_RES)/%.o) $(MUSICS:%.mod=$(OBJDIR_RES)/%.mod.o) 
 
 
 #until I can find a way to create a .lib I'll be linking the.o files from my common library
-COMMON_OBJS = $(wildcard $(ZGB_PATH)/Release/*.o)
+COMMON_OBJS = $(wildcard $(ZGB_PATH)/$(BUILD_TYPE)/*.o)
 
 $(BINDIR):
 	@echo Creating folder $(BINDIR)
