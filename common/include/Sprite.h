@@ -30,6 +30,8 @@ struct Sprite {
 	UINT8 marked_for_removal;
 	UINT16 lim_x, lim_y; //limits offscren where the sprite will be deleted (0 means inmediatelly)
 	UINT16 unique_id;
+
+	UINT8 custom_data_idx;
 };
 
 void InitSprite(struct Sprite* sprite, FrameSize size, UINT8 first_tile);
