@@ -27,6 +27,7 @@ struct Sprite* scroll_target = 0;
 INT16 scroll_target_offset_x = 0;
 INT16 scroll_target_offset_y = 0;
 UINT8 scroll_collisions[128];
+UINT8 scroll_collisions_down[128];
 UINT8 scroll_bank;
 
 //This function was thought for updating a whole square... can't find a better one that updates one tile only!
@@ -86,7 +87,7 @@ void ClampScrollLimits(UINT16* x, UINT16* y) {
 	}
 }
 
-void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list, UINT8 bank) {
+void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list, UINT8* coll_list_down, UINT8 bank) {
 	UINT8 i;
 	
 	scroll_tiles_w = map_w;
@@ -106,14 +107,23 @@ void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list
 	
 	scroll_bank = bank;
 
+
+	for(i = 0u; i != 128; ++i) {
+		scroll_collisions[i] = 0u;
+		scroll_collisions_down[i] = 0u;
+	}
 	if(coll_list) {
-		for(i = 0u; i != 128; ++i) {
-			scroll_collisions[i] = 0u;
-		}
 		for(i = 0u; coll_list[i] != 0u; ++i) {
 			scroll_collisions[coll_list[i]] = 1u;
 		}
 	}
+	if(coll_list_down) {
+		for(i = 0u; coll_list_down[i] != 0u; ++i) {
+			scroll_collisions_down[coll_list_down[i]] = 1u;
+		}
+	}
+
+
 
 	//Change bank now, after copying the collision array (it can be in a different bank)
 	PUSH_BANK(bank);
