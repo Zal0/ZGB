@@ -20,6 +20,7 @@ extern Void_Func_Void updateFuncs[];
 extern UINT8 spriteBanks[];
 extern Void_Func_SpritePtr spriteStartFuncs[];
 extern Void_Func_Void spriteUpdateFuncs[];
+extern Void_Func_Void spriteDestroyFuncs[];
 
 void SetState(UINT8 state) {
 	state_running = 0;

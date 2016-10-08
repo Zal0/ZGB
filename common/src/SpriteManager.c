@@ -8,6 +8,7 @@
 extern UINT8 spriteBanks[];
 extern Void_Func_SpritePtr spriteStartFuncs[];
 extern Void_Func_Void spriteUpdateFuncs[];
+extern Void_Func_Void spriteDestroyFuncs[];
 
 //Pool
 UINT8 sprite_manager_sprites_mem[N_SPRITE_MANAGER_SPRITES * sizeof(struct Sprite)];
@@ -109,6 +110,10 @@ void SpriteManagerUpdate() {
 				VectorRemovePos(sprite_manager_updatables, sprite_manager_current_index);
 				move_sprite(sprite_manager_current_sprite->oam_idx, 200, 200);
 				move_sprite(sprite_manager_current_sprite->oam_idx + 1, 200, 200);
+				
+				PUSH_BANK(spriteBanks[sprite_manager_current_sprite->type]);
+					spriteDestroyFuncs[sprite_manager_current_sprite->type]();
+				POP_BANK;
 			}
 		}
 		sprite_manager_removal_check = 0;
