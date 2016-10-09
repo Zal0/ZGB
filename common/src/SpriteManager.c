@@ -49,6 +49,7 @@ struct Sprite* SpriteManagerAdd(UINT8 sprite_type) {
 	sprite->marked_for_removal = 0;
 	sprite->lim_x = 32u;
 	sprite->lim_y = 32u;
+	sprite->flags = 0;
 
 	VectorAdd(sprite_manager_updatables, sprite_idx);
 
