@@ -27,10 +27,14 @@ void SetState(UINT8 state) {
 	next_state = state;
 }
 
+unsigned char* last_music = 0;
 void PlayMusic(unsigned char* music, unsigned char bank, unsigned char loop) {
-	gbt_play(music, bank, 7);
-	gbt_loop(loop);
-	REFRESH_BANK;
+	if(music != last_music) {
+		last_music = music;
+		gbt_play(music, bank, 7);
+		gbt_loop(loop);
+		REFRESH_BANK;
+	}
 }
 
 UINT8 vbl_count;
