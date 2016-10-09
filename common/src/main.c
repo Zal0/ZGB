@@ -82,7 +82,7 @@ void main() {
 		}
 
 		DISPLAY_OFF
-		gbt_stop();
+		//gbt_stop();
 		last_sprite_loaded = 0;
 		SpriteManagerReset();
 		state_running = 1;
