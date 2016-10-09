@@ -275,19 +275,24 @@ UINT8 GetScrollTile(UINT16 x, UINT16 y) {
 }
 
 void ScrollFindTile(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, UINT8 tile, UINT16* x, UINT16* y) {
-	UINT16 xt, yt;
-	BOOLEAN found = 0;
+	UINT16 xt = 0;
+	UINT16 yt = 0;
+	UINT8 found = 0;
 
 	PUSH_BANK(bank);
-		for(xt = 0; (xt < map_w) && !found; xt ++) {
-			for(yt = 0; (yt < map_h) && !found; yt ++) {
-				if(map[map_w * xt + yt] == tile) {
-					found = 1;
-				}
+	for(xt = 0; xt != map_w && !found; ++ xt) {
+		for(yt = 0; yt != map_h && !found; ++ yt) {
+			if(map[map_w * yt + xt] == (UINT16)tile) { //That cast over there is mandatory and gave me a lot of headaches
+				found = 1;
+				break;
 			}
 		}
+		if(found) {
+			break;
+		}
+	}
 	POP_BANK;
 
-	*x = (xt << 3);
-	*y = (yt << 3);
+	*x = xt;
+	*y = yt;
 }
