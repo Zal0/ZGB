@@ -154,9 +154,14 @@ void Update_SPRITE_PRINCESS() {
 #ifndef DEBUG_CONTROLS
 	//Simple gravity physics 
 	if(princess_accel_y < 40) {
-		princess_accel_y += 2 << delta_time;
+		princess_accel_y += 2;
 	}
-	if(tile_collision = TranslateSprite(sprite_manager_current_sprite, 0, (princess_accel_y >> 4) << delta_time)) {
+	tile_collision = TranslateSprite(sprite_manager_current_sprite, 0, princess_accel_y >> 4);
+	if(!tile_collision && delta_time != 0 && princess_accel_y < 40) { //Do another iteration if there is no collision
+			princess_accel_y += 2;
+			tile_collision = TranslateSprite(sprite_manager_current_sprite, 0, princess_accel_y >> 4);
+	}
+	if(tile_collision) {
 		princess_accel_y = 0;
 		if(princes_state == PRINCESS_STATE_JUMPING) {
 			princes_state = PRINCESS_STATE_NORMAL;
