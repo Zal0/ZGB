@@ -18,3 +18,6 @@ void Start_SPRITE_ZURRAPA(struct Sprite* sprite) {
 void Update_SPRITE_ZURRAPA() {
 	
 }
+
+void Destroy_SPRITE_ZURRAPA() {
+}

@@ -9,159 +9,102 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Source Files\resources">
-      <UniqueIdentifier>{c4d70f5c-5f6e-41ef-89f4-e51a7e355896}</UniqueIdentifier>
+    <Filter Include="Header Files\Sprites">
+      <UniqueIdentifier>{9123e4a6-b364-4567-a66b-7fe865376bf2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\States">
+      <UniqueIdentifier>{4e8deb16-e7c5-487a-9c84-3af23acbb9d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Sprites">
+      <UniqueIdentifier>{31ddb2b6-aa80-4d79-a0e7-a14c84c85d3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\States">
+      <UniqueIdentifier>{6df65f25-d223-4c3c-af48-591215319d31}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\StateGame.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\StateMenu.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\StateTests.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\StateDisclaimer.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\StateGameOver.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\StateWin.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\resources\aznar.b2.c">
-      <Filter>Source Files\resources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\resources\gameovermap.b2.c">
-      <Filter>Source Files\resources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\resources\gameovertiles.b2.c">
-      <Filter>Source Files\resources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\resources\map.b2.c">
-      <Filter>Source Files\resources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\resources\particles.b2.c">
-      <Filter>Source Files\resources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\resources\princess.b2.c">
-      <Filter>Source Files\resources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\resources\splash.b2.c">
-      <Filter>Source Files\resources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\resources\splashtiles.b2.c">
-      <Filter>Source Files\resources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\resources\tilemap.b2.c">
-      <Filter>Source Files\resources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\resources\winmap.b2.c">
-      <Filter>Source Files\resources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\resources\zurrapa.b2.c">
-      <Filter>Source Files\resources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SpritePrincess.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SpriteZurrapa.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SpriteParticle.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SpriteAxe.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SpriteAznar.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\BitBit3.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\SpriteAxe.c">
+      <Filter>Source Files\Sprites</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SpriteAznar.c">
+      <Filter>Source Files\Sprites</Filter>
+    </ClCompile>
     <ClCompile Include="src\SpriteFlag.c">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Sprites</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SpriteParticle.c">
+      <Filter>Source Files\Sprites</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SpritePrincess.c">
+      <Filter>Source Files\Sprites</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SpriteZurrapa.c">
+      <Filter>Source Files\Sprites</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StateDisclaimer.c">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StateGame.c">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StateGameOver.c">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StateMenu.c">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StateTests.c">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StateWin.c">
+      <Filter>Source Files\States</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Makefile" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\StateGame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\StateMenu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\StateTests.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\StateDisclaimer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\StateGameOver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\StateWin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\resources\aznar.h">
-      <Filter>Source Files\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="src\resources\gameovermap.h">
-      <Filter>Source Files\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="src\resources\gameovertiles.h">
-      <Filter>Source Files\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="src\resources\map.h">
-      <Filter>Source Files\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="src\resources\particles.h">
-      <Filter>Source Files\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="src\resources\princess.h">
-      <Filter>Source Files\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="src\resources\splash.h">
-      <Filter>Source Files\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="src\resources\splashtiles.h">
-      <Filter>Source Files\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="src\resources\tilemap.h">
-      <Filter>Source Files\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="src\resources\winmap.h">
-      <Filter>Source Files\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="src\resources\zurrapa.h">
-      <Filter>Source Files\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SpritePrincess.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SpriteZurrapa.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SpriteParticle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SpriteAxe.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SpriteAznar.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\BitBit3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\SpriteAxe.h">
+      <Filter>Header Files\Sprites</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SpriteAznar.h">
+      <Filter>Header Files\Sprites</Filter>
+    </ClInclude>
     <ClInclude Include="include\SpriteFlag.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Sprites</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SpriteParticle.h">
+      <Filter>Header Files\Sprites</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SpritePrincess.h">
+      <Filter>Header Files\Sprites</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SpriteZurrapa.h">
+      <Filter>Header Files\Sprites</Filter>
+    </ClInclude>
+    <ClInclude Include="include\StateDisclaimer.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="include\StateGame.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="include\StateGameOver.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="include\StateMenu.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="include\StateTests.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="include\StateWin.h">
+      <Filter>Header Files\States</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

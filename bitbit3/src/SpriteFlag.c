@@ -23,3 +23,6 @@ void Update_SPRITE_FLAG() {
 		}
 	}
 }
+
+void Destroy_SPRITE_FLAG() {
+}

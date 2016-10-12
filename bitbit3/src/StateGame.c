@@ -10,14 +10,14 @@ UINT8 bank_STATE_GAME = 2;
 #include "SpritePrincess.h"
 #include "SpriteAznar.h"
 
-#include "resources/map.h"
-#include "resources/map2.h"
-#include "resources/princess.h"
-#include "resources/particles.h"
-#include "resources/zurrapa.h"
-#include "resources/tilemap.h"
-#include "resources/aznar.h"
-#include "resources/flag.h"
+#include "../res/src/map.h"
+#include "../res/src/map2.h"
+#include "../res/src/princess.h"
+#include "../res/src/particles.h"
+#include "../res/src/zurrapa.h"
+#include "../res/src/tilemap.h"
+#include "../res/src/aznar.h"
+#include "../res/src/flag.h"
 
 #include "BitBit3.h"
 
@@ -60,10 +60,10 @@ void Start_STATE_GAME() {
 	set_bkg_data(0, 61, tilemap);
 	switch(level) {
 		case 0:
-			InitScroll(level1Width, level1Height, level1 , collision_tiles, 3);
+			InitScroll(level1Width, level1Height, level1 , collision_tiles, 0, 3);
 			break;
 		case 1:
-			InitScroll(level2Width, level2Height, level2, collision_tiles, 3);
+			InitScroll(level2Width, level2Height, level2, collision_tiles, 0, 3);
 			break;
 	}
 	SHOW_BKG;

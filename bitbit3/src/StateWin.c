@@ -7,14 +7,14 @@ UINT8 bank_STATE_WIN = 2;
 #include "Scroll.h"
 #include "Keys.h"
 
-#include "resources/winmap.h"
-#include "resources/splashtiles.h"
+#include "../res/src/winmap.h"
+#include "../res/src/splashtiles.h"
 
 extern const unsigned char * gameover_mod_Data[];
 
 void Start_STATE_WIN() {
 	set_bkg_data(0, 104, splashtiles);
-	InitScroll(winmapWidth, winmapHeight, winmap, 0, 2);
+	InitScroll(winmapWidth, winmapHeight, winmap, 0, 0, 2);
 	SHOW_BKG;
 
 	PlayMusic(gameover_mod_Data, 3, 0);

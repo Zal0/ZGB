@@ -2,7 +2,7 @@
 #include "SpriteAznar.h"
 UINT8 bank_SPRITE_AZNAR = 2;
 
-#include "resources/aznar.h"
+#include "../res/src/aznar.h"
 #include "SpriteManager.h"
 #include "Scroll.h"
 
@@ -35,4 +35,7 @@ void Update_SPRITE_AZNAR() {
 			sprite_manager_current_sprite->flags |= OAM_VERTICAL_FLAG;
 		}
 	}
+}
+
+void Destroy_SPRITE_AZNAR() {
 }

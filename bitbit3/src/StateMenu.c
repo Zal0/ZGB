@@ -7,8 +7,8 @@ UINT8 bank_STATE_MENU = 2;
 #include "Scroll.h"
 #include "Keys.h"
 
-#include "resources/splash.h"
-#include "resources/splashtiles.h"
+#include "../res/src/splash.h"
+#include "../res/src/splashtiles.h"
 
 extern const unsigned char * start_mod_Data[];
 
@@ -18,7 +18,7 @@ extern UINT16 reset_y;
 
 void Start_STATE_MENU() {
 	InitScrollTiles(0, 102, splashtiles, 2);
-	InitScroll(splashmapWidth, splashmapHeight, splashmap, 0, 2);
+	InitScroll(splashmapWidth, splashmapHeight, splashmap, 0, 0, 2);
 	SHOW_BKG;
 
 	level = 0;

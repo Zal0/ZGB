@@ -10,7 +10,7 @@ UINT8 bank_SPRITE_PRINCESS = 2;
 #include "Scroll.h"
 #include "SpriteManager.h"
 
-#include "resources/princess.h"
+#include "../res/src/princess.h"
 
 //#define DEBUG_CONTROLS
 
@@ -56,7 +56,7 @@ void Start_SPRITE_PRINCESS(struct Sprite* sprite) {
 
 void Die(struct Sprite* sprite, UINT8 idx) {
 	SpriteManagerRemove(idx);
-	game_over_particle = SpriteManagerAdd(SPRITE_DEAD_PARTICLE);
+	game_over_particle = SpriteManagerAdd(SPRITE_PARTICLE);
 	game_over_particle->x = sprite->x;
 	game_over_particle->y = sprite->y;
 
@@ -199,4 +199,5 @@ void Update_SPRITE_PRINCESS() {
 	}*/
 }
 
-
+void Destroy_SPRITE_PRINCESS() {
+}
