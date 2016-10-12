@@ -30,7 +30,6 @@ INT16 princess_accel_y;
 
 struct Sprite* axe_sprite;
 
-extern UINT8 princess_idx;
 extern struct Sprite* game_over_particle;
 
 extern UINT16 reset_x;
@@ -38,7 +37,6 @@ extern UINT16 reset_y;
 extern UINT8 level;
 
 void Start_SPRITE_PRINCESS(struct Sprite* sprite) {
-	InitSprite(sprite, FRAME_16x16, princess_idx >> 2);
 	SetSpriteAnim(sprite, anim_idle, 3u);
 	sprite->coll_x += 4u;
 	sprite->coll_w -= 8u;

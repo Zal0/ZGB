@@ -6,13 +6,11 @@ UINT8 bank_SPRITE_FLAG = 2;
 
 const UINT8 anim_flag_idle[] = {1, 0};
 const UINT8 anim_flag_enabled[] = {1, 1};
-extern UINT8 flag_idx;
 
 extern UINT16 reset_x;
 extern UINT16 reset_y;
 
 void Start_SPRITE_FLAG(struct Sprite* sprite) {
-	InitSprite(sprite, FRAME_16x16, flag_idx >> 2);
 	SetSpriteAnim(sprite, anim_flag_idle, 5u);
 }
 

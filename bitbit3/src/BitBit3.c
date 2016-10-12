@@ -14,6 +14,15 @@
 #include "SpriteAznar.h"
 #include "SpriteFlag.h"
 
+#include "../res/src/map.h"
+#include "../res/src/map2.h"
+#include "../res/src/princess.h"
+#include "../res/src/particles.h"
+#include "../res/src/zurrapa.h"
+#include "../res/src/tilemap.h"
+#include "../res/src/aznar.h"
+#include "../res/src/flag.h"
+
 UINT8 next_state = STATE_MENU;// STATE_GAME; //STATE_MENU;
 
 SET_N_STATES(N_STATES);
@@ -29,12 +38,12 @@ void InitStates() {
 }
 
 void InitSprites() {
-	INIT_SPRITE(SPRITE_PRINCESS);
-	INIT_SPRITE(SPRITE_ZURRAPA);
-	INIT_SPRITE(SPRITE_PARTICLE);
-	INIT_SPRITE(SPRITE_AXE);
-	INIT_SPRITE(SPRITE_AZNAR);
-	INIT_SPRITE(SPRITE_FLAG);
+	INIT_SPRITE(SPRITE_PRINCESS, princess,  2, FRAME_16x16, 10 * 4);
+	INIT_SPRITE(SPRITE_ZURRAPA,  zurrapa,   0, FRAME_16x16,  2 * 4);
+	INIT_SPRITE(SPRITE_PARTICLE, particles, 2, FRAME_16x16,  6 * 4);
+	INIT_SPRITE(SPRITE_AXE,      princess,  2, FRAME_16x16, 10 * 4);
+	INIT_SPRITE(SPRITE_AZNAR,    aznar,     2, FRAME_16x16,  5 * 4);
+	INIT_SPRITE(SPRITE_FLAG,     flag,      0, FRAME_16x16,  2 * 4);
 }
 
 UINT8 GetTileReplacement(UINT8 t) {

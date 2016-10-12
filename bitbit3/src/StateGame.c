@@ -12,30 +12,17 @@ UINT8 bank_STATE_GAME = 2;
 
 #include "../res/src/map.h"
 #include "../res/src/map2.h"
-#include "../res/src/princess.h"
-#include "../res/src/particles.h"
-#include "../res/src/zurrapa.h"
 #include "../res/src/tilemap.h"
-#include "../res/src/aznar.h"
-#include "../res/src/flag.h"
 
 #include "BitBit3.h"
-
 #include "gbt_player.h"
 
 extern const unsigned char * level_mod_Data[];
 
 const UINT8 collision_tiles[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 47, 48, 53, 56, 57, 58, 59, 0};
 
-UINT8 princess_idx;
-UINT8 particles_idx;
-UINT8 zurrapa_idx;
-UINT8 aznar_idx;
-UINT8 flag_idx;
-
 UINT16 reset_x;
 UINT16 reset_y;
-
 UINT8 level;
 
 struct Sprite* game_over_particle;
@@ -46,11 +33,12 @@ void Start_STATE_GAME() {
 	game_over_particle = 0;
 
 	SPRITES_8x16;
-	princess_idx = LoadSprite(10 * 4, princess);
-	zurrapa_idx = LoadSprite(2 * 4, zurrapa);
-	particles_idx = LoadSprite(6 * 4, particles);
-	aznar_idx = LoadSprite(5 * 4, aznar);
-	flag_idx = LoadSprite(2 * 4, flag);
+	SpriteManagerLoad(SPRITE_PRINCESS);
+	SpriteManagerLoadSubsprite(SPRITE_AXE, SPRITE_PRINCESS);
+	SpriteManagerLoad(SPRITE_ZURRAPA);
+	SpriteManagerLoad(SPRITE_PARTICLE);
+	SpriteManagerLoad(SPRITE_AZNAR);
+	SpriteManagerLoad(SPRITE_FLAG);
 	SHOW_SPRITES;
 
 	princess_sprite = SpriteManagerAdd(SPRITE_PRINCESS);

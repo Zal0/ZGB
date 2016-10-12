@@ -6,11 +6,9 @@ UINT8 bank_SPRITE_AZNAR = 2;
 #include "SpriteManager.h"
 #include "Scroll.h"
 
-extern UINT8 aznar_idx;
 const UINT8 anim_aznar_walk[] = {8, 0, 1, 2, 3, 4, 3, 2, 1};
 
 void Start_SPRITE_AZNAR(struct Sprite* sprite) {
-	InitSprite(sprite, FRAME_16x16, aznar_idx >> 2);
 	SetSpriteAnim(sprite, anim_aznar_walk, 20u);
 
 	sprite->coll_x += 4;

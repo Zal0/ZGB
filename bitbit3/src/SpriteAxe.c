@@ -7,12 +7,8 @@ UINT8 bank_SPRITE_AXE = 2;
 #include "SpriteManager.h"
 #include "BitBit3.h"
 
-extern UINT8 princess_idx;
-const UINT8 anim_axe[] = {1, 9};
-
 void Start_SPRITE_AXE(struct Sprite* sprite) {
-	InitSprite(sprite, FRAME_16x16, princess_idx >> 2);
-	SetSpriteAnim(sprite, anim_axe, 5u);
+	sprite->current_frame = 9u;
 }
 
 void Update_SPRITE_AXE() {
