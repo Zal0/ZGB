@@ -1,6 +1,6 @@
 /*
 
- SPLASHTILES.H
+ TILEMAP.H
 
  Include File.
 
@@ -10,7 +10,7 @@
   Compression          : None.
   Counter              : None.
   Tile size            : 8 x 8
-  Tiles                : 0 to 100
+  Tiles                : 0 to 60
 
   Palette colors       : None.
   SGB Palette          : None.
@@ -24,8 +24,8 @@
 
 
 /* Bank of tiles. */
-#define splashtilesBank 0
+#define tilemapBank 0
 /* Start of tile array. */
-extern unsigned char splashtiles[];
+extern unsigned char tilemap[];
 
-/* End of SPLASHTILES.H */
+/* End of TILEMAP.H */

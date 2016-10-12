@@ -1,6 +1,6 @@
 /*
 
- ZURRAPA.H
+ SPLASHTILES.H
 
  Include File.
 
@@ -9,8 +9,8 @@
   Format               : Gameboy 4 color.
   Compression          : None.
   Counter              : None.
-  Tile size            : 16 x 16
-  Tiles                : 0 to 1
+  Tile size            : 8 x 8
+  Tiles                : 0 to 103
 
   Palette colors       : None.
   SGB Palette          : None.
@@ -24,8 +24,8 @@
 
 
 /* Bank of tiles. */
-#define zurrapaBank 0
+#define splashtilesBank 0
 /* Start of tile array. */
-extern unsigned char zurrapa[];
+extern unsigned char splashtiles[];
 
-/* End of ZURRAPA.H */
+/* End of SPLASHTILES.H */
