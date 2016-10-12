@@ -9,6 +9,11 @@ extern UINT8 spriteBanks[];
 extern Void_Func_SpritePtr spriteStartFuncs[];
 extern Void_Func_Void spriteUpdateFuncs[];
 extern Void_Func_Void spriteDestroyFuncs[];
+extern UINT8* spriteDatas[];
+extern UINT8 spriteDataBanks[];
+extern FrameSize spriteFrameSizes[];
+extern UINT8 spriteNumFrames[];
+extern UINT8 spriteIdxs[];
 
 //Pool
 UINT8 sprite_manager_sprites_mem[N_SPRITE_MANAGER_SPRITES * sizeof(struct Sprite)];
@@ -39,6 +44,14 @@ void SpriteManagerReset() {
 	sprite_manager_removal_check = 0;
 }
 
+void SpriteManagerLoad(UINT8 sprite_type) {
+	spriteIdxs[sprite_type] = LoadSprite(spriteNumFrames[sprite_type], spriteDatas[sprite_type], spriteDataBanks[sprite_type]);
+}
+
+void SpriteManagerLoadSubsprite(UINT8 sprite_type, UINT8 sprite_type_source) {
+	spriteIdxs[sprite_type] = spriteIdxs[sprite_type_source];
+}
+
 struct Sprite* SpriteManagerAdd(UINT8 sprite_type) {
 	UINT8 sprite_idx;
 	struct Sprite* sprite;
@@ -53,6 +66,7 @@ struct Sprite* SpriteManagerAdd(UINT8 sprite_type) {
 
 	VectorAdd(sprite_manager_updatables, sprite_idx);
 
+	InitSprite(sprite, spriteFrameSizes[sprite_type], spriteIdxs[sprite_type] >> 2);
 	PUSH_BANK(spriteBanks[sprite->type]);
 		spriteStartFuncs[sprite->type](sprite);
 	POP_BANK;

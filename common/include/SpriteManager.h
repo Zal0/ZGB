@@ -19,6 +19,9 @@ extern struct Sprite* sprite_manager_current_sprite;
 
 void SpriteManagerReset();
 
+void SpriteManagerLoad(UINT8 sprite_type);
+void SpriteManagerLoadSubsprite(UINT8 sprite_type, UINT8 sprite_type_source);
+
 struct Sprite* SpriteManagerAdd(UINT8 sprite_type);
 void SpriteManagerRemove(int idx);
 void SpriteManagerRemoveSprite(struct Sprite* sprite);
