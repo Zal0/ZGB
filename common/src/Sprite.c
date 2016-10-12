@@ -6,6 +6,7 @@ void InitSprite(struct Sprite* sprite, FrameSize size, UINT8 first_tile) {
 	sprite->size = size;
 	sprite->first_tile = first_tile;
 	sprite->data = 0u;
+	sprite->current_frame = 0u;
 	sprite->anim_speed = 33u;
 
 	sprite->x = 0;
@@ -32,8 +33,8 @@ void SetSpriteAnim(struct Sprite* sprite, UINT8* data, UINT8 speed) {
 
 extern UINT8 delta_time;
 void DrawSprite(struct Sprite* sprite) {
-	if(sprite->data) {
-		
+	int frame;
+	if(sprite->data) {	
 		sprite->accum_ticks += sprite->anim_speed << delta_time;
 		if(sprite->accum_ticks > 100u) {
 			sprite->current_frame ++;
@@ -43,9 +44,12 @@ void DrawSprite(struct Sprite* sprite) {
 
 			sprite->accum_ticks -= 100u;
 		}
-
-		DrawFrame(sprite->oam_idx, sprite->size, sprite->first_tile + sprite->data[1 + sprite->current_frame], sprite->x, sprite->y, sprite->flags);
+		frame = sprite->data[1 + sprite->current_frame];
+	} else {
+		frame = sprite->current_frame;
 	}
+	
+	DrawFrame(sprite->oam_idx, sprite->size, sprite->first_tile + frame, sprite->x, sprite->y, sprite->flags);
 }
 
 UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
