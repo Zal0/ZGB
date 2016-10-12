@@ -19,8 +19,6 @@ void InitSprite(struct Sprite* sprite, FrameSize size, UINT8 first_tile) {
 		case FRAME_16x16: sprite->coll_w = 16u; sprite->coll_h = 16u; break;
 		case FRAME_32x32: sprite->coll_w = 32u; sprite->coll_h = 32u; break;
 	}
-
-	sprite->custom_data_idx = 0;
 }
 
 void SetSpriteAnim(struct Sprite* sprite, UINT8* data, UINT8 speed) {
