@@ -3,10 +3,10 @@
 #include "SpriteManager.h"
 #include "BankManager.h"
 
-#define SCREEN_TILES_W       20u // 160 >> 3 = 20
-#define SCREEN_TILES_H       18u // 144 >> 3 = 18
-#define SCREEN_TILE_REFRES_W 23u
-#define SCREEN_TILE_REFRES_H 19u
+#define SCREEN_TILES_W       20 // 160 >> 3 = 20
+#define SCREEN_TILES_H       18 // 144 >> 3 = 18
+#define SCREEN_TILE_REFRES_W 23
+#define SCREEN_TILE_REFRES_H 19
 
 #define U_LESS_THAN(A, B) ((A) - (B) & 0x8000u)
 
@@ -17,8 +17,8 @@
 UINT8 GetTileReplacement(UINT8 t);
 
 unsigned char* scroll_map = 0;
-UINT16 scroll_x;
-UINT16 scroll_y;
+INT16 scroll_x;
+INT16 scroll_y;
 UINT16 scroll_w;
 UINT16 scroll_h;
 UINT16 scroll_tiles_w;
@@ -32,16 +32,26 @@ UINT8 scroll_bank;
 UINT8 scroll_offset_x = 0;
 UINT8 scroll_offset_y = 0;
 
+INT16 pending_h_x, pending_h_y;
+UINT8 pending_h_i;
+unsigned char* pending_h_map = 0;
+INT16 pending_w_x, pending_w_y;
+UINT8 pending_w_i;
+unsigned char* pending_w_map = 0;
+
 //This function was thought for updating a whole square... can't find a better one that updates one tile only!
 //#define UPDATE_TILE(X, Y, T) set_bkg_tiles(0x1F & (UINT8)X, 0x1F & (UINT8)Y, 1, 1, T)
-void UPDATE_TILE(UINT16 x, UINT16 y, UINT8* t) {
+void UPDATE_TILE(INT16 x, INT16 y, UINT8* t) {
 	UINT8 i = *t;
 	struct Sprite* s = 0;
 	UINT8 type = 255u;
 	UINT16 id = 0u;
 	UINT16 tmp_y;
 	
-	type = GetTileReplacement(*t);
+	//if(x < 0 || y < 0 ||  x >= scroll_tiles_w || y >= scroll_tiles_h)
+	//	i = 0;
+
+	type = GetTileReplacement(i);
 	if(type != 255u) {
 		if(type != 254u) {
 			tmp_y = y << 8;
@@ -91,23 +101,30 @@ void ClampScrollLimits(UINT16* x, UINT16* y) {
 	}
 }
 
+INT16 DespRight(INT16 a, INT16 b) {
+	return a >> b;
+}
+
 void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list, UINT8* coll_list_down, UINT8 bank) {
 	UINT8 i;
+	INT16 y;
 	
 	scroll_tiles_w = map_w;
 	scroll_tiles_h = map_h;
 	scroll_map = map;
-	scroll_x = 0u;
-	scroll_y = 0u;
+	scroll_x = 0;
+	scroll_y = 0;
 	scroll_w = map_w << 3;
 	scroll_h = map_h << 3;
 	scroll_bank = bank;
 	if(scroll_target) {
 		scroll_x = scroll_target->x - (SCREENWIDTH >> 1);
-		scroll_y = scroll_target->y - (SCREENHEIGHT >> 1);
-		scroll_y -= BOTTOM_MOVEMENT_LIMIT - (scroll_target->y - scroll_y); //Move the camera to its bottom limit
+		//scroll_y = scroll_target->y - (SCREENHEIGHT >> 1);
+		scroll_y = scroll_target->y - BOTTOM_MOVEMENT_LIMIT; //Move the camera to its bottom limit
 		ClampScrollLimits(&scroll_x, &scroll_y);
 	}
+	pending_h_i = 0;
+	pending_w_i = 0;
 
 	for(i = 0u; i != 128; ++i) {
 		scroll_collisions[i] = 0u;
@@ -126,15 +143,13 @@ void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list
 
 	//Change bank now, after copying the collision array (it can be in a different bank)
 	PUSH_BANK(bank);
-	for(i = 0u; i != SCREEN_TILE_REFRES_H && i != scroll_tiles_h; ++i) {
-		ScrollUpdateRow((scroll_x >> 3) - 1u, (scroll_y >> 3) + i);
+	y = DespRight(scroll_y, 3);
+	for(i = 0u; i != SCREEN_TILE_REFRES_H && y != scroll_h; ++i, y ++) {
+		ScrollUpdateRow(DespRight(scroll_x, 3) - 1,  y);
 	}
 	POP_BANK;
 }
 
-UINT16 pending_w_x, pending_w_y;
-UINT8 pending_w_i;
-unsigned char* pending_w_map = 0;
 void ScrollUpdateRowR() {
 	UINT8 i = 0u;
 	
@@ -143,28 +158,24 @@ void ScrollUpdateRowR() {
 	}
 }
 
-void ScrollUpdateRowWithDelay(UINT16 x, UINT16 y) {
+void ScrollUpdateRowWithDelay(INT16 x, INT16 y) {
 	FinishPendingScrollUpdates();
 
 	pending_w_x = x;
 	pending_w_y = y;
 	pending_w_i = SCREEN_TILE_REFRES_W;
-	pending_w_map = &scroll_map[scroll_tiles_w * y + x];
+	pending_w_map = scroll_map + scroll_tiles_w * y + x;
 }
 
-void ScrollUpdateRow(UINT16 x, UINT16 y) {
+void ScrollUpdateRow(INT16 x, INT16 y) {
 	UINT8 i = 0u;
-	
-	unsigned char* map = &scroll_map[scroll_tiles_w * y + x];
+	unsigned char* map = scroll_map + scroll_tiles_w * y + x;
 	for(i = 0u; i != SCREEN_TILE_REFRES_W; ++i) {
 		UPDATE_TILE(x + i, y, map);
 		map += 1;
 	}
 }
 
-UINT16 pending_h_x, pending_h_y;
-UINT8 pending_h_i;
-unsigned char* pending_h_map = 0;
 void ScrollUpdateColumnR() {
 	UINT8 i = 0u;
 
@@ -174,16 +185,16 @@ void ScrollUpdateColumnR() {
 	}
 }
 
-void ScrollUpdateColumnWithDelay(UINT16 x, UINT16 y) {
+void ScrollUpdateColumnWithDelay(INT16 x, INT16 y) {
 	FinishPendingScrollUpdates();
 
 	pending_h_x = x;
 	pending_h_y = y;
 	pending_h_i = SCREEN_TILE_REFRES_H;
-	pending_h_map = &scroll_map[scroll_tiles_w * y + x];
+	pending_h_map = scroll_map + scroll_tiles_w * y + x;
 }
 
-void ScrollUpdateColumn(UINT16 x, UINT16 y) {
+void ScrollUpdateColumn(INT16 x, INT16 y) {
 	UINT8 i = 0u;
 
 	unsigned char* map = &scroll_map[scroll_tiles_w * y + x];
@@ -203,32 +214,29 @@ void FinishPendingScrollUpdates() {
 }
 
 void RefreshScroll() {
-	UINT8 ny = scroll_y;
+	UINT16 ny = scroll_y;
 
 	if(scroll_target) {
 		if(U_LESS_THAN(BOTTOM_MOVEMENT_LIMIT, scroll_target->y - scroll_y)) {
 			ny = scroll_target->y - BOTTOM_MOVEMENT_LIMIT;
 		} else if(U_LESS_THAN(scroll_target->y - scroll_y, TOP_MOVEMENT_LIMIT)) {
-			if(U_LESS_THAN(scroll_target->y, TOP_MOVEMENT_LIMIT))
-				ny = 0;
-			else
-				ny = scroll_target->y - TOP_MOVEMENT_LIMIT;
+			ny = scroll_target->y - TOP_MOVEMENT_LIMIT;
 		}
 
 		MoveScroll(scroll_target->x - (SCREENWIDTH >> 1), ny);
 	}
 }
 
-void MoveScroll(UINT16 x, UINT16 y) {
-	UINT8 current_column, new_column, current_row, new_row;
+void MoveScroll(INT16 x, INT16 y) {
+	INT16 current_column, new_column, current_row, new_row;
 	
 	PUSH_BANK(scroll_bank);
 	ClampScrollLimits(&x, &y);
 
-	current_column = scroll_x >> 3;
-	new_column = (x >> 3);
-	current_row = scroll_y >> 3;
-	new_row = y >> 3;
+	current_column = DespRight(scroll_x, 3);
+	new_column     = DespRight(x, 3);
+	current_row    = DespRight(scroll_y, 3);
+	new_row        = DespRight(y, 3);
 
 	if(current_column != new_column) {
 		if(new_column > current_column) {
@@ -240,9 +248,9 @@ void MoveScroll(UINT16 x, UINT16 y) {
 	
 	if(current_row != new_row) {
 		if(new_row > current_row) {
-			ScrollUpdateRowWithDelay((UINT16)new_column - 1u, new_row + SCREEN_TILE_REFRES_H - 1u);
+			ScrollUpdateRowWithDelay(new_column - 1, new_row + SCREEN_TILE_REFRES_H - 1);
 		} else {
-			ScrollUpdateRowWithDelay((UINT16)new_column - 1u, new_row);
+			ScrollUpdateRowWithDelay(new_column - 1, new_row);
 		}
 	}
 

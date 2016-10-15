@@ -43,7 +43,7 @@ void PlayMusic(unsigned char* music, unsigned char bank, unsigned char loop) {
 }
 
 UINT8 vbl_count;
-UINT16 old_scroll_x, old_scroll_y;
+INT16 old_scroll_x, old_scroll_y;
 void vbl_update() {
 	vbl_count ++;
 	gbt_update();
