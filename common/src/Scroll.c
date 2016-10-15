@@ -106,6 +106,8 @@ void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list
 		scroll_y -= BOTTOM_MOVEMENT_LIMIT - (scroll_target->y - scroll_y); //Move the camera to its bottom limit
 		ClampScrollLimits(&scroll_x, &scroll_y);
 	}
+	pending_h_i = 0;
+	pending_w_i = 0;
 
 	for(i = 0u; i != 128; ++i) {
 		scroll_collisions[i] = 0u;
