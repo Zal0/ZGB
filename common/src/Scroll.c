@@ -75,13 +75,13 @@ void InitScrollTiles(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 ti
 }
 
 void ClampScrollLimits(UINT16* x, UINT16* y) {
-	if(*x > 60000u) {
+	if(U_LESS_THAN(*x, 0u)) {
 		*x = 0u;		
 	}
 	if(*x > (scroll_w - SCREENWIDTH)) {
 		*x = (scroll_w - SCREENWIDTH);
 	}
-	if(*y > 60000u) {
+	if(U_LESS_THAN(*y, 0u)) {
 		*y = 0u;		
 	}
 	if(*y > (scroll_h - SCREENHEIGHT)) {
@@ -99,16 +99,13 @@ void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list
 	scroll_y = 0u;
 	scroll_w = map_w << 3;
 	scroll_h = map_h << 3;
+	scroll_bank = bank;
 	if(scroll_target) {
 		scroll_x = scroll_target->x - (SCREENWIDTH >> 1);
 		scroll_y = scroll_target->y - (SCREENHEIGHT >> 1);
 		scroll_y -= BOTTOM_MOVEMENT_LIMIT - (scroll_target->y - scroll_y); //Move the camera to its bottom limit
 		ClampScrollLimits(&scroll_x, &scroll_y);
 	}
-
-	
-	scroll_bank = bank;
-
 
 	for(i = 0u; i != 128; ++i) {
 		scroll_collisions[i] = 0u;
@@ -124,8 +121,6 @@ void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list
 			scroll_collisions_down[coll_list_down[i]] = 1u;
 		}
 	}
-
-
 
 	//Change bank now, after copying the collision array (it can be in a different bank)
 	PUSH_BANK(bank);
@@ -208,7 +203,6 @@ void FinishPendingScrollUpdates() {
 void RefreshScroll() {
 	UINT8 ny = scroll_y;
 
-	PUSH_BANK(scroll_bank);
 	if(scroll_target) {
 		if(U_LESS_THAN(BOTTOM_MOVEMENT_LIMIT, scroll_target->y - scroll_y)) {
 			ny = scroll_target->y - BOTTOM_MOVEMENT_LIMIT;
@@ -221,12 +215,12 @@ void RefreshScroll() {
 
 		MoveScroll(scroll_target->x - (SCREENWIDTH >> 1), ny);
 	}
-	POP_BANK;
 }
 
 void MoveScroll(UINT16 x, UINT16 y) {
 	UINT8 current_column, new_column, current_row, new_row;
 	
+	PUSH_BANK(scroll_bank);
 	ClampScrollLimits(&x, &y);
 
 	current_column = scroll_x >> 3;
@@ -259,6 +253,7 @@ void MoveScroll(UINT16 x, UINT16 y) {
 	if(pending_h_i) {
 		ScrollUpdateColumnR();
 	}
+	POP_BANK;
 }
 
 UINT8* GetScrollTilePtr(UINT16 x, UINT16 y) {
