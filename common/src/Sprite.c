@@ -52,9 +52,9 @@ void DrawSprite(struct Sprite* sprite) {
 	DrawFrame(sprite->oam_idx, sprite->size, sprite->first_tile + frame, sprite->x, sprite->y, sprite->flags);
 }
 
+unsigned char* tile_coll;
 UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 	UINT16 start_x, start_y, n_its;
-	unsigned char* tile;
 	UINT8 i;
 	UINT8 ret = 0;
 
@@ -65,12 +65,12 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 			start_y = (sprite->y + sprite->coll_y);
 			if(((start_y & 0xF000) | (start_x & 0xF000)) == 0u) {
 				n_its = ((start_y + sprite->coll_h - 1u) >> 3) - (start_y >> 3) + 1u;
-				tile = GetScrollTilePtr(start_x >> 3, start_y >> 3);
+				tile_coll = GetScrollTilePtr(start_x >> 3, start_y >> 3);
 			
-				for(i = 0u; i != n_its; ++i, tile += scroll_tiles_w) {
-					if(scroll_collisions[*tile] == 1u) {
+				for(i = 0u; i != n_its; ++i, tile_coll += scroll_tiles_w) {
+					if(scroll_collisions[*tile_coll] == 1u) {
 						x -= (start_x & (UINT16)7u);
-						ret = *tile;
+						ret = *tile_coll;
 					}
 				}
 			}
@@ -80,12 +80,12 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 			start_y = (sprite->y + sprite->coll_y);
 			if(((start_y & 0xF000) | (start_x & 0xF000)) == 0u) {
 				n_its = ((start_y + sprite->coll_h - 1u) >> 3) - (start_y >> 3) + 1u;
-				tile = GetScrollTilePtr(start_x >> 3, start_y >> 3);
+				tile_coll = GetScrollTilePtr(start_x >> 3, start_y >> 3);
 			
-				for(i = 0u; i != n_its; ++i, tile += scroll_tiles_w) {
-					if(scroll_collisions[*tile] == 1u) {
+				for(i = 0u; i != n_its; ++i, tile_coll += scroll_tiles_w) {
+					if(scroll_collisions[*tile_coll] == 1u) {
 						x = (INT16)x + (8u - (start_x & (UINT16)7u));
-						ret = *tile;
+						ret = *tile_coll;
 					}
 				}
 			}
@@ -95,12 +95,12 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 			start_y = (sprite->y + sprite->coll_y + sprite->coll_h + y);
 			if(((start_y & 0xF000) | (start_x & 0xF000)) == 0u) {
 				n_its = ((start_x + sprite->coll_w - 1u) >> 3) - (start_x >> 3) + 1u;
-				tile = GetScrollTilePtr(start_x >> 3, start_y >> 3);
+				tile_coll = GetScrollTilePtr(start_x >> 3, start_y >> 3);
 			
-				for(i = 0u; i != n_its; ++i, tile += 1u) {
-					if(scroll_collisions[*tile] == 1u || scroll_collisions_down[*tile] == 1u) {
+				for(i = 0u; i != n_its; ++i, tile_coll += 1u) {
+					if(scroll_collisions[*tile_coll] == 1u || scroll_collisions_down[*tile_coll] == 1u) {
 						y -= (start_y & (UINT16)7u);
-						ret = *tile;
+						ret = *tile_coll;
 					}
 				}
 			}
@@ -110,12 +110,12 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 			start_y = (sprite->y + sprite->coll_y + (INT16)y);
 			if(((start_y & 0xF000) | (start_x & 0xF000)) == 0u) {
 				n_its = ((start_x + sprite->coll_w - 1u) >> 3) - (start_x >> 3) + 1u;
-				tile = GetScrollTilePtr(start_x >> 3, start_y >> 3);
+				tile_coll = GetScrollTilePtr(start_x >> 3, start_y >> 3);
 			
-				for(i = 0u; i != n_its; ++i, tile += 1u) {
-					if(scroll_collisions[*tile] == 1u) {
+				for(i = 0u; i != n_its; ++i, tile_coll += 1u) {
+					if(scroll_collisions[*tile_coll] == 1u) {
 						y = (INT16)y + (8u - (start_y & (UINT16)7u));
-						ret = *tile;
+						ret = *tile_coll;
 					}
 				}
 			}
@@ -126,6 +126,13 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 	sprite->x += (INT16)x;
 	sprite->y += (INT16)y;
 	return ret;
+}
+
+//TODO: This functions is not tested yet
+void GetCollTileCoords(UINT16* x, UINT16*y) {
+	UINT16 c = (UINT16)(tile_coll - scroll_map);
+	x = c % scroll_tiles_w;
+	y = c / scroll_tiles_h;
 }
 
 UINT8 CheckCollision(struct Sprite* sprite1, struct Sprite* sprite2) {
