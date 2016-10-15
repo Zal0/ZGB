@@ -29,6 +29,8 @@ INT16 scroll_target_offset_y = 0;
 UINT8 scroll_collisions[128];
 UINT8 scroll_collisions_down[128];
 UINT8 scroll_bank;
+UINT8 scroll_offset_x = 0;
+UINT8 scroll_offset_y = 0;
 
 //This function was thought for updating a whole square... can't find a better one that updates one tile only!
 //#define UPDATE_TILE(X, Y, T) set_bkg_tiles(0x1F & (UINT8)X, 0x1F & (UINT8)Y, 1, 1, T)
@@ -65,7 +67,7 @@ void UPDATE_TILE(UINT16 x, UINT16 y, UINT8* t) {
 		i = 0u;
 	}
 
-	set_bkg_tiles(0x1F & x, 0x1F & y, 1, 1, &i); //i pointing to zero will replace the tile by the deafault one
+	set_bkg_tiles(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), 1, 1, &i); //i pointing to zero will replace the tile by the deafault one
 }
 
 void InitScrollTiles(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 tile_bank) {

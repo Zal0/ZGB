@@ -54,13 +54,13 @@ void vbl_update() {
 		old_scroll_x += (scroll_x - old_scroll_x + 1) >> 1;
 	else if(old_scroll_x > scroll_x)
 		old_scroll_x -= (old_scroll_x - scroll_x + 1) >> 1;
-	SCX_REG = old_scroll_x;
+	SCX_REG = old_scroll_x + (scroll_offset_x << 3);
 
 	if(old_scroll_y < scroll_y)
 		old_scroll_y += (scroll_y - old_scroll_y + 1) >> 1;
 	else if(old_scroll_y > scroll_y)
 		old_scroll_y -= (old_scroll_y - scroll_y + 1) >> 1;
-	SCY_REG = old_scroll_y;
+	SCY_REG = old_scroll_y + (scroll_offset_y << 3);
 	REFRESH_BANK;
 }
 

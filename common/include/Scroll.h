@@ -13,6 +13,8 @@ extern UINT16 scroll_tiles_h;
 extern UINT8  scroll_collisions[128];
 extern UINT8  scroll_collisions_down[128];
 extern UINT8  scroll_bank;
+extern UINT8 scroll_offset_x;
+extern UINT8 scroll_offset_y;
 
 extern struct Sprite* scroll_target;
 
