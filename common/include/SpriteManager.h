@@ -26,6 +26,7 @@ struct Sprite* SpriteManagerAdd(UINT8 sprite_type);
 void SpriteManagerRemove(int idx);
 void SpriteManagerRemoveSprite(struct Sprite* sprite);
 
+void SpriteManagerFlushRemove();
 void SpriteManagerUpdate();
 
 #endif

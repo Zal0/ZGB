@@ -86,18 +86,21 @@ void InitScrollTiles(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 ti
 	POP_BANK;
 }
 
+UINT8 clamp_enabled = 1;
 void ClampScrollLimits(UINT16* x, UINT16* y) {
-	if(U_LESS_THAN(*x, 0u)) {
-		*x = 0u;		
-	}
-	if(*x > (scroll_w - SCREENWIDTH)) {
-		*x = (scroll_w - SCREENWIDTH);
-	}
-	if(U_LESS_THAN(*y, 0u)) {
-		*y = 0u;		
-	}
-	if(*y > (scroll_h - SCREENHEIGHT)) {
-		*y = (scroll_h - SCREENHEIGHT);
+	if(clamp_enabled) {
+		if(U_LESS_THAN(*x, 0u)) {
+			*x = 0u;		
+		}
+		if(*x > (scroll_w - SCREENWIDTH)) {
+			*x = (scroll_w - SCREENWIDTH);
+		}
+		if(U_LESS_THAN(*y, 0u)) {
+			*y = 0u;		
+		}
+		if(*y > (scroll_h - SCREENHEIGHT)) {
+			*y = (scroll_h - SCREENHEIGHT);
+		}
 	}
 }
 
@@ -105,10 +108,7 @@ INT16 DespRight(INT16 a, INT16 b) {
 	return a >> b;
 }
 
-void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list, UINT8* coll_list_down, UINT8 bank) {
-	UINT8 i;
-	INT16 y;
-	
+void ScrollSetMap(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank) {
 	scroll_tiles_w = map_w;
 	scroll_tiles_h = map_h;
 	scroll_map = map;
@@ -119,12 +119,18 @@ void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list
 	scroll_bank = bank;
 	if(scroll_target) {
 		scroll_x = scroll_target->x - (SCREENWIDTH >> 1);
-		//scroll_y = scroll_target->y - (SCREENHEIGHT >> 1);
 		scroll_y = scroll_target->y - BOTTOM_MOVEMENT_LIMIT; //Move the camera to its bottom limit
 		ClampScrollLimits(&scroll_x, &scroll_y);
 	}
 	pending_h_i = 0;
 	pending_w_i = 0;
+}
+
+void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list, UINT8* coll_list_down, UINT8 bank) {
+	UINT8 i;
+	INT16 y;
+	
+	ScrollSetMap(map_w, map_h, map, bank);
 
 	for(i = 0u; i != 128; ++i) {
 		scroll_collisions[i] = 0u;
@@ -196,12 +202,14 @@ void ScrollUpdateColumnWithDelay(INT16 x, INT16 y) {
 
 void ScrollUpdateColumn(INT16 x, INT16 y) {
 	UINT8 i = 0u;
-
 	unsigned char* map = &scroll_map[scroll_tiles_w * y + x];
+	
+	PUSH_BANK(scroll_bank);
 	for(i = 0u; i != SCREEN_TILE_REFRES_H; ++i) {
 		UPDATE_TILE(x, y + i, map);
 		map += scroll_tiles_w;
 	}
+	POP_BANK;
 }
 
 void FinishPendingScrollUpdates() {

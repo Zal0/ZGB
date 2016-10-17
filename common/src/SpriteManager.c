@@ -91,6 +91,24 @@ void SpriteManagerRemoveSprite(struct Sprite* sprite) {
 	}
 }
 
+void SpriteManagerFlushRemove() {
+	//We must remove sprites in inverse order because everytime we remove one the vector shrinks and displaces all elements
+	for(sprite_manager_current_index = sprite_manager_updatables[0] - 1; sprite_manager_current_index + 1 != 0u; sprite_manager_current_index -= 1u) {
+		sprite_manager_current_sprite = sprite_manager_sprites[sprite_manager_updatables[sprite_manager_current_index + 1u]];
+		if(sprite_manager_current_sprite->marked_for_removal) {
+			StackPush(sprite_manager_sprites_pool, sprite_manager_updatables[sprite_manager_current_index + 1u]);
+			VectorRemovePos(sprite_manager_updatables, sprite_manager_current_index);
+			move_sprite(sprite_manager_current_sprite->oam_idx, 200, 200);
+			move_sprite(sprite_manager_current_sprite->oam_idx + 1, 200, 200);
+				
+			PUSH_BANK(spriteBanks[sprite_manager_current_sprite->type]);
+				spriteDestroyFuncs[sprite_manager_current_sprite->type]();
+			POP_BANK;
+		}
+	}
+	sprite_manager_removal_check = 0;
+}
+
 UINT8 sprite_manager_current_index;
 struct Sprite* sprite_manager_current_sprite;
 void SpriteManagerUpdate() {
@@ -117,20 +135,6 @@ void SpriteManagerUpdate() {
 	}
 
 	if(sprite_manager_removal_check) {
-		//We must remove sprites in inverse order because everytime we remove one the vector shrinks and displaces all elements
-		for(sprite_manager_current_index = sprite_manager_updatables[0] - 1; sprite_manager_current_index + 1 != 0u; sprite_manager_current_index -= 1u) {
-			sprite_manager_current_sprite = sprite_manager_sprites[sprite_manager_updatables[sprite_manager_current_index + 1u]];
-			if(sprite_manager_current_sprite->marked_for_removal) {
-				StackPush(sprite_manager_sprites_pool, sprite_manager_updatables[sprite_manager_current_index + 1u]);
-				VectorRemovePos(sprite_manager_updatables, sprite_manager_current_index);
-				move_sprite(sprite_manager_current_sprite->oam_idx, 200, 200);
-				move_sprite(sprite_manager_current_sprite->oam_idx + 1, 200, 200);
-				
-				PUSH_BANK(spriteBanks[sprite_manager_current_sprite->type]);
-					spriteDestroyFuncs[sprite_manager_current_sprite->type]();
-				POP_BANK;
-			}
-		}
-		sprite_manager_removal_check = 0;
+		SpriteManagerFlushRemove();
 	}
 }

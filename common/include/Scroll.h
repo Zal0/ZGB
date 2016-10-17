@@ -17,9 +17,11 @@ extern UINT8 scroll_offset_x;
 extern UINT8 scroll_offset_y;
 
 extern struct Sprite* scroll_target;
+extern UINT8 clamp_enabled;
 
 void InitScrollTiles(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 tile_bank);
 void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list, UINT8* coll_list_down, UINT8 bank);
+void ScrollSetMap(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank);
 void ScrollUpdateRow(INT16 x, INT16 y);
 void ScrollUpdateColumn(INT16 x, INT16 y);
 void MoveScroll(INT16 x, INT16 y);
