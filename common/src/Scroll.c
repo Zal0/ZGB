@@ -48,8 +48,8 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t) {
 	UINT16 id = 0u;
 	UINT16 tmp_y;
 	
-	//if(x < 0 || y < 0 ||  x >= scroll_tiles_w || y >= scroll_tiles_h)
-	//	i = 0;
+	if(x < 0 || y < 0 ||  x >= scroll_tiles_w || y >= scroll_tiles_h)
+		i = 0;
 
 	type = GetTileReplacement(i);
 	if(type != 255u) {
@@ -176,10 +176,13 @@ void ScrollUpdateRowWithDelay(INT16 x, INT16 y) {
 void ScrollUpdateRow(INT16 x, INT16 y) {
 	UINT8 i = 0u;
 	unsigned char* map = scroll_map + scroll_tiles_w * y + x;
+
+	PUSH_BANK(scroll_bank);
 	for(i = 0u; i != SCREEN_TILE_REFRES_W; ++i) {
 		UPDATE_TILE(x + i, y, map);
 		map += 1;
 	}
+	POP_BANK;
 }
 
 void ScrollUpdateColumnR() {
@@ -304,6 +307,52 @@ void ScrollFindTile(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, 
 		}
 		if(found) {
 			break;
+		}
+	}
+	POP_BANK;
+
+	*x = xt;
+	*y = yt;
+}
+
+void ScrollFindTileInCorners(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, UINT8 tile, UINT16* x, UINT16* y) {
+	UINT16 xt = 0;
+	UINT16 yt = 0;
+	UINT8 found = 0;
+
+	PUSH_BANK(bank);
+	yt = 0;
+	for(xt = 0; xt != map_w && !found; ++ xt) {
+		if(map[map_w * yt + xt] == (UINT16)tile) { //That cast over there is mandatory and gave me a lot of headaches
+			found = 1;
+			break;
+		}
+	}
+	if(!found) {
+		yt = map_h - 1;
+		for(xt = 0; xt != map_w && !found; ++ xt) {
+			if(map[map_w * yt + xt] == (UINT16)tile) { //That cast over there is mandatory and gave me a lot of headaches
+				found = 1;
+				break;
+			}
+		}
+	}
+	if(!found) {
+		xt = 0;
+		for(yt = 0; yt != map_h && !found; ++ yt) {
+			if(map[map_w * yt + xt] == (UINT16)tile) { //That cast over there is mandatory and gave me a lot of headaches
+				found = 1;
+				break;
+			}
+		}
+	}
+	if(!found) {
+		xt = map_w - 1;
+		for(yt = 0; yt != map_h && !found; ++ yt) {
+			if(map[map_w * yt + xt] == (UINT16)tile) { //That cast over there is mandatory and gave me a lot of headaches
+				found = 1;
+				break;
+			}
 		}
 	}
 	POP_BANK;

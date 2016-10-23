@@ -31,5 +31,6 @@ void FinishPendingScrollUpdates();
 UINT8* GetScrollTilePtr(UINT16 x, UINT16 y);
 UINT8 GetScrollTile(UINT16 x, UINT16 y);
 void ScrollFindTile(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, UINT8 tile, UINT16* x, UINT16* y);
+void ScrollFindTileInCorners(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, UINT8 tile, UINT16* x, UINT16* y);
 
 #endif
