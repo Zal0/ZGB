@@ -52,7 +52,7 @@ void SpriteManagerLoadSubsprite(UINT8 sprite_type, UINT8 sprite_type_source) {
 	spriteIdxs[sprite_type] = spriteIdxs[sprite_type_source];
 }
 
-struct Sprite* SpriteManagerAdd(UINT8 sprite_type) {
+struct Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y) {
 	UINT8 sprite_idx;
 	struct Sprite* sprite;
 
@@ -67,6 +67,8 @@ struct Sprite* SpriteManagerAdd(UINT8 sprite_type) {
 	VectorAdd(sprite_manager_updatables, sprite_idx);
 
 	InitSprite(sprite, spriteFrameSizes[sprite_type], spriteIdxs[sprite_type] >> 2);
+	sprite->x = x;
+	sprite->y = y;
 	PUSH_BANK(spriteBanks[sprite->type]);
 		spriteStartFuncs[sprite->type](sprite);
 	POP_BANK;

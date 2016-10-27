@@ -65,10 +65,8 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t) {
 			}
 
 			if( i == sprite_manager_updatables[0]) {
-				s = SpriteManagerAdd(type);
+				s = SpriteManagerAdd(type, x << 3, (y - 1) << 3);
 				if(s) {
-					s->x = x << 3;
-					s->y = (y - 1) << 3;
 					s->unique_id = id;
 				}
 			}

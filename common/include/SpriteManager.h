@@ -22,7 +22,7 @@ void SpriteManagerReset();
 void SpriteManagerLoad(UINT8 sprite_type);
 void SpriteManagerLoadSubsprite(UINT8 sprite_type, UINT8 sprite_type_source);
 
-struct Sprite* SpriteManagerAdd(UINT8 sprite_type);
+struct Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y);
 void SpriteManagerRemove(int idx);
 void SpriteManagerRemoveSprite(struct Sprite* sprite);
 
