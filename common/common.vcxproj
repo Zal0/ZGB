@@ -22,6 +22,7 @@
     <ClInclude Include="include\SpriteManager.h" />
     <ClInclude Include="include\Stack.h" />
     <ClInclude Include="include\Vector.h" />
+    <ClInclude Include="include\Print.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BankManager.c" />
@@ -34,6 +35,7 @@
     <ClCompile Include="src\SpriteManager.c" />
     <ClCompile Include="src\Stack.c" />
     <ClCompile Include="src\Vector.c" />
+    <ClCompile Include="src\Print.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Makefile" />
