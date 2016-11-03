@@ -98,7 +98,7 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 				tile_coll = GetScrollTilePtr(start_x >> 3, start_y >> 3);
 			
 				for(i = 0u; i != n_its; ++i, tile_coll += 1u) {
-					if(scroll_collisions[*tile_coll] == 1u || scroll_collisions_down[*tile_coll] == 1u) {
+					if(scroll_collisions[*tile_coll] == 1u || (scroll_collisions_down[*tile_coll] == 1u && scroll_collisions_down[*(tile_coll - scroll_h)] == 0)) {
 						y -= (start_y & (UINT16)7u);
 						ret = *tile_coll;
 					}
