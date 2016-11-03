@@ -10,17 +10,22 @@ void UIntToString(UINT16 n, unsigned char* str) {
 	UINT16 tmp = n;
 	UINT8 size = 0;
 
-	while(tmp) {
-		tmp /= 10;
-		size ++;
-	}
-	str[size] = '\0';
-	size --;
-
-	while(n) {
-		str[size] = (n % 10) + '0';
-		n /= 10;
+	if(n == 0) {
+		str[0] ='0';
+		str[1] = '\0';
+	} else {
+		while(tmp) {
+			tmp /= 10;
+			size ++;
+		}
+		str[size] = '\0';
 		size --;
+
+		while(n) {
+			str[size] = (n % 10) + '0';
+			n /= 10;
+			size --;
+		}
 	}
 }
 
