@@ -46,13 +46,15 @@ void InitSprites() {
 	INIT_SPRITE(SPRITE_FLAG,     flag,      0, FRAME_16x16,  2 * 4);
 }
 
-UINT8 GetTileReplacement(UINT8 t) {
+UINT8 GetTileReplacement(UINT8* tile_ptr, UINT8* tile) {
 	if(current_state == STATE_GAME) {
-		switch(t) {
+		*tile = 0;
+		switch(*tile_ptr) {
 				case 54: return SPRITE_ZURRAPA;
 				case 55: return SPRITE_AZNAR;
 				case 60: return SPRITE_FLAG;
 		}
+		*tile = *tile_ptr;
 	}
 	return 255u;
 }
