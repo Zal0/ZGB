@@ -14,7 +14,7 @@
 #define BOTTOM_MOVEMENT_LIMIT 100u
 
 //To be defined on the main app
-UINT8 GetTileReplacement(UINT8 t);
+UINT8 GetTileReplacement(UINT8* tile_ptr, UINT8* tile);
 
 unsigned char* scroll_map = 0;
 INT16 scroll_x;
@@ -42,18 +42,18 @@ unsigned char* pending_w_map = 0;
 //This function was thought for updating a whole square... can't find a better one that updates one tile only!
 //#define UPDATE_TILE(X, Y, T) set_bkg_tiles(0x1F & (UINT8)X, 0x1F & (UINT8)Y, 1, 1, T)
 void UPDATE_TILE(INT16 x, INT16 y, UINT8* t) {
-	UINT8 i = *t;
+	UINT8 replacement = *t;
+	UINT8 i;
 	struct Sprite* s = 0;
 	UINT8 type = 255u;
 	UINT16 id = 0u;
 	UINT16 tmp_y;
 	
-	if(x < 0 || y < 0 ||  x >= scroll_tiles_w || y >= scroll_tiles_h)
-		i = 0;
-
-	type = GetTileReplacement(i);
-	if(type != 255u) {
-		if(type != 254u) {
+	if(x < 0 || y < 0 || U_LESS_THAN(scroll_tiles_w - 1, x) || U_LESS_THAN(scroll_tiles_h - 1, y)) {
+		replacement = 0;
+	} else {
+		type = GetTileReplacement(t, &replacement);
+		if(type != 255u) {
 			tmp_y = y << 8;
 			id = (0x00FF & x) | ((0xFF00 & tmp_y)); // (y >> 3) << 8 == y << 5
 			for(i = 0u; i != sprite_manager_updatables[0]; ++i) {
@@ -64,18 +64,16 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t) {
 				}
 			}
 
-			if( i == sprite_manager_updatables[0]) {
+			if(i == sprite_manager_updatables[0]) {
 				s = SpriteManagerAdd(type, x << 3, (y - 1) << 3);
 				if(s) {
 					s->unique_id = id;
 				}
 			}
 		}
-
-		i = 0u;
 	}
 
-	set_bkg_tiles(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), 1, 1, &i); //i pointing to zero will replace the tile by the deafault one
+	set_bkg_tiles(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), 1, 1, &replacement); //i pointing to zero will replace the tile by the deafault one
 }
 
 void InitScrollTiles(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 tile_bank) {
