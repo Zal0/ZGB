@@ -16,6 +16,7 @@
     <ClInclude Include="include\Frame.h" />
     <ClInclude Include="include\Keys.h" />
     <ClInclude Include="include\main.h" />
+    <ClInclude Include="include\Math.h" />
     <ClInclude Include="include\OAMManager.h" />
     <ClInclude Include="include\Scroll.h" />
     <ClInclude Include="include\Sprite.h" />
