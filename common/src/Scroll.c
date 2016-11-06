@@ -2,13 +2,13 @@
 #include "Sprite.h"
 #include "SpriteManager.h"
 #include "BankManager.h"
+#include "Math.h"
+
 
 #define SCREEN_TILES_W       20 // 160 >> 3 = 20
 #define SCREEN_TILES_H       18 // 144 >> 3 = 18
 #define SCREEN_TILE_REFRES_W 23
 #define SCREEN_TILE_REFRES_H 19
-
-#define U_LESS_THAN(A, B) ((A) - (B) & 0x8000u)
 
 #define TOP_MOVEMENT_LIMIT 30u
 #define BOTTOM_MOVEMENT_LIMIT 100u
