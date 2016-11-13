@@ -5,6 +5,7 @@
 
 UINT8 print_x = 0;
 UINT8 print_y = 0;
+UINT8 font_idx = 128;
 
 void UIntToString(UINT16 n, unsigned char* str) {
 	UINT16 tmp = n;
@@ -51,23 +52,23 @@ void Printf(const char* txt, ...){
 	va_start(list, txt); 
 	while(*txt) {
 		if(*txt == ' ') {
-			c = 128;
+			c = font_idx;
 		} else if(*txt >= 'A' && *txt <= 'Z'){
-			c = 128 +  1 + *txt - 'A';
+			c = font_idx +  1 + *txt - 'A';
 		} else if(*txt >= 'a' && *txt <= 'z') {
-			c = 128 +  1 + *txt - 'a';
+			c = font_idx +  1 + *txt - 'a';
 		} else if(*txt >= '0' && *txt <= '9') {
-			c = 128 + 27 + *txt - '0';
+			c = font_idx + 27 + *txt - '0';
 		} else {
 			switch(*txt) {
-				case  '!': c= 128 + 37; break;
-				case '\'': c= 128 + 38; break;
-				case  '(': c= 128 + 39; break;
-				case  ')': c= 128 + 40; break;
-				case  '-': c= 128 + 41; break;
-				case  '.': c= 128 + 42; break;
-				case  ':': c= 128 + 43; break;
-				case  '?': c= 128 + 44; break;
+				case  '!': c= font_idx + 37; break;
+				case '\'': c= font_idx + 38; break;
+				case  '(': c= font_idx + 39; break;
+				case  ')': c= font_idx + 40; break;
+				case  '-': c= font_idx + 41; break;
+				case  '.': c= font_idx + 42; break;
+				case  ':': c= font_idx + 43; break;
+				case  '?': c= font_idx + 44; break;
 				case  '%':
 					switch(*(txt + 1)) {
 						case 'd':

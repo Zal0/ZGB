@@ -3,7 +3,7 @@
 
 #include <gb/gb.h> 
 
-extern UINT8 print_x, print_y;
+extern UINT8 print_x, print_y, font_idx;
 
 void UIntToString(UINT16 n, unsigned char* str);
 void IntToString (INT16  n, unsigned char* str);
