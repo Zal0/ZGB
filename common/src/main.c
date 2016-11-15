@@ -80,7 +80,10 @@ void InitSpriteInfo(UINT8 type, UINT8 bank, Void_Func_SpritePtr startFunc, Void_
 void InitStates();
 void InitSprites();
 
+#define PAL_DEF(C3, C2, C1, C0) ((C0 << 6) | (C1 << 4) | (C2 << 2) | C3)
 void main() {
+	UINT8 i;
+
 	InitStates();
 	InitSprites();
 
@@ -103,7 +106,12 @@ void main() {
 			POP_BANK;
 		}
 
+		for(i = 0; i != 4; ++i) {
+			BGP_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
+			delay(50);
+		}
 		DISPLAY_OFF
+
 		last_sprite_loaded = 0;
 		SpriteManagerReset();
 		state_running = 1;
@@ -117,6 +125,10 @@ void main() {
 		old_scroll_y = scroll_y;
 
 		DISPLAY_ON;
+		for(i = 3; i != 0xFF; --i) {
+			BGP_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
+			delay(50);
+		}
 	}
 }
 
