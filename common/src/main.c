@@ -74,7 +74,7 @@ void InitSpriteInfo(UINT8 type, UINT8 bank, Void_Func_SpritePtr startFunc, Void_
 	spriteDatas[type] = data;
 	spriteDataBanks[type] = dataBank;
 	spriteFrameSizes[type] = size;
-	spriteNumFrames[type] = num_frames;
+	spriteNumFrames[type] = num_frames << size;
 }  
 
 void InitStates();

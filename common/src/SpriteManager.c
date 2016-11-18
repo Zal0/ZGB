@@ -66,7 +66,7 @@ struct Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y) {
 
 	VectorAdd(sprite_manager_updatables, sprite_idx);
 
-	InitSprite(sprite, spriteFrameSizes[sprite_type], spriteIdxs[sprite_type] >> 2);
+	InitSprite(sprite, spriteFrameSizes[sprite_type], spriteIdxs[sprite_type]);
 	sprite->x = x;
 	sprite->y = y;
 	PUSH_BANK(spriteBanks[sprite->type]);

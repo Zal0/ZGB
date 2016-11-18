@@ -33,7 +33,7 @@ void SetSpriteAnim(struct Sprite* sprite, UINT8* data, UINT8 speed) {
 
 extern UINT8 delta_time;
 void DrawSprite(struct Sprite* sprite) {
-	int frame;
+	UINT8 frame;
 	if(sprite->data) {	
 		sprite->accum_ticks += sprite->anim_speed << delta_time;
 		if(sprite->accum_ticks > 100u) {
@@ -49,7 +49,7 @@ void DrawSprite(struct Sprite* sprite) {
 		frame = sprite->current_frame;
 	}
 	
-	DrawFrame(sprite->oam_idx, sprite->size, sprite->first_tile + frame, sprite->x, sprite->y, sprite->flags);
+	DrawFrame(sprite->oam_idx, sprite->size, sprite->first_tile + (frame << sprite->size), sprite->x, sprite->y, sprite->flags);
 }
 
 unsigned char* tile_coll;
