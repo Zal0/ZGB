@@ -30,7 +30,8 @@ typedef void (*Void_Func_SpritePtr)(struct Sprite*);
                                            UINT8 spriteDataBanks[N_SPRITE_TYPES];\
                                            FrameSize spriteFrameSizes[N_SPRITE_TYPES];\
                                            UINT8 spriteNumFrames[N_SPRITE_TYPES];\
-                                           UINT8 spriteIdxs[N_SPRITE_TYPES]
+                                           UINT8 spriteIdxs[N_SPRITE_TYPES];\
+                                           UINT8 n_sprite_types = N_SPRITE_TYPES
 
 extern UINT8 current_state;
 void SetState(UINT8 state);
