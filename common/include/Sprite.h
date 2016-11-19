@@ -13,7 +13,7 @@ struct Sprite {
 	UINT8 first_tile; //tile offset, for animation indices
 
 	//Anim data
-	UINT8* data;
+	UINT8* anim_data;
 	UINT8 current_frame;
 	UINT8 accum_ticks;
 	UINT8 anim_speed;
