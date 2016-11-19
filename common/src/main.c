@@ -108,6 +108,8 @@ void main() {
 
 		for(i = 0; i != 4; ++i) {
 			BGP_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
+			OBP0_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
+			OBP1_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
 			delay(50);
 		}
 		DISPLAY_OFF
@@ -127,6 +129,8 @@ void main() {
 		DISPLAY_ON;
 		for(i = 3; i != 0xFF; --i) {
 			BGP_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
+			OBP0_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
+			OBP1_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
 			delay(50);
 		}
 	}
