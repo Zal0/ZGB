@@ -317,7 +317,7 @@ void ScrollFindTileInCorners(UINT16 map_w, UINT16 map_h, unsigned char* map, UIN
 
 	PUSH_BANK(bank);
 	yt = 0;
-	for(xt = 0; xt != map_w && !found; ++ xt) {
+	for(xt = 0; xt != map_w; ++ xt) {
 		if(map[map_w * yt + xt] == (UINT16)tile) { //That cast over there is mandatory and gave me a lot of headaches
 			found = 1;
 			break;
@@ -325,7 +325,7 @@ void ScrollFindTileInCorners(UINT16 map_w, UINT16 map_h, unsigned char* map, UIN
 	}
 	if(!found) {
 		yt = map_h - 1;
-		for(xt = 0; xt != map_w && !found; ++ xt) {
+		for(xt = 0; xt != map_w; ++ xt) {
 			if(map[map_w * yt + xt] == (UINT16)tile) { //That cast over there is mandatory and gave me a lot of headaches
 				found = 1;
 				break;
@@ -334,7 +334,7 @@ void ScrollFindTileInCorners(UINT16 map_w, UINT16 map_h, unsigned char* map, UIN
 	}
 	if(!found) {
 		xt = 0;
-		for(yt = 0; yt != map_h && !found; ++ yt) {
+		for(yt = 0; yt != map_h; ++ yt) {
 			if(map[map_w * yt + xt] == (UINT16)tile) { //That cast over there is mandatory and gave me a lot of headaches
 				found = 1;
 				break;
@@ -343,7 +343,7 @@ void ScrollFindTileInCorners(UINT16 map_w, UINT16 map_h, unsigned char* map, UIN
 	}
 	if(!found) {
 		xt = map_w - 1;
-		for(yt = 0; yt != map_h && !found; ++ yt) {
+		for(yt = 0; yt != map_h; ++ yt) {
 			if(map[map_w * yt + xt] == (UINT16)tile) { //That cast over there is mandatory and gave me a lot of headaches
 				found = 1;
 				break;
