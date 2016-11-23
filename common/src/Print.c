@@ -6,6 +6,7 @@
 UINT8 print_x = 0;
 UINT8 print_y = 0;
 UINT8 font_idx = 128;
+UINT8 print_target = PRINT_BKG;
 
 void UIntToString(UINT16 n, unsigned char* str) {
 	UINT16 tmp = n;
@@ -87,7 +88,11 @@ void Printf(const char* txt, ...){
 					break;
 			}
 		}
-		set_win_tiles(print_x, print_y, 1, 1, &c);
+		if(print_target == PRINT_BKG)
+			set_bkg_tiles(print_x, print_y, 1, 1, &c);
+		else
+			set_win_tiles(print_x, print_y, 1, 1, &c);
+
 		print_x ++;
 		txt ++;
 	}
