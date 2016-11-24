@@ -1,5 +1,6 @@
 #include "Print.h"
 #include "BankManager.h"
+#include "Scroll.h"
 
 #include <stdarg.h>
 
@@ -89,9 +90,9 @@ void Printf(const char* txt, ...){
 			}
 		}
 		if(print_target == PRINT_BKG)
-			set_bkg_tiles(print_x, print_y, 1, 1, &c);
+			set_bkg_tiles(print_x + scroll_offset_x, print_y + scroll_offset_y, 1, 1, &c);
 		else
-			set_win_tiles(print_x, print_y, 1, 1, &c);
+			set_win_tiles(print_x + scroll_offset_x, print_y + scroll_offset_y, 1, 1, &c);
 
 		print_x ++;
 		txt ++;
