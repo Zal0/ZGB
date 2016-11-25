@@ -5,8 +5,8 @@
 
 #include "Sprite.h"
 
-#define DECLARE_STATE(STATE_IDX)   extern UINT8 bank_##STATE_IDX;  void Start_##STATE_IDX();                       void Update_##STATE_IDX()
-#define DECLARE_SPRITE(SPRITE_IDX) extern UINT8 bank_##SPRITE_IDX; void Start_##SPRITE_IDX(struct Sprite* sprite); void Update_##SPRITE_IDX(); void Destroy_##SPRITE_IDX()
+#define DECLARE_STATE(STATE_IDX)   extern UINT8 bank_##STATE_IDX;  void Start_##STATE_IDX(); void Update_##STATE_IDX()
+#define DECLARE_SPRITE(SPRITE_IDX) extern UINT8 bank_##SPRITE_IDX; void Start_##SPRITE_IDX(); void Update_##SPRITE_IDX(); void Destroy_##SPRITE_IDX()
 
 #define INIT_STATE(STATE_IDX)   stateBanks[STATE_IDX] = bank_##STATE_IDX;\
                                 startFuncs[STATE_IDX] = Start_##STATE_IDX;\
@@ -23,7 +23,7 @@ typedef void (*Void_Func_SpritePtr)(struct Sprite*);
                                Void_Func_Void updateFuncs[N_STATES]
 
 #define SET_N_SPRITE_TYPES(N_SPRITE_TYPES) UINT8 spriteBanks[N_SPRITE_TYPES];\
-                                           Void_Func_SpritePtr spriteStartFuncs[N_SPRITE_TYPES];\
+                                           Void_Func_Void spriteStartFuncs[N_SPRITE_TYPES];\
                                            Void_Func_Void spriteUpdateFuncs[N_SPRITE_TYPES];\
                                            Void_Func_Void spriteDestroyFuncs[N_SPRITE_TYPES];\
                                            UINT8* spriteDatas[N_SPRITE_TYPES];\

@@ -41,9 +41,7 @@ void Start_STATE_GAME() {
 	SpriteManagerLoad(SPRITE_FLAG);
 	SHOW_SPRITES;
 
-	princess_sprite = SpriteManagerAdd(SPRITE_PRINCESS);
-	princess_sprite->x = reset_x;
-	princess_sprite->y = reset_y;
+	princess_sprite = SpriteManagerAdd(SPRITE_PRINCESS, reset_x, reset_y);
 
 	set_bkg_data(0, 61, tilemap);
 	switch(level) {

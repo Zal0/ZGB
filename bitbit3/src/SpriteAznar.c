@@ -8,13 +8,13 @@ UINT8 bank_SPRITE_AZNAR = 2;
 
 const UINT8 anim_aznar_walk[] = {8, 0, 1, 2, 3, 4, 3, 2, 1};
 
-void Start_SPRITE_AZNAR(struct Sprite* sprite) {
-	SetSpriteAnim(sprite, anim_aznar_walk, 20u);
+void Start_SPRITE_AZNAR() {
+	SetSpriteAnim(THIS, anim_aznar_walk, 20u);
 
-	sprite->coll_x += 4;
-	sprite->coll_w -= 8;
-	sprite->lim_x = 160u;
-	sprite->lim_y = 160u;
+	THIS->coll_x += 4;
+	THIS->coll_w -= 8;
+	THIS->lim_x = 160u;
+	THIS->lim_y = 160u;
 }
 
 void Update_SPRITE_AZNAR() {

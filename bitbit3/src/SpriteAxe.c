@@ -7,8 +7,8 @@ UINT8 bank_SPRITE_AXE = 2;
 #include "SpriteManager.h"
 #include "BitBit3.h"
 
-void Start_SPRITE_AXE(struct Sprite* sprite) {
-	sprite->current_frame = 9u;
+void Start_SPRITE_AXE() {
+	THIS->current_frame = 9u;
 }
 
 void Update_SPRITE_AXE() {
@@ -20,10 +20,8 @@ void Update_SPRITE_AXE() {
 		spr = sprite_manager_sprites[sprite_manager_updatables[i + 1u]];
 		if(spr->type == SPRITE_ZURRAPA || spr->type == SPRITE_AZNAR) {
 			if(CheckCollision(THIS, spr)) {
-				spr2 = SpriteManagerAdd(SPRITE_PARTICLE);
-				spr2->x = spr->x;
-				spr2->y = spr->y;
-				
+				spr2 = SpriteManagerAdd(SPRITE_PARTICLE, spr->x, spr->y);
+
 				SpriteManagerRemove(i);
 			}
 		}

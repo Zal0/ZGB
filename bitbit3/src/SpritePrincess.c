@@ -36,16 +36,16 @@ extern UINT16 reset_x;
 extern UINT16 reset_y;
 extern UINT8 level;
 
-void Start_SPRITE_PRINCESS(struct Sprite* sprite) {
-	SetSpriteAnim(sprite, anim_idle, 3u);
-	sprite->coll_x += 4u;
-	sprite->coll_w -= 8u;
-	sprite->coll_y += 2u;
-	sprite->coll_h -= 2u;
+void Start_SPRITE_PRINCESS() {
+	SetSpriteAnim(THIS, anim_idle, 3u);
+	THIS->coll_x += 4u;
+	THIS->coll_w -= 8u;
+	THIS->coll_y += 2u;
+	THIS->coll_h -= 2u;
 
 	princess_accel_y = 0;
 
-	scroll_target = sprite;
+	scroll_target = THIS;
 
 	princes_state = PRINCESS_STATE_NORMAL;
 
@@ -54,10 +54,7 @@ void Start_SPRITE_PRINCESS(struct Sprite* sprite) {
 
 void Die(struct Sprite* sprite, UINT8 idx) {
 	SpriteManagerRemove(idx);
-	game_over_particle = SpriteManagerAdd(SPRITE_PARTICLE);
-	game_over_particle->x = sprite->x;
-	game_over_particle->y = sprite->y;
-
+	game_over_particle = SpriteManagerAdd(SPRITE_PARTICLE, sprite->x, sprite->y);
 	scroll_target = 0;
 }
 
@@ -99,13 +96,13 @@ void MovePrincess(struct Sprite* sprite, UINT8 idx) {
 #endif
 }
 
-void UpdateAxePos(struct Sprite* sprite) {
-	axe_sprite->flags = sprite->flags;
-	if(sprite->flags & OAM_VERTICAL_FLAG) 
-		axe_sprite->x = sprite->x - 16u;
+void UpdateAxePos() {
+	axe_sprite->flags = THIS->flags;
+	if(THIS->flags & OAM_VERTICAL_FLAG) 
+		axe_sprite->x = THIS->x - 16u;
 	else
-		axe_sprite->x = sprite->x + 16u; 
-	axe_sprite->y = sprite->y;
+		axe_sprite->x = THIS->x + 16u; 
+	axe_sprite->y = THIS->y;
 }
 
 void Update_SPRITE_PRINCESS() {
@@ -146,7 +143,7 @@ void Update_SPRITE_PRINCESS() {
 				SpriteManagerRemoveSprite(axe_sprite);
 			} else {
 				MovePrincess(THIS, sprite_manager_current_index);
-				UpdateAxePos(THIS);
+				UpdateAxePos();
 			}
 			break;
 	}
@@ -190,15 +187,13 @@ void Update_SPRITE_PRINCESS() {
 		SetSpriteAnim(THIS, anim_fire, 15u);
 		princes_state = PRINCESS_STATE_FIRE;
 
-		axe_sprite = SpriteManagerAdd(SPRITE_AXE);
-		UpdateAxePos(THIS);
+		axe_sprite = SpriteManagerAdd(SPRITE_AXE, THIS->x, THIS->y);
+		UpdateAxePos();
 	}
 
 
 	/*if(KEY_TICKED(J_B) ) {
-		sprite_test = SpriteManagerAdd(SPRITE_ZURRAPA);
-		sprite_test->x = THIS->x;
-		sprite_test->y = THIS->y;
+		sprite_test = SpriteManagerAdd(SPRITE_ZURRAPA, THIS->x, THIS->y);
 	}*/
 }
 

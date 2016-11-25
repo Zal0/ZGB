@@ -18,7 +18,7 @@ extern Void_Func_Void startFuncs[];
 extern Void_Func_Void updateFuncs[];
 
 extern UINT8 spriteBanks[];
-extern Void_Func_SpritePtr spriteStartFuncs[];
+extern Void_Func_Void spriteStartFuncs[];
 extern Void_Func_Void spriteUpdateFuncs[];
 extern Void_Func_Void spriteDestroyFuncs[];
 extern UINT8* spriteDatas[];

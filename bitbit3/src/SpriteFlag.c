@@ -10,8 +10,8 @@ const UINT8 anim_flag_enabled[] = {1, 1};
 extern UINT16 reset_x;
 extern UINT16 reset_y;
 
-void Start_SPRITE_FLAG(struct Sprite* sprite) {
-	SetSpriteAnim(sprite, anim_flag_idle, 5u);
+void Start_SPRITE_FLAG() {
+	SetSpriteAnim(THIS, anim_flag_idle, 5u);
 }
 
 void Update_SPRITE_FLAG() {

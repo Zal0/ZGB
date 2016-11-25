@@ -6,9 +6,9 @@ UINT8 bank_SPRITE_PARTICLE = 2;
 
 const UINT8 anim_explosion[] = {6, 0, 1, 2, 3, 4, 5};
 
-void Start_SPRITE_PARTICLE(struct Sprite* sprite) {
-	SetSpriteAnim(sprite, anim_explosion, 5u);
-	sprite->anim_speed = 33u;
+void Start_SPRITE_PARTICLE() {
+	SetSpriteAnim(THIS, anim_explosion, 5u);
+	THIS->anim_speed = 33u;
 }
 
 void Update_SPRITE_PARTICLE() {

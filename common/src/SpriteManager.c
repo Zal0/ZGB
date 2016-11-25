@@ -6,7 +6,7 @@
 #include "main.h"
 
 extern UINT8 spriteBanks[];
-extern Void_Func_SpritePtr spriteStartFuncs[];
+extern Void_Func_Void spriteStartFuncs[];
 extern Void_Func_Void spriteUpdateFuncs[];
 extern Void_Func_Void spriteDestroyFuncs[];
 extern UINT8* spriteDatas[];
@@ -60,9 +60,11 @@ void SpriteManagerLoadSubsprite(UINT8 sprite_type, UINT8 sprite_type_source) {
 	spriteIdxs[sprite_type] = spriteIdxs[sprite_type_source];
 }
 
+struct Sprite* cachedSprite; //This has to be declared outside because of an LCC bug (easy to see with the Princess' Axe)
 struct Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y) {
-	UINT8 sprite_idx;
 	struct Sprite* sprite;
+	UINT8 sprite_idx;
+	UINT8 spriteIdxTmp;
 
 	sprite_idx = StackPop(sprite_manager_sprites_pool);
 	sprite = sprite_manager_sprites[sprite_idx];
@@ -77,9 +79,18 @@ struct Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y) {
 	InitSprite(sprite, spriteFrameSizes[sprite_type], spriteIdxs[sprite_type]);
 	sprite->x = x;
 	sprite->y = y;
+
+	//Before calling start THIS and sprite_manager_current_index must be set
+	cachedSprite = THIS;
+	spriteIdxTmp = sprite_manager_current_index;
+	THIS = sprite;
+	sprite_manager_current_index = sprite_idx;
 	PUSH_BANK(spriteBanks[sprite->type]);
-		spriteStartFuncs[sprite->type](sprite);
+		spriteStartFuncs[sprite->type]();
 	POP_BANK;
+	//And now they must be restored
+	THIS = cachedSprite;
+	sprite_manager_current_index = spriteIdxTmp;
 
 	return sprite;
 }

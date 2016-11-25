@@ -9,8 +9,8 @@ UINT8 bank_SPRITE_ZURRAPA = 2;
 
 const UINT8 anim_zurrapa_idle[] = {2, 0, 1};
 
-void Start_SPRITE_ZURRAPA(struct Sprite* sprite) {
-	SetSpriteAnim(sprite, anim_zurrapa_idle, 5u);
+void Start_SPRITE_ZURRAPA() {
+	SetSpriteAnim(THIS, anim_zurrapa_idle, 5u);
 }
 
 void Update_SPRITE_ZURRAPA() {
