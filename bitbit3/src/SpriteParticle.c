@@ -12,7 +12,7 @@ void Start_SPRITE_PARTICLE(struct Sprite* sprite) {
 }
 
 void Update_SPRITE_PARTICLE() {
-	if(sprite_manager_current_sprite->current_frame == 5) {
+	if(THIS->current_frame == 5) {
 		SpriteManagerRemove(sprite_manager_current_index);
 	}
 }

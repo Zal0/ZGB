@@ -30,9 +30,9 @@ void SpriteManagerReset() {
 
 	//Call Destroy on all sprites still on the list
 	for(i = 0u; i != sprite_manager_updatables[0]; ++ i) {
-		sprite_manager_current_sprite = sprite_manager_sprites[sprite_manager_updatables[i + 1]];
-		PUSH_BANK(spriteBanks[sprite_manager_current_sprite->type]);
-				spriteDestroyFuncs[sprite_manager_current_sprite->type]();
+		THIS = sprite_manager_sprites[sprite_manager_updatables[i + 1]];
+		PUSH_BANK(spriteBanks[THIS->type]);
+				spriteDestroyFuncs[THIS->type]();
 		POP_BANK;
 	}
 
@@ -104,15 +104,15 @@ void SpriteManagerRemoveSprite(struct Sprite* sprite) {
 void SpriteManagerFlushRemove() {
 	//We must remove sprites in inverse order because everytime we remove one the vector shrinks and displaces all elements
 	for(sprite_manager_current_index = sprite_manager_updatables[0] - 1; sprite_manager_current_index + 1 != 0u; sprite_manager_current_index -= 1u) {
-		sprite_manager_current_sprite = sprite_manager_sprites[sprite_manager_updatables[sprite_manager_current_index + 1u]];
-		if(sprite_manager_current_sprite->marked_for_removal) {
+		THIS = sprite_manager_sprites[sprite_manager_updatables[sprite_manager_current_index + 1u]];
+		if(THIS->marked_for_removal) {
 			StackPush(sprite_manager_sprites_pool, sprite_manager_updatables[sprite_manager_current_index + 1u]);
 			VectorRemovePos(sprite_manager_updatables, sprite_manager_current_index);
-			move_sprite(sprite_manager_current_sprite->oam_idx, 200, 200);
-			move_sprite(sprite_manager_current_sprite->oam_idx + 1, 200, 200);
+			move_sprite(THIS->oam_idx, 200, 200);
+			move_sprite(THIS->oam_idx + 1, 200, 200);
 				
-			PUSH_BANK(spriteBanks[sprite_manager_current_sprite->type]);
-				spriteDestroyFuncs[sprite_manager_current_sprite->type]();
+			PUSH_BANK(spriteBanks[THIS->type]);
+				spriteDestroyFuncs[THIS->type]();
 			POP_BANK;
 		}
 	}
@@ -120,24 +120,24 @@ void SpriteManagerFlushRemove() {
 }
 
 UINT8 sprite_manager_current_index;
-struct Sprite* sprite_manager_current_sprite;
+struct Sprite* THIS;
 void SpriteManagerUpdate() {
 	for(sprite_manager_current_index = 0u; sprite_manager_current_index != sprite_manager_updatables[0]; ++sprite_manager_current_index) {
-		sprite_manager_current_sprite = sprite_manager_sprites[sprite_manager_updatables[sprite_manager_current_index + 1]];
-		if(!sprite_manager_current_sprite->marked_for_removal) {
+		THIS = sprite_manager_sprites[sprite_manager_updatables[sprite_manager_current_index + 1]];
+		if(!THIS->marked_for_removal) {
 
-			PUSH_BANK(spriteBanks[sprite_manager_current_sprite->type]);
-				spriteUpdateFuncs[sprite_manager_current_sprite->type]();
+			PUSH_BANK(spriteBanks[THIS->type]);
+				spriteUpdateFuncs[THIS->type]();
 			
-				if(scroll_target == sprite_manager_current_sprite)
+				if(scroll_target == THIS)
 					RefreshScroll();
 
-				if( ((scroll_x - sprite_manager_current_sprite->x - 16u - sprite_manager_current_sprite->lim_x)          & 0x8000u) &&
-						((sprite_manager_current_sprite->x - scroll_x - SCREENWIDTH - sprite_manager_current_sprite->lim_x)  & 0x8000u) &&
-						((scroll_y - sprite_manager_current_sprite->y - 16u - sprite_manager_current_sprite->lim_y)          & 0x8000u) &&
-						((sprite_manager_current_sprite->y - scroll_y - SCREENHEIGHT - sprite_manager_current_sprite->lim_y) & 0x8000u)
+				if( ((scroll_x - THIS->x - 16u - THIS->lim_x)          & 0x8000u) &&
+						((THIS->x - scroll_x - SCREENWIDTH - THIS->lim_x)  & 0x8000u) &&
+						((scroll_y - THIS->y - 16u - THIS->lim_y)          & 0x8000u) &&
+						((THIS->y - scroll_y - SCREENHEIGHT - THIS->lim_y) & 0x8000u)
 				) { 
-					DrawSprite(sprite_manager_current_sprite); //this needs to be done using the sprite bank because the animation array is stored there
+					DrawSprite(THIS); //this needs to be done using the sprite bank because the animation array is stored there
 				} else {
 					SpriteManagerRemove(sprite_manager_current_index);
 				}

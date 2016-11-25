@@ -15,9 +15,9 @@ void Start_SPRITE_FLAG(struct Sprite* sprite) {
 }
 
 void Update_SPRITE_FLAG() {
-	if(sprite_manager_current_sprite->anim_data == anim_flag_idle) {
-		if(reset_x == sprite_manager_current_sprite->x && reset_y == sprite_manager_current_sprite->y) {
-			SetSpriteAnim(sprite_manager_current_sprite, anim_flag_enabled, 5u);
+	if(THIS->anim_data == anim_flag_idle) {
+		if(reset_x == THIS->x && reset_y == THIS->y) {
+			SetSpriteAnim(THIS, anim_flag_enabled, 5u);
 		}
 	}
 }

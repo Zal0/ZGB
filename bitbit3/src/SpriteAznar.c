@@ -18,19 +18,19 @@ void Start_SPRITE_AZNAR(struct Sprite* sprite) {
 }
 
 void Update_SPRITE_AZNAR() {
-	if(sprite_manager_current_sprite->flags & OAM_VERTICAL_FLAG) {
+	if(THIS->flags & OAM_VERTICAL_FLAG) {
 		//moving left
-		if(TranslateSprite(sprite_manager_current_sprite, -1, 0)) {
-			sprite_manager_current_sprite->flags = 0u;
-		} else	if(!scroll_collisions[GetScrollTile(((sprite_manager_current_sprite->x + sprite_manager_current_sprite->coll_x) >> 3), (sprite_manager_current_sprite->y >> 3) + 2u)]) {
-			sprite_manager_current_sprite->flags = 0u;
+		if(TranslateSprite(THIS, -1, 0)) {
+			THIS->flags = 0u;
+		} else	if(!scroll_collisions[GetScrollTile(((THIS->x + THIS->coll_x) >> 3), (THIS->y >> 3) + 2u)]) {
+			THIS->flags = 0u;
 		}
 	} else {
 		//moving right
-		if(TranslateSprite(sprite_manager_current_sprite, +1, 0)) {
-			sprite_manager_current_sprite->flags |= OAM_VERTICAL_FLAG;
-		} else if(!scroll_collisions[GetScrollTile(((sprite_manager_current_sprite->x + sprite_manager_current_sprite->coll_x + sprite_manager_current_sprite->coll_w) >> 3), (sprite_manager_current_sprite->y >> 3) + 2u)]) {
-			sprite_manager_current_sprite->flags |= OAM_VERTICAL_FLAG;
+		if(TranslateSprite(THIS, +1, 0)) {
+			THIS->flags |= OAM_VERTICAL_FLAG;
+		} else if(!scroll_collisions[GetScrollTile(((THIS->x + THIS->coll_x + THIS->coll_w) >> 3), (THIS->y >> 3) + 2u)]) {
+			THIS->flags |= OAM_VERTICAL_FLAG;
 		}
 	}
 }
