@@ -99,10 +99,6 @@ void ClampScrollLimits(UINT16* x, UINT16* y) {
 	}
 }
 
-INT16 DespRight(INT16 a, INT16 b) {
-	return a >> b;
-}
-
 void ScrollSetMap(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank) {
 	scroll_tiles_w = map_w;
 	scroll_tiles_h = map_h;

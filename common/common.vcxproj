@@ -30,6 +30,7 @@
     <ClCompile Include="src\Frame.c" />
     <ClCompile Include="src\Keys.c" />
     <ClCompile Include="src\main.c" />
+    <ClCompile Include="src\Math.c" />
     <ClCompile Include="src\OAMManager.c" />
     <ClCompile Include="src\Scroll.c" />
     <ClCompile Include="src\Sprite.c" />
