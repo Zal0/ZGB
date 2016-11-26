@@ -126,12 +126,14 @@ void main() {
 		old_scroll_x = scroll_x;
 		old_scroll_y = scroll_y;
 
-		DISPLAY_ON;
-		for(i = 3; i != 0xFF; --i) {
-			BGP_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-			OBP0_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-			OBP1_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-			delay(50);
+		if(state_running) {
+			DISPLAY_ON;
+			for(i = 3; i != 0xFF; --i) {
+				BGP_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
+				OBP0_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
+				OBP1_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
+				delay(50);
+			}
 		}
 	}
 }
