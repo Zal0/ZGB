@@ -92,7 +92,7 @@ void Printf(const char* txt, ...){
 		if(print_target == PRINT_BKG)
 			set_bkg_tiles(0x1F & (print_x + scroll_offset_x), 0x1F & (print_y + scroll_offset_y), 1, 1, &c);
 		else
-			set_win_tiles(0x1F & (print_x + scroll_offset_x), 0x1F & (print_y + scroll_offset_y), 1, 1, &c);
+			set_win_tiles(print_x, print_y, 1, 1, &c);
 
 		print_x ++;
 		txt ++;
