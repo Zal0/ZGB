@@ -81,6 +81,12 @@ void InitScrollTiles(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 ti
 	POP_BANK;
 }
 
+void InitWindow(UINT8 x, UINT8 y, UINT8 w, UINT8 h, UINT8* map, UINT8 bank) {
+	PUSH_BANK(bank);
+	set_win_tiles(x, y, w, h, map);
+	POP_BANK;
+}
+
 UINT8 clamp_enabled = 1;
 void ClampScrollLimits(UINT16* x, UINT16* y) {
 	if(clamp_enabled) {
