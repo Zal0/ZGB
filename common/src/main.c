@@ -101,6 +101,7 @@ void main() {
 
 			UPDATE_KEYS();
 			
+			SpriteManagerUpdate();
 			PUSH_BANK(stateBanks[current_state]);
 				updateFuncs[current_state]();
 			POP_BANK;
