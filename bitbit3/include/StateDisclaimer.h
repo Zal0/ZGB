@@ -1,8 +1,0 @@
-#ifndef STATE_DISCLAIMER_H
-#define STATE_DISCLAIMER_H
-
-#include "main.h"
-
-DECLARE_STATE(STATE_DISCLAIMER);
-
-#endif
