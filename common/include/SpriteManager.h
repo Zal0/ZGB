@@ -7,6 +7,8 @@
 
 #define N_SPRITE_MANAGER_SPRITES 20
 
+#define SPRITEMANAGER_ITERATE(i, spr) for(i = 0u, spr = sprite_manager_sprites[sprite_manager_updatables[1]]; i != sprite_manager_updatables[0]; ++i, spr = sprite_manager_sprites[sprite_manager_updatables[i + 1u]])
+
 //Pool
 extern struct Sprite* sprite_manager_sprites[];
 extern UINT8 sprite_manager_sprites_pool[];
