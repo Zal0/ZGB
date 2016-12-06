@@ -28,7 +28,7 @@ current_dir = $(shell pwd)
 ASMS      = $(foreach dir,.,$(notdir $(wildcard $(dir)/*.s)))
 CLASSES   = $(foreach dir,.,$(notdir $(wildcard $(dir)/*.c)))
 RESOURCES = $(foreach dir,../res/src,$(notdir $(wildcard $(dir)/*.c)))
-MUSICS    = $(foreach dir,./music,$(notdir $(wildcard $(dir)/*.mod)))
+MUSICS    = $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.mod)))
 OBJS = $(RESOURCES:%.c=$(OBJDIR_RES)/%.o) $(MUSICS:%.mod=$(OBJDIR_RES)/%.mod.o) $(CLASSES:%.c=$(OBJDIR)/%.o) $(ASMS:%.s=$(OBJDIR)/%.o)
 
 
@@ -62,7 +62,7 @@ $(OBJDIR_RES)/%.o: ../res/src/%.c
 	fi
 	@$(CC) $(CFLAGS) $(filter -Wf-bo%, $(subst .b,-Wf-bo,$(suffix $(<:%.c=%)))) -c -o $@ $<
 
-$(OBJDIR_RES)/%.mod.o: music/%.mod
+$(OBJDIR_RES)/%.mod.o: ../res/music/%.mod
 	@echo compiling music: $<
 	@$(MOD2GBT) $< $(basename $(basename $(notdir $<)))_mod -c $(subst .b,,$(suffix $(<:%.mod=%))) > /dev/null
 	@mv output.c $(OBJDIR)/music_tmp.c
