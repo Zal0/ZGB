@@ -101,7 +101,9 @@ As a suggestion start placing all your code files into bank 2 and all your resou
 
 Tutorial
 --------
-Here is a quick tutorial of how to make a simple game
+Here is a quick tutorial of how to make a simple game like this one
+
+![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/tuto.gif)
 
 Creating a New Project
 ----------------------
@@ -110,6 +112,7 @@ Download [this template](https://github.com/Zal0/ZGB-template/archive/master.zip
 Try to build it by launching **build.bat** or loading the project into Visual Studio. If you have problems compiling check the installation list again. 
 
 If everything goes ok **BGB** will be automatically launched after the build and you should see something like this
+
 ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/bgb00006.bmp)
 
 The template contains the minimum files required for making a build:
