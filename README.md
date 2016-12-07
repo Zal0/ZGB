@@ -170,8 +170,8 @@ Animations
 Let's make our Sprite animate when walking
 
  - Open the file **player.bgr** with **Game Boy Tile Designer** (you should associate the extension *.gbr to be always opened whit this program if you haven't done it yet)
- - Change the aspect of the Sprite by a boy and add a couple of frames for the walking animation. Something like this ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/2-anim.PNG)
-
+ - Change the aspect of the Sprite by a boy and add a couple of frames for the walking animation. Something like this 
+![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/2-anim.PNG)
  - Now go to File->Export To... and Update the **number of frames** (From 0 to 2) and after that Save your file
  - If you Build your the project now you should see the new Sprite instead of the Game Boy
  - In **ZGBMain.c** we need to update the number of frames of our sprite, the last parameter of **INIT_SPRITE** does exactly that: 
@@ -245,6 +245,7 @@ void Update_SPRITE_PLAYER() {
 }
 ```
 * There is still a small issue that can be fixed. Unless you did a square your Sprite might be stopping before touching the collidable tile
+
  ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/3-bad%20collision.PNG) 
  
  this can be fixed by adjusting the **collider** of the Sprite on the Start method. The collider of an Sprite is defined by an rectangle declared using **coll_x, coll_y, coll_w and coll_h** These values worked for me:
@@ -263,7 +264,8 @@ Enemies
 Time to add a little bit of action to our game by adding an enemy.
 
 * Open the **Game Boy Tile Designer** and create a new **16x16** Sprite for our enemy (View->Tile Size->16x16). This is what I came up with:
-![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/5-enemy.PNG)
+
+ ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/5-enemy.PNG)
 
  Save the file into the res/ folder and Set Export settings (File -> Export To...) as:
 	*	FileName: src/enemy.b3.c
@@ -327,7 +329,8 @@ void Start_STATE_GAME() {
 }
 ```
   * If you build the game now you'll see your player and the new enemy. It does nothing and there aren't any collisions yet
-![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/bgb00007.bmp)
+ 
+ ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/bgb00007.bmp)
 
 * Write the next code on **SpriteEnemy.c**
 ```
@@ -356,7 +359,7 @@ void Update_SPRITE_ENEMY() {
 void Destroy_SPRITE_ENEMY() {
 }
 ```
-Here you can see how the field **custom_data** of the Sprites is mean to be used. Also **TranslateSprite** will return the index of the tile when a collision happens or 0 otherwise. In this case if there is a collision with the background the velocity of the sprite is negated making it changing its direction
+ Here you can see how the field **custom_data** of the Sprites is mean to be used. Also **TranslateSprite** will return the index of the tile when a collision happens or 0 otherwise. In this case if there is a collision with the background the velocity of the sprite is negated making it changing its direction
 
 - In order to collide with the enemy you have to add the next code at the end of the method Update of **SpritePlayer.c**
 ```
@@ -384,10 +387,12 @@ Maps
 Let's now focus on the creation of our game level. 
 
 - Open the file **res/map.bgm** with the **Game Boy Map Builder** and create your stage. This is how mine looks like
-![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/6-map.PNG)
+
+ ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/6-map.PNG)
 
  Export and Save and make a build. If you are unlucky something like this will happen
-![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/bgb00008.bmp)
+
+ ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/bgb00008.bmp)
 
  The enemy has been spawned in the middle of a wall
 
@@ -413,17 +418,20 @@ UINT8 GetTileReplacement(UINT8* tile_ptr, UINT8* tile) {
 	- This default function will spawn and enemy of type 0 when the tile is 255, and enemy of type 1 when the tile is 254, and enemy of type 2 when the tile is 253... and so on
 
 - Open the **tiles.bgr** with the **Game Boy Tile Designer** and go to View->Tile Count and set that to 255. Now **edit the tile 254** that corresponds to the sprite of type 1 (SPRITE_ENEMY) and create a thumbnail of the enemy
-![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/7-thumb.PNG)
+
+ ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/7-thumb.PNG)
 
  Export and save it.
 
 - Open the **res/map.bgm** again and scroll down the list of tiles. You should see the thumbnail on the tile 254. Put it on some places of your map
-![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/8-mapenemies.PNG)
+
+ ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/8-mapenemies.PNG)
 
  Export and Save. 
 
 - Build the program now and you should see enemies spawned on those places instead of the thumbnail
-![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/bgb00009.bmp)
+
+ ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/bgb00009.bmp)
 
  You will also see that the Sprite we were spawning by code is still there so make sure you delete that line
 
