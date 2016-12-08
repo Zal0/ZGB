@@ -132,13 +132,6 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 	return ret;
 }
 
-//TODO: This functions is not tested yet
-void GetCollTileCoords(UINT16* x, UINT16*y) {
-	UINT16 c = (UINT16)(tile_coll - scroll_map);
-	x = c % scroll_tiles_w;
-	y = c / scroll_tiles_h;
-}
-
 UINT8 CheckCollision(struct Sprite* sprite1, struct Sprite* sprite2) {
 	if( (sprite1->x + sprite1->coll_x > sprite2->x + sprite2->coll_x - sprite1->coll_w) &&
 	    (sprite1->x + sprite1->coll_x < sprite2->x + sprite2->coll_x + sprite2->coll_w) &&
