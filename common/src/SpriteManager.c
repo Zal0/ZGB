@@ -60,7 +60,7 @@ struct Sprite* cachedSprite; //This has to be declared outside because of an LCC
 struct Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y) {
 	struct Sprite* sprite;
 	UINT8 sprite_idx;
-	UINT8 spriteIdxTmp;
+	UINT16 spriteIdxTmp; //Yes, another bug in the compiler forced me to change the type here to UINT16 instead of UINT8
 
 	sprite_idx = StackPop(sprite_manager_sprites_pool);
 	sprite = sprite_manager_sprites[sprite_idx];
@@ -87,7 +87,6 @@ struct Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y) {
 	//And now they must be restored
 	THIS = cachedSprite;
 	sprite_manager_current_index = spriteIdxTmp;
-
 	return sprite;
 }
 
