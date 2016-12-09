@@ -16,7 +16,7 @@ extern UINT8 sprite_manager_sprites_pool[];
 //Current sprites
 extern UINT8 sprite_manager_updatables[];
 
-extern UINT8 sprite_manager_current_index;
+extern UINT8 THIS_IDX;
 extern struct Sprite* THIS;
 
 void SpriteManagerReset();
