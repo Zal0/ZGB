@@ -115,6 +115,9 @@ void main() {
 		}
 		DISPLAY_OFF
 
+		gbt_stop();
+		last_music = 0;
+
 		last_sprite_loaded = 0;
 		SpriteManagerReset();
 		state_running = 1;
