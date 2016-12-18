@@ -46,7 +46,7 @@ UINT8 vbl_count;
 INT16 old_scroll_x, old_scroll_y;
 void vbl_update() {
 	vbl_count ++;
-	gbt_update();
+	//gbt_update();
 	
 	//Instead of assigning scroll_y to SCX_REG I do a small interpolation that smooths the scroll transition giving the
 	//Illusion of a better frame rate
@@ -80,6 +80,11 @@ void InitSpriteInfo(UINT8 type, UINT8 bank, Void_Func_SpritePtr startFunc, Void_
 void InitStates();
 void InitSprites();
 
+void MusicUpdate() {
+	gbt_update();
+	REFRESH_BANK;
+}
+
 #define PAL_DEF(C3, C2, C1, C0) ((C0 << 6) | (C1 << 4) | (C2 << 2) | C3)
 void main() {
 	UINT8 i;
@@ -89,7 +94,11 @@ void main() {
 
 	disable_interrupts();
 	add_VBL(vbl_update);
-	set_interrupts(VBL_IFLAG);
+	add_TIM(MusicUpdate);
+	TMA_REG = 0xC0U;
+  TAC_REG = 0x04U;
+
+	set_interrupts(VBL_IFLAG | TIM_IFLAG);
 	enable_interrupts();
 
 	while(1) {
