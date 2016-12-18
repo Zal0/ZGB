@@ -95,7 +95,7 @@ void main() {
 	disable_interrupts();
 	add_VBL(vbl_update);
 	add_TIM(MusicUpdate);
-	TMA_REG = 0xC0U;
+	TMA_REG = 0xBCU;
   TAC_REG = 0x04U;
 
 	set_interrupts(VBL_IFLAG | TIM_IFLAG);
