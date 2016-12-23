@@ -44,9 +44,9 @@ void PlayMusic(unsigned char* music, unsigned char bank, unsigned char loop) {
 
 UINT8 vbl_count;
 INT16 old_scroll_x, old_scroll_y;
+UINT8 music_mute_frames = 0;
 void vbl_update() {
 	vbl_count ++;
-	//gbt_update();
 	
 	//Instead of assigning scroll_y to SCX_REG I do a small interpolation that smooths the scroll transition giving the
 	//Illusion of a better frame rate
@@ -61,7 +61,13 @@ void vbl_update() {
 	else if(old_scroll_y > scroll_y)
 		old_scroll_y -= (old_scroll_y - scroll_y + 1) >> 1;
 	SCY_REG = old_scroll_y + (scroll_offset_y << 3);
-	REFRESH_BANK;
+
+	if(music_mute_frames != 0) {
+		music_mute_frames --;
+		if(music_mute_frames == 0) {
+			gbt_enable_channels(0xF);
+		}
+	}
 }
 
 void InitSpriteInfo(UINT8 type, UINT8 bank, Void_Func_SpritePtr startFunc, Void_Func_Void updateFunc, Void_Func_Void destroyFunc, 

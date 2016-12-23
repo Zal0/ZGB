@@ -56,9 +56,9 @@ void SpriteManagerLoad(UINT8 sprite_type) {
 	spriteIdxs[sprite_type] = LoadSprite(spriteNumFrames[sprite_type], spriteDatas[sprite_type], spriteDataBanks[sprite_type]);
 }
 
-void SpriteManagerLoadSubsprite(UINT8 sprite_type, UINT8 sprite_type_source) {
+/*void SpriteManagerLoadSubsprite(UINT8 sprite_type, UINT8 sprite_type_source) {
 	spriteIdxs[sprite_type] = spriteIdxs[sprite_type_source];
-}
+}*/
 
 struct Sprite* cachedSprite; //This has to be declared outside because of an LCC bug (easy to see with the Princess' Axe)
 struct Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y) {
