@@ -21,6 +21,9 @@ void Printf(const char* txt, ...);
 
 #ifdef NDEBUG 
 #define INIT_CONSOLE
+#define DPrintf
+#define DPRINT_POS
+#define DPRINT
 #else
 #define INIT_CONSOLE(FONT, FONT_BANK, NLINES) \
 	print_target = PRINT_WIN;\
@@ -31,6 +34,11 @@ void Printf(const char* txt, ...);
 	WX_REG = 7;\
   WY_REG = (144 - (NLINES << 3));\
 	SHOW_WIN;
+
+#define DPrintf Printf
+#define DPRINT_POS PRINT_POS
+#define DPRINT PRINT
+
 #endif
 
 
