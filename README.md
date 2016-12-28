@@ -5,8 +5,25 @@ ZGB
 
 A little engine for creating games for the original Game Boy.
 
-Features:
----------
+ 1. [Features](#features)
+ 2. [Installation](#installation)
+ 3. [States and Sprites](#states-and-sprites)
+ 4. [Resource Guidelines](#resource-guidelines)
+ 5. [Banks](#banks)
+ 6. [Tutorial](#tutorial)
+	 7. [Creating a new Project](#creating-a-new-project)
+	 8. [Input](#input)
+	 9. [Animations](#animations)
+	 10. [Collisions](#collisions)
+	 11. [Enemies](#enemies)
+	 12. [Maps](#maps)
+	 13. [Frame Skipping](#frame-skipping)
+	 14. [Music](#music)
+	 15. [Sounds](#sounds)
+	 16. [Debugging](#debugging)
+
+Features <a name="features"></a>
+--------------------------------
 
  - Coding in C using [gbdk](http://gbdk.sourceforge.net/)
  - Based on States and Sprites
@@ -20,8 +37,9 @@ Features:
  - Fonts
  - Music support using [gbt-player](https://github.com/AntonioND/gbt-player)
 
-Installation
-------------
+Installation <a name="installation"></a>
+----------------------------------------
+
 Download and install:
 
  - gbdk ([2.95-3](https://sourceforge.net/projects/gbdk/files/gbdk-win32/2.95-3/) at the moment of writing this) on c:\gbdk
@@ -36,8 +54,9 @@ Download and install:
 
 *The make that comes with devkitpro doesn't print any error messages and that's why you need to download make for windows too.
 
-States and Sprites
-------------------
+States and Sprites <a name="states-and-sprites"></a>
+----------------------------------------------------
+
 Before you start coding anything it is important that you understand what States and Sprites are for ZGB
 
  * **States**: you can think of States as the current main loop of your program (they are similar to Scenes in Unity3d). There can only be one of them running at a time and everytime you change from one to another all resources are discarded. Every declared State must contain 2 functions:
@@ -60,7 +79,7 @@ Before you start coding anything it is important that you understand what States
 	 - ***SpriteManagerRemove***: for removing them
 	 - ***SPRITEMANAGER_ITERATE***: a useful macro for iterating through all active sprites
 
-Resource guidelines
+Resource guidelines <a name="resource-guidelines"></a>
 -------------------
 Some guidelines you must follow to make your life easier when developing for Game Boy using ZGB:
 
@@ -80,7 +99,7 @@ Some guidelines you must follow to make your life easier when developing for Gam
 	- The makefile will handle the conversion automatically so you don't need to worry about it
 	- For more info about music formats check the [gbt-player](https://github.com/AntonioND/gbt-player) docs
 
-Banks
+Banks <a name="banks"></a>
 -----
 It is very important that you understand the concept of banks. ZGB together with GBDK is taking most of the space in bank0 and gbt-player is using most of the space in bank1. That means you will have to put your code on bank 2 and further, and that you will have to use banks, whether you like it or not. Check the point 3 of my post [Game Boy Development Tips and Tricks (I)](http://zalods.blogspot.com.es/2016/07/game-boy-development-tips-and-tricks-i.html) for more info.
 
@@ -99,13 +118,13 @@ UINT8 bank_STATE_GAME = 2;
 As a suggestion start placing all your code files into bank 2 and all your resources into bank 3. When you run out of space you can increase the number of banks in the Makefile of your project (also remember the number of banks must be a power of 4: 4, 8, 16, 32...)
 
 
-Tutorial
+Tutorial <a name="tutorial"></a>
 --------
 Here is a quick tutorial of how to make a simple game like this one
 
 ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/tuto.gif)
 
-Creating a New Project
+Creating a New Project <a name="creating-a-new-project"></a>
 ----------------------
 Download [this template](https://github.com/Zal0/ZGB-template/archive/master.zip).
 
@@ -125,7 +144,7 @@ The template contains the minimum files required for making a build:
 	 - Loads all tile graphics into memory
 	 - Initializes the scroll (this will center the camera on the sprite set as camera and fill the background)
 
-Input
+Input <a name="input"></a>
 ----------------------
 Let's make our sprite move a little bit:
 
@@ -168,7 +187,7 @@ void Destroy_SPRITE_PLAYER() {
 }
 ```
 
-Animations
+Animations <a name="animations"></a>
 ----------
 Let's make our Sprite animate when walking
 
@@ -211,7 +230,7 @@ void Update_SPRITE_PLAYER() {
 }
 ```
 
-Collisions
+Collisions <a name="collisions"></a>
 ----------
 Right now if you move the player you'll see it can go throught walls (also going offscreen will kill the sprite so we need to avoid this). Here is how to add collision checking with background tiles:
 
@@ -261,7 +280,7 @@ void Start_SPRITE_PLAYER() {
 }
 ```
 
-Enemies
+Enemies <a name="enemies"></a>
 -------
 
 Time to add a little bit of action to our game by adding an enemy.
@@ -385,7 +404,7 @@ void Update_SPRITE_PLAYER() {
 ```
 "ZGBMain.h" needs to be included in order to get access to all the sprite types. **SPRITEMANAGER_ITERATE** is a macro that iterates through all the active sprites, if the sprite is of type **SPRITE_ENEMY** then we use the function **CheckCollision** to check if we are colliding with it (do it in this order). If that happens then **SetState** is called unloading the current state and loading the state passed as paramenter (even if it is the current one, like in this case)
 
-Maps
+Maps <a name="maps"></a>
 ----
 Let's now focus on the creation of our game level. 
 
@@ -438,7 +457,53 @@ UINT8 GetTileReplacement(UINT8* tile_ptr, UINT8* tile) {
 
  You will also see that the Sprite we were spawning by code is still there so make sure you delete that line
 
-Music
+Frame Skipping <a name="frame-skipping"></a>
+--------------
+If you add too many enemies on your map you might notice a big slowdown that at some points can even make the game unplayable. This can be improved a little bit using the var delta_time that:
+
+- Will be 0 when the frame rate is ~60fps
+- Will be 1 otherwise
+
+You can use this var to multiply the current amount of movement of your sprites (x <<  0 is the same as multiplying by 1 and x << 1 is the same as multiplying by 2). This is how your update method should look like on your SpritePlayer.c
+
+```
+void Update_SPRITE_PLAYER() {
+	...
+	if(KEY_PRESSED(J_UP)) {
+		TranslateSprite(THIS, 0, -1 << delta_time);
+		SetSpriteAnim(THIS, anim_walk, 15);
+	} 
+	if(KEY_PRESSED(J_DOWN)) {
+		TranslateSprite(THIS, 0, 1 << delta_time);
+		SetSpriteAnim(THIS, anim_walk, 15);
+	}
+	if(KEY_PRESSED(J_LEFT)) {
+		TranslateSprite(THIS, -1 << delta_time, 0);
+		SetSpriteAnim(THIS, anim_walk, 15);
+	}
+	if(KEY_PRESSED(J_RIGHT)) {
+		TranslateSprite(THIS, 1 << delta_time, 0);
+		SetSpriteAnim(THIS, anim_walk, 15);
+	}
+	...
+}
+```
+
+and here is the same change on SpriteEnemy.c
+
+```
+void Update_SPRITE_ENEMY() {
+	struct EnemyInfo* data = THIS->custom_data;
+	if(TranslateSprite(THIS, 0, data->vy << delta_time)) {
+		data->vy = -data->vy;
+	}
+}
+```
+
+For more info about frame skipping check this post on my blog [Game Boy Development Tips and Tricks (II)](http://zalods.blogspot.com.es/2016/07/game-boy-development-tips-and-tricks-ii.html)
+
+
+Music <a name="music"></a>
 -----
 If you want to add any music
 
@@ -455,3 +520,94 @@ void Start_STATE_GAME() {
 	PlayMusic(level_mod_Data, 3, 1);
 }
 ```
+
+Sounds <a name="sounds"></a>
+------
+If you want to add sound to your game I recommend downloading the fixed version of the Sound Sample [here](https://github.com/Zal0/GBSoundDemo)
+
+![scr1](https://github.com/Zal0/GBSoundDemo/blob/master/screenshots/bgb00011.png?raw=true) ![scr2](https://github.com/Zal0/GBSoundDemo/blob/master/screenshots/bgb00012.png?raw=true) ![scr3](https://github.com/Zal0/GBSoundDemo/blob/master/screenshots/bgb00013.png?raw=true) ![scr4](https://github.com/Zal0/GBSoundDemo/blob/master/screenshots/bgb00014.png?raw=true) ![scr5](https://github.com/Zal0/GBSoundDemo/blob/master/screenshots/bgb00015.png?raw=true)
+
+Pressing select + A will output the current register values, then you just need to call PlayFx with the values you see there. For example you can add this sound when the enemy changes its direction on **SpriteEnemy.c**
+```
+void Update_SPRITE_ENEMY() {
+	struct EnemyInfo* data = THIS->custom_data;
+	if(TranslateSprite(THIS, 0, data->vy << delta_time)) {
+		data->vy = -data->vy;
+		PlayFx(CHANNEL_4, 4, 0x0c, 0x41, 0x30, 0xc0);
+	}
+}
+```
+and this one when an enemy kills the player on **SpritePlayer.c**
+```
+void Update_SPRITE_PLAYER() {
+	...
+	SPRITEMANAGER_ITERATE(i, spr) {
+		if(spr->type == SPRITE_ENEMY) {
+			if(CheckCollision(THIS, spr)) {
+				PlayFx(CHANNEL_1, 10, 0x4f, 0xc7, 0xf3, 0x73, 0x86);
+				SetState(STATE_GAME);
+			}
+		}
+	}
+	...
+}
+```
+rememeber to include **Sound.h** in both files
+
+If you are playing an fx at the same time the music is playing and the music is using that channel then you need to mute it for a moment (the second parameter in PlayFx is the number of frames you want that music channel to be muted)
+
+If you don't have music on your game then you need to init register 5 (take a look [here](http://gbdev.gg8.se/wiki/articles/Sound_tutorial)). Usually this setup will work for you
+```
+	NR52_REG = 0x80; //Enables sound, you should always setup this first
+	NR51_REG = 0xFF; //Enables all channels (left and right)
+	NR50_REG = 0x77; //Max volume
+```
+
+Debugging <a name="debugging"></a>
+---------
+I am not gonna lie to you, the **sdcc** that comes with the gbdk is far from perfect. It has a lot of issues that are hard to deal with ([take a look at this post](http://zalods.blogspot.com.es/2016/12/game-boy-development-tips-and-tricks-iii.html))
+
+The **printf** function that comes with the gbdk is ok for small projects but as your code grows you won't be able to use it (actually if you use ZGB you can't use it because it takes a big part of bank 0 that is also required by printf)
+
+Instead you can use the print functions available on Print.h
+
+- INIT_CONSOLE will activate the Window and place it so that n number of lines ara available for printing (obviously this won't let you use the Window for other things)
+- print_x and print_y will let you set the position where you want to write (take into account that after writing, these vars are automatically updated so you should reset then manually if you want to constantly print a value on the same position). You can update both using DPRINT_POS
+- you will need a font. I have included one that can be used as a placeholder (and stored on bank 3). This font will take the last 45 tiles so if your vram is full you will have a conflict here too.
+- These are the functions available:
+	- INIT_CONSOLE: inits the console
+	- DPrintf: similar to printf
+	- DPRINT_POS: places the printing position
+	- DPRINT: places the printing position and prints the string passed as parameter
+
+If you want to debug the position of the SpritePlayer here is what you should do: 
+
+- On StateGame.c:
+```
+#include "Print.h"
+#include "../res/src/font.h"
+
+...
+
+void Start_STATE_GAME() {
+	...
+	INIT_CONSOLE(font, 3, 2);
+}
+```
+
+- On SpritePlayer.c
+```
+#include "Print.h"
+
+...
+
+void Update_SPRITE_PLAYER() {
+	...
+	DPRINT_POS(0, 0);
+	DPrintf("x:%d y:%d  ", THIS->x, THIS->y);
+}
+```
+
+Leaving at least one space at the end of your text is recommented because the Window is never cleaned so previous values might overlap the current ones making it a bit confusing.
+
+One last thing: If you are using **build.bat** (or your current target in Visual Studio is Release) you won't see anything. You need to compile using **build_Debug.bat** (or change the Target to Debug on VS). This will create a new rom ending in _Debug.gb. This will ensure none of this code will end in your final rom.
