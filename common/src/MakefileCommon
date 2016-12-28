@@ -3,6 +3,8 @@ BUILD_TYPE = Release
 
 ifeq ($(BUILD_TYPE), Release)
 	BUILD_DEFS += -DNDEBUG
+else
+	PROJECT_NAME := $(PROJECT_NAME)_Debug
 endif
 
 OBJDIR = ../$(BUILD_TYPE)
