@@ -4,6 +4,8 @@
 #include "Frame.h"
 #include "OAMManager.h"
 
+#define CUSTOM_DATA_SIZE 8
+
 struct Sprite {
 	//Frame info
 	UINT8 oam_idx; //oam assigned to this sprite
@@ -11,7 +13,7 @@ struct Sprite {
 	UINT8 first_tile; //tile offset, for animation indices
 
 	//Anim data
-	UINT8* data;
+	UINT8* anim_data;
 	UINT8 current_frame;
 	UINT8 accum_ticks;
 	UINT8 anim_speed;
@@ -30,6 +32,8 @@ struct Sprite {
 	UINT8 marked_for_removal;
 	UINT16 lim_x, lim_y; //limits offscren where the sprite will be deleted (0 means inmediatelly)
 	UINT16 unique_id;
+
+	UINT8 custom_data[CUSTOM_DATA_SIZE];
 };
 
 void InitSprite(struct Sprite* sprite, FrameSize size, UINT8 first_tile);

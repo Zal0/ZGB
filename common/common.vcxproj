@@ -11,29 +11,34 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\bitbit3\include\Princess.h" />
     <ClInclude Include="include\BankManager.h" />
     <ClInclude Include="include\Frame.h" />
     <ClInclude Include="include\Keys.h" />
     <ClInclude Include="include\main.h" />
+    <ClInclude Include="include\Math.h" />
     <ClInclude Include="include\OAMManager.h" />
     <ClInclude Include="include\Scroll.h" />
+    <ClInclude Include="include\Sound.h" />
     <ClInclude Include="include\Sprite.h" />
     <ClInclude Include="include\SpriteManager.h" />
     <ClInclude Include="include\Stack.h" />
     <ClInclude Include="include\Vector.h" />
+    <ClInclude Include="include\Print.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BankManager.c" />
     <ClCompile Include="src\Frame.c" />
     <ClCompile Include="src\Keys.c" />
     <ClCompile Include="src\main.c" />
+    <ClCompile Include="src\Math.c" />
     <ClCompile Include="src\OAMManager.c" />
     <ClCompile Include="src\Scroll.c" />
+    <ClCompile Include="src\Sound.c" />
     <ClCompile Include="src\Sprite.c" />
     <ClCompile Include="src\SpriteManager.c" />
     <ClCompile Include="src\Stack.c" />
     <ClCompile Include="src\Vector.c" />
+    <ClCompile Include="src\Print.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Makefile" />

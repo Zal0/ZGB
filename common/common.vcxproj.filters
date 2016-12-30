@@ -32,9 +32,6 @@
     <ClInclude Include="include\Stack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\bitbit3\include\Princess.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\BankManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -42,6 +39,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Print.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Sound.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -74,6 +80,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Print.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Math.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sound.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

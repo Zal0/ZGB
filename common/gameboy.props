@@ -10,7 +10,7 @@ C:\gbdk\bin\make-3.81-bin\bin\make clean BUILD_TYPE=$(Configuration)
 C:\gbdk\bin\make-3.81-bin\bin\make BUILD_TYPE=$(Configuration)</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>cd src
 C:\gbdk\bin\make-3.81-bin\bin\make clean BUILD_TYPE=$(Configuration)</NMakeCleanCommandLine>
-    <NMakeIncludeSearchPath>C:\gbdk\include;.\include;..\common\include;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath>C:\gbdk\include;$(ZGB_PATH)\include;.\include;.\src;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <OutDir>$(SolutionDir)bin\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup>
