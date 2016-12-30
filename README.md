@@ -92,7 +92,7 @@ Some guidelines you must follow to make your life easier when developing for Gam
 	- When setting the tileset of a map (File->Map Properties) ensure the Filename is relative (it shouldn't contain any folders on the path, eg: "C:\Users\Zalo\ZGB-template\res\tiles.gbr" should be changed to just "tiles.gbr"). This will make your life easier if you are working on your game with more people
 	- In the Export To... set te filename as src/[map name].[bank].c
 	- In the Export To... ensure you have the Location Format like this
-	![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/4-Location%20Format.PNG)
+	![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/master/doc%20files/4-Location%20Format.PNG)
 	- When making changes besides saving your file remember to Export it 
 - Music:
 	- Place your music mod files in the res/music folder
@@ -122,7 +122,7 @@ Tutorial <a name="tutorial"></a>
 --------
 Here is a quick tutorial of how to make a simple game like this one
 
-![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/tuto.gif)
+![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/master/doc%20files/tuto.gif)
 
 Creating a New Project <a name="creating-a-new-project"></a>
 ----------------------
@@ -132,7 +132,7 @@ Try to build it by launching **build.bat** or loading the project into Visual St
 
 If everything goes ok **BGB** will be automatically launched after the build and you should see something like this
 
-![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/bgb00006.bmp)
+![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/master/doc%20files/bgb00006.bmp)
 
 The template contains the minimum files required for making a build:
 
@@ -193,7 +193,7 @@ Let's make our Sprite animate when walking
 
  - Open the file **player.bgr** with **Game Boy Tile Designer** (you should associate the extension *.gbr to be always opened whit this program if you haven't done it yet)
  - Change the aspect of the Sprite by a boy and add a couple of frames for the walking animation. Something like this 
-![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/2-anim.PNG)
+![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/master/doc%20files/2-anim.PNG)
  - Now go to File->Export To... and Update the **number of frames** (From 0 to 2) and after that Save your file
  - If you Build your the project now you should see the new Sprite instead of the Game Boy
  - In **ZGBMain.c** we need to update the number of frames of our sprite, the last parameter of **INIT_SPRITE** does exactly that: 
@@ -268,7 +268,7 @@ void Update_SPRITE_PLAYER() {
 ```
 * There is still a small issue that can be fixed. Unless you did a square your Sprite might be stopping before touching the collidable tile
 
- ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/3-bad%20collision.PNG) 
+ ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/master/doc%20files/3-bad%20collision.PNG) 
  
  this can be fixed by adjusting the **collider** of the Sprite on the Start method. The collider of an Sprite is defined by an rectangle declared using **coll_x, coll_y, coll_w and coll_h** These values worked for me:
 ```
@@ -287,7 +287,7 @@ Time to add a little bit of action to our game by adding an enemy.
 
 * Open the **Game Boy Tile Designer** and create a new **16x16** Sprite for our enemy (View->Tile Size->16x16). This is what I came up with:
 
- ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/5-enemy.PNG)
+ ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/master/doc%20files/5-enemy.PNG)
 
  Save the file into the res/ folder and Set Export settings (File -> Export To...) as:
 	*	FileName: src/enemy.b3.c
@@ -352,7 +352,7 @@ void Start_STATE_GAME() {
 ```
   * If you build the game now you'll see your player and the new enemy. It does nothing and there aren't any collisions yet
  
- ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/bgb00007.bmp)
+ ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/master/doc%20files/bgb00007.bmp)
 
 * Write the next code on **SpriteEnemy.c**
 ```
@@ -410,11 +410,11 @@ Let's now focus on the creation of our game level.
 
 - Open the file **res/map.bgm** with the **Game Boy Map Builder** and create your stage. This is how mine looks like
 
- ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/6-map.PNG)
+ ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/master/doc%20files/6-map.PNG)
 
  Export and Save and make a build. If you are unlucky something like this will happen
 
- ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/bgb00008.bmp)
+ ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/master/doc%20files/bgb00008.bmp)
 
  The enemy has been spawned in the middle of a wall
 
@@ -441,19 +441,19 @@ UINT8 GetTileReplacement(UINT8* tile_ptr, UINT8* tile) {
 
 - Open the **tiles.bgr** with the **Game Boy Tile Designer** and go to View->Tile Count and set that to 255. Now **edit the tile 254** that corresponds to the sprite of type 1 (SPRITE_ENEMY) and create a thumbnail of the enemy
 
- ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/7-thumb.PNG)
+ ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/master/doc%20files/7-thumb.PNG)
 
  Export and save it.
 
 - Open the **res/map.bgm** again and scroll down the list of tiles. You should see the thumbnail on the tile 254. Put it on some places of your map
 
- ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/8-mapenemies.PNG)
+ ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/master/doc%20files/8-mapenemies.PNG)
 
  Export and Save. 
 
 - Build the program now and you should see enemies spawned on those places instead of the thumbnail
 
- ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/postGBJAM5_Improvements/doc%20files/bgb00009.bmp)
+ ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/master/doc%20files/bgb00009.bmp)
 
  You will also see that the Sprite we were spawning by code is still there so make sure you delete that line
 
