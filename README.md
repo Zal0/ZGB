@@ -36,6 +36,7 @@ Features <a name="features"></a>
  - Bank management
  - Fonts
  - Music support using [gbt-player](https://github.com/AntonioND/gbt-player)
+ - Sound Effects
 
 Installation <a name="installation"></a>
 ----------------------------------------
