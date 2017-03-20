@@ -3,7 +3,7 @@
 ZGB
 ===
 
-A little engine for creating games for the original Game Boy.
+A little engine for creating games for the original Game Boy and Game Boy Color.
 
  1. [Features](#features)
  2. [Installation](#installation)
