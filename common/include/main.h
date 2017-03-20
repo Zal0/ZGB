@@ -38,8 +38,20 @@ void SetState(UINT8 state);
 extern UINT8 delta_time;
 
 void PlayMusic(unsigned char* music, unsigned char bank, unsigned char loop);
-
 void InitSpriteInfo(UINT8 type, UINT8 bank, Void_Func_SpritePtr startFunc, Void_Func_Void updateFunc, Void_Func_Void destroyFunc, 
 	              UINT8* data, UINT8 dataBank, FrameSize size, UINT8 num_frames);
+
+extern const unsigned char NULL_TILE[];
+
+void ZGB_set_colors(UWORD *bpal, UINT8 bbank, UWORD *spal, UINT8 sbank);
+typedef enum {
+    Dir_From,
+    Dir_To
+} FDir;
+
+typedef enum {
+    zgb_fade_black,
+    zgb_fade_white
+} FColor;
 
 #endif
