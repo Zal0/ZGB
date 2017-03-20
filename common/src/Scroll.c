@@ -4,19 +4,16 @@
 #include "BankManager.h"
 #include "Math.h"
 
-
 #define SCREEN_TILES_W       20 // 160 >> 3 = 20
 #define SCREEN_TILES_H       18 // 144 >> 3 = 18
 #define SCREEN_TILE_REFRES_W 23
 #define SCREEN_TILE_REFRES_H 19
-
 #define TOP_MOVEMENT_LIMIT 30u
-#define BOTTOM_MOVEMENT_LIMIT 100u
+const UINT8 BOTTOM_MOVEMENT_LIMIT = 100u;
 
 //To be defined on the main app
 UINT8 GetTileReplacement(UINT8* tile_ptr, UINT8* tile);
 
-unsigned char* scroll_map = 0;
 INT16 scroll_x;
 INT16 scroll_y;
 UINT16 scroll_w;
@@ -26,28 +23,51 @@ UINT16 scroll_tiles_h;
 struct Sprite* scroll_target = 0;
 INT16 scroll_target_offset_x = 0;
 INT16 scroll_target_offset_y = 0;
-UINT8 scroll_collisions[128];
-UINT8 scroll_collisions_down[128];
+UINT8 scroll_collisions[220];
+UINT8 scroll_collisions_down[220];
 UINT8 scroll_bank;
 UINT8 scroll_offset_x = 0;
 UINT8 scroll_offset_y = 0;
 
 INT16 pending_h_x, pending_h_y;
 UINT8 pending_h_i;
+unsigned char* scroll_map = 0;
 unsigned char* pending_h_map = 0;
+unsigned char* pending_w_map = 0;
+unsigned char* palet_map = 0;
+#ifdef CGB
+unsigned char* pending_h_cmap = 0;
+unsigned char* pending_w_cmap = 0;
+#endif
 INT16 pending_w_x, pending_w_y;
 UINT8 pending_w_i;
-unsigned char* pending_w_map = 0;
+
+
+//BANK 2 FUNCTIONS
+void ClampScrollLimits_b1(UINT16* x, UINT16* y);
+void ScrollSetMap_b1(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, unsigned char* color_map);
+
+
+//This function updates one tile only! it is twice as faster as set_bkg_tiles
+void ZGB_SET_TILE(UINT8 x,UINT8 y, UINT8 t); 
 
 //This function was thought for updating a whole square... can't find a better one that updates one tile only!
 //#define UPDATE_TILE(X, Y, T) set_bkg_tiles(0x1F & (UINT8)X, 0x1F & (UINT8)Y, 1, 1, T)
-void UPDATE_TILE(INT16 x, INT16 y, UINT8* t) {
+
+void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	UINT8 replacement = *t;
 	UINT8 i;
+
 	struct Sprite* s = 0;
 	UINT8 type = 255u;
 	UINT16 id = 0u;
 	UINT16 tmp_y;
+	
+	#ifdef CGB
+	UINT8 color_map = *c;
+	#else
+	c = 0;
+	#endif
 	
 	if(x < 0 || y < 0 || U_LESS_THAN(scroll_tiles_w - 1, x) || U_LESS_THAN(scroll_tiles_h - 1, y)) {
 		replacement = 0;
@@ -71,8 +91,14 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t) {
 			}
 		}
 	}
-
+	//ZGB_SET_TILE(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), replacement);
 	set_bkg_tiles(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), 1, 1, &replacement); //i pointing to zero will replace the tile by the deafault one
+	#ifdef CGB
+	VBK_REG = 1;
+		set_bkg_tiles(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), 1, 1, &color_map);
+		//ZGB_SET_TILE(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), color_map);
+	VBK_REG = 0;
+	#endif
 }
 
 void InitScrollTiles(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 tile_bank) {
@@ -81,55 +107,38 @@ void InitScrollTiles(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 ti
 	POP_BANK;
 }
 
-void InitWindow(UINT8 x, UINT8 y, UINT8 w, UINT8 h, UINT8* map, UINT8 bank) {
+void InitWindow(UINT8 x, UINT8 y, UINT8 w, UINT8 h, UINT8* map, UINT8 bank, UINT8* cmap) {
 	PUSH_BANK(bank);
 	set_win_tiles(x, y, w, h, map);
+	//COLOR ONLY
+	#ifdef CGB
+	VBK_REG = 1;
+		set_win_tiles(x, y, w, h, cmap);
+	VBK_REG = 0;
+	#endif
 	POP_BANK;
 }
 
 UINT8 clamp_enabled = 1;
 void ClampScrollLimits(UINT16* x, UINT16* y) {
-	if(clamp_enabled) {
-		if(U_LESS_THAN(*x, 0u)) {
-			*x = 0u;		
-		}
-		if(*x > (scroll_w - SCREENWIDTH)) {
-			*x = (scroll_w - SCREENWIDTH);
-		}
-		if(U_LESS_THAN(*y, 0u)) {
-			*y = 0u;		
-		}
-		if(*y > (scroll_h - SCREENHEIGHT)) {
-			*y = (scroll_h - SCREENHEIGHT);
-		}
-	}
+	PUSH_BANK(1);
+	ClampScrollLimits_b1(x,y);
+	POP_BANK;
 }
 
-void ScrollSetMap(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank) {
-	scroll_tiles_w = map_w;
-	scroll_tiles_h = map_h;
-	scroll_map = map;
-	scroll_x = 0;
-	scroll_y = 0;
-	scroll_w = map_w << 3;
-	scroll_h = map_h << 3;
-	scroll_bank = bank;
-	if(scroll_target) {
-		scroll_x = scroll_target->x - (SCREENWIDTH >> 1);
-		scroll_y = scroll_target->y - BOTTOM_MOVEMENT_LIMIT; //Move the camera to its bottom limit
-		ClampScrollLimits(&scroll_x, &scroll_y);
-	}
-	pending_h_i = 0;
-	pending_w_i = 0;
+void ScrollSetMap(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, unsigned char* color_map) {
+	PUSH_BANK(1);
+	ScrollSetMap_b1(map_w,map_h,map,bank,color_map);
+	POP_BANK;
 }
 
-void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list, UINT8* coll_list_down, UINT8 bank) {
+void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list, UINT8* coll_list_down, UINT8 bank, unsigned char* color_map) {
 	UINT8 i;
 	INT16 y;
 	
-	ScrollSetMap(map_w, map_h, map, bank);
+	ScrollSetMap(map_w, map_h, map, bank, color_map);
 
-	for(i = 0u; i != 128; ++i) {
+	for(i = 0u; i != 220; ++i) {
 		scroll_collisions[i] = 0u;
 		scroll_collisions_down[i] = 0u;
 	}
@@ -156,8 +165,12 @@ void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list
 void ScrollUpdateRowR() {
 	UINT8 i = 0u;
 	
-	for(i = 0u; i != SCREEN_TILE_REFRES_W && pending_w_i != 0; ++i, -- pending_w_i) {
-		UPDATE_TILE(pending_w_x ++, pending_w_y, pending_w_map ++);
+	for(i = 0u; i != SCREEN_TILE_REFRES_H && pending_w_i != 0; ++i, -- pending_w_i)  {
+		#ifdef CGB
+		UPDATE_TILE(pending_w_x ++, pending_w_y, pending_w_map ++, pending_w_cmap++);
+		#else
+		UPDATE_TILE(pending_w_x ++, pending_w_y, pending_w_map ++,0);
+		#endif
 	}
 }
 
@@ -168,16 +181,27 @@ void ScrollUpdateRowWithDelay(INT16 x, INT16 y) {
 	pending_w_y = y;
 	pending_w_i = SCREEN_TILE_REFRES_W;
 	pending_w_map = scroll_map + scroll_tiles_w * y + x;
+	#ifdef CGB
+	pending_w_cmap = palet_map + scroll_tiles_w * y + x;
+	#endif
 }
 
 void ScrollUpdateRow(INT16 x, INT16 y) {
 	UINT8 i = 0u;
 	unsigned char* map = scroll_map + scroll_tiles_w * y + x;
-
+	#ifdef CGB
+	unsigned char* cmap = palet_map + scroll_tiles_w * y + x;
+	#endif
 	PUSH_BANK(scroll_bank);
 	for(i = 0u; i != SCREEN_TILE_REFRES_W; ++i) {
-		UPDATE_TILE(x + i, y, map);
+		#ifdef CGB
+		UPDATE_TILE(x + i, y, map, cmap);
 		map += 1;
+		cmap += 1;
+		#else
+		UPDATE_TILE(x + i, y, map,0);
+		map += 1;
+		#endif
 	}
 	POP_BANK;
 }
@@ -186,8 +210,14 @@ void ScrollUpdateColumnR() {
 	UINT8 i = 0u;
 
 	for(i = 0u; i != 5 && pending_h_i != 0; ++i, pending_h_i --) {
-		UPDATE_TILE(pending_h_x, pending_h_y ++, pending_h_map);
+		#ifdef CGB
+		UPDATE_TILE(pending_h_x, pending_h_y ++, pending_h_map, pending_h_cmap);
 		pending_h_map += scroll_tiles_w;
+		pending_h_cmap += scroll_tiles_w;
+		#else
+		UPDATE_TILE(pending_h_x, pending_h_y ++, pending_h_map,0);
+		pending_h_map += scroll_tiles_w;
+		#endif
 	}
 }
 
@@ -198,16 +228,28 @@ void ScrollUpdateColumnWithDelay(INT16 x, INT16 y) {
 	pending_h_y = y;
 	pending_h_i = SCREEN_TILE_REFRES_H;
 	pending_h_map = scroll_map + scroll_tiles_w * y + x;
+	#ifdef CGB
+	pending_h_cmap = palet_map + scroll_tiles_w * y + x;
+	#endif
 }
 
 void ScrollUpdateColumn(INT16 x, INT16 y) {
 	UINT8 i = 0u;
 	unsigned char* map = &scroll_map[scroll_tiles_w * y + x];
+	#ifdef CGB
+	unsigned char* cmap = &palet_map[scroll_tiles_w * y + x];
+	#endif
 	
 	PUSH_BANK(scroll_bank);
-	for(i = 0u; i != SCREEN_TILE_REFRES_H; ++i) {
-		UPDATE_TILE(x, y + i, map);
+	for(i = 0u; i != 19; ++i) {
+		#ifdef CGB
+		UPDATE_TILE(x, y + i, map, cmap);
 		map += scroll_tiles_w;
+		cmap += scroll_tiles_w;
+		#else
+		UPDATE_TILE(x, y + i, map, 0);
+		map += scroll_tiles_w;
+		#endif
 	}
 	POP_BANK;
 }
@@ -220,6 +262,7 @@ void FinishPendingScrollUpdates() {
 		ScrollUpdateColumnR();
 	}
 }
+
 
 void RefreshScroll() {
 	UINT16 ny = scroll_y;
@@ -311,7 +354,13 @@ void ScrollFindTile(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, 
 	*x = xt;
 	*y = yt;
 }
-
+void EditCollision(UINT8 tile, UINT8 col){
+	scroll_collisions[tile] = col;
+}
+void EditCollisionDown(UINT8 tile, UINT8 col){
+	scroll_collisions_down[tile] = col;
+}
+/*
 void ScrollFindTileInCorners(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, UINT8 tile, UINT16* x, UINT16* y) {
 	UINT16 xt = 0;
 	UINT16 yt = 0;
@@ -357,3 +406,4 @@ void ScrollFindTileInCorners(UINT16 map_w, UINT16 map_h, unsigned char* map, UIN
 	*x = xt;
 	*y = yt;
 }
+*/

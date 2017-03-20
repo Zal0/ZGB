@@ -3,10 +3,21 @@
 #include <gb/gb.h> 
 #include "OAMManager.h"
 #include "Scroll.h"
+#include "Sound.h"
 #include "Keys.h"
-#include "gbt_player.h"
 #include "SpriteManager.h"
 #include "BankManager.h"
+#ifdef CP
+#include "carillon_player.h"
+extern UINT8 ZGB_CP_ON;
+void CP_UpdateMusic();
+void CP_Mute_Chan(UINT8 chan);
+void CP_Reset_Chan(); 
+#else
+#include "gbt_player.h"
+#endif
+
+UINT8 CP_Muted_Chan;
 
 extern UINT8 next_state;
 UINT8 delta_time;
@@ -17,21 +28,22 @@ extern UINT8 stateBanks[];
 extern Void_Func_Void startFuncs[];
 extern Void_Func_Void updateFuncs[];
 
-extern UINT8 spriteBanks[];
-extern Void_Func_Void spriteStartFuncs[];
-extern Void_Func_Void spriteUpdateFuncs[];
-extern Void_Func_Void spriteDestroyFuncs[];
 extern UINT8* spriteDatas[];
-extern UINT8 spriteDataBanks[];
-extern FrameSize spriteFrameSizes[];
-extern UINT8 spriteNumFrames[];
-extern UINT8 spriteIdxs[];
+
+#ifdef CGB
+extern UWORD ZGB_Fading_BPal[32];
+extern UWORD ZGB_Fading_SPal[32];
+#endif
+//BANK 2
+void ZGB_FADE_COLORS(UINT8 dir);
+void vbl_update_b1();
+void InitSpriteInfo_b1(UINT8 type, UINT8 bank, Void_Func_SpritePtr startFunc, Void_Func_Void updateFunc, Void_Func_Void destroyFunc, UINT8* data, UINT8 dataBank, FrameSize size, UINT8 num_frames);
 
 void SetState(UINT8 state) {
 	state_running = 0;
 	next_state = state;
 }
-
+#ifndef CP
 unsigned char* last_music = 0;
 void PlayMusic(unsigned char* music, unsigned char bank, unsigned char loop) {
 	if(music != last_music) {
@@ -41,98 +53,117 @@ void PlayMusic(unsigned char* music, unsigned char bank, unsigned char loop) {
 		REFRESH_BANK;
 	}
 }
+#endif
 
 UINT8 vbl_count;
 INT16 old_scroll_x, old_scroll_y;
-UINT8 music_mute_frames = 0;
-void vbl_update() {
-	vbl_count ++;
-	
-	//Instead of assigning scroll_y to SCX_REG I do a small interpolation that smooths the scroll transition giving the
-	//Illusion of a better frame rate
-	if(old_scroll_x < scroll_x)
-		old_scroll_x += (scroll_x - old_scroll_x + 1) >> 1;
-	else if(old_scroll_x > scroll_x)
-		old_scroll_x -= (old_scroll_x - scroll_x + 1) >> 1;
-	SCX_REG = old_scroll_x + (scroll_offset_x << 3);
-
-	if(old_scroll_y < scroll_y)
-		old_scroll_y += (scroll_y - old_scroll_y + 1) >> 1;
-	else if(old_scroll_y > scroll_y)
-		old_scroll_y -= (old_scroll_y - scroll_y + 1) >> 1;
-	SCY_REG = old_scroll_y + (scroll_offset_y << 3);
-
-	if(music_mute_frames != 0) {
-		music_mute_frames --;
-		if(music_mute_frames == 0) {
-			gbt_enable_channels(0xF);
-		}
-	}
+UINT8 music_mute_frames;
+void vbl_update(){
+	PUSH_BANK(1);
+	vbl_update_b1();
+	POP_BANK;
 }
 
-void InitSpriteInfo(UINT8 type, UINT8 bank, Void_Func_SpritePtr startFunc, Void_Func_Void updateFunc, Void_Func_Void destroyFunc, 
-	              UINT8* data, UINT8 dataBank, FrameSize size, UINT8 num_frames) {
-	spriteBanks[type] = bank;
-	spriteStartFuncs[type] = startFunc;
-	spriteUpdateFuncs[type] = updateFunc;
-	spriteDestroyFuncs[type] = destroyFunc;
-
+void InitSpriteInfo(UINT8 type, UINT8 bank, Void_Func_SpritePtr startFunc, Void_Func_Void updateFunc, Void_Func_Void destroyFunc, UINT8* data, UINT8 dataBank, FrameSize size, UINT8 num_frames)
+{
+	PUSH_BANK(1);
+	InitSpriteInfo_b1(type,bank,startFunc, updateFunc, destroyFunc, data, dataBank,size,num_frames);
+	POP_BANK;
 	spriteDatas[type] = data;
-	spriteDataBanks[type] = dataBank;
-	spriteFrameSizes[type] = size;
-	spriteNumFrames[type] = num_frames << size;
 }  
 
 void InitStates();
 void InitSprites();
 
 void MusicUpdate() {
+	#ifdef CP
+	if (ZGB_CP_ON == 1) {
+		CP_UpdateMusic();
+	}
+	if(music_mute_frames != 0){
+		PUSH_BANK(1);
+		CP_Mute_Chan(CP_Muted_Chan);
+		if(music_mute_frames == 1){
+			CP_Reset_Chan(CP_Muted_Chan);
+		}
+		POP_BANK;
+		
+		music_mute_frames --;
+	}
+	#else
+	if(music_mute_frames != 0)music_mute_frames --;
+	else gbt_enable_channels(0xF);
 	gbt_update();
+	#endif
 	REFRESH_BANK;
 }
 
-#define PAL_DEF(C3, C2, C1, C0) ((C0 << 6) | (C1 << 4) | (C2 << 2) | C3)
-void main() {
-	UINT8 i;
 
+void ZGB_set_colors(UWORD *bpal, UINT8 bbank, UWORD *spal, UINT8 sbank){
+	#ifdef CGB
+	UINT8 i;
+	
+	PUSH_BANK(bbank);	
+		for(i = 0; i != 32; ++i) ZGB_Fading_BPal[i] = bpal[i];
+	POP_BANK;
+	
+	PUSH_BANK(sbank);
+		for(i = 0; i != 32; ++i) ZGB_Fading_SPal[i] = spal[i];
+	POP_BANK;
+	
+	set_bkg_palette(0, 8, bpal);
+	set_sprite_palette(0, 8, spal);	
+	#endif
+}
+
+void main() {
+	
 	InitStates();
 	InitSprites();
 
 	disable_interrupts();
 	add_VBL(vbl_update);
+	//add_VBL(MusicUpdate);
 	add_TIM(MusicUpdate);
-	TMA_REG = 0xBCU;
-  TAC_REG = 0x04U;
+	
+	#ifdef CGB
+	TMA_REG = 120;
+	cpu_fast();
+	#else
+	TMA_REG = 188;
+	#endif
+	TAC_REG = 0x04U;
+	
 
 	set_interrupts(VBL_IFLAG | TIM_IFLAG);
 	enable_interrupts();
 
 	while(1) {
 		while (state_running) {
-			if(!vbl_count)
-				wait_vbl_done();
-			delta_time = vbl_count == 1u ? 0u : 1u;
-			vbl_count = 0;
 
 			UPDATE_KEYS();
 			
+			if(!vbl_count) wait_vbl_done();
+			delta_time = vbl_count == 1u ? 0u : 1u;
+			vbl_count = 0;
+			
 			SpriteManagerUpdate();
+			
 			PUSH_BANK(stateBanks[current_state]);
 				updateFuncs[current_state]();
-			POP_BANK;
+			POP_BANK;	
 		}
-
-		for(i = 0; i != 4; ++i) {
-			BGP_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-			OBP0_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-			OBP1_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-			delay(50);
-		}
+		//FADE TO WHITE
+		PUSH_BANK(1);
+		ZGB_FADE_COLORS(1);
+		POP_BANK;
 		DISPLAY_OFF
-
+		
+		#ifndef CP
 		gbt_stop();
 		last_music = 0;
-
+		#endif
+		
 		last_sprite_loaded = 0;
 		SpriteManagerReset();
 		state_running = 1;
@@ -147,13 +178,10 @@ void main() {
 
 		if(state_running) {
 			DISPLAY_ON;
-			for(i = 3; i != 0xFF; --i) {
-				BGP_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-				OBP0_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-				OBP1_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-				delay(50);
-			}
+			//FADE FROM WHITE
+			PUSH_BANK(1);
+			ZGB_FADE_COLORS(0);
+			POP_BANK;
 		}
 	}
 }
-

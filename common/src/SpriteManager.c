@@ -15,6 +15,7 @@ extern FrameSize spriteFrameSizes[];
 extern UINT8 spriteNumFrames[];
 extern UINT8 spriteIdxs[];
 
+
 //Pool
 UINT8 sprite_manager_sprites_mem[N_SPRITE_MANAGER_SPRITES * sizeof(struct Sprite)];
 struct Sprite* sprite_manager_sprites[N_SPRITE_MANAGER_SPRITES];
