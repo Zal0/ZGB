@@ -1,0 +1,8 @@
+#ifndef SPRITE_PLATFORM_H
+#define SPRITE_PLATFORM_H
+
+#include "main.h"
+
+DECLARE_SPRITE(SPRITE_PLATFORM);
+
+#endif

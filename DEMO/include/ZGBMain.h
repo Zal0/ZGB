@@ -1,0 +1,25 @@
+#ifndef ZGBMAIN_H
+#define ZGBMAIN_H
+
+#include "main.h"
+
+typedef enum {
+	STATE_MENU,
+	STATE_GAME,
+	STATE_LEVEL1,
+	
+
+	N_STATES
+} STATE;
+
+typedef enum {
+	SPRITE_PLAYER,
+	SPRITE_PLATFORM,
+	SPRITE_ENEMY,
+	SPRITE_SHARK,
+	SPRITE_BULLET,
+	
+	N_SPRITE_TYPES
+} SPRITE_TYPE;
+
+#endif
