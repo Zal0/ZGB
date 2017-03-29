@@ -5,10 +5,16 @@ rem --------------------------------------
 
 rem		CHANGE OPTIONS (yes/no)
 rem		-----------------------
-rem		COLOR: enables game boy color features
-rem		CPlayer: enables Carillon Player for music
+rem		COLOR: 
+rem 		yes = enable game boy color features, ROM will only work well on GBC
+rem 		no = disable game boy color features, ROM will only work well on GB
+rem		CPlayer: 
+rem 		yes = enable Carillon Player for music, gbt player is disabled
+rem			Only .sav files will be used
+rem 		no = enable GBT player for music, disable carillon player
+rem			Only .mod files will be used
 
-set "COLOR=yes"
+set "COLOR=no"
 set "CPlayer=yes"
 
 
