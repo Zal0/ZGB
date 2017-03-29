@@ -66,7 +66,7 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	#ifdef CGB
 	UINT8 color_map = *c;
 	#else
-	c = 0;
+	c = NULL;
 	#endif
 	
 	if(x < 0 || y < 0 || U_LESS_THAN(scroll_tiles_w - 1, x) || U_LESS_THAN(scroll_tiles_h - 1, y)) {
@@ -91,14 +91,17 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 			}
 		}
 	}
+	PUSH_BANK(1);
 	//ZGB_SET_TILE(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), replacement);
 	set_bkg_tiles(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), 1, 1, &replacement); //i pointing to zero will replace the tile by the deafault one
 	#ifdef CGB
 	VBK_REG = 1;
-		set_bkg_tiles(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), 1, 1, &color_map);
 		//ZGB_SET_TILE(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), color_map);
+		set_bkg_tiles(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), 1, 1, &color_map);
 	VBK_REG = 0;
 	#endif
+	POP_BANK;
+	
 }
 
 void InitScrollTiles(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 tile_bank) {
@@ -126,34 +129,16 @@ void ClampScrollLimits(UINT16* x, UINT16* y) {
 	POP_BANK;
 }
 
-void ScrollSetMap(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, unsigned char* color_map) {
-	PUSH_BANK(1);
-	ScrollSetMap_b1(map_w,map_h,map,bank,color_map);
-	POP_BANK;
-}
-
 void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list, UINT8* coll_list_down, UINT8 bank, unsigned char* color_map) {
 	UINT8 i;
 	INT16 y;
 	
-	ScrollSetMap(map_w, map_h, map, bank, color_map);
+	//set map and copy the collision array 
+	PUSH_BANK(1);
+	ScrollSetMap_b1(map_w, map_h, map, bank, color_map, coll_list, coll_list_down);
+	POP_BANK;
 
-	for(i = 0u; i != 220; ++i) {
-		scroll_collisions[i] = 0u;
-		scroll_collisions_down[i] = 0u;
-	}
-	if(coll_list) {
-		for(i = 0u; coll_list[i] != 0u; ++i) {
-			scroll_collisions[coll_list[i]] = 1u;
-		}
-	}
-	if(coll_list_down) {
-		for(i = 0u; coll_list_down[i] != 0u; ++i) {
-			scroll_collisions_down[coll_list_down[i]] = 1u;
-		}
-	}
-
-	//Change bank now, after copying the collision array (it can be in a different bank)
+	//Change bank now
 	PUSH_BANK(bank);
 	y = DespRight(scroll_y, 3);
 	for(i = 0u; i != SCREEN_TILE_REFRES_H && y != scroll_h; ++i, y ++) {

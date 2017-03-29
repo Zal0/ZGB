@@ -2,7 +2,7 @@
 
 #include "BankManager.h"
 //Carillon Player Vars
-UINT8 ZGB_CPBank = 0;
+UINT8 ZGB_CPBank = 0; 
 UINT8 ZGB_CPSong = 0;
 UINT8 ZGB_CP_ON;
 
@@ -29,9 +29,13 @@ void CP_UpdateMusic(){
 	POP_BANK;
 }
 void CP_StopMusic(){
-	CP_StopSong();
-	ZGB_CPBank = 0;
-	ZGB_CP_ON = 0;
+	if (ZGB_CP_ON == 1){
+		PUSH_BANK(ZGB_CPBank);
+		CP_StopSong();
+		ZGB_CPBank = 0;
+		ZGB_CP_ON = 0;
+		POP_BANK;
+	}
 }
 #else
 int Junk;

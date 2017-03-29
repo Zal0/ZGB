@@ -10,6 +10,8 @@ extern UINT8 scroll_offset_x;
 extern UINT8 scroll_offset_y;
 extern UINT8 GetTileReplacement(UINT8* tile_ptr, UINT8* tile);
 extern UINT8 clamp_enabled;
+extern UINT8 scroll_collisions[];
+extern UINT8 scroll_collisions_down[];
 
 void ClampScrollLimits_b1(UINT16* x, UINT16* y) {
 	if(clamp_enabled) {
@@ -28,7 +30,9 @@ void ClampScrollLimits_b1(UINT16* x, UINT16* y) {
 	}
 }
 
-void ScrollSetMap_b1(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, unsigned char* color_map) {
+void ScrollSetMap_b1(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, unsigned char* color_map, UINT8* coll_list, UINT8* coll_list_down) {
+	UINT8 i;
+	
 	scroll_tiles_w = map_w;
 	scroll_tiles_h = map_h;
 	scroll_map = map;
@@ -47,5 +51,22 @@ void ScrollSetMap_b1(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank,
 	}
 	pending_h_i = 0;
 	pending_w_i = 0;
+	
+	
+	//copy collision array
+	for(i = 0u; i != 220; ++i) {
+		scroll_collisions[i] = 0u;
+		scroll_collisions_down[i] = 0u;
+	}
+	if(coll_list) {
+		for(i = 0u; coll_list[i] != 0u; ++i) {
+			scroll_collisions[coll_list[i]] = 1u;
+		}
+	}
+	if(coll_list_down) {
+		for(i = 0u; coll_list_down[i] != 0u; ++i) {
+			scroll_collisions_down[coll_list_down[i]] = 1u;
+		}
+	}
 }
 

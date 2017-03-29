@@ -1,3 +1,4 @@
+#pragma bank=1
 #include "Keys.h"
 
 UBYTE previous_KEYS = 0;

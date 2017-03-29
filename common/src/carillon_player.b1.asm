@@ -52,42 +52,42 @@ MCH4:
 ;This just resets all parameters after playing a SFX, 
 ;so that carillon keeps playing
 _CP_Reset_Chan:
-	LDA	HL,2(SP)
-	LD	A,(HL)
-	CP	#0
-	JR	Z,CH1
-	CP	#1
-	JR	Z,CH2
-	CP	#2
-	JR	Z,CH3
-	CP	#3
-	JR	Z,CH4
+	;LDA	HL,2(SP)
+	;LD	A,(HL)
+	;CP	#0
+	;JR	Z,CH1
+	;CP	#1
+	;JR	Z,CH2
+	;CP	#2
+	;JR	Z,CH3
+	;CP	#3
+	;JR	Z,CH4
 	;////////////////////////////////
-CH1:    ;SOUND REG
+;CH1:    ;SOUND REG
 	LD	A,#0x00
 	LD  (#0xFF10),A		;CHAN 1 RESET
 	LD  (#0xFF11),A	
 	LD  (#0xFF12),A	
 	LD  (#0xFF13),A	
 	LD  (#0xFF14),A	
-	ret
-CH2:
-	LD	A,#0x00
+;	ret
+;CH2:
+;	LD	A,#0x00
 	LD  (#0xFF16),A		;CHAN 2 RESET
 	LD  (#0xFF17),A	
 	LD  (#0xFF18),A	
 	LD  (#0xFF19),A	
-	ret
-CH3:
-	LD	A,#0x00
+;	ret
+;CH3:
+;	LD	A,#0x00
 	LD  (#0xFF1A),A		;CHAN 3 RESET
 	LD  (#0xFF1B),A	
 	LD  (#0xFF1C),A	
 	LD  (#0xFF1D),A	
 	LD  (#0xFF1E),A
-	ret
-CH4:
-	LD	A,#0x00
+;	ret
+;CH4:
+;	LD	A,#0x00
 	LD  (#0xFF20),A		;CHAN 4 RESET
 	LD  (#0xFF21),A	
 	LD  (#0xFF22),A	

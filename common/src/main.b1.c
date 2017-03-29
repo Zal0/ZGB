@@ -110,11 +110,12 @@ void ZGB_Fade_Colors_b1(UWORD *org_p, UWORD *s_p, FDir dir, FColor color)
         bit_mask |= (dir == Dir_From)
             ? (bit_mask << 1)
             : (bit_mask >> 1);
-
+		set_bkg_palette(0,8, &ZGB_FBPal[0]);
+		delay(50);	
 		wait_vbl_done();
         set_bkg_palette(0,8, &ZGB_FBPal[0]);
 		set_sprite_palette(0,8, &ZGB_FSPal[0]);
-        delay(100);	
+        
 	}
 }
 

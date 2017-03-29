@@ -13,11 +13,10 @@ extern UINT8 ZGB_CP_ON;
 void CP_UpdateMusic();
 void CP_Mute_Chan(UINT8 chan);
 void CP_Reset_Chan(); 
+UINT8 CP_Muted_Chan;
 #else
 #include "gbt_player.h"
 #endif
-
-UINT8 CP_Muted_Chan;
 
 extern UINT8 next_state;
 UINT8 delta_time;

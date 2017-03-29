@@ -1,3 +1,4 @@
+#pragma bank=1
 #include "Frame.h"
 #include "OAMManager.h"
 #include "Scroll.h"
