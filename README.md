@@ -83,6 +83,9 @@ Before you start coding anything it is important that you understand what States
 	 - ***SpriteManagerRemove***: for removing them
 	 - ***SPRITEMANAGER_ITERATE***: a useful macro for iterating through all active sprites
 
+Bank 0 and 1 are so full, you can't init all states and sprites from main in bank 1. It only lets you init about 3 states and 3 sprites.
+But doing it from other banks works well, so you just have to init all sprites in a start function of a state in other bank, and then continue to your state.
+
 Resource guidelines <a name="resource-guidelines"></a>
 -------------------
 Some guidelines you must follow to make your life easier when developing for Game Boy using ZGB:
