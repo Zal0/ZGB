@@ -17,6 +17,7 @@
 UINT8 GetTileReplacement(UINT8* tile_ptr, UINT8* tile);
 
 unsigned char* scroll_map = 0;
+unsigned char* palet_map = 0;
 INT16 scroll_x;
 INT16 scroll_y;
 UINT16 scroll_w;
@@ -35,13 +36,18 @@ UINT8 scroll_offset_y = 0;
 INT16 pending_h_x, pending_h_y;
 UINT8 pending_h_i;
 unsigned char* pending_h_map = 0;
+unsigned char* pending_w_map = 0;
+#ifdef CGB
+unsigned char* pending_h_cmap = 0;
+unsigned char* pending_w_cmap = 0;
+#endif
 INT16 pending_w_x, pending_w_y;
 UINT8 pending_w_i;
-unsigned char* pending_w_map = 0;
 
 //This function was thought for updating a whole square... can't find a better one that updates one tile only!
 //#define UPDATE_TILE(X, Y, T) set_bkg_tiles(0x1F & (UINT8)X, 0x1F & (UINT8)Y, 1, 1, T)
-void UPDATE_TILE(INT16 x, INT16 y, UINT8* t) {
+
+void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	UINT8 replacement = *t;
 	UINT8 i;
 	struct Sprite* s = 0;
@@ -73,6 +79,11 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t) {
 	}
 
 	set_bkg_tiles(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), 1, 1, &replacement); //i pointing to zero will replace the tile by the deafault one
+	#ifdef CGB
+		VBK_REG = 1;
+		set_bkg_tiles(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), 1, 1, c);
+		VBK_REG = 0;
+	#endif
 }
 
 void InitScrollTiles(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 tile_bank) {
@@ -81,9 +92,15 @@ void InitScrollTiles(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 ti
 	POP_BANK;
 }
 
-void InitWindow(UINT8 x, UINT8 y, UINT8 w, UINT8 h, UINT8* map, UINT8 bank) {
+void InitWindow(UINT8 x, UINT8 y, UINT8 w, UINT8 h, UINT8* map, UINT8 bank, UINT8* cmap) {
 	PUSH_BANK(bank);
 	set_win_tiles(x, y, w, h, map);
+	//COLOR ONLY
+	#ifdef CGB
+	VBK_REG = 1;
+		set_win_tiles(x, y, w, h, cmap);
+	VBK_REG = 0;
+	#endif
 	POP_BANK;
 }
 
@@ -123,7 +140,7 @@ void ScrollSetMap(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank) {
 	pending_w_i = 0;
 }
 
-void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list, UINT8* coll_list_down, UINT8 bank) {
+void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list, UINT8* coll_list_down, UINT8 bank, unsigned char* color_map) {
 	UINT8 i;
 	INT16 y;
 	
@@ -156,8 +173,12 @@ void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list
 void ScrollUpdateRowR() {
 	UINT8 i = 0u;
 	
-	for(i = 0u; i != SCREEN_TILE_REFRES_W && pending_w_i != 0; ++i, -- pending_w_i) {
-		UPDATE_TILE(pending_w_x ++, pending_w_y, pending_w_map ++);
+	for(i = 0u; i != SCREEN_TILE_REFRES_H && pending_w_i != 0; ++i, -- pending_w_i)  {
+		#ifdef CGB
+		UPDATE_TILE(pending_w_x ++, pending_w_y, pending_w_map ++, pending_w_cmap++);
+		#else
+		UPDATE_TILE(pending_w_x ++, pending_w_y, pending_w_map ++,0);
+		#endif
 	}
 }
 
@@ -168,16 +189,28 @@ void ScrollUpdateRowWithDelay(INT16 x, INT16 y) {
 	pending_w_y = y;
 	pending_w_i = SCREEN_TILE_REFRES_W;
 	pending_w_map = scroll_map + scroll_tiles_w * y + x;
+	#ifdef CGB
+	pending_w_cmap = palet_map + scroll_tiles_w * y + x;
+	#endif
 }
 
 void ScrollUpdateRow(INT16 x, INT16 y) {
 	UINT8 i = 0u;
 	unsigned char* map = scroll_map + scroll_tiles_w * y + x;
 
+	#ifdef CGB
+	unsigned char* cmap = palet_map + scroll_tiles_w * y + x;
+	#endif
 	PUSH_BANK(scroll_bank);
 	for(i = 0u; i != SCREEN_TILE_REFRES_W; ++i) {
-		UPDATE_TILE(x + i, y, map);
+		#ifdef CGB
+		UPDATE_TILE(x + i, y, map, cmap);
 		map += 1;
+		cmap += 1;
+		#else
+		UPDATE_TILE(x + i, y, map,0);
+		map += 1;
+		#endif
 	}
 	POP_BANK;
 }
@@ -186,8 +219,14 @@ void ScrollUpdateColumnR() {
 	UINT8 i = 0u;
 
 	for(i = 0u; i != 5 && pending_h_i != 0; ++i, pending_h_i --) {
-		UPDATE_TILE(pending_h_x, pending_h_y ++, pending_h_map);
+		#ifdef CGB
+		UPDATE_TILE(pending_h_x, pending_h_y ++, pending_h_map, pending_h_cmap);
 		pending_h_map += scroll_tiles_w;
+		pending_h_cmap += scroll_tiles_w;
+		#else
+		UPDATE_TILE(pending_h_x, pending_h_y ++, pending_h_map,0);
+		pending_h_map += scroll_tiles_w;
+		#endif
 	}
 }
 
@@ -198,16 +237,28 @@ void ScrollUpdateColumnWithDelay(INT16 x, INT16 y) {
 	pending_h_y = y;
 	pending_h_i = SCREEN_TILE_REFRES_H;
 	pending_h_map = scroll_map + scroll_tiles_w * y + x;
+	#ifdef CGB
+	pending_h_cmap = palet_map + scroll_tiles_w * y + x;
+	#endif
 }
 
 void ScrollUpdateColumn(INT16 x, INT16 y) {
 	UINT8 i = 0u;
 	unsigned char* map = &scroll_map[scroll_tiles_w * y + x];
+	#ifdef CGB
+	unsigned char* cmap = &palet_map[scroll_tiles_w * y + x];
+	#endif
 	
 	PUSH_BANK(scroll_bank);
 	for(i = 0u; i != SCREEN_TILE_REFRES_H; ++i) {
-		UPDATE_TILE(x, y + i, map);
+		#ifdef CGB
+		UPDATE_TILE(x, y + i, map, cmap);
 		map += scroll_tiles_w;
+		cmap += scroll_tiles_w;
+		#else
+		UPDATE_TILE(x, y + i, map, 0);
+		map += scroll_tiles_w;
+		#endif
 	}
 	POP_BANK;
 }

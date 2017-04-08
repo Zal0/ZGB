@@ -20,9 +20,9 @@ extern struct Sprite* scroll_target;
 extern UINT8 clamp_enabled;
 
 void InitScrollTiles(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 tile_bank);
-void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list, UINT8* coll_list_down, UINT8 bank);
-void InitWindow(UINT8 x, UINT8 y, UINT8 w, UINT8 h, UINT8* map, UINT8 bank);
-void ScrollSetMap(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank);
+void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list, UINT8* coll_list_down, UINT8 bank, unsigned char* color_map);
+void InitWindow(UINT8 x, UINT8 y, UINT8 w, UINT8 h, UINT8* map, UINT8 bank, unsigned char* color_map);
+void ScrollSetMap(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, unsigned char* color_map);
 void ScrollUpdateRow(INT16 x, INT16 y);
 void ScrollUpdateColumn(INT16 x, INT16 y);
 void MoveScroll(INT16 x, INT16 y);
