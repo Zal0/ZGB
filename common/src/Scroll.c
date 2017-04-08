@@ -17,7 +17,7 @@
 UINT8 GetTileReplacement(UINT8* tile_ptr, UINT8* tile);
 
 unsigned char* scroll_map = 0;
-unsigned char* palet_map = 0;
+unsigned char* scroll_cmap = 0;
 INT16 scroll_x;
 INT16 scroll_y;
 UINT16 scroll_w;
@@ -122,10 +122,11 @@ void ClampScrollLimits(UINT16* x, UINT16* y) {
 	}
 }
 
-void ScrollSetMap(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank) {
+void ScrollSetMap(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, unsigned char* cmap) {
 	scroll_tiles_w = map_w;
 	scroll_tiles_h = map_h;
 	scroll_map = map;
+	scroll_cmap = cmap;
 	scroll_x = 0;
 	scroll_y = 0;
 	scroll_w = map_w << 3;
@@ -144,7 +145,7 @@ void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list
 	UINT8 i;
 	INT16 y;
 	
-	ScrollSetMap(map_w, map_h, map, bank);
+	ScrollSetMap(map_w, map_h, map, bank, color_map);
 
 	for(i = 0u; i != 128; ++i) {
 		scroll_collisions[i] = 0u;
@@ -190,7 +191,7 @@ void ScrollUpdateRowWithDelay(INT16 x, INT16 y) {
 	pending_w_i = SCREEN_TILE_REFRES_W;
 	pending_w_map = scroll_map + scroll_tiles_w * y + x;
 	#ifdef CGB
-	pending_w_cmap = palet_map + scroll_tiles_w * y + x;
+	pending_w_cmap = scroll_cmap + scroll_tiles_w * y + x;
 	#endif
 }
 
@@ -199,7 +200,7 @@ void ScrollUpdateRow(INT16 x, INT16 y) {
 	unsigned char* map = scroll_map + scroll_tiles_w * y + x;
 
 	#ifdef CGB
-	unsigned char* cmap = palet_map + scroll_tiles_w * y + x;
+	unsigned char* cmap = scroll_cmap + scroll_tiles_w * y + x;
 	#endif
 	PUSH_BANK(scroll_bank);
 	for(i = 0u; i != SCREEN_TILE_REFRES_W; ++i) {
@@ -238,7 +239,7 @@ void ScrollUpdateColumnWithDelay(INT16 x, INT16 y) {
 	pending_h_i = SCREEN_TILE_REFRES_H;
 	pending_h_map = scroll_map + scroll_tiles_w * y + x;
 	#ifdef CGB
-	pending_h_cmap = palet_map + scroll_tiles_w * y + x;
+	pending_h_cmap = scroll_cmap + scroll_tiles_w * y + x;
 	#endif
 }
 
@@ -246,7 +247,7 @@ void ScrollUpdateColumn(INT16 x, INT16 y) {
 	UINT8 i = 0u;
 	unsigned char* map = &scroll_map[scroll_tiles_w * y + x];
 	#ifdef CGB
-	unsigned char* cmap = &palet_map[scroll_tiles_w * y + x];
+	unsigned char* cmap = &scroll_cmap[scroll_tiles_w * y + x];
 	#endif
 	
 	PUSH_BANK(scroll_bank);
