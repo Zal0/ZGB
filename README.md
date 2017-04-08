@@ -137,7 +137,8 @@ If everything goes ok **BGB** will be automatically launched after the build and
 
 The template contains the minimum files required for making a build:
 
- - **ZGBMain**: The Main file for your project, all states an sprites declarations must be done in this file
+ - **ZGBMain_Init**: The Main file for your project, all states an sprites declarations must be done in this file
+ - **ZGBMain**: This containts the default method for replacing tiles when adding them to the map
  - **SpritePlayer**: this is the code of the Game Boy Sprite that you see on the screen. It does nothing, but has all the required methods
  - **StateGame**: the current State that makes a basic initialization:
 	 - Loads all sprites graphics into memory
@@ -197,7 +198,7 @@ Let's make our Sprite animate when walking
 ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/master/doc%20files/2-anim.PNG)
  - Now go to File->Export To... and Update the **number of frames** (From 0 to 2) and after that Save your file
  - If you Build your the project now you should see the new Sprite instead of the Game Boy
- - In **ZGBMain.c** we need to update the number of frames of our sprite, the last parameter of **INIT_SPRITE** does exactly that: 
+ - In **ZGBMain_Init.c** we need to update the number of frames of our sprite, the last parameter of **INIT_SPRITE** does exactly that: 
 ```
 INIT_SPRITE(SPRITE_PLAYER, player, 3, FRAME_16x16, 3);
 ```
