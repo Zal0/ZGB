@@ -9,6 +9,8 @@
 #include "BankManager.h"
 
 extern UINT8 next_state;
+extern UINT8 init_bank;
+
 UINT8 delta_time;
 UINT8 current_state;
 UINT8 state_running = 0;
@@ -95,8 +97,10 @@ void MusicUpdate() {
 void main() {
 	UINT8 i;
 
+	PUSH_BANK(init_bank);
 	InitStates();
 	InitSprites();
+	POP_BANK;
 
 	disable_interrupts();
 	add_VBL(vbl_update);
