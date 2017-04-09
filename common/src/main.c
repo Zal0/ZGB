@@ -107,14 +107,20 @@ void ZGB_set_colors(UWORD *bpal, UINT8 bbank, UWORD *spal, UINT8 sbank){
 		for(i = 0; i != 32; ++i) ZGB_Fading_SPal[i] = spal[i];
 	POP_BANK;
 	
+	PUSH_BANK(bbank);	
 	set_bkg_palette(0, 8, bpal);
+	POP_BANK;
+
+	PUSH_BANK(sbank);	
 	set_sprite_palette(0, 8, spal);	
+	POP_BANK;
 	#endif
 }
 
 
 void main() {
-	
+	UINT8 i;
+
 	PUSH_BANK(init_bank);
 	InitStates();
 	InitSprites();
