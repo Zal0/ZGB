@@ -1,6 +1,6 @@
 #--- Default build will be release. Can be overiden passing BUILD_TYPE = debug as a parameter
 BUILD_TYPE = Release
-CGB = no
+CGB = yes
 
 ifeq ($(BUILD_TYPE), Release)
 	BUILD_DEFS += -DNDEBUG
