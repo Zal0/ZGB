@@ -94,9 +94,27 @@ void MusicUpdate() {
 }
 
 #define PAL_DEF(C3, C2, C1, C0) ((C0 << 6) | (C1 << 4) | (C2 << 2) | C3)
-void main() {
-	UINT8 i;
 
+void ZGB_set_colors(UWORD *bpal, UINT8 bbank, UWORD *spal, UINT8 sbank){
+	#ifdef CGB
+	UINT8 i;
+	
+	PUSH_BANK(bbank);	
+		for(i = 0; i != 32; ++i) ZGB_Fading_BPal[i] = bpal[i];
+	POP_BANK;
+	
+	PUSH_BANK(sbank);
+		for(i = 0; i != 32; ++i) ZGB_Fading_SPal[i] = spal[i];
+	POP_BANK;
+	
+	set_bkg_palette(0, 8, bpal);
+	set_sprite_palette(0, 8, spal);	
+	#endif
+}
+
+
+void main() {
+	
 	PUSH_BANK(init_bank);
 	InitStates();
 	InitSprites();

@@ -42,4 +42,5 @@ void PlayMusic(unsigned char* music, unsigned char bank, unsigned char loop);
 void InitSpriteInfo(UINT8 type, UINT8 bank, Void_Func_SpritePtr startFunc, Void_Func_Void updateFunc, Void_Func_Void destroyFunc, 
 	              UINT8* data, UINT8 dataBank, FrameSize size, UINT8 num_frames);
 
+void ZGB_set_colors(UWORD *bpal, UINT8 bbank, UWORD *spal, UINT8 sbank);
 #endif
