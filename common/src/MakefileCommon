@@ -1,6 +1,6 @@
 #--- Default build will be release. Can be overiden passing BUILD_TYPE = debug as a parameter
 BUILD_TYPE = Release
-CGB = yes
+CGB = no
 
 ifeq ($(BUILD_TYPE), Release)
 	BUILD_DEFS += -DNDEBUG
@@ -20,19 +20,18 @@ BGB = c:/gbdk/bin/bgb/bgb.exe
 ifneq ($(strip $(N_BANKS)),)
 	LFLAGS_NBANKS = -Wl-yt1 -Wl-yo$(N_BANKS)
 endif
-ifeq ($(CGB), yes)
-	LFLAGS_NBANKS += -Wl-yp0x143=0xC0
-else
-	LFLAGS_NBANKS += -Wl-yp0x143=0x00 
-endif
 
 CFLAGS = -DUSE_SFR_FOR_REG $(BUILD_DEFS) -I..\include -I$(ZGB_PATH)\include
 #-Wa-l -Wl-m -Wl-j 
 
-#--- Default build will use DMG and GBT
+EXTENSION = gb
 ifeq ($(CGB), yes)
+	LFLAGS_NBANKS += -Wl-yp0x143=0xC0
 	CFLAGS += -DCGB	#Enable Color functions
+	OBJDIR = ../$(BUILD_TYPE)Color
+	EXTENSION = gbc
 endif
+
 LFLAGS = -DUSE_SFR_FOR_REG $(LFLAGS_NBANKS)
 CC = $(LCC)
 
@@ -46,7 +45,7 @@ OBJS = $(RESOURCES:%.c=$(OBJDIR_RES)/%.o) $(MUSICS:%.mod=$(OBJDIR_RES)/%.mod.o) 
 
 
 #until I can find a way to create a .lib I'll be linking the.o files from my common library
-COMMON_OBJS = $(wildcard $(ZGB_PATH)/$(BUILD_TYPE)/*.o)
+COMMON_OBJS = $(wildcard $(ZGB_PATH)/src/$(OBJDIR)/*.o)
 
 $(BINDIR):
 	@echo Creating folder $(BINDIR)
@@ -99,22 +98,13 @@ $(OBJDIR_RES)/%.mod.o: ../res/music/%.mod
 	@mv output.c $(OBJDIR)/music_tmp.c
 	@$(CC) $(CFLAGS) -c -o $@ $(OBJDIR)/music_tmp.c
 	
-ifeq ($(CGB), yes)	
-$(BINDIR)/$(PROJECT_NAME).gbc: $(OBJDIR) $(OBJDIR_RES) $(BINDIR) $(OBJS) $(COMMON_OBJS)
+$(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR) $(OBJDIR_RES) $(BINDIR) $(OBJS) $(COMMON_OBJS)
 	@echo Linking
-	@$(CC) $(LFLAGS) -o $(BINDIR)/$(PROJECT_NAME).gbc $(OBJS) $(COMMON_OBJS)
-else
-$(BINDIR)/$(PROJECT_NAME).gb: $(OBJDIR) $(OBJDIR_RES) $(BINDIR) $(OBJS) $(COMMON_OBJS)
-	@echo Linking
-	@$(CC) $(LFLAGS) -o $(BINDIR)/$(PROJECT_NAME).gb $(OBJS) $(COMMON_OBJS)
-endif
+	@$(CC) $(LFLAGS) -o $(BINDIR)/$(PROJECT_NAME).$(EXTENSION) $(OBJS) $(COMMON_OBJS)
+
 build_lib: $(OBJDIR) $(OBJS)
 
-ifeq ($(CGB), yes)
-build_gb: $(BINDIR)/$(PROJECT_NAME).gbc
-else
-build_gb: $(BINDIR)/$(PROJECT_NAME).gb
-endif
+build_gb: $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
 
 clean:
 	@echo Cleaning $(PROJECT_NAME)
@@ -123,16 +113,8 @@ clean:
 	@rm -rf .map
 	@rm -rf .lst
 
-ifeq ($(CGB), yes)	
 run: all
-	@if test -f $(BINDIR)/$(PROJECT_NAME).gbc; then \
-		echo Running $(BINDIR)/$(PROJECT_NAME).gbc; \
-		$(BGB) $(BINDIR)/$(PROJECT_NAME).gbc; \
+	@if test -f $(BINDIR)/$(PROJECT_NAME).$(EXTENSION); then \
+		echo Running $(BINDIR)/$(PROJECT_NAME).$(EXTENSION); \
+		$(BGB) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION); \
 	fi
-else
-run: all
-	@if test -f $(BINDIR)/$(PROJECT_NAME).gb; then \
-		echo Running $(BINDIR)/$(PROJECT_NAME).gb; \
-		$(BGB) $(BINDIR)/$(PROJECT_NAME).gb; \
-	fi
-endif	
