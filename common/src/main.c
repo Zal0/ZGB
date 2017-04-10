@@ -107,9 +107,12 @@ void ZGB_set_colors(UWORD *bpal, UINT8 bbank, UWORD *spal, UINT8 sbank){
 	#endif
 }
 
-
+UINT16 default_palette[] = {RGB(31, 31, 31), RGB(20, 20, 20), RGB(10, 10, 10), RGB(0, 0, 0)};
 void main() {
 	UINT8 i;
+
+	set_bkg_palette(0, 1, default_palette);
+	set_sprite_palette(0, 1, default_palette);
 
 	PUSH_BANK(init_bank);
 	InitStates();
