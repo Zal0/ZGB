@@ -29,6 +29,7 @@ INT16 scroll_target_offset_x = 0;
 INT16 scroll_target_offset_y = 0;
 UINT8 scroll_collisions[128];
 UINT8 scroll_collisions_down[128];
+UINT8 scroll_tile_info[256];
 UINT8 scroll_bank;
 UINT8 scroll_offset_x = 0;
 UINT8 scroll_offset_y = 0;
@@ -81,14 +82,23 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	set_bkg_tiles(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), 1, 1, &replacement); //i pointing to zero will replace the tile by the deafault one
 	#ifdef CGB
 		VBK_REG = 1;
+		if(!scroll_cmap) {
+			i = 0x7 & scroll_tile_info[*t];
+			c = &i;
+		}
 		set_bkg_tiles(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), 1, 1, c);
 		VBK_REG = 0;
 	#endif
 }
 
-void InitScrollTiles(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 tile_bank) {
+void InitScrollTiles(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 tile_bank, UINT8* palette_entries) {
+	UINT8 i;
+
 	PUSH_BANK(tile_bank);
 	set_bkg_data(first_tile, n_tiles, tile_data);
+	for(i = first_tile; i < first_tile + n_tiles; ++i) {
+		scroll_tile_info[i] = palette_entries[i];
+	}
 	POP_BANK;
 }
 
