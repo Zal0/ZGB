@@ -1,6 +1,6 @@
 #--- Default build will be release. Can be overiden passing BUILD_TYPE = debug as a parameter
 BUILD_TYPE = Release
-CGB = no
+CGB = yes
 
 ifeq ($(BUILD_TYPE), Release)
 	BUILD_DEFS += -DNDEBUG
@@ -72,24 +72,6 @@ $(OBJDIR_RES)/%.o: ../res/src/%.c
 	@if grep -q "unsigned char" $<; then \
 		sed -i "s/unsigned char/const unsigned  char/g" $<; \
 	fi
-
-	@echo palete format: $<
-	@if grep -q "CGBpalette" $<; then \
-		sed -i 's@CGBpalette entries.@*/\n\
-		#include "$(basename $(basename $(notdir $<))).h"\n\
-		const int $(basename $(basename $(notdir $<)))PAL[] = \n\
-		{\n\
-		$(basename $(basename $(notdir $<)))CGBPal0c0,$(basename $(basename $(notdir $<)))CGBPal0c1,$(basename $(basename $(notdir $<)))CGBPal0c2,$(basename $(basename $(notdir $<)))CGBPal0c3,\n\
-		$(basename $(basename $(notdir $<)))CGBPal1c0,$(basename $(basename $(notdir $<)))CGBPal1c1,$(basename $(basename $(notdir $<)))CGBPal1c2,$(basename $(basename $(notdir $<)))CGBPal1c3,\n\
-		$(basename $(basename $(notdir $<)))CGBPal2c0,$(basename $(basename $(notdir $<)))CGBPal2c1,$(basename $(basename $(notdir $<)))CGBPal2c2,$(basename $(basename $(notdir $<)))CGBPal2c3,\n\
-		$(basename $(basename $(notdir $<)))CGBPal3c0,$(basename $(basename $(notdir $<)))CGBPal3c1,$(basename $(basename $(notdir $<)))CGBPal3c2,$(basename $(basename $(notdir $<)))CGBPal3c3,\n\
-		$(basename $(basename $(notdir $<)))CGBPal4c0,$(basename $(basename $(notdir $<)))CGBPal4c1,$(basename $(basename $(notdir $<)))CGBPal4c2,$(basename $(basename $(notdir $<)))CGBPal4c3,\n\
-		$(basename $(basename $(notdir $<)))CGBPal5c0,$(basename $(basename $(notdir $<)))CGBPal5c1,$(basename $(basename $(notdir $<)))CGBPal5c2,$(basename $(basename $(notdir $<)))CGBPal5c3,\n\
-		$(basename $(basename $(notdir $<)))CGBPal6c0,$(basename $(basename $(notdir $<)))CGBPal6c1,$(basename $(basename $(notdir $<)))CGBPal6c2,$(basename $(basename $(notdir $<)))CGBPal6c3,\n\
-		$(basename $(basename $(notdir $<)))CGBPal7c0,$(basename $(basename $(notdir $<)))CGBPal7c1,$(basename $(basename $(notdir $<)))CGBPal7c2,$(basename $(basename $(notdir $<)))CGBPal7c3,\n\
-		};/*@g' $<; \
-	fi
-
 	@$(CC) $(CFLAGS) $(filter -Wf-bo%, $(subst .b,-Wf-bo,$(suffix $(<:%.c=%)))) -c -o $@ $<
 
 $(OBJDIR_RES)/%.mod.o: ../res/music/%.mod
