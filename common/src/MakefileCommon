@@ -2,7 +2,7 @@
 BUILD_TYPE = Release
 CGB = yes
 
-ifeq ($(BUILD_TYPE), Release)
+ifneq (,$(findstring Release,$(BUILD_TYPE)))
 	BUILD_DEFS += -DNDEBUG
 else
 	PROJECT_NAME := $(PROJECT_NAME)_Debug
@@ -25,10 +25,9 @@ CFLAGS = -DUSE_SFR_FOR_REG $(BUILD_DEFS) -I..\include -I$(ZGB_PATH)\include
 #-Wa-l -Wl-m -Wl-j 
 
 EXTENSION = gb
-ifeq ($(CGB), yes)
+ifneq (,$(findstring Color,$(BUILD_TYPE)))
 	LFLAGS_NBANKS += -Wl-yp0x143=0xC0
-	CFLAGS += -DCGB	#Enable Color functions
-	OBJDIR = ../$(BUILD_TYPE)Color
+	CFLAGS += -DCGB
 	EXTENSION = gbc
 endif
 
@@ -45,7 +44,7 @@ OBJS = $(RESOURCES:%.c=$(OBJDIR_RES)/%.o) $(MUSICS:%.mod=$(OBJDIR_RES)/%.mod.o) 
 
 
 #until I can find a way to create a .lib I'll be linking the.o files from my common library
-COMMON_OBJS = $(wildcard $(ZGB_PATH)/src/$(OBJDIR)/*.o)
+COMMON_OBJS = $(wildcard $(ZGB_PATH)/$(BUILD_TYPE)/*.o)
 
 $(BINDIR):
 	@echo Creating folder $(BINDIR)
