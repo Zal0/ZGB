@@ -91,13 +91,13 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	#endif
 }
 
-void InitScrollTiles(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 tile_bank, UINT8* palette_entries) {
+void InitScrollTilesColor(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 tile_bank, UINT8* palette_entries) {
 	UINT8 i;
 
 	PUSH_BANK(tile_bank);
 	set_bkg_data(first_tile, n_tiles, tile_data);
 	for(i = first_tile; i < first_tile + n_tiles; ++i) {
-		scroll_tile_info[i] = palette_entries[i];
+		scroll_tile_info[i] = palette_entries ? palette_entries[i] : 0;
 	}
 	POP_BANK;
 }
@@ -151,7 +151,7 @@ void ScrollSetMap(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, un
 	pending_w_i = 0;
 }
 
-void InitScroll(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list, UINT8* coll_list_down, UINT8 bank, unsigned char* color_map) {
+void InitScrollColor(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list, UINT8* coll_list_down, UINT8 bank, unsigned char* color_map) {
 	UINT8 i;
 	INT16 y;
 	
