@@ -105,12 +105,13 @@ void InitScrollTilesColor(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UIN
 void InitWindow(UINT8 x, UINT8 y, UINT8 w, UINT8 h, UINT8* map, UINT8 bank, UINT8* cmap) {
 	PUSH_BANK(bank);
 	set_win_tiles(x, y, w, h, map);
-	//COLOR ONLY
+	
 	#ifdef CGB
 	VBK_REG = 1;
 		set_win_tiles(x, y, w, h, cmap);
 	VBK_REG = 0;
 	#endif
+
 	POP_BANK;
 }
 
@@ -200,6 +201,7 @@ void ScrollUpdateRowWithDelay(INT16 x, INT16 y) {
 	pending_w_y = y;
 	pending_w_i = SCREEN_TILE_REFRES_W;
 	pending_w_map = scroll_map + scroll_tiles_w * y + x;
+
 	#ifdef CGB
 	pending_w_cmap = scroll_cmap + scroll_tiles_w * y + x;
 	#endif
@@ -212,15 +214,13 @@ void ScrollUpdateRow(INT16 x, INT16 y) {
 	#ifdef CGB
 	unsigned char* cmap = scroll_cmap + scroll_tiles_w * y + x;
 	#endif
+
 	PUSH_BANK(scroll_bank);
 	for(i = 0u; i != SCREEN_TILE_REFRES_W; ++i) {
 		#ifdef CGB
-		UPDATE_TILE(x + i, y, map, cmap);
-		map += 1;
-		cmap += 1;
+		UPDATE_TILE(x + i, y, map ++, cmap ++);
 		#else
-		UPDATE_TILE(x + i, y, map,0);
-		map += 1;
+		UPDATE_TILE(x + i, y, map ++, 0);
 		#endif
 	}
 	POP_BANK;
@@ -235,7 +235,7 @@ void ScrollUpdateColumnR() {
 		pending_h_map += scroll_tiles_w;
 		pending_h_cmap += scroll_tiles_w;
 		#else
-		UPDATE_TILE(pending_h_x, pending_h_y ++, pending_h_map,0);
+		UPDATE_TILE(pending_h_x, pending_h_y ++, pending_h_map, 0);
 		pending_h_map += scroll_tiles_w;
 		#endif
 	}
@@ -248,6 +248,7 @@ void ScrollUpdateColumnWithDelay(INT16 x, INT16 y) {
 	pending_h_y = y;
 	pending_h_i = SCREEN_TILE_REFRES_H;
 	pending_h_map = scroll_map + scroll_tiles_w * y + x;
+
 	#ifdef CGB
 	pending_h_cmap = scroll_cmap + scroll_tiles_w * y + x;
 	#endif
