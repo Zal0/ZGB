@@ -352,71 +352,28 @@ UINT8 GetScrollTile(UINT16 x, UINT16 y) {
 	return ret;
 }
 
-void ScrollFindTile(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, UINT8 tile, UINT16* x, UINT16* y) {
+UINT8 ScrollFindTile(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, UINT8 tile,
+	UINT8 start_x, UINT8 start_y, UINT8 w, UINT8 h,
+	UINT16* x, UINT16* y) {
 	UINT16 xt = 0;
 	UINT16 yt = 0;
-	UINT8 found = 0;
+	UINT8 found = 1;
 
 	PUSH_BANK(bank);
-	for(xt = 0; xt != map_w && !found; ++ xt) {
-		for(yt = 0; yt != map_h && !found; ++ yt) {
+	for(xt = start_x; xt != start_x + w; ++ xt) {
+		for(yt = start_y; yt != start_y + h; ++ yt) {
 			if(map[map_w * yt + xt] == (UINT16)tile) { //That cast over there is mandatory and gave me a lot of headaches
-				found = 1;
-				break;
+				goto done;
 			}
 		}
-		if(found) {
-			break;
-		}
 	}
-	POP_BANK;
+	found = 0;
 
+done:
+	POP_BANK;
 	*x = xt;
 	*y = yt;
+
+	return found;
 }
 
-void ScrollFindTileInCorners(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, UINT8 tile, UINT16* x, UINT16* y) {
-	UINT16 xt = 0;
-	UINT16 yt = 0;
-	UINT8 found = 0;
-
-	PUSH_BANK(bank);
-	yt = 0;
-	for(xt = 0; xt != map_w; ++ xt) {
-		if(map[map_w * yt + xt] == (UINT16)tile) { //That cast over there is mandatory and gave me a lot of headaches
-			found = 1;
-			break;
-		}
-	}
-	if(!found) {
-		yt = map_h - 1;
-		for(xt = 0; xt != map_w; ++ xt) {
-			if(map[map_w * yt + xt] == (UINT16)tile) { //That cast over there is mandatory and gave me a lot of headaches
-				found = 1;
-				break;
-			}
-		}
-	}
-	if(!found) {
-		xt = 0;
-		for(yt = 0; yt != map_h; ++ yt) {
-			if(map[map_w * yt + xt] == (UINT16)tile) { //That cast over there is mandatory and gave me a lot of headaches
-				found = 1;
-				break;
-			}
-		}
-	}
-	if(!found) {
-		xt = map_w - 1;
-		for(yt = 0; yt != map_h; ++ yt) {
-			if(map[map_w * yt + xt] == (UINT16)tile) { //That cast over there is mandatory and gave me a lot of headaches
-				found = 1;
-				break;
-			}
-		}
-	}
-	POP_BANK;
-
-	*x = xt;
-	*y = yt;
-}
