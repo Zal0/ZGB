@@ -14,7 +14,8 @@ UINT8 LoadSprite(UINT8 n_tiles, unsigned char* data, UINT8 bank, UINT8 frame_siz
 		for(j = 0; j < 1 << frame_size; ++j) {
 			sprites_pal[last_sprite_loaded + i + j] = palette_idx ? *(palette_idx) : 0; 
 		}
-		palette_idx ++;
+		if(palette_idx)
+			palette_idx ++;
 	}
 	last_sprite_loaded += n_tiles;
 	POP_BANK;
