@@ -133,7 +133,7 @@ void ClampScrollLimits(UINT16* x, UINT16* y) {
 	}
 }
 
-void ScrollSetMap(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, unsigned char* cmap) {
+void ScrollSetMapColor(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, unsigned char* cmap) {
 	scroll_tiles_w = map_w;
 	scroll_tiles_h = map_h;
 	scroll_map = map;
@@ -156,7 +156,7 @@ void InitScrollColor(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll
 	UINT8 i;
 	INT16 y;
 	
-	ScrollSetMap(map_w, map_h, map, bank, color_map);
+	ScrollSetMapColor(map_w, map_h, map, bank, color_map);
 
 	for(i = 0u; i != 128; ++i) {
 		scroll_collisions[i] = 0u;
