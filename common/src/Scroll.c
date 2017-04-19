@@ -352,7 +352,7 @@ UINT8 GetScrollTile(UINT16 x, UINT16 y) {
 	return ret;
 }
 
-UINT8 ScrollFindTile(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, UINT8 tile,
+UINT8 ScrollFindTile(UINT16 map_w, unsigned char* map, UINT8 bank, UINT8 tile,
 	UINT8 start_x, UINT8 start_y, UINT8 w, UINT8 h,
 	UINT16* x, UINT16* y) {
 	UINT16 xt = 0;
