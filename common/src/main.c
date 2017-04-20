@@ -7,6 +7,7 @@
 #include "gbt_player.h"
 #include "SpriteManager.h"
 #include "BankManager.h"
+#include "Fade.h"
 
 extern UINT8 next_state;
 extern UINT8 init_bank;
@@ -96,8 +97,6 @@ void MusicUpdate() {
 	REFRESH_BANK;
 }
 
-#define PAL_DEF(C3, C2, C1, C0) ((C0 << 6) | (C1 << 4) | (C2 << 2) | C3)
-
 void ZGB_set_colors(UWORD *bpal, UINT8 bbank, UWORD *spal, UINT8 sbank){
 	#ifdef CGB	
 	PUSH_BANK(bbank);	
@@ -146,12 +145,7 @@ void main() {
 			POP_BANK;
 		}
 
-		for(i = 0; i != 4; ++i) {
-			BGP_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-			OBP0_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-			OBP1_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-			delay(50);
-		}
+		FadeIn();
 		DISPLAY_OFF
 
 		gbt_stop();
@@ -171,12 +165,7 @@ void main() {
 
 		if(state_running) {
 			DISPLAY_ON;
-			for(i = 3; i != 0xFF; --i) {
-				BGP_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-				OBP0_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-				OBP1_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-				delay(50);
-			}
+			FadeOut();
 		}
 	}
 }

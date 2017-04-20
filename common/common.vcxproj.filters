@@ -53,6 +53,9 @@
     <ClInclude Include="include\Palette.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Fade.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Frame.c">
@@ -92,6 +95,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Sound.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Fade_b.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Fade.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
