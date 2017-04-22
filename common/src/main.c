@@ -111,7 +111,7 @@ void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *
 	} else {
 		set_sprite_palette(first_palette, nb_palettes, rgb_data);
 	}
-	memcpy(&pal_ptr[first_palette << 3], rgb_data, nb_palettes << 3);
+	memcpy(&pal_ptr[first_palette << 2], rgb_data, nb_palettes << 3);
 	POP_BANK;
 	#endif
 }
