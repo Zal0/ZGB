@@ -119,6 +119,7 @@ void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *
 UINT16 default_palette[] = {RGB(31, 31, 31), RGB(20, 20, 20), RGB(10, 10, 10), RGB(0, 0, 0)};
 void main() {
 	if (_cpu == CGB_TYPE) {
+		cpu_fast();
 		SetPalette(BG_PALETTE, 0, 1, default_palette, 1);
 		SetPalette(SPRITES_PALETTE, 0, 1, default_palette, 1);
 	}
@@ -131,7 +132,7 @@ void main() {
 	disable_interrupts();
 	add_VBL(vbl_update);
 	add_TIM(MusicUpdate);
-	TMA_REG = 0xBCU;
+	TMA_REG = _cpu == CGB_TYPE ? 120U : 0xBCU;
   TAC_REG = 0x04U;
 
 	set_interrupts(VBL_IFLAG | TIM_IFLAG);
