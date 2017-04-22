@@ -1,6 +1,8 @@
 #include "main.h"
 
 #include <gb/gb.h> 
+#include <string.h>
+
 #include "OAMManager.h"
 #include "Scroll.h"
 #include "Keys.h"
@@ -97,14 +99,19 @@ void MusicUpdate() {
 	REFRESH_BANK;
 }
 
+
+extern UWORD ZGB_Fading_BPal[32];
+extern UWORD ZGB_Fading_SPal[32];
 void ZGB_set_colors(UWORD *bpal, UINT8 bbank, UWORD *spal, UINT8 sbank){
 	#ifdef CGB	
 	PUSH_BANK(bbank);	
 	set_bkg_palette(0, 8, bpal);
+	memcpy(ZGB_Fading_BPal, bpal, 64);
 	POP_BANK;
 
 	PUSH_BANK(sbank);	
 	set_sprite_palette(0, 8, spal);	
+	memcpy(ZGB_Fading_SPal, spal, 64);
 	POP_BANK;
 	#endif
 }
