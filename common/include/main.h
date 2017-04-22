@@ -45,5 +45,9 @@ void PlayMusic(unsigned char* music, unsigned char bank, unsigned char loop);
 void InitSpriteInfo(UINT8 type, UINT8 bank, Void_Func_SpritePtr startFunc, Void_Func_Void updateFunc, Void_Func_Void destroyFunc, 
 	              UINT8* data, UINT8 dataBank, FrameSize size, UINT8 num_frames, UINT8* pal_data);
 
-void ZGB_set_colors(UWORD *bpal, UINT8 bbank, UWORD *spal, UINT8 sbank);
+typedef enum {
+	BG_PALETTE,
+	SPRITES_PALETTE
+} PALETTE_TYPE;
+void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *rgb_data, UINT8 bank);
 #endif

@@ -102,26 +102,26 @@ void MusicUpdate() {
 
 extern UWORD ZGB_Fading_BPal[32];
 extern UWORD ZGB_Fading_SPal[32];
-void ZGB_set_colors(UWORD *bpal, UINT8 bbank, UWORD *spal, UINT8 sbank){
+void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *rgb_data, UINT8 bank) {
 	#ifdef CGB	
-	PUSH_BANK(bbank);	
-	set_bkg_palette(0, 8, bpal);
-	memcpy(ZGB_Fading_BPal, bpal, 64);
-	POP_BANK;
-
-	PUSH_BANK(sbank);	
-	set_sprite_palette(0, 8, spal);	
-	memcpy(ZGB_Fading_SPal, spal, 64);
+	UWORD* pal_ptr = (t == BG_PALETTE) ? ZGB_Fading_BPal : ZGB_Fading_SPal;
+	PUSH_BANK(bank);
+	if(t == BG_PALETTE) {
+		set_bkg_palette(first_palette, nb_palettes, rgb_data);
+	} else {
+		set_sprite_palette(first_palette, nb_palettes, rgb_data);
+	}
+	memcpy(&pal_ptr[first_palette << 3], rgb_data, nb_palettes << 3);
 	POP_BANK;
 	#endif
 }
 
 UINT16 default_palette[] = {RGB(31, 31, 31), RGB(20, 20, 20), RGB(10, 10, 10), RGB(0, 0, 0)};
 void main() {
-	UINT8 i;
-
-	set_bkg_palette(0, 1, default_palette);
-	set_sprite_palette(0, 1, default_palette);
+	if (_cpu == CGB_TYPE) {
+		SetPalette(BG_PALETTE, 0, 1, default_palette, 1);
+		SetPalette(SPRITES_PALETTE, 0, 1, default_palette, 1);
+	}
 
 	PUSH_BANK(init_bank);
 	InitStates();
