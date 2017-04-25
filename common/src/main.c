@@ -102,8 +102,8 @@ void MusicUpdate() {
 
 extern UWORD ZGB_Fading_BPal[32];
 extern UWORD ZGB_Fading_SPal[32];
+#ifdef CGB	
 void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *rgb_data, UINT8 bank) {
-	#ifdef CGB	
 	UWORD* pal_ptr = (t == BG_PALETTE) ? ZGB_Fading_BPal : ZGB_Fading_SPal;
 	PUSH_BANK(bank);
 	if(t == BG_PALETTE) {
@@ -113,8 +113,8 @@ void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *
 	}
 	memcpy(&pal_ptr[first_palette << 2], rgb_data, nb_palettes << 3);
 	POP_BANK;
-	#endif
 }
+#endif
 
 UINT16 default_palette[] = {RGB(31, 31, 31), RGB(20, 20, 20), RGB(10, 10, 10), RGB(0, 0, 0)};
 void main() {
