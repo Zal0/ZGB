@@ -6,19 +6,40 @@ UINT8 fade_bank = 1;
 #include "Palette.h"
 #include "Math.h"
 
-#define PAL_DEF(C3, C2, C1, C0) ((C0 << 6) | (C1 << 4) | (C2 << 2) | C3)
-
 UWORD ZGB_Fading_BPal[32];
 UWORD ZGB_Fading_SPal[32];
 
-void FadeInDMG() {
-	UINT8 i;
+UINT8 FadeInOp(UINT16 c, UINT16 i) {
+	return U_LESS_THAN(c, i) ? 0: (c - i);
+}
+
+void FadeDMG(UINT8 fadeout) {
+	UINT8 colors[12];
+	UINT8* pals[] = {0xFF47, 0xFF48, 0xFF49};
+	UINT8 i, j; 
+	UINT8* c = colors;
+	UINT8 p;
+
+	//Pick current palette colors
+	for(i = 0; i != 3; ++i) {
+		p = (UINT8)*(pals[i]);
+		for(j = 0; j != 8; j += 2, ++c) {
+			*c = (DespRight(p, j)) & 0x3;
+		}
+	}
+
 	for(i = 0; i != 4; ++i) {
-		BGP_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-		OBP0_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-		OBP1_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
+		p = fadeout ? 3 - i : i;
+		for(j = 0; j != 3; ++j) {
+			c = &colors[j << 2];
+			*pals[j] = PAL_DEF(FadeInOp(c[0], p), FadeInOp(c[1], p), FadeInOp(c[2], p), FadeInOp(c[3], p));
+		}
 		delay(50);
 	}
+}
+
+void FadeInDMG() {
+	FadeDMG(0);
 }
 
 UWORD UpdateColor(UINT8 i, UWORD col) {
@@ -60,13 +81,7 @@ void FadeIn_b() {
 }
 
 void FadeOutDMG() {
-	UINT8 i;
-	for(i = 3; i != 0xFF; --i) {
-		BGP_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-		OBP0_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-		OBP1_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-		delay(50);
-	}
+	FadeDMG(1);
 }
 
 void FadeOutColor() {

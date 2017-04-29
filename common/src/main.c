@@ -10,6 +10,7 @@
 #include "SpriteManager.h"
 #include "BankManager.h"
 #include "Fade.h"
+#include "Palette.h"
 
 extern UINT8 next_state;
 extern UINT8 init_bank;
@@ -165,6 +166,7 @@ void main() {
 		current_state = next_state;
 		scroll_target = 0;
 		
+		BGP_REG = OBP0_REG = OBP1_REG = PAL_DEF(0, 1, 2, 3);
 		PUSH_BANK(stateBanks[current_state]);
 			(startFuncs[current_state])();
 		POP_BANK;
