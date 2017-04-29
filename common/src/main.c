@@ -119,11 +119,7 @@ void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *
 
 UINT16 default_palette[] = {RGB(31, 31, 31), RGB(20, 20, 20), RGB(10, 10, 10), RGB(0, 0, 0)};
 void main() {
-	if (_cpu == CGB_TYPE) {
-		cpu_fast();
-		SetPalette(BG_PALETTE, 0, 1, default_palette, 1);
-		SetPalette(SPRITES_PALETTE, 0, 1, default_palette, 1);
-	}
+	cpu_fast(); //Calling this on DMG seems to do nothing but it doesn't crash or anything
 
 	PUSH_BANK(init_bank);
 	InitStates();
@@ -166,7 +162,13 @@ void main() {
 		current_state = next_state;
 		scroll_target = 0;
 		
-		BGP_REG = OBP0_REG = OBP1_REG = PAL_DEF(0, 1, 2, 3);
+		if (_cpu == CGB_TYPE) {
+			SetPalette(BG_PALETTE, 0, 1, default_palette, 1);
+			SetPalette(SPRITES_PALETTE, 0, 1, default_palette, 1);
+		} else {
+			BGP_REG = OBP0_REG = OBP1_REG = PAL_DEF(0, 1, 2, 3);
+		}
+
 		PUSH_BANK(stateBanks[current_state]);
 			(startFuncs[current_state])();
 		POP_BANK;
