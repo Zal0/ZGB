@@ -56,6 +56,9 @@
     <ClInclude Include="include\Fade.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\BkgAnimation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Frame.c">
@@ -101,6 +104,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Fade.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BkgAnimation.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

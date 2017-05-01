@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\BankManager.h" />
+    <ClInclude Include="include\BkgAnimation.h" />
     <ClInclude Include="include\Fade.h" />
     <ClInclude Include="include\Frame.h" />
     <ClInclude Include="include\Keys.h" />
@@ -37,6 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BankManager.c" />
+    <ClCompile Include="src\BkgAnimation.c" />
     <ClCompile Include="src\Fade.c" />
     <ClCompile Include="src\Fade_b.c" />
     <ClCompile Include="src\Frame.c" />
