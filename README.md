@@ -3,7 +3,7 @@
 ZGB
 ===
 
-A little engine for creating games for the original Game Boy.
+A little engine for creating games for the original Game Boy and Game Boy Color.
 
  1. [Features](#features)
  2. [Installation](#installation)
@@ -31,11 +31,13 @@ Features <a name="features"></a>
  - Support maps bigger than 32x32
  - Transparent sprites pool allowing 20 sprites 8x16 or 16x16
  - Sprite animations
+ - Background layer animations
  - Collisions sprite vs sprite and sprite vs background and configurable rectangle collider
  - Easy makefile support (just 3 lines for most projects)
  - Bank management
  - Fonts
  - Music support using [gbt-player](https://github.com/AntonioND/gbt-player)
+ - Music support using [carillon-player]()
  - Sound Effects
 
 Installation <a name="installation"></a>
@@ -48,6 +50,7 @@ Download and install:
  - [Make for Windows](http://gnuwin32.sourceforge.net/packages/make.htm)* on C:\gbdk\bin\make-3.81-bin
  - [BGB](http://bgb.bircd.org/) on c:\gbdk\bin
  - [mod2gbt](https://github.com/AntonioND/gbt-player/raw/master/legacy_gbdk/mod2gbt/mod2gbt.exe) on c:\gbdk\bin
+ - bin2s from MISC folder, copy to c:\gbdk\bin
  - [Game Boy Map Builder](http://www.devrs.com/gb/hmgd/gbmb.html) on c:\gbdk\tools\gbmb18
  - [Game Boy Tile Designer](http://www.devrs.com/gb/hmgd/gbtd.html) on c:\gbdk\tools\gbtd22
  - This repo, anywhere but create an env var called ZGB_PATH pointing the common folder eg: c:\ZGB\common
@@ -80,6 +83,9 @@ Before you start coding anything it is important that you understand what States
 	 - ***SpriteManagerRemove***: for removing them
 	 - ***SPRITEMANAGER_ITERATE***: a useful macro for iterating through all active sprites
 
+Bank 0 and 1 are so full, you can't init all states and sprites from main in bank 1. It only lets you init about 3 states and 3 sprites.
+But doing it from other banks works well, so you just have to init all sprites in a start function of a state in other bank, and then continue to your state.
+
 Resource guidelines <a name="resource-guidelines"></a>
 -------------------
 Some guidelines you must follow to make your life easier when developing for Game Boy using ZGB:
@@ -102,7 +108,7 @@ Some guidelines you must follow to make your life easier when developing for Gam
 
 Banks <a name="banks"></a>
 -----
-It is very important that you understand the concept of banks. ZGB together with GBDK is taking most of the space in bank0 and gbt-player is using most of the space in bank1. That means you will have to put your code on bank 2 and further, and that you will have to use banks, whether you like it or not. Check the point 3 of my post [Game Boy Development Tips and Tricks (I)](http://zalods.blogspot.com.es/2016/07/game-boy-development-tips-and-tricks-i.html) for more info.
+It is very important that you understand the concept of banks. ZGB together with GBDK is taking most of the space in bank0 and bank1. That means you will have to put your code on bank 2 and further, and that you will have to use banks, whether you like it or not. Check the point 3 of my post [Game Boy Development Tips and Tricks (I)](http://zalods.blogspot.com.es/2016/07/game-boy-development-tips-and-tricks-i.html) for more info.
 
 The good news is that you don't have to worry much about bank swapping since ZGB will take care of it in most situations (before calling start, update or destroy).
 

@@ -12,7 +12,7 @@
 *                                          antonio_nd@outlook.com
 */
 
-#ifndef _GBT_PLAYER_
+#ifndef CP
 #define _GBT_PLAYER_
 
 #include <gb/gb.h>

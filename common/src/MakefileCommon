@@ -1,5 +1,8 @@
 #--- Default build will be release. Can be overiden passing BUILD_TYPE = debug as a parameter
 BUILD_TYPE = Release
+CGB = no
+CP = no
+
 
 ifeq ($(BUILD_TYPE), Release)
 	BUILD_DEFS += -DNDEBUG
@@ -15,24 +18,49 @@ LCC = c:/gbdk/bin/lcc.exe
 SDCC = c:/gbdk/bin/sdcc.exe
 MOD2GBT = c:/gbdk/bin/mod2gbt.exe
 BGB = c:/gbdk/bin/bgb/bgb.exe
+B2S = c:/gbdk/bin/bin2s.exe
 
 ifneq ($(strip $(N_BANKS)),)
-	LFLAGS_NBANKS = -Wl-yt1 -Wl-yo$(N_BANKS)
+	LFLAGS_NBANKS = -Wl-yt1 -Wl-yo$(N_BANKS) -Wl-ya0 
+endif
+ifeq ($(CGB), yes)
+	LFLAGS_NBANKS += -Wl-yp0x143=0xC0
+else
+	LFLAGS_NBANKS += -Wl-yp0x143=0x00 
 endif
 
 CFLAGS = -DUSE_SFR_FOR_REG $(BUILD_DEFS) -I..\include -I$(ZGB_PATH)\include
 #-Wa-l -Wl-m -Wl-j 
+
+#--- Default build will use DMG and GBT
+ifeq ($(CGB), yes)
+	CFLAGS += -DCGB	#Enable Color functions
+endif
+ifeq ($(CP), yes)
+	CFLAGS += -DCP	#Enable Carillon player functions, and disable gbt
+endif
+
 LFLAGS = -DUSE_SFR_FOR_REG $(LFLAGS_NBANKS)
 CC = $(LCC)
 
 current_dir = $(shell pwd)
 
-ASMS      = $(foreach dir,.,$(notdir $(wildcard $(dir)/*.s)))
 CLASSES   = $(foreach dir,.,$(notdir $(wildcard $(dir)/*.c)))
 RESOURCES = $(foreach dir,../res/src,$(notdir $(wildcard $(dir)/*.c)))
-MUSICS    = $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.mod)))
-OBJS = $(RESOURCES:%.c=$(OBJDIR_RES)/%.o) $(MUSICS:%.mod=$(OBJDIR_RES)/%.mod.o) $(CLASSES:%.c=$(OBJDIR)/%.o) $(ASMS:%.s=$(OBJDIR)/%.o)
 
+ifeq ($(CP), yes)
+
+ASMS	= $(foreach dir,.,$(notdir $(wildcard $(dir)/*.asm)))
+MUSIC	= $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.sav)))
+OBJS	= $(RESOURCES:%.c=$(OBJDIR_RES)/%.o) $(MUSIC:%.sav=$(OBJDIR_RES)/%.o) $(CLASSES:%.c=$(OBJDIR)/%.o) $(ASMS:%.asm=$(OBJDIR)/%.o)
+
+else
+
+ASMS	= $(foreach dir,.,$(notdir $(wildcard $(dir)/*.s)))
+MUSIC	= $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.mod)))
+OBJS	= $(RESOURCES:%.c=$(OBJDIR_RES)/%.o) $(MUSIC:%.mod=$(OBJDIR_RES)/%.mod.o) $(CLASSES:%.c=$(OBJDIR)/%.o) $(ASMS:%.s=$(OBJDIR)/%.o)
+
+endif
 
 #until I can find a way to create a .lib I'll be linking the.o files from my common library
 COMMON_OBJS = $(wildcard $(ZGB_PATH)/$(BUILD_TYPE)/*.o)
@@ -48,10 +76,16 @@ $(OBJDIR):
 $(OBJDIR_RES):
 	@echo Creating folder $(OBJDIR_RES)
 	@mkdir $(OBJDIR_RES)
-
+	
+ifeq ($(CP), no)
 $(OBJDIR)/%.o: %.s
 	@echo compiling $<
 	@$(CC) $(CFLAGS) $(filter -Wf-bo%, $(subst .b,-Wf-bo,$(suffix $(<:%.s=%)))) -c -o $@ $<
+else
+$(OBJDIR)/%.o: %.asm
+	@echo compiling $<
+	@$(CC) $(CFLAGS) $(filter -Wf-bo%, $(subst .b,-Wf-bo,$(suffix $(<:%.s=%)))) -c -o $@ $<	
+endif
 
 $(OBJDIR)/%.o: %.c
 	@echo compiling $<
@@ -62,32 +96,76 @@ $(OBJDIR_RES)/%.o: ../res/src/%.c
 	@if grep -q "unsigned char" $<; then \
 		sed -i "s/unsigned char/const unsigned  char/g" $<; \
 	fi
+
+	@echo palete format: $<
+	@if grep -q "CGBpalette" $<; then \
+		sed -i 's@CGBpalette entries.@*/\n\
+		#include "$(basename $(basename $(notdir $<))).h"\n\
+		const int $(basename $(basename $(notdir $<)))PAL[] = \n\
+		{\n\
+		$(basename $(basename $(notdir $<)))CGBPal0c0,$(basename $(basename $(notdir $<)))CGBPal0c1,$(basename $(basename $(notdir $<)))CGBPal0c2,$(basename $(basename $(notdir $<)))CGBPal0c3,\n\
+		$(basename $(basename $(notdir $<)))CGBPal1c0,$(basename $(basename $(notdir $<)))CGBPal1c1,$(basename $(basename $(notdir $<)))CGBPal1c2,$(basename $(basename $(notdir $<)))CGBPal1c3,\n\
+		$(basename $(basename $(notdir $<)))CGBPal2c0,$(basename $(basename $(notdir $<)))CGBPal2c1,$(basename $(basename $(notdir $<)))CGBPal2c2,$(basename $(basename $(notdir $<)))CGBPal2c3,\n\
+		$(basename $(basename $(notdir $<)))CGBPal3c0,$(basename $(basename $(notdir $<)))CGBPal3c1,$(basename $(basename $(notdir $<)))CGBPal3c2,$(basename $(basename $(notdir $<)))CGBPal3c3,\n\
+		$(basename $(basename $(notdir $<)))CGBPal4c0,$(basename $(basename $(notdir $<)))CGBPal4c1,$(basename $(basename $(notdir $<)))CGBPal4c2,$(basename $(basename $(notdir $<)))CGBPal4c3,\n\
+		$(basename $(basename $(notdir $<)))CGBPal5c0,$(basename $(basename $(notdir $<)))CGBPal5c1,$(basename $(basename $(notdir $<)))CGBPal5c2,$(basename $(basename $(notdir $<)))CGBPal5c3,\n\
+		$(basename $(basename $(notdir $<)))CGBPal6c0,$(basename $(basename $(notdir $<)))CGBPal6c1,$(basename $(basename $(notdir $<)))CGBPal6c2,$(basename $(basename $(notdir $<)))CGBPal6c3,\n\
+		$(basename $(basename $(notdir $<)))CGBPal7c0,$(basename $(basename $(notdir $<)))CGBPal7c1,$(basename $(basename $(notdir $<)))CGBPal7c2,$(basename $(basename $(notdir $<)))CGBPal7c3,\n\
+		};/*@g' $<; \
+	fi
+
 	@$(CC) $(CFLAGS) $(filter -Wf-bo%, $(subst .b,-Wf-bo,$(suffix $(<:%.c=%)))) -c -o $@ $<
 
+ifeq ($(CP), no)	
 $(OBJDIR_RES)/%.mod.o: ../res/music/%.mod
-	@echo compiling music: $<
+	@echo compiling gbt music: $<
 	@$(MOD2GBT) $< $(basename $(basename $(notdir $<)))_mod -c $(subst .b,,$(suffix $(<:%.mod=%))) > /dev/null
 	@mv output.c $(OBJDIR)/music_tmp.c
 	@$(CC) $(CFLAGS) -c -o $@ $(OBJDIR)/music_tmp.c
-	
+else
+$(OBJDIR_RES)/%.o: ../res/music/%.sav
+	@echo compiling carillon music$<
+	@$(B2S) $< $(subst .b,,$(suffix $(<:%.sav=%))) > /dev/null
+	@mv music.s $(OBJDIR)/music.s
+	@$(CC) $(CFLAGS) -c -o $@ $(OBJDIR)/music.s
+	@rm $(OBJDIR)/music.s
+endif
+
+ifeq ($(CGB), yes)	
+$(BINDIR)/$(PROJECT_NAME).gbc: $(OBJDIR) $(OBJDIR_RES) $(BINDIR) $(OBJS) $(COMMON_OBJS)
+	@echo Linking
+	@$(CC) $(LFLAGS) -o $(BINDIR)/$(PROJECT_NAME).gbc $(OBJS) $(COMMON_OBJS)
+else
 $(BINDIR)/$(PROJECT_NAME).gb: $(OBJDIR) $(OBJDIR_RES) $(BINDIR) $(OBJS) $(COMMON_OBJS)
 	@echo Linking
 	@$(CC) $(LFLAGS) -o $(BINDIR)/$(PROJECT_NAME).gb $(OBJS) $(COMMON_OBJS)
-
+endif
 build_lib: $(OBJDIR) $(OBJS)
 
+ifeq ($(CGB), yes)
+build_gb: $(BINDIR)/$(PROJECT_NAME).gbc
+else
 build_gb: $(BINDIR)/$(PROJECT_NAME).gb
+endif
 
 clean:
 	@echo Cleaning $(PROJECT_NAME)
 	@rm -rf $(BINDIR)
 	@rm  -f $(OBJDIR)/*.*
+	@rm -rf $(OBJDIR_RES)
 	@rm -rf .map
 	@rm -rf .lst
-	
+
+ifeq ($(CGB), yes)	
+run: all
+	@if test -f $(BINDIR)/$(PROJECT_NAME).gbc; then \
+		echo Running $(BINDIR)/$(PROJECT_NAME).gbc; \
+		$(BGB) $(BINDIR)/$(PROJECT_NAME).gbc; \
+	fi
+else
 run: all
 	@if test -f $(BINDIR)/$(PROJECT_NAME).gb; then \
 		echo Running $(BINDIR)/$(PROJECT_NAME).gb; \
 		$(BGB) $(BINDIR)/$(PROJECT_NAME).gb; \
 	fi
-	
+endif	
