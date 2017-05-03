@@ -623,10 +623,13 @@ In order to create a rom for the Game Boy Color you just need to change the targ
 **Adding color to tiles**
 
  - Open the file tiles.bgr with the Gameboy Tile Designer and select View->Color Set->Gameboy Color. Everything will look the same but if you click on the palettes list you'll see there are now 8 palettes to choose from.
+
  ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/color/doc%20files/9-paletteChoose.PNG)
  - Select the fist tile and click on the second palette. Now go to View->Palettes (or click control+A) and edit the second palette to add some colors
+
 ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/color/doc%20files/10-bgpaletteset.PNG)
  - Finally go to ***File->Export To*** and in the ***Advanced*** tab set ***Include palette colors*** and then select ***1 byte per entry*** on ***CGB palettes***. Click Ok to export everything.
+
 ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/color/doc%20files/11-exportsettings.PNG)
 
 Now in your code:
@@ -637,6 +640,7 @@ Now in your code:
 const UINT16 bg_palette[] = {PALETTE_FROM_HEADER(tiles)};
 ```
 The macro ***PALETTE_FROM_HEADER*** will take the palette exported on one of the files. The parameter passed should be the same that you used on the ***Label*** on export settings:
+
 ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/color/doc%20files/12-labelName.PNG)
 
  - Load the palette inside Start_STATE_GAME using
@@ -657,6 +661,7 @@ to
 InitScrollTilesColor(0, 2, tiles, 3, tilesCGB);
 ```
 this new parameter contains the palette info for each tile exported by the Tile Exporter. Build the project and you should see your background in color 
+
 ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/color/doc%20files/bgb00003.bmp)
 
 **Adding color to sprites**
@@ -668,6 +673,7 @@ The process for sprites is very similar to what we did for the tiles
 	 - Assign it to all the sprites
 	 - Set ***Include palette colors*** and change CGB palettes to ***1 byte per entry*** in the ***Advanced*** tab in File->Export To...
 	 - Save your file and export it
+
 ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/color/doc%20files/13-spritecolored.PNG)
 
 Now in your code:
@@ -697,7 +703,9 @@ Note we have also included ..\res\src\player.h since that is the file where the 
  }
  ```
  Build the project and your main character will appear in glorious 4 colors
- ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/color/doc%20files/bgb00004.bmp)
+
+![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/color/doc%20files/bgb00004.bmp)
  
  Note: It seems that by default BGB doesn't show colors properly, so ensure you have GBC LCD colors disabled inside Options->Graphics
- ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/color/doc%20files/14-bgbsettings.PNG)
+
+![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/color/doc%20files/14-bgbsettings.PNG)
