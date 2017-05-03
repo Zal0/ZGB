@@ -21,7 +21,7 @@ extern struct Sprite* scroll_target;
 extern UINT8 clamp_enabled;
 
 
-#define InitScrollTiles(first_tile, n_tiles, tile_data, tile_bank) InitScrollTilesColor(first_tile, n_tiles, tile_data, tile_bank, 0)
+#define InitScrollTiles(first_tile, n_tiles, tile_data, tile_bank) ZInitScrollTilesColor(first_tile, n_tiles, tile_data, tile_bank, 0)
 #define InitScrollTilesColor(first_tile, n_tiles, tile_data, tile_bank) ZInitScrollTilesColor(first_tile, n_tiles, tile_data, tile_bank, tile_data##CGB)
 #define InitScroll(map_w, map_h, map, coll_list, coll_list_down, bank) InitScrollColor(map_w, map_h, map, coll_list, coll_list_down, bank, 0) 
 #define ScrollSetMap(map_w, map_h, map, bank) ScrollSetMapColor(map_w, map_h, map, bank, 0)
