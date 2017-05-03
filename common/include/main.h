@@ -13,7 +13,9 @@
                                 updateFuncs[STATE_IDX] = Update_##STATE_IDX
 
 #define INIT_SPRITE(SPRITE_IDX, DATA, BANK, SIZE, NFRAMES) \
-              InitSpriteInfo(SPRITE_IDX, bank_##SPRITE_IDX, Start_##SPRITE_IDX, Update_##SPRITE_IDX, Destroy_##SPRITE_IDX, DATA, BANK, SIZE, NFRAMES)
+              InitSpriteInfo(SPRITE_IDX, bank_##SPRITE_IDX, Start_##SPRITE_IDX, Update_##SPRITE_IDX, Destroy_##SPRITE_IDX, DATA, BANK, SIZE, NFRAMES, 0)
+#define INIT_SPRITE_COLOR(SPRITE_IDX, DATA, BANK, SIZE, NFRAMES) \
+              InitSpriteInfo(SPRITE_IDX, bank_##SPRITE_IDX, Start_##SPRITE_IDX, Update_##SPRITE_IDX, Destroy_##SPRITE_IDX, DATA, BANK, SIZE, NFRAMES, DATA##CGB)
 
 typedef void (*Void_Func_Void)();
 typedef void (*Void_Func_SpritePtr)(struct Sprite*);
@@ -31,7 +33,8 @@ typedef void (*Void_Func_SpritePtr)(struct Sprite*);
                                            FrameSize spriteFrameSizes[N_SPRITE_TYPES];\
                                            UINT8 spriteNumFrames[N_SPRITE_TYPES];\
                                            UINT8 spriteIdxs[N_SPRITE_TYPES];\
-                                           UINT8 n_sprite_types = N_SPRITE_TYPES
+                                           UINT8 n_sprite_types = N_SPRITE_TYPES;\
+                                           UINT8* spritePalDatas[N_SPRITE_TYPES]
 
 extern UINT8 current_state;
 void SetState(UINT8 state);
@@ -40,6 +43,16 @@ extern UINT8 delta_time;
 void PlayMusic(unsigned char* music, unsigned char bank, unsigned char loop);
 
 void InitSpriteInfo(UINT8 type, UINT8 bank, Void_Func_SpritePtr startFunc, Void_Func_Void updateFunc, Void_Func_Void destroyFunc, 
-	              UINT8* data, UINT8 dataBank, FrameSize size, UINT8 num_frames);
+	              UINT8* data, UINT8 dataBank, FrameSize size, UINT8 num_frames, UINT8* pal_data);
+
+#ifdef CGB
+typedef enum {
+	BG_PALETTE,
+	SPRITES_PALETTE
+} PALETTE_TYPE;
+void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *rgb_data, UINT8 bank);
+#else
+#define SetPalette(PALETTE_TYPE, first_palette, nb_palettes, rgb_data, bank);
+#endif
 
 #endif

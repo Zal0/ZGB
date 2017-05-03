@@ -7,8 +7,11 @@
 
 extern UINT8 bank_stack[];
 
-#define PUSH_BANK(N) StackPush(bank_stack, N); SWITCH_ROM_MBC1(N)
-#define POP_BANK StackPop(bank_stack);REFRESH_BANK
+void PushBank(UINT8 b);
+void PopBank();
+
+#define PUSH_BANK(N) PushBank(N);
+#define POP_BANK PopBank();
 #define REFRESH_BANK SWITCH_ROM_MBC1(StackPeek(bank_stack))
 
 #endif

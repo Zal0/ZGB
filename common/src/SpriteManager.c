@@ -14,6 +14,7 @@ extern UINT8 spriteDataBanks[];
 extern FrameSize spriteFrameSizes[];
 extern UINT8 spriteNumFrames[];
 extern UINT8 spriteIdxs[];
+extern UINT8* spritePalDatas[];
 
 //Pool
 UINT8 sprite_manager_sprites_mem[N_SPRITE_MANAGER_SPRITES * sizeof(struct Sprite)];
@@ -53,7 +54,7 @@ void SpriteManagerReset() {
 }
 
 void SpriteManagerLoad(UINT8 sprite_type) {
-	spriteIdxs[sprite_type] = LoadSprite(spriteNumFrames[sprite_type], spriteDatas[sprite_type], spriteDataBanks[sprite_type]);
+	spriteIdxs[sprite_type] = LoadSprite(spriteNumFrames[sprite_type], spriteDatas[sprite_type], spriteDataBanks[sprite_type], spriteFrameSizes[sprite_type], spritePalDatas[sprite_type]);
 }
 
 struct Sprite* cachedSprite; //This has to be declared outside because of an LCC bug (easy to see with the Princess' Axe)

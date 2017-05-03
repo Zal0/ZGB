@@ -1,14 +1,20 @@
 #include "main.h"
 
 #include <gb/gb.h> 
+#include <string.h>
+
 #include "OAMManager.h"
 #include "Scroll.h"
 #include "Keys.h"
 #include "gbt_player.h"
 #include "SpriteManager.h"
 #include "BankManager.h"
+#include "Fade.h"
+#include "Palette.h"
 
 extern UINT8 next_state;
+extern UINT8 init_bank;
+
 UINT8 delta_time;
 UINT8 current_state;
 UINT8 state_running = 0;
@@ -26,6 +32,7 @@ extern UINT8 spriteDataBanks[];
 extern FrameSize spriteFrameSizes[];
 extern UINT8 spriteNumFrames[];
 extern UINT8 spriteIdxs[];
+extern UINT8* spritePalDatas[];
 
 void SetState(UINT8 state) {
 	state_running = 0;
@@ -71,7 +78,7 @@ void vbl_update() {
 }
 
 void InitSpriteInfo(UINT8 type, UINT8 bank, Void_Func_SpritePtr startFunc, Void_Func_Void updateFunc, Void_Func_Void destroyFunc, 
-	              UINT8* data, UINT8 dataBank, FrameSize size, UINT8 num_frames) {
+	              UINT8* data, UINT8 dataBank, FrameSize size, UINT8 num_frames, UINT8* pal_data) {
 	spriteBanks[type] = bank;
 	spriteStartFuncs[type] = startFunc;
 	spriteUpdateFuncs[type] = updateFunc;
@@ -81,6 +88,8 @@ void InitSpriteInfo(UINT8 type, UINT8 bank, Void_Func_SpritePtr startFunc, Void_
 	spriteDataBanks[type] = dataBank;
 	spriteFrameSizes[type] = size;
 	spriteNumFrames[type] = num_frames << size;
+
+	spritePalDatas[type] = pal_data;
 }  
 
 void InitStates();
@@ -91,17 +100,36 @@ void MusicUpdate() {
 	REFRESH_BANK;
 }
 
-#define PAL_DEF(C3, C2, C1, C0) ((C0 << 6) | (C1 << 4) | (C2 << 2) | C3)
-void main() {
-	UINT8 i;
 
+extern UWORD ZGB_Fading_BPal[32];
+extern UWORD ZGB_Fading_SPal[32];
+#ifdef CGB	
+void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *rgb_data, UINT8 bank) {
+	UWORD* pal_ptr = (t == BG_PALETTE) ? ZGB_Fading_BPal : ZGB_Fading_SPal;
+	PUSH_BANK(bank);
+	if(t == BG_PALETTE) {
+		set_bkg_palette(first_palette, nb_palettes, rgb_data);
+	} else {
+		set_sprite_palette(first_palette, nb_palettes, rgb_data);
+	}
+	memcpy(&pal_ptr[first_palette << 2], rgb_data, nb_palettes << 3);
+	POP_BANK;
+}
+#endif
+
+UINT16 default_palette[] = {RGB(31, 31, 31), RGB(20, 20, 20), RGB(10, 10, 10), RGB(0, 0, 0)};
+void main() {
+	cpu_fast(); //Calling this on DMG seems to do nothing but it doesn't crash or anything
+
+	PUSH_BANK(init_bank);
 	InitStates();
 	InitSprites();
+	POP_BANK;
 
 	disable_interrupts();
 	add_VBL(vbl_update);
 	add_TIM(MusicUpdate);
-	TMA_REG = 0xBCU;
+	TMA_REG = _cpu == CGB_TYPE ? 120U : 0xBCU;
   TAC_REG = 0x04U;
 
 	set_interrupts(VBL_IFLAG | TIM_IFLAG);
@@ -122,12 +150,7 @@ void main() {
 			POP_BANK;
 		}
 
-		for(i = 0; i != 4; ++i) {
-			BGP_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-			OBP0_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-			OBP1_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-			delay(50);
-		}
+		FadeIn();
 		DISPLAY_OFF
 
 		gbt_stop();
@@ -139,6 +162,13 @@ void main() {
 		current_state = next_state;
 		scroll_target = 0;
 		
+		if (_cpu == CGB_TYPE) {
+			SetPalette(BG_PALETTE, 0, 1, default_palette, 1);
+			SetPalette(SPRITES_PALETTE, 0, 1, default_palette, 1);
+		} else {
+			BGP_REG = OBP0_REG = OBP1_REG = PAL_DEF(0, 1, 2, 3);
+		}
+
 		PUSH_BANK(stateBanks[current_state]);
 			(startFuncs[current_state])();
 		POP_BANK;
@@ -147,12 +177,7 @@ void main() {
 
 		if(state_running) {
 			DISPLAY_ON;
-			for(i = 3; i != 0xFF; --i) {
-				BGP_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-				OBP0_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-				OBP1_REG = PAL_DEF(0, 1, 2, 3) << (i << 1);
-				delay(50);
-			}
+			FadeOut();
 		}
 	}
 }

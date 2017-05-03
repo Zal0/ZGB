@@ -1,7 +1,8 @@
 #--- Default build will be release. Can be overiden passing BUILD_TYPE = debug as a parameter
 BUILD_TYPE = Release
+CGB = yes
 
-ifeq ($(BUILD_TYPE), Release)
+ifneq (,$(findstring Release,$(BUILD_TYPE)))
 	BUILD_DEFS += -DNDEBUG
 else
 	PROJECT_NAME := $(PROJECT_NAME)_Debug
@@ -22,6 +23,14 @@ endif
 
 CFLAGS = -DUSE_SFR_FOR_REG $(BUILD_DEFS) -I..\include -I$(ZGB_PATH)\include
 #-Wa-l -Wl-m -Wl-j 
+
+EXTENSION = gb
+ifneq (,$(findstring Color,$(BUILD_TYPE)))
+	LFLAGS_NBANKS += -Wl-yp0x143=0xC0
+	CFLAGS += -DCGB
+	EXTENSION = gbc
+endif
+
 LFLAGS = -DUSE_SFR_FOR_REG $(LFLAGS_NBANKS)
 CC = $(LCC)
 
@@ -70,13 +79,13 @@ $(OBJDIR_RES)/%.mod.o: ../res/music/%.mod
 	@mv output.c $(OBJDIR)/music_tmp.c
 	@$(CC) $(CFLAGS) -c -o $@ $(OBJDIR)/music_tmp.c
 	
-$(BINDIR)/$(PROJECT_NAME).gb: $(OBJDIR) $(OBJDIR_RES) $(BINDIR) $(OBJS) $(COMMON_OBJS)
+$(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR) $(OBJDIR_RES) $(BINDIR) $(OBJS) $(COMMON_OBJS)
 	@echo Linking
-	@$(CC) $(LFLAGS) -o $(BINDIR)/$(PROJECT_NAME).gb $(OBJS) $(COMMON_OBJS)
+	@$(CC) $(LFLAGS) -o $(BINDIR)/$(PROJECT_NAME).$(EXTENSION) $(OBJS) $(COMMON_OBJS)
 
 build_lib: $(OBJDIR) $(OBJS)
 
-build_gb: $(BINDIR)/$(PROJECT_NAME).gb
+build_gb: $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
 
 clean:
 	@echo Cleaning $(PROJECT_NAME)
@@ -84,10 +93,9 @@ clean:
 	@rm  -f $(OBJDIR)/*.*
 	@rm -rf .map
 	@rm -rf .lst
-	
+
 run: all
-	@if test -f $(BINDIR)/$(PROJECT_NAME).gb; then \
-		echo Running $(BINDIR)/$(PROJECT_NAME).gb; \
-		$(BGB) $(BINDIR)/$(PROJECT_NAME).gb; \
+	@if test -f $(BINDIR)/$(PROJECT_NAME).$(EXTENSION); then \
+		echo Running $(BINDIR)/$(PROJECT_NAME).$(EXTENSION); \
+		$(BGB) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION); \
 	fi
-	
