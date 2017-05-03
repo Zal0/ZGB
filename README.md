@@ -634,7 +634,7 @@ In order to create a rom for the Game Boy Color you just need to change the targ
 
 Now in your code:
 
- - Open the file StateGame.c and declare the palette for the background before the method Start_STATE_GAME like this
+ - Open the file **StateGame.c** and declare the palette for the background before the method Start_STATE_GAME like this
 ```
 #include "Palette.h"
 const UINT16 bg_palette[] = {PALETTE_FROM_HEADER(tiles)};
@@ -665,6 +665,7 @@ this new parameter contains the palette info for each tile exported by the Tile 
 ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/color/doc%20files/bgb00003.bmp)
 
 **Adding color to sprites**
+
 The process for sprites is very similar to what we did for the tiles
 
  - Add some color to player.bgr the same way we did with the tiles
@@ -678,14 +679,14 @@ The process for sprites is very similar to what we did for the tiles
 
 Now in your code:
 
- - Open the file ZGBMain_b.c and change the INIT_SPRITE call for your sprite for INIT_SPRITE_COLOR, like this
+ - Open the file **ZGBMain_b.c** and change the INIT_SPRITE call for your sprite for INIT_SPRITE_COLOR, like this
 ```
 void InitSprites() {
 	INIT_SPRITE_COLOR(SPRITE_PLAYER, player, 3, FRAME_16x16, 3);
 	...
 }
 ```
- - Similar to what we did with the tiles we need to declare a palette for the sprites in StateGame.c. Do this next the background palette declaration
+ - Similar to what we did with the tiles we need to declare a palette for the sprites in **StateGame.c**. Do this next the background palette declaration
 ```
 #include "..\res\src\player.h"
 #include "Palette.h"
@@ -709,3 +710,46 @@ Note we have also included ..\res\src\player.h since that is the file where the 
  Note: It seems that by default BGB doesn't show colors properly, so ensure you have GBC LCD colors disabled inside Options->Graphics
 
 ![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/color/doc%20files/14-bgbsettings.PNG)
+
+**Composing a palette from various files**
+
+Do the same thing that you did on the player with the enemy. But this time use the Third palette instead of the second one (because that is already being used by the player)
+
+![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/color/doc%20files/15-enemycolored.PNG)
+
+Now in your code:
+
+ - In **ZGBMain_b.**c change INIT_SPRITE to INIT_SPRITE_COLOR
+```
+void InitSprites() {
+...
+	INIT_SPRITE_COLOR(SPRITE_ENEMY,  enemy,  3, FRAME_16x16, 1);
+}
+```
+ - In **StateGame.c** change the palette for the sprites that we declared in the previous step
+```
+#include "..\res\src\player.h"
+UINT16 sprites_palette[] = {PALETTE_FROM_HEADER(player)};
+```
+to
+```
+#include "..\res\src\player.h"
+#include "..\res\src\enemy.h"
+UINT16 sprites_palette[] = {
+	PALETTE_INDEX(player, 0),
+	PALETTE_INDEX(player, 1),
+	PALETTE_INDEX(enemy,  2),
+	PALETTE_INDEX(player, 3),
+	PALETTE_INDEX(player, 4),
+	PALETTE_INDEX(player, 5),
+	PALETTE_INDEX(player, 6),
+	PALETTE_INDEX(player, 7),
+};
+```
+basically what this piece of code is doing is declaring an 8 palettes array and filling the the 3rd position with the enemy info and the rest with the player info. This is how you can combine palettes created on several files.
+
+Another way of accomplishing the same thing would be copying the palette slot that we have on enemy.bgr to player.bgr using the Gameboy Tile Designer and then leave the palette initialization as it was. 
+
+![enter image description here](https://raw.githubusercontent.com/Zal0/ZGB/feature/color/doc%20files/enemyColored.bmp)
+
+Note: this new build created for the Game Boy Color will also work on the classic Game Boy (but it will run a bit slower than if you create it for the Game Boy specifically)
