@@ -337,7 +337,7 @@ typedef enum {
 	N_SPRITE_TYPES
 } SPRITE_TYPE;
 ```
-* In **ZGB_Main.c**
+* In **ZGBMain_Init.c**
 	* Include "SpriteEnemy.h" and "../res/src/enemy.h"
 	* Add its initialization, we stored it on bank 3, saved as 16x16 and created only 1 frame  so it should look like this
 ```
