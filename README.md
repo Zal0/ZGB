@@ -520,7 +520,7 @@ extern UINT8* game_mod_Data[];
 ```
 void Start_STATE_GAME() {
 	...
-	PlayMusic(level_mod_Data, 3, 1);
+	PlayMusic(game_mod_Data, 3, 1);
 }
 ```
 
