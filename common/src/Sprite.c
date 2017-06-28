@@ -71,6 +71,7 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 					if(scroll_collisions[*tile_coll] == 1u) {
 						x -= (start_x & (UINT16)7u);
 						ret = *tile_coll;
+						break;
 					}
 				}
 			}
@@ -86,6 +87,7 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 					if(scroll_collisions[*tile_coll] == 1u) {
 						x = (INT16)x + (8u - (start_x & (UINT16)7u));
 						ret = *tile_coll;
+						break;
 					}
 				}
 			}
@@ -105,6 +107,7 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 					) {
 						y -= (start_y & (UINT16)7u);
 						ret = *tile_coll;
+						break;
 					}
 				}
 			}
@@ -120,6 +123,7 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 					if(scroll_collisions[*tile_coll] == 1u) {
 						y = (INT16)y + (8u - (start_y & (UINT16)7u));
 						ret = *tile_coll;
+						break;
 					}
 				}
 			}
