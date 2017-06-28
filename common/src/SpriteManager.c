@@ -40,7 +40,7 @@ void SpriteManagerReset() {
 	//place all sprites on the pool
 	sprite_manager_sprites_pool[0] = 0;
 	for(i = 0; i != N_SPRITE_MANAGER_SPRITES; ++i) {
-		sprite_manager_sprites[i] = &sprite_manager_sprites_mem[sizeof(struct Sprite) * (UINT16)i];
+		sprite_manager_sprites[i] = (struct Sprite*)&sprite_manager_sprites_mem[sizeof(struct Sprite) * (UINT16)i];
 		sprite_manager_sprites[i]->oam_idx = i << 1;
 
 		StackPush(sprite_manager_sprites_pool, i);		

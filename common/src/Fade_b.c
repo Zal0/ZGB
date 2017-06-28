@@ -1,4 +1,4 @@
-#pragma bank=1
+#pragma bank 1
 #include "Fade.h"
 UINT8 fade_bank = 1;
 
@@ -15,7 +15,7 @@ UINT8 FadeInOp(UINT16 c, UINT16 i) {
 
 void FadeDMG(UINT8 fadeout) {
 	UINT8 colors[12];
-	UINT8* pals[] = {0xFF47, 0xFF48, 0xFF49};
+	UINT8* pals[] = {(UINT8*)0xFF47, (UINT8*)0xFF48, (UINT8*)0xFF49};
 	UINT8 i, j; 
 	UINT8* c = colors;
 	UINT8 p;

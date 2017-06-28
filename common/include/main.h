@@ -40,9 +40,9 @@ extern UINT8 current_state;
 void SetState(UINT8 state);
 extern UINT8 delta_time;
 
-void PlayMusic(unsigned char* music, unsigned char bank, unsigned char loop);
+void PlayMusic(const unsigned char* music[], unsigned char bank, unsigned char loop);
 
-void InitSpriteInfo(UINT8 type, UINT8 bank, Void_Func_SpritePtr startFunc, Void_Func_Void updateFunc, Void_Func_Void destroyFunc, 
+void InitSpriteInfo(UINT8 type, UINT8 bank, Void_Func_Void startFunc, Void_Func_Void updateFunc, Void_Func_Void destroyFunc, 
 	              UINT8* data, UINT8 dataBank, FrameSize size, UINT8 num_frames, UINT8* pal_data);
 
 #ifdef CGB

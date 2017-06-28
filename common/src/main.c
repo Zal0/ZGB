@@ -39,8 +39,8 @@ void SetState(UINT8 state) {
 	next_state = state;
 }
 
-unsigned char* last_music = 0;
-void PlayMusic(unsigned char* music, unsigned char bank, unsigned char loop) {
+void* last_music = 0;
+void PlayMusic(const unsigned char* music[], unsigned char bank, unsigned char loop) {
 	if(music != last_music) {
 		last_music = music;
 		gbt_play(music, bank, 7);
@@ -77,7 +77,7 @@ void vbl_update() {
 	}
 }
 
-void InitSpriteInfo(UINT8 type, UINT8 bank, Void_Func_SpritePtr startFunc, Void_Func_Void updateFunc, Void_Func_Void destroyFunc, 
+void InitSpriteInfo(UINT8 type, UINT8 bank, Void_Func_Void startFunc, Void_Func_Void updateFunc, Void_Func_Void destroyFunc, 
 	              UINT8* data, UINT8 dataBank, FrameSize size, UINT8 num_frames, UINT8* pal_data) {
 	spriteBanks[type] = bank;
 	spriteStartFuncs[type] = startFunc;

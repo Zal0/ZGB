@@ -12,16 +12,21 @@ OBJDIR = ../$(BUILD_TYPE)
 OBJDIR_RES = ../$(BUILD_TYPE)/res
 BINDIR = ../bin
 
-LCC = c:/gbdk/bin/lcc.exe
-SDCC = c:/gbdk/bin/sdcc.exe
-MOD2GBT = c:/gbdk/bin/mod2gbt.exe
-BGB = c:/gbdk/bin/bgb/bgb.exe
+GBDK_HOME = C:/gbdk
+GBDKN_HOME = C:/gbdk_n/gbdk-n
+SDCC_HOME = C:/gbdk_n/SDCC
+
+LCC = $(GBDK_HOME)/bin/lcc
+SDCC = $(SDCC_HOME)/bin/sdcc
+SDASGB = $(SDCC_HOME)/bin/sdasgb
+MOD2GBT = c:/gbdk/bin/mod2gbt
+BGB = c:/gbdk/bin/bgb/bgb
 
 ifneq ($(strip $(N_BANKS)),)
 	LFLAGS_NBANKS = -Wl-yt1 -Wl-yo$(N_BANKS)
 endif
 
-CFLAGS = -DUSE_SFR_FOR_REG $(BUILD_DEFS) -I..\include -I$(ZGB_PATH)\include
+CFLAGS = -mgbz80 --no-std-crt0 --fsigned-char --use-stdout -I $(GBDKN_HOME)/include -I $(GBDKN_HOME)/include/asm $(BUILD_DEFS) -I..\include -I$(ZGB_PATH)\include 
 #-Wa-l -Wl-m -Wl-j 
 
 EXTENSION = gb
@@ -31,8 +36,7 @@ ifneq (,$(findstring Color,$(BUILD_TYPE)))
 	EXTENSION = gbc
 endif
 
-LFLAGS = -DUSE_SFR_FOR_REG $(LFLAGS_NBANKS)
-CC = $(LCC)
+LFLAGS = $(LFLAGS_NBANKS)
 
 current_dir = $(shell pwd)
 
@@ -60,28 +64,28 @@ $(OBJDIR_RES):
 
 $(OBJDIR)/%.o: %.s
 	@echo compiling $<
-	@$(CC) $(CFLAGS) $(filter -Wf-bo%, $(subst .b,-Wf-bo,$(suffix $(<:%.s=%)))) -c -o $@ $<
+	@$(SDASGB) -plosgff -I"libc" $(filter --constseg CODE_%, $(subst .b,--constseg CODE_,$(suffix $(<:%.s=%)))) -c -o $@ $<
 
 $(OBJDIR)/%.o: %.c
 	@echo compiling $<
-	@$(CC) $(CFLAGS) $(filter -Wf-bo%, $(subst .b,-Wf-bo,$(suffix $(<:%.c=%)))) -c -o $@ $<
+	@$(SDCC) $(CFLAGS) $(filter --constseg CODE_%, $(subst .b,--constseg CODE_,$(suffix $(<:%.c=%)))) -c -o $@ $<
 
 $(OBJDIR_RES)/%.o: ../res/src/%.c
 	@echo compiling resource: $<
 	@if grep -q "unsigned char" $<; then \
 		sed -i "s/unsigned char/const unsigned  char/g" $<; \
 	fi
-	@$(CC) $(CFLAGS) $(filter -Wf-bo%, $(subst .b,-Wf-bo,$(suffix $(<:%.c=%)))) -c -o $@ $<
+	@$(SDCC) $(CFLAGS) $(filter --constseg CODE_%, $(subst .b,--constseg CODE_,$(suffix $(<:%.c=%)))) -c -o $@ $<
 
 $(OBJDIR_RES)/%.mod.o: ../res/music/%.mod
 	@echo compiling music: $<
 	@$(MOD2GBT) $< $(basename $(basename $(notdir $<)))_mod -c $(subst .b,,$(suffix $(<:%.mod=%))) > /dev/null
 	@mv output.c $(OBJDIR)/music_tmp.c
-	@$(CC) $(CFLAGS) -c -o $@ $(OBJDIR)/music_tmp.c
+	@$(SDCC) $(CFLAGS) -c -o $@ $(OBJDIR)/music_tmp.c
 	
 $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR) $(OBJDIR_RES) $(BINDIR) $(OBJS) $(COMMON_OBJS)
 	@echo Linking
-	@$(CC) $(LFLAGS) -o $(BINDIR)/$(PROJECT_NAME).$(EXTENSION) $(OBJS) $(COMMON_OBJS)
+	$(LCC) $(LFLAGS) -o $(BINDIR)/$(PROJECT_NAME).$(EXTENSION) $(OBJS) $(COMMON_OBJS)
 
 build_lib: $(OBJDIR) $(OBJS)
 
