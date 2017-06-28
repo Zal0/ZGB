@@ -110,7 +110,7 @@ void SpriteManagerRemoveSprite(struct Sprite* sprite) {
 
 void SpriteManagerFlushRemove() {
 	//We must remove sprites in inverse order because everytime we remove one the vector shrinks and displaces all elements
-	for(THIS_IDX = sprite_manager_updatables[0] - 1; THIS_IDX + 1 != 0u; THIS_IDX -= 1u) {
+	for(THIS_IDX = sprite_manager_updatables[0] - 1u; (UINT8)(THIS_IDX + 1u) != 0u; THIS_IDX --) {
 		THIS = sprite_manager_sprites[sprite_manager_updatables[THIS_IDX + 1u]];
 		if(THIS->marked_for_removal) {
 			StackPush(sprite_manager_sprites_pool, sprite_manager_updatables[THIS_IDX + 1u]);
