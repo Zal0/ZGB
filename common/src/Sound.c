@@ -10,15 +10,15 @@ extern UINT8 music_mute_frames;
 
 void PlayFx(SOUND_CHANNEL channel, UINT8 mute_frames, ...) {
 	UINT8 i;
-	UINT8* reg = FX_ADDRESS[channel];
+	UINT8* reg = (UINT8*)FX_ADDRESS[channel];
 	va_list list;
 
 	va_start(list, mute_frames);
 	for(i = 0; i < FX_REG_SIZES[channel]; ++i, ++reg) {
-		*reg = va_arg(list, INT8);
+		*reg = va_arg(list, INT16);
 	}
-	va_end(mute_frames);
-
+	va_end(list);
+	
 	if(channel != CHANNEL_5) {
 		gbt_enable_channels(~(0xF & (1 << channel)));
 	}
