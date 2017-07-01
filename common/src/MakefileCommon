@@ -13,11 +13,9 @@ OBJDIR_RES = ../$(BUILD_TYPE)/res
 BINDIR = ../bin
 
 GBDK_HOME = C:/gbdk
-SDCC_HOME = C:/gbdk_n/SDCC
-
 LCC = $(GBDK_HOME)/bin/lcc
-SDCC = $(SDCC_HOME)/bin/sdcc
-SDASGB = $(SDCC_HOME)/bin/sdasgb
+SDCC = sdcc
+SDASGB = sdasgb
 MOD2GBT = c:/gbdk/bin/mod2gbt
 BGB = c:/gbdk/bin/bgb/bgb
 
