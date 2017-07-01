@@ -13,7 +13,6 @@ OBJDIR_RES = ../$(BUILD_TYPE)/res
 BINDIR = ../bin
 
 GBDK_HOME = C:/gbdk
-GBDKN_HOME = C:/gbdk_n/gbdk-n
 SDCC_HOME = C:/gbdk_n/SDCC
 
 LCC = $(GBDK_HOME)/bin/lcc
@@ -26,7 +25,7 @@ ifneq ($(strip $(N_BANKS)),)
 	LFLAGS_NBANKS = -Wl-yt1 -Wl-yo$(N_BANKS)
 endif
 
-CFLAGS = -mgbz80 --no-std-crt0 --fsigned-char --use-stdout -I $(GBDKN_HOME)/include -I $(GBDKN_HOME)/include/asm $(BUILD_DEFS) -I..\include -I$(ZGB_PATH)\include 
+CFLAGS = -mgbz80 --no-std-crt0 --fsigned-char --use-stdout -Dnonbanked=  -I $(GBDK_HOME)/include -I $(GBDK_HOME)/include/asm $(BUILD_DEFS) -I..\include -I$(ZGB_PATH)\include 
 #-Wa-l -Wl-m -Wl-j 
 
 EXTENSION = gb
