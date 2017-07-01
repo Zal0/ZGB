@@ -6,6 +6,7 @@
 #define INIT_FONT(FONT, FONT_BANK, TARGET) InitScrollTiles(255 - 45, 45, FONT, FONT_BANK); font_idx = 255 - 45; print_target = TARGET
 
 extern UINT8 print_x, print_y, font_idx, print_target;
+extern INT8 scroll_h_border;
 
 typedef enum {
 	PRINT_BKG,
@@ -33,6 +34,7 @@ void Printf(const char* txt, ...);
 	InitScrollTiles(255 - 45, 45, FONT, FONT_BANK);\
 	WX_REG = 7;\
   WY_REG = (144 - (NLINES << 3));\
+	scroll_h_border = NLINES << 3;\
 	SHOW_WIN;
 
 #define DPrintf Printf

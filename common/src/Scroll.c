@@ -117,6 +117,7 @@ void InitWindow(UINT8 x, UINT8 y, UINT8 w, UINT8 h, UINT8* map, UINT8 bank, UINT
 	POP_BANK;
 }
 
+INT8 scroll_h_border = 0;
 UINT8 clamp_enabled = 1;
 void ClampScrollLimits(UINT16* x, UINT16* y) {
 	if(clamp_enabled) {
@@ -129,8 +130,8 @@ void ClampScrollLimits(UINT16* x, UINT16* y) {
 		if(U_LESS_THAN(*y, 0u)) {
 			*y = 0u;		
 		}
-		if(*y > (scroll_h - SCREENHEIGHT)) {
-			*y = (scroll_h - SCREENHEIGHT);
+		if(*y > (scroll_h - SCREENHEIGHT + scroll_h_border)) {
+			*y = (scroll_h - SCREENHEIGHT + scroll_h_border);
 		}
 	}
 }
