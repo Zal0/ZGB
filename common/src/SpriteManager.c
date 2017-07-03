@@ -81,7 +81,7 @@ struct Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y) {
 	cachedSprite = THIS;
 	spriteIdxTmp = THIS_IDX;
 	THIS = sprite;
-	THIS_IDX = sprite_idx;
+	THIS_IDX = sprite_manager_updatables[0] - 1;
 	PUSH_BANK(spriteBanks[sprite->type]);
 		spriteStartFuncs[sprite->type]();
 	POP_BANK;
