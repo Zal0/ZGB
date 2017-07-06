@@ -137,13 +137,13 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 }
 
 UINT8 CheckCollision(struct Sprite* sprite1, struct Sprite* sprite2) {
-	if( (sprite1->x + sprite1->coll_x > sprite2->x + sprite2->coll_x - sprite1->coll_w) &&
-	    (sprite1->x + sprite1->coll_x < sprite2->x + sprite2->coll_x + sprite2->coll_w) &&
-			(sprite1->y + sprite1->coll_y > sprite2->y + sprite2->coll_y - sprite1->coll_h) &&
-			(sprite1->y + sprite1->coll_y < sprite2->y + sprite2->coll_y + sprite2->coll_h)
+	if( (sprite1->x + sprite1->coll_x + sprite1->coll_w < sprite2->x + sprite2->coll_x) ||
+	    (sprite2->x + sprite2->coll_x + sprite2->coll_w < sprite1->x + sprite1->coll_x) ||
+			(sprite1->y + sprite1->coll_y + sprite1->coll_h < sprite2->y + sprite2->coll_y) ||
+			(sprite2->y + sprite2->coll_y + sprite2->coll_h < sprite1->y + sprite1->coll_y)
 	) {
-		return 1;
-	} else {
 		return 0;
+	} else {
+		return 1;
 	}
 }
