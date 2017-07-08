@@ -22,6 +22,7 @@
     <ClInclude Include="include\BankManager.h" />
     <ClInclude Include="include\Fade.h" />
     <ClInclude Include="include\Frame.h" />
+    <ClInclude Include="include\gbt_player.h" />
     <ClInclude Include="include\Keys.h" />
     <ClInclude Include="include\main.h" />
     <ClInclude Include="include\Math.h" />

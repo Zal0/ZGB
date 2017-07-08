@@ -56,6 +56,9 @@
     <ClInclude Include="include\Fade.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\gbt_player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Frame.c">
