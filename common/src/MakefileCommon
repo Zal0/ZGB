@@ -12,18 +12,17 @@ OBJDIR = ../$(BUILD_TYPE)
 OBJDIR_RES = ../$(BUILD_TYPE)/res
 BINDIR = ../bin
 
-GBDK_HOME = C:/gbdk
 LCC = $(GBDK_HOME)/bin/lcc
 SDCC = sdcc
 SDASGB = sdasgb
-MOD2GBT = c:/gbdk/bin/mod2gbt
-BGB = c:/gbdk/bin/bgb/bgb
+MOD2GBT = $(GBDK_HOME)/bin/mod2gbt
+BGB = $(GBDK_HOME)/bin/bgb/bgb
 
 ifneq ($(strip $(N_BANKS)),)
 	LFLAGS_NBANKS = -Wl-yt1 -Wl-yo$(N_BANKS)
 endif
 
-CFLAGS = -mgbz80 --no-std-crt0 --fsigned-char --use-stdout -Dnonbanked=  -I $(GBDK_HOME)/include -I $(GBDK_HOME)/include/asm $(BUILD_DEFS) -I..\include -I$(ZGB_PATH)\include 
+CFLAGS = -mgbz80 --no-std-crt0 --fsigned-char --use-stdout -Dnonbanked=  -I $(GBDK_HOME)/include -I $(GBDK_HOME)/include/asm $(BUILD_DEFS) -I../include -I$(ZGB_PATH)/include 
 #-Wa-l -Wl-m -Wl-j 
 
 EXTENSION = gb
