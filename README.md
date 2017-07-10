@@ -49,7 +49,7 @@ Download and install:
  - [***Make for Windows***](http://gnuwin32.sourceforge.net/packages/make.htm)* anywhere but add the folder bin to your Path **BEFORE** msys/bin
  - [***SDCC***](https://sourceforge.net/projects/sdcc/files/sdcc-win64/3.6.0/sdcc-3.6.0-x64-setup.exe/download), make sure you check the option "add to PATH environment variable" when prompted
  - [***BGB***](http://bgb.bircd.org/) on GBDK_HOME\bin
- - [***mod2gbt***](https://github.com/Zal0/gbt-player/raw/master/legacy_gbdk/mod2gbt/mod2gbt.exe) on GBDK_HOME\bin
+ - [***mod2gbt***](https://github.com/Zal0/gbt-player/raw/gbdk-n/legacy_gbdk/mod2gbt/mod2gbt.exe) on GBDK_HOME\bin
  - [***Game Boy Map Builder***](http://www.devrs.com/gb/hmgd/gbmb.html) on c:\gbdk\tools\gbmb18
  - [***Game Boy Tile Designer***](http://www.devrs.com/gb/hmgd/gbtd.html) on c:\gbdk\tools\gbtd22
  - ***This repo***, anywhere but create an env var called ZGB_PATH pointing the common folder eg: c:\ZGB\common
