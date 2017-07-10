@@ -110,7 +110,7 @@ The good news is that you don't have to worry much about bank swapping since ZGB
 
 Bank management is managed in ZGB in 2 different ways
 - **Setting the bank on the filename**: if you name your file [filename].[bank].c that will be compiled into the [bank] specified. All your maps, tiles and music should use this convention (eg: player.b3.c will be compiled into bank 3)
-- **Setting the bank using #pragma bank=[bank]**: this is the standard way sdcc handles banks. You should use this in all your code files. Also for States and Sprites you need to declare an extra var so the engine will know where it has been placed (And it will swap banks before calling start, update or destroy automatically). The first 3 lines of your States and Sprites should look like:
+- **Setting the bank using #pragma bank [bank]**: this is the standard way sdcc handles banks. You should use this in all your code files. Also for States and Sprites you need to declare an extra var so the engine will know where it has been placed (And it will swap banks before calling start, update or destroy automatically). The first 3 lines of your States and Sprites should look like:
 ```
 #pragma bank 2
 #include "StateGame.h"
@@ -162,7 +162,7 @@ if(KEY_PRESSED(J_UP)) {
  - Compile and you should see your sprite moving upwards when pressing the up button
  - Now, to do the full movement, this is how your SpritePlayer.c should look:
 ```
-#pragma bank=2
+#pragma bank 2
 #include "SpritePlayer.h"
 UINT8 bank_SPRITE_PLAYER = 2;
 
@@ -316,7 +316,7 @@ DECLARE_SPRITE(SPRITE_ENEMY);
 
 * Create another file **SpriteEnemy.c** inside de src folder with the next content: 
 ```
-#pragma bank=2
+#pragma bank 2
 #include "SpriteEnemy.h"
 UINT8 bank_SPRITE_ENEMY = 2;
 
@@ -360,7 +360,7 @@ void Start_STATE_GAME() {
 
 * Write the next code on **SpriteEnemy.c**
 ```
-#pragma bank=2
+#pragma bank 2
 #include "SpriteEnemy.h"
 UINT8 bank_SPRITE_ENEMY = 2;
 
