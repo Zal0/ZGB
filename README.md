@@ -44,17 +44,18 @@ Installation <a name="installation"></a>
 
 Download and install:
 
- - gbdk ([2.95-3](https://sourceforge.net/projects/gbdk/files/gbdk-win32/2.95-3/) at the moment of writing this) on c:\gbdk
- - [msys](https://sourceforge.net/projects/mingw-w64/files/External%20binary%20packages%20%28Win64%20hosted%29/MSYS%20%2832-bit%29/MSYS-20111123.zip/download) anywhere but add the folder msys/bin to your Path environment var
- - [Make for Windows](http://gnuwin32.sourceforge.net/packages/make.htm)* on C:\gbdk\bin\make-3.81-bin
- - [BGB](http://bgb.bircd.org/) on c:\gbdk\bin
- - [mod2gbt](https://github.com/AntonioND/gbt-player/raw/master/legacy_gbdk/mod2gbt/mod2gbt.exe) on c:\gbdk\bin
- - [Game Boy Map Builder](http://www.devrs.com/gb/hmgd/gbmb.html) on c:\gbdk\tools\gbmb18
- - [Game Boy Tile Designer](http://www.devrs.com/gb/hmgd/gbtd.html) on c:\gbdk\tools\gbtd22
- - This repo, anywhere but create an env var called ZGB_PATH pointing the common folder eg: c:\ZGB\common
- - [Microsoft Visual Studio Community Edition](https://www.visualstudio.com/downloads/) (optional)
+ - gbdk [***2.95-3***](https://sourceforge.net/projects/gbdk/files/gbdk-win32/2.95-3/) Create and env var GBDK_HOME pointing to the installation path
+ - [***msys***](https://sourceforge.net/projects/mingw-w64/files/External%20binary%20packages%20%28Win64%20hosted%29/MSYS%20%2832-bit%29/MSYS-20111123.zip/download) anywhere but add the folder msys/bin to your Path environment var
+ - [***Make for Windows***](http://gnuwin32.sourceforge.net/packages/make.htm)* anywhere but add the folder bin to your Path **BEFORE** msys/bin
+ - [***SDCC***](https://sourceforge.net/projects/sdcc/files/sdcc-win64/3.6.0/sdcc-3.6.0-x64-setup.exe/download), make sure you check the option "add to PATH environment variable" when prompted
+ - [***BGB***](http://bgb.bircd.org/) on GBDK_HOME\bin
+ - [***mod2gbt***](https://github.com/Zal0/gbt-player/raw/master/legacy_gbdk/mod2gbt/mod2gbt.exe) on GBDK_HOME\bin
+ - [***Game Boy Map Builder***](http://www.devrs.com/gb/hmgd/gbmb.html) on c:\gbdk\tools\gbmb18
+ - [***Game Boy Tile Designer***](http://www.devrs.com/gb/hmgd/gbtd.html) on c:\gbdk\tools\gbtd22
+ - ***This repo***, anywhere but create an env var called ZGB_PATH pointing the common folder eg: c:\ZGB\common
+ - [***Microsoft Visual Studio Community Edition***](https://www.visualstudio.com/downloads/) (optional)
 
-*The make that comes with msys doesn't print any error messages and that's why you need to download make for windows too.
+*The make that comes with msys doesn't print any linker error messages and that's why you need to download make for windows too.
 
 States and Sprites <a name="states-and-sprites"></a>
 ----------------------------------------------------
@@ -109,9 +110,9 @@ The good news is that you don't have to worry much about bank swapping since ZGB
 
 Bank management is managed in ZGB in 2 different ways
 - **Setting the bank on the filename**: if you name your file [filename].[bank].c that will be compiled into the [bank] specified. All your maps, tiles and music should use this convention (eg: player.b3.c will be compiled into bank 3)
-- **Setting the bank using #pragma bank=[bank]**: this is the standard way gbdk handles banks. You should use this in all your code files. Also for States and Sprites you need to declare an extra var so the engine will know where it has been placed (And it will swap banks before calling start, update or destroy automatically). The first 3 lines of your States and Sprites should look like:
+- **Setting the bank using #pragma bank=[bank]**: this is the standard way sdcc handles banks. You should use this in all your code files. Also for States and Sprites you need to declare an extra var so the engine will know where it has been placed (And it will swap banks before calling start, update or destroy automatically). The first 3 lines of your States and Sprites should look like:
 ```
-#pragma bank=2
+#pragma bank 2
 #include "StateGame.h"
 UINT8 bank_STATE_GAME = 2;
 ```
