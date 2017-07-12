@@ -49,7 +49,7 @@ void DrawSprite(struct Sprite* sprite) {
 		frame = sprite->current_frame;
 	}
 	
-	DrawFrame(sprite->oam_idx, sprite->size, sprite->first_tile + (frame << sprite->size), sprite->x, sprite->y, sprite->flags);
+	DrawFrame(sprite->size, sprite->first_tile + (frame << sprite->size), sprite->x, sprite->y, sprite->flags);
 }
 
 unsigned char* tile_coll;

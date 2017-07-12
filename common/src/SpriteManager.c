@@ -41,7 +41,6 @@ void SpriteManagerReset() {
 	sprite_manager_sprites_pool[0] = 0;
 	for(i = 0; i != N_SPRITE_MANAGER_SPRITES; ++i) {
 		sprite_manager_sprites[i] = (struct Sprite*)&sprite_manager_sprites_mem[sizeof(struct Sprite) * (UINT16)i];
-		sprite_manager_sprites[i]->oam_idx = i << 1;
 
 		StackPush(sprite_manager_sprites_pool, i);		
 		move_sprite(i << 1, 200, 200);
@@ -115,8 +114,6 @@ void SpriteManagerFlushRemove() {
 		if(THIS->marked_for_removal) {
 			StackPush(sprite_manager_sprites_pool, sprite_manager_updatables[THIS_IDX + 1u]);
 			VectorRemovePos(sprite_manager_updatables, THIS_IDX);
-			move_sprite(THIS->oam_idx, 200, 200);
-			move_sprite(THIS->oam_idx + 1, 200, 200);
 				
 			PUSH_BANK(spriteBanks[THIS->type]);
 				spriteDestroyFuncs[THIS->type]();
@@ -126,17 +123,23 @@ void SpriteManagerFlushRemove() {
 	sprite_manager_removal_check = 0;
 }
 
+extern UINT8* oams;
+extern UINT8* oam;
+UINT8* cached_oam;
+
 UINT8 THIS_IDX;
 struct Sprite* THIS;
 void SpriteManagerUpdate() {
+	cached_oam = oam;
+	oam = oams;
 	for(THIS_IDX = 0u; THIS_IDX != sprite_manager_updatables[0]; ++THIS_IDX) {
 		THIS = sprite_manager_sprites[sprite_manager_updatables[THIS_IDX + 1]];
 		if(!THIS->marked_for_removal) {
 
 			PUSH_BANK(spriteBanks[THIS->type]);
-				spriteUpdateFuncs[THIS->type]();
+			spriteUpdateFuncs[THIS->type]();
 			
-				if(scroll_target == THIS)
+			if(scroll_target == THIS)
 					RefreshScroll();
 
 				if( ((scroll_x - THIS->x - 16u - THIS->lim_x)          & 0x8000u) &&
@@ -150,6 +153,12 @@ void SpriteManagerUpdate() {
 				}
 			POP_BANK;
 		}
+	}
+
+	//Clean the previous oam struct
+	while(oam < cached_oam) {
+		*oam = 200;
+		oam += 4;
 	}
 
 	if(sprite_manager_removal_check) {

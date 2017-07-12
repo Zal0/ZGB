@@ -8,7 +8,6 @@
 
 struct Sprite {
 	//Frame info
-	UINT8 oam_idx; //oam assigned to this sprite
 	FrameSize size;
 	UINT8 first_tile; //tile offset, for animation indices
 

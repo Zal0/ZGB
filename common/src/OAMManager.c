@@ -25,9 +25,9 @@ UINT8 LoadSprite(UINT8 n_tiles, unsigned char* data, UINT8 bank, UINT8 frame_siz
 }
 
 UINT8* oams = (__REG)0xC000;
+UINT8* oam;
 
-void DrawOAMSprite(UINT8 oam_idx, UINT8 idx, UINT8 x, UINT8 y, UINT8 flags) {
-	UINT8* oam = (oams + (oam_idx << 2));
+void DrawOAMSprite(UINT8 idx, UINT8 x, UINT8 y, UINT8 flags) {
 #ifdef CGB
 	flags = sprites_pal[idx] | flags;
 #endif
