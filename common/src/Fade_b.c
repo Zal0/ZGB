@@ -73,11 +73,12 @@ void FadeInCOLOR() {
 }
 
 void FadeIn_b() {
+#ifdef CGB
 	if (_cpu == CGB_TYPE) {
 		FadeInCOLOR();
-	} else {
+	} else
+#endif
 		FadeInDMG();
-	}
 }
 
 void FadeOutDMG() {
@@ -92,10 +93,11 @@ void FadeOutColor() {
 }
 
 void FadeOut_b() {
+#ifdef CGB
 	if (_cpu == CGB_TYPE) {
 		FadeOutColor();
-	} else {
+	} else 
+#endif
 		FadeOutDMG();
-	}
 }
 
