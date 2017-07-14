@@ -19,6 +19,6 @@ extern UINT8* oams;
 extern UINT8 last_sprite_loaded;
 
 UINT8 LoadSprite(UINT8 n_tiles, unsigned char* data, UINT8 bank, UINT8 frame_size, unsigned char* palette_idx);
-void DrawOAMSprite(UINT8 idx, UINT8 x, UINT8 y, UINT8 flags);
+void DrawOAMSprite(UINT8 y, UINT8 x, UINT8 idx, UINT8 flags);
 
 #endif
