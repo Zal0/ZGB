@@ -1,6 +1,7 @@
 #include "Sprite.h"
 #include "Scroll.h"
 #include "BankManager.h"
+#include "SpriteManager.h"
 
 void InitSprite(struct Sprite* sprite, FrameSize size, UINT8 first_tile) {
 	sprite->size = size;
@@ -31,8 +32,12 @@ void SetSpriteAnim(struct Sprite* sprite, UINT8* data, UINT8 speed) {
 	}
 }
 
+#define SCREENWIDTH_PLUS_32 192 //160 + 32
+#define SCREENHEIGHT_PLUS_32 176 //144 + 32
 extern UINT8 delta_time;
 void DrawSprite(struct Sprite* sprite) {
+	UINT16 screen_x;
+	UINT16 screen_y;
 	UINT8 frame;
 	if(sprite->anim_data) {	
 		sprite->accum_ticks += sprite->anim_speed << delta_time;
@@ -48,8 +53,19 @@ void DrawSprite(struct Sprite* sprite) {
 	} else {
 		frame = sprite->current_frame;
 	}
-	
-	DrawFrame(sprite->size, sprite->first_tile + (frame << sprite->size), sprite->x, sprite->y, sprite->flags);
+
+	screen_x = THIS->x - scroll_x;
+	screen_y = THIS->y - scroll_y;
+	//It might sound stupid adding 32 in both sides but remember the values are unsigned! (and maybe truncated after substracting scroll_)
+	if((screen_x + 32u < SCREENWIDTH_PLUS_32) && (screen_y + 32 < SCREENHEIGHT_PLUS_32)) {
+		DrawFrame(sprite->size, sprite->first_tile + (frame << sprite->size), screen_x, screen_y, sprite->flags);		
+	} else {
+		if((screen_x + THIS->lim_x + 16) > ((THIS->lim_x << 1) + 16 + SCREENWIDTH) ||
+				(screen_y + THIS->lim_y + 16) > ((THIS->lim_y << 1) + 16 + SCREENHEIGHT)
+		) {
+			SpriteManagerRemove(THIS_IDX);
+		}
+	}
 }
 
 unsigned char* tile_coll;

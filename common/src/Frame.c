@@ -5,15 +5,7 @@
 #define SCREENWIDTH_PLUS_32 192 //160 + 32
 #define SCREENHEIGHT_PLUS_32 176 //144 + 32
 
-void DrawFrame(FrameSize size, int idx, UINT16 x, UINT16 y, UINT8 flags){
-	x -= scroll_x;
-	y -= scroll_y;
-
-	//It might sound stupid adding 32 in both sides but remember the values are unsigned! (and maybe truncated after substracting scroll_)
-	if((x + 32u > SCREENWIDTH_PLUS_32) || (y + 32 > SCREENHEIGHT_PLUS_32)) {
-		return;
-	}
-	
+void DrawFrame(FrameSize size, int idx, UINT8 x, UINT8 y, UINT8 flags){
 	switch(size) {
 		//case FRAME_8x8: //For some reason enabling this, breaks the compiler
 		//	DrawOAMSprite(idx, x + 8u, y + 16u, flags);

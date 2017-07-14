@@ -138,23 +138,14 @@ void SpriteManagerUpdate() {
 
 			PUSH_BANK(spriteBanks[THIS->type]);
 			spriteUpdateFuncs[THIS->type]();
-			
-			if(scroll_target == THIS)
-					RefreshScroll();
 
-				if( ((scroll_x - THIS->x - 16u - THIS->lim_x)          & 0x8000u) &&
-						((THIS->x - scroll_x - SCREENWIDTH - THIS->lim_x)  & 0x8000u) &&
-						((scroll_y - THIS->y - 16u - THIS->lim_y)          & 0x8000u) &&
-						((THIS->y - scroll_y - SCREENHEIGHT - THIS->lim_y) & 0x8000u)
-				) { 
-					DrawSprite(THIS); //this needs to be done using the sprite bank because the animation array is stored there
-				} else {
-					SpriteManagerRemove(THIS_IDX);
-				}
+			DrawSprite(THIS); //this needs to be done using the sprite bank because the animation array is stored there
+
 			POP_BANK;
 		}
 	}
 
+	RefreshScroll();
 	//Clean the previous oam struct
 	while(oam < cached_oam) {
 		*oam = 200;
