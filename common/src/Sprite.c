@@ -119,7 +119,7 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 					if(scroll_collisions[*tile_coll] == 1u || 
 						(scroll_collisions_down[*tile_coll] == 1u && //Tile that only checks collisions when going down
 						 scroll_collisions_down[*(tile_coll - scroll_tiles_w)] == 0) &&  //The one above is not collidable (so we can crate a big block putting some of there together)
-						 (((start_y - y - 1) >> 3) != (start_y >> 3)) //The is entering the collidable tile in this moment
+						 (((start_y - y) >> 3) != (start_y >> 3)) //The is entering the collidable tile in this moment
 					) {
 						y -= (start_y & (UINT16)7u) + 1;
 						ret = *tile_coll;
