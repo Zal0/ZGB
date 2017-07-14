@@ -139,13 +139,15 @@ void SpriteManagerUpdate() {
 			PUSH_BANK(spriteBanks[THIS->type]);
 			spriteUpdateFuncs[THIS->type]();
 
+			if(THIS == scroll_target)
+				RefreshScroll();
+
 			DrawSprite(THIS); //this needs to be done using the sprite bank because the animation array is stored there
 
 			POP_BANK;
 		}
 	}
-
-	RefreshScroll();
+	
 	//Clean the previous oam struct
 	while(oam < cached_oam) {
 		*oam = 200;
