@@ -13,12 +13,15 @@ struct OAMData {
 	UINT8 idx;
 	UINT8 flags;
 };
-extern UINT8* oams;
+
+#define OAMS  ((UINT8*)((UINT16)oam & 0xFF00))
 #define OAM(A) ((struct OAMData*)(oams + (A << 2)))
 
 extern UINT8 last_sprite_loaded;
 
 UINT8 LoadSprite(UINT8 n_tiles, unsigned char* data, UINT8 bank, UINT8 frame_size, unsigned char* palette_idx);
+void SwapOAMs();
+void ClearOAMs();
 void DrawOAMSprite(UINT8 y, UINT8 x, UINT8 idx, UINT8 flags);
 
 #endif

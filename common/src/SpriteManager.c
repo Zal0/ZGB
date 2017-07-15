@@ -41,11 +41,9 @@ void SpriteManagerReset() {
 	sprite_manager_sprites_pool[0] = 0;
 	for(i = 0; i != N_SPRITE_MANAGER_SPRITES; ++i) {
 		sprite_manager_sprites[i] = (struct Sprite*)&sprite_manager_sprites_mem[sizeof(struct Sprite) * (UINT16)i];
-
 		StackPush(sprite_manager_sprites_pool, i);		
-		move_sprite(i << 1, 200, 200);
-		move_sprite((i << 1) + 1, 200, 200);
 	}
+	ClearOAMs();
 
 	//Clear the list of updatable sprites
 	sprite_manager_updatables[0] = 0;
@@ -123,15 +121,12 @@ void SpriteManagerFlushRemove() {
 	sprite_manager_removal_check = 0;
 }
 
-extern UINT8* oams;
 extern UINT8* oam;
-UINT8* cached_oam;
-
+extern UINT8* oam0;
+extern UINT8* oam1;
 UINT8 THIS_IDX;
 struct Sprite* THIS;
 void SpriteManagerUpdate() {
-	cached_oam = oam;
-	oam = oams;
 	for(THIS_IDX = 0u; THIS_IDX != sprite_manager_updatables[0]; ++THIS_IDX) {
 		THIS = sprite_manager_sprites[sprite_manager_updatables[THIS_IDX + 1]];
 		if(!THIS->marked_for_removal) {
@@ -147,12 +142,8 @@ void SpriteManagerUpdate() {
 			POP_BANK;
 		}
 	}
-	
-	//Clean the previous oam struct
-	while(oam < cached_oam) {
-		*oam = 200;
-		oam += 4;
-	}
+
+	SwapOAMs();
 
 	if(sprite_manager_removal_check) {
 		SpriteManagerFlushRemove();
