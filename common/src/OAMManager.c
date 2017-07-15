@@ -29,7 +29,7 @@ UINT8* oam0 = (__REG)0xC000;
 UINT8* oam1 = (__REG)0xCF00;
 void SwapOAMs() {
 	//Clean the previous oam struct
-	UINT8* cached_oam = ((UINT8*)((UINT16)oam & 0xFF00) == 0xC000) ? oam0 : oam1;
+	UINT8* cached_oam = ((UINT8*)((UINT16)oam & 0xFF00) == (__REG)0xC000) ? oam0 : oam1;
 	while(oam < cached_oam) {
 		*oam = 200;
 		oam += 4;
