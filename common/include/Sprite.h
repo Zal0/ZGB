@@ -35,6 +35,10 @@ struct Sprite {
 	UINT8 custom_data[CUSTOM_DATA_SIZE];
 };
 
+#define SPRITE_SET_VMIRROR(SPRITE)   (SPRITE->flags |= 32)
+#define SPRITE_UNSET_VMIRROR(SPRITE) (SPRITE->flags &= ~32)
+#define SPRITE_GET_VMIRROR(SPRITE)   (SPRITE->flags & 32)
+
 void InitSprite(struct Sprite* sprite, FrameSize size, UINT8 first_tile);
 void SetSpriteAnim(struct Sprite* sprite, UINT8* data, UINT8 speed);
 void DrawSprite(struct Sprite* sprite);

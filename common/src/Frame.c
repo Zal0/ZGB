@@ -22,7 +22,7 @@ void DrawFrame(FrameSize size, int idx, UINT8 x, UINT8 y, UINT8 flags){
 			break;
 
 		case FRAME_16x16:
-			if(flags & OAM_VERTICAL_FLAG){
+			if(flags & 32){
 				DrawOAMSprite(y + 16u, x + 8u,  idx + 2u, flags);
 				DrawOAMSprite(y + 16u, x + 16u, idx,      flags);
 			} else {

@@ -2,11 +2,6 @@
 #define OAMMANAGER_H
 #include <gb/gb.h> 
 
-typedef enum {
-	OAM_VERTICAL_FLAG   = 0x20,
-	OAM_HORIZONTAL_FLAG = 0x40
-} OAMFLAGS;
-
 struct OAMData {
 	UINT8 y;
 	UINT8 x;
