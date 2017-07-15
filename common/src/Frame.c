@@ -5,7 +5,13 @@
 #define SCREENWIDTH_PLUS_32 192 //160 + 32
 #define SCREENHEIGHT_PLUS_32 176 //144 + 32
 
+extern UINT8 sprites_pal[];
+
 void DrawFrame(FrameSize size, int idx, UINT8 x, UINT8 y, UINT8 flags){
+#ifdef CGB
+	flags = sprites_pal[idx] | flags;
+#endif
+
 	switch(size) {
 		//case FRAME_8x8: //For some reason enabling this, breaks the compiler
 		//	DrawOAMSprite(idx, x + 8u, y + 16u, flags);

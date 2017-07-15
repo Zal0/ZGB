@@ -58,11 +58,8 @@ void ClearOAMs() {
 }
 
 void DrawOAMSprite(UINT8 y, UINT8 x, UINT8 idx, UINT8 flags) {
-#ifdef CGB
-	flags = sprites_pal[idx] | flags;
-#endif
-	
 	y; x; idx; flags; // to avoid warning: unreferenced function argument
+
 __asm
 ;store in bc the address stored in oam ptr
 	ld	hl,#_oam
