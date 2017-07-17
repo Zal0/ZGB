@@ -9,7 +9,9 @@ extern UINT8 sprites_pal[];
 
 void DrawFrame(FrameSize size, int idx, UINT8 x, UINT8 y, UINT8 flags){
 #ifdef CGB
-	flags = sprites_pal[idx] | flags;
+	if(_cpu == CGB_TYPE && (flags & 0x10) == 0) { //In GBC I am gonna use bit 4 to know if this sprite is using a custom palette 
+		flags = sprites_pal[idx] | (flags & 0xF8);
+	}
 #endif
 
 	switch(size) {
