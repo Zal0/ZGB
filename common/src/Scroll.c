@@ -109,9 +109,11 @@ void InitWindow(UINT8 x, UINT8 y, UINT8 w, UINT8 h, UINT8* map, UINT8 bank, UINT
 	set_win_tiles(x, y, w, h, map);
 	
 	#ifdef CGB
-	VBK_REG = 1;
-		set_win_tiles(x, y, w, h, cmap);
-	VBK_REG = 0;
+	if(cmap) {
+		VBK_REG = 1;
+			set_win_tiles(x, y, w, h, cmap);
+		VBK_REG = 0;
+	}
 	#endif
 
 	POP_BANK;
