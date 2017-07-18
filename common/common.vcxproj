@@ -41,6 +41,7 @@
     <ClCompile Include="src\Fade.c" />
     <ClCompile Include="src\Fade_b.c" />
     <ClCompile Include="src\Frame.c" />
+    <ClCompile Include="src\Frame_b.c" />
     <ClCompile Include="src\Keys.c" />
     <ClCompile Include="src\main.c" />
     <ClCompile Include="src\Math.c" />

@@ -1,12 +1,14 @@
 #include "Frame.h"
 #include "OAMManager.h"
 #include "Scroll.h"
+#include "BankManager.h"
 
 #define SCREENWIDTH_PLUS_32 192 //160 + 32
 #define SCREENHEIGHT_PLUS_32 176 //144 + 32
 
 extern UINT8 sprites_pal[];
 
+void DrawFrame32x32(int idx, UINT8 x, UINT8 y, UINT8 flags);
 void DrawFrame(FrameSize size, int idx, UINT8 x, UINT8 y, UINT8 flags){
 #ifdef CGB
 	if(_cpu == CGB_TYPE && (flags & 0x10) == 0) { //In GBC I am gonna use bit 4 to know if this sprite is using a custom palette 
@@ -33,8 +35,10 @@ void DrawFrame(FrameSize size, int idx, UINT8 x, UINT8 y, UINT8 flags){
 			}
 			break;
 
-		//case FRAME_32x32:
-			//TODO
-		//	break;
+		case FRAME_32x32:
+			PUSH_BANK(1);
+			DrawFrame32x32(idx, x, y, flags);
+			POP_BANK;
+			break;
 	}
 }
