@@ -7,8 +7,13 @@
 
 #define SCREEN_TILES_W       20 // 160 >> 3 = 20
 #define SCREEN_TILES_H       18 // 144 >> 3 = 18
-#define SCREEN_TILE_REFRES_W 23
-#define SCREEN_TILE_REFRES_H 21
+#define SCREEN_PAD_LEFT   1
+#define SCREEN_PAD_RIGHT  2
+#define SCREEN_PAD_TOP    1
+#define SCREEN_PAD_BOTTOM 2
+
+#define SCREEN_TILE_REFRES_W (SCREEN_TILES_W + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT)
+#define SCREEN_TILE_REFRES_H (SCREEN_TILES_H + SCREEN_PAD_TOP  + SCREEN_PAD_BOTTOM)
 
 #define TOP_MOVEMENT_LIMIT 30u
 #define BOTTOM_MOVEMENT_LIMIT 100u
@@ -177,9 +182,9 @@ void InitScrollColor(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll
 
 	//Change bank now, after copying the collision array (it can be in a different bank)
 	PUSH_BANK(bank);
-	y = DespRight(scroll_y, 3);
-	for(i = 0u; i != SCREEN_TILE_REFRES_H && y != scroll_h; ++i, y ++) {
-		ScrollUpdateRow(DespRight(scroll_x, 3) - 1,  y - 1);
+	y = scroll_y >> 3;
+	for(i = 0u; i != (SCREEN_TILE_REFRES_H) && y != scroll_h; ++i, y ++) {
+		ScrollUpdateRow((scroll_x >> 3) - SCREEN_PAD_LEFT,  y - SCREEN_PAD_TOP);
 	}
 	POP_BANK;
 }
@@ -308,17 +313,17 @@ void MoveScroll(INT16 x, INT16 y) {
 
 	if(current_column != new_column) {
 		if(new_column > current_column) {
-			ScrollUpdateColumnWithDelay(new_column - 2u + SCREEN_TILE_REFRES_W, new_row - 1);
+			ScrollUpdateColumnWithDelay(new_column - SCREEN_PAD_LEFT + SCREEN_TILE_REFRES_W - 1, new_row - SCREEN_PAD_TOP);
 		} else {
-			ScrollUpdateColumnWithDelay(new_column - 1u, new_row - 1);
+			ScrollUpdateColumnWithDelay(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP);
 		}
 	}
 	
 	if(current_row != new_row) {
 		if(new_row > current_row) {
-			ScrollUpdateRowWithDelay(new_column - 1, new_row + SCREEN_TILE_REFRES_H - 2);
+			ScrollUpdateRowWithDelay(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP + SCREEN_TILE_REFRES_H - 1);
 		} else {
-			ScrollUpdateRowWithDelay(new_column - 1, new_row - 1);
+			ScrollUpdateRowWithDelay(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP);
 		}
 	}
 
