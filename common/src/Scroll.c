@@ -50,6 +50,34 @@ unsigned char* pending_w_cmap = 0;
 INT16 pending_w_x, pending_w_y;
 UINT8 pending_w_i;
 
+extern UINT8 vbl_count;
+UINT8 current_vbl_count;
+void SetTile(UINT16 r, UINT8 t) {
+	r; t;
+	//while((STAT_REG & 0x2) != 0);
+	//*(__REG)(r) = t;
+__asm
+;bc = r, hl = t
+	ldhl	sp,#2
+	ld	c,(hl)
+	inc	hl
+	ld	b,(hl)
+	ldhl	sp,#4
+
+;while 0xff41 & 02 != 0 (can't write)
+	ld	de,#0xff41
+1$:
+	ld	a,(de)
+	and	a, #0x02
+	jr	NZ,1$
+
+;Write tile
+	ld	a,(hl)
+	ld	(bc),a
+	ret
+__endasm;
+}
+
 void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	UINT8 replacement = *t;
 	UINT8 i;
@@ -81,7 +109,11 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 		}
 	}
 
-	set_bkg_tiles(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), 1, 1, &replacement); //i pointing to zero will replace the tile by the deafault one
+	id = 0x9800 + (0x1F & (x + scroll_offset_x)) + ((0x1F & (y + scroll_offset_y)) << 5);
+	SetTile(id, replacement);
+	SetTile(id, replacement);
+	
+
 	#ifdef CGB
 		if (_cpu == CGB_TYPE) {
 			VBK_REG = 1;
