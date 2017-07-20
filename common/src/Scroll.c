@@ -64,7 +64,7 @@ __asm
 	ld	b,(hl)
 	ldhl	sp,#4
 
-;while 0xff41 & 02 != 0 (can't write)
+;while 0xff41 & 02 != 0 (cannot write)
 	ld	de,#0xff41
 1$:
 	ld	a,(de)
@@ -85,7 +85,8 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	UINT8 type = 255u;
 	UINT16 id = 0u;
 	UINT16 tmp_y;
-	
+	c;
+
 	if(x < 0 || y < 0 || U_LESS_THAN(scroll_tiles_w - 1, x) || U_LESS_THAN(scroll_tiles_h - 1, y)) {
 		replacement = 0;
 	} else {
@@ -139,6 +140,7 @@ void ZInitScrollTilesColor(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UI
 }
 
 void InitWindow(UINT8 x, UINT8 y, UINT8 w, UINT8 h, UINT8* map, UINT8 bank, UINT8* cmap) {
+	cmap;
 	PUSH_BANK(bank);
 	set_win_tiles(x, y, w, h, map);
 	
@@ -191,7 +193,7 @@ void ScrollSetMapColor(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 ban
 	pending_w_i = 0;
 }
 
-void InitScrollColor(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list, UINT8* coll_list_down, UINT8 bank, unsigned char* color_map) {
+void InitScrollColor(UINT16 map_w, UINT16 map_h, unsigned char* map, const UINT8* coll_list, const UINT8* coll_list_down, UINT8 bank, unsigned char* color_map) {
 	UINT8 i;
 	INT16 y;
 	
