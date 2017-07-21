@@ -119,7 +119,9 @@ void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *
 
 UINT16 default_palette[] = {RGB(31, 31, 31), RGB(20, 20, 20), RGB(10, 10, 10), RGB(0, 0, 0)};
 void main() {
-	cpu_fast(); //Calling this on DMG seems to do nothing but it doesn't crash or anything
+#ifdef CGB
+	cpu_fast();
+#endif
 
 	PUSH_BANK(init_bank);
 	InitStates();
@@ -129,7 +131,11 @@ void main() {
 	disable_interrupts();
 	add_VBL(vbl_update);
 	add_TIM(MusicUpdate);
+#ifdef CGB
 	TMA_REG = _cpu == CGB_TYPE ? 120U : 0xBCU;
+#else
+	TMA_REG = 0xBCU;
+#endif
   TAC_REG = 0x04U;
 
 	set_interrupts(VBL_IFLAG | TIM_IFLAG);
@@ -162,12 +168,13 @@ void main() {
 		current_state = next_state;
 		scroll_target = 0;
 		
+#ifdef CGB
 		if (_cpu == CGB_TYPE) {
 			SetPalette(BG_PALETTE, 0, 1, default_palette, 1);
 			SetPalette(SPRITES_PALETTE, 0, 1, default_palette, 1);
-		} else {
+		} else 
+#endif
 			BGP_REG = OBP0_REG = OBP1_REG = PAL_DEF(0, 1, 2, 3);
-		}
 
 		PUSH_BANK(stateBanks[current_state]);
 			(startFuncs[current_state])();

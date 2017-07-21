@@ -7,8 +7,13 @@
 
 #define SCREEN_TILES_W       20 // 160 >> 3 = 20
 #define SCREEN_TILES_H       18 // 144 >> 3 = 18
-#define SCREEN_TILE_REFRES_W 23
-#define SCREEN_TILE_REFRES_H 19
+#define SCREEN_PAD_LEFT   1
+#define SCREEN_PAD_RIGHT  2
+#define SCREEN_PAD_TOP    1
+#define SCREEN_PAD_BOTTOM 2
+
+#define SCREEN_TILE_REFRES_W (SCREEN_TILES_W + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT)
+#define SCREEN_TILE_REFRES_H (SCREEN_TILES_H + SCREEN_PAD_TOP  + SCREEN_PAD_BOTTOM)
 
 #define TOP_MOVEMENT_LIMIT 30u
 #define BOTTOM_MOVEMENT_LIMIT 100u
@@ -45,8 +50,38 @@ unsigned char* pending_w_cmap = 0;
 INT16 pending_w_x, pending_w_y;
 UINT8 pending_w_i;
 
-//This function was thought for updating a whole square... can't find a better one that updates one tile only!
-//#define UPDATE_TILE(X, Y, T) set_bkg_tiles(0x1F & (UINT8)X, 0x1F & (UINT8)Y, 1, 1, T)
+extern UINT8 vbl_count;
+UINT8 current_vbl_count;
+void SetTile(UINT16 r, UINT8 t) {
+	r; t;
+	//while((STAT_REG & 0x2) != 0);
+	//*(__REG)(r) = t;
+__asm
+;bc = r, hl = t
+	ldhl	sp,#2
+	ld	c,(hl)
+	inc	hl
+	ld	b,(hl)
+	ldhl	sp,#4
+
+;while 0xff41 & 02 != 0 (cannot write)
+	ld	de,#0xff41
+1$:
+	ld	a,(de)
+	and	a, #0x02
+	jr	NZ,1$
+
+;Write tile
+	ld	a,(hl)
+	ld	(bc),a
+
+;Check again stat is 0 or 1
+	ld	a,(de)
+	and	a, #0x02
+	jr	NZ,1$
+	ret
+__endasm;
+}
 
 void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	UINT8 replacement = *t;
@@ -55,7 +90,8 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	UINT8 type = 255u;
 	UINT16 id = 0u;
 	UINT16 tmp_y;
-	
+	c;
+
 	if(x < 0 || y < 0 || U_LESS_THAN(scroll_tiles_w - 1, x) || U_LESS_THAN(scroll_tiles_h - 1, y)) {
 		replacement = 0;
 	} else {
@@ -79,7 +115,10 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 		}
 	}
 
-	set_bkg_tiles(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), 1, 1, &replacement); //i pointing to zero will replace the tile by the deafault one
+	id = 0x9800 + (0x1F & (x + scroll_offset_x)) + ((0x1F & (y + scroll_offset_y)) << 5);
+	SetTile(id, replacement);
+	
+
 	#ifdef CGB
 		if (_cpu == CGB_TYPE) {
 			VBK_REG = 1;
@@ -105,13 +144,16 @@ void ZInitScrollTilesColor(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UI
 }
 
 void InitWindow(UINT8 x, UINT8 y, UINT8 w, UINT8 h, UINT8* map, UINT8 bank, UINT8* cmap) {
+	cmap;
 	PUSH_BANK(bank);
 	set_win_tiles(x, y, w, h, map);
 	
 	#ifdef CGB
-	VBK_REG = 1;
-		set_win_tiles(x, y, w, h, cmap);
-	VBK_REG = 0;
+	if(cmap) {
+		VBK_REG = 1;
+			set_win_tiles(x, y, w, h, cmap);
+		VBK_REG = 0;
+	}
 	#endif
 
 	POP_BANK;
@@ -155,7 +197,7 @@ void ScrollSetMapColor(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 ban
 	pending_w_i = 0;
 }
 
-void InitScrollColor(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll_list, UINT8* coll_list_down, UINT8 bank, unsigned char* color_map) {
+void InitScrollColor(UINT16 map_w, UINT16 map_h, unsigned char* map, const UINT8* coll_list, const UINT8* coll_list_down, UINT8 bank, unsigned char* color_map) {
 	UINT8 i;
 	INT16 y;
 	
@@ -178,9 +220,9 @@ void InitScrollColor(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll
 
 	//Change bank now, after copying the collision array (it can be in a different bank)
 	PUSH_BANK(bank);
-	y = DespRight(scroll_y, 3);
-	for(i = 0u; i != SCREEN_TILE_REFRES_H && y != scroll_h; ++i, y ++) {
-		ScrollUpdateRow(DespRight(scroll_x, 3) - 1,  y);
+	y = scroll_y >> 3;
+	for(i = 0u; i != (SCREEN_TILE_REFRES_H) && y != scroll_h; ++i, y ++) {
+		ScrollUpdateRow((scroll_x >> 3) - SCREEN_PAD_LEFT,  y - SCREEN_PAD_TOP);
 	}
 	POP_BANK;
 }
@@ -188,7 +230,7 @@ void InitScrollColor(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8* coll
 void ScrollUpdateRowR() {
 	UINT8 i = 0u;
 	
-	for(i = 0u; i != SCREEN_TILE_REFRES_H && pending_w_i != 0; ++i, -- pending_w_i)  {
+	for(i = 0u; i != 5 && pending_w_i != 0; ++i, -- pending_w_i)  {
 		#ifdef CGB
 		UPDATE_TILE(pending_w_x ++, pending_w_y, pending_w_map ++, pending_w_cmap++);
 		#else
@@ -198,7 +240,9 @@ void ScrollUpdateRowR() {
 }
 
 void ScrollUpdateRowWithDelay(INT16 x, INT16 y) {
-	FinishPendingScrollUpdates();
+	while(pending_w_i) {
+		ScrollUpdateRowR();
+	}
 
 	pending_w_x = x;
 	pending_w_y = y;
@@ -245,7 +289,9 @@ void ScrollUpdateColumnR() {
 }
 
 void ScrollUpdateColumnWithDelay(INT16 x, INT16 y) {
-	FinishPendingScrollUpdates();
+	while(pending_h_i) {
+		ScrollUpdateColumnR();
+	}
 
 	pending_h_x = x;
 	pending_h_y = y;
@@ -278,15 +324,6 @@ void ScrollUpdateColumn(INT16 x, INT16 y) {
 	POP_BANK;
 }
 
-void FinishPendingScrollUpdates() {
-	while(pending_w_i) {
-		ScrollUpdateRowR();
-	}
-	while(pending_h_i) {
-		ScrollUpdateColumnR();
-	}
-}
-
 void RefreshScroll() {
 	UINT16 ny = scroll_y;
 
@@ -307,24 +344,24 @@ void MoveScroll(INT16 x, INT16 y) {
 	PUSH_BANK(scroll_bank);
 	ClampScrollLimits(&x, &y);
 
-	current_column = DespRight(scroll_x, 3);
-	new_column     = DespRight(x, 3);
-	current_row    = DespRight(scroll_y, 3);
-	new_row        = DespRight(y, 3);
+	current_column = scroll_x >> 3;
+	new_column     = x >> 3;
+	current_row    = scroll_y >> 3;
+	new_row        = y >> 3;
 
 	if(current_column != new_column) {
 		if(new_column > current_column) {
-			ScrollUpdateColumnWithDelay(new_column - 2u + SCREEN_TILE_REFRES_W, new_row);
+			ScrollUpdateColumnWithDelay(new_column - SCREEN_PAD_LEFT + SCREEN_TILE_REFRES_W - 1, new_row - SCREEN_PAD_TOP);
 		} else {
-			ScrollUpdateColumnWithDelay(new_column - 1u, new_row);
+			ScrollUpdateColumnWithDelay(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP);
 		}
 	}
 	
 	if(current_row != new_row) {
 		if(new_row > current_row) {
-			ScrollUpdateRowWithDelay(new_column - 1, new_row + SCREEN_TILE_REFRES_H - 1);
+			ScrollUpdateRowWithDelay(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP + SCREEN_TILE_REFRES_H - 1);
 		} else {
-			ScrollUpdateRowWithDelay(new_column - 1, new_row);
+			ScrollUpdateRowWithDelay(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP);
 		}
 	}
 

@@ -41,12 +41,9 @@ void SpriteManagerReset() {
 	sprite_manager_sprites_pool[0] = 0;
 	for(i = 0; i != N_SPRITE_MANAGER_SPRITES; ++i) {
 		sprite_manager_sprites[i] = (struct Sprite*)&sprite_manager_sprites_mem[sizeof(struct Sprite) * (UINT16)i];
-		sprite_manager_sprites[i]->oam_idx = i << 1;
-
 		StackPush(sprite_manager_sprites_pool, i);		
-		move_sprite(i << 1, 200, 200);
-		move_sprite((i << 1) + 1, 200, 200);
 	}
+	ClearOAMs();
 
 	//Clear the list of updatable sprites
 	sprite_manager_updatables[0] = 0;
@@ -115,8 +112,6 @@ void SpriteManagerFlushRemove() {
 		if(THIS->marked_for_removal) {
 			StackPush(sprite_manager_sprites_pool, sprite_manager_updatables[THIS_IDX + 1u]);
 			VectorRemovePos(sprite_manager_updatables, THIS_IDX);
-			move_sprite(THIS->oam_idx, 200, 200);
-			move_sprite(THIS->oam_idx + 1, 200, 200);
 				
 			PUSH_BANK(spriteBanks[THIS->type]);
 				spriteDestroyFuncs[THIS->type]();
@@ -126,6 +121,9 @@ void SpriteManagerFlushRemove() {
 	sprite_manager_removal_check = 0;
 }
 
+extern UINT8* oam;
+extern UINT8* oam0;
+extern UINT8* oam1;
 UINT8 THIS_IDX;
 struct Sprite* THIS;
 void SpriteManagerUpdate() {
@@ -134,23 +132,18 @@ void SpriteManagerUpdate() {
 		if(!THIS->marked_for_removal) {
 
 			PUSH_BANK(spriteBanks[THIS->type]);
-				spriteUpdateFuncs[THIS->type]();
-			
-				if(scroll_target == THIS)
-					RefreshScroll();
+			spriteUpdateFuncs[THIS->type]();
 
-				if( ((scroll_x - THIS->x - 16u - THIS->lim_x)          & 0x8000u) &&
-						((THIS->x - scroll_x - SCREENWIDTH - THIS->lim_x)  & 0x8000u) &&
-						((scroll_y - THIS->y - 16u - THIS->lim_y)          & 0x8000u) &&
-						((THIS->y - scroll_y - SCREENHEIGHT - THIS->lim_y) & 0x8000u)
-				) { 
-					DrawSprite(THIS); //this needs to be done using the sprite bank because the animation array is stored there
-				} else {
-					SpriteManagerRemove(THIS_IDX);
-				}
+			if(THIS == scroll_target)
+				RefreshScroll();
+
+			DrawSprite(THIS); //this needs to be done using the sprite bank because the animation array is stored there
+
 			POP_BANK;
 		}
 	}
+
+	SwapOAMs();
 
 	if(sprite_manager_removal_check) {
 		SpriteManagerFlushRemove();
