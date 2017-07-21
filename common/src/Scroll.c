@@ -74,6 +74,11 @@ __asm
 ;Write tile
 	ld	a,(hl)
 	ld	(bc),a
+
+;Check again stat is 0 or 1
+	ld	a,(de)
+	and	a, #0x02
+	jr	NZ,1$
 	ret
 __endasm;
 }
@@ -111,7 +116,6 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	}
 
 	id = 0x9800 + (0x1F & (x + scroll_offset_x)) + ((0x1F & (y + scroll_offset_y)) << 5);
-	SetTile(id, replacement);
 	SetTile(id, replacement);
 	
 
