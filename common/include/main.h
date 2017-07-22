@@ -37,7 +37,7 @@ typedef void (*Void_Func_SpritePtr)(struct Sprite*);
                                            UINT8* spritePalDatas[N_SPRITE_TYPES]
 
 extern UINT8 current_state;
-void SetState(UINT8 state);
+void SetState(UINT8 state, UINT8 stop_music);
 extern UINT8 delta_time;
 
 void PlayMusic(const unsigned char* music[], unsigned char bank, unsigned char loop);

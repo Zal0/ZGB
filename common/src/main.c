@@ -34,9 +34,11 @@ extern UINT8 spriteNumFrames[];
 extern UINT8 spriteIdxs[];
 extern UINT8* spritePalDatas[];
 
-void SetState(UINT8 state) {
+void SetState(UINT8 state, UINT8 stop_music) {
 	state_running = 0;
 	next_state = state;
+	if(stop_music)
+		gbt_stop();
 }
 
 void* last_music = 0;
@@ -159,7 +161,6 @@ void main() {
 		FadeIn();
 		DISPLAY_OFF
 
-		gbt_stop();
 		last_music = 0;
 
 		last_sprite_loaded = 0;
