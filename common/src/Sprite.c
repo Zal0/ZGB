@@ -58,7 +58,7 @@ void DrawSprite(struct Sprite* sprite) {
 	screen_y = sprite->y - scroll_y;
 	//It might sound stupid adding 32 in both sides but remember the values are unsigned! (and maybe truncated after substracting scroll_)
 	if((screen_x + 32u < SCREENWIDTH_PLUS_32) && (screen_y + 32 < SCREENHEIGHT_PLUS_32)) {
-		DrawFrame(sprite->size, sprite->first_tile + (frame << sprite->size), screen_x, screen_y, sprite->flags);		
+		DrawFrame(sprite->size, sprite->first_tile + GetFrameCount(frame, sprite->size), screen_x, screen_y, sprite->flags);		
 	} else {
 		if((screen_x + THIS->lim_x + 16) > ((THIS->lim_x << 1) + 16 + SCREENWIDTH) ||
 				(screen_y + THIS->lim_y + 16) > ((THIS->lim_y << 1) + 16 + SCREENHEIGHT)
