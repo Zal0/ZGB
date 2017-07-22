@@ -20,6 +20,8 @@ extern UINT8 scroll_offset_y;
 extern struct Sprite* scroll_target;
 extern UINT8 clamp_enabled;
 
+// used to control where the scroll_target is (left/center/right of the screen)
+extern UINT8 adjustableOffsetX;
 
 #define InitScrollTiles(first_tile, n_tiles, tile_data, tile_bank) ZInitScrollTilesColor(first_tile, n_tiles, tile_data, tile_bank, 0)
 #define InitScrollTilesColor(first_tile, n_tiles, tile_data, tile_bank) ZInitScrollTilesColor(first_tile, n_tiles, tile_data, tile_bank, tile_data##CGB)
@@ -38,8 +40,8 @@ void FinishPendingScrollUpdates();
 
 UINT8* GetScrollTilePtr(UINT16 x, UINT16 y);
 UINT8 GetScrollTile(UINT16 x, UINT16 y);
-UINT8 ScrollFindTile(UINT16 map_w, unsigned char* map, UINT8 bank, UINT8 tile,
-	UINT8 start_x, UINT8 start_y, UINT8 w, UINT8 h,
+UINT8 ScrollFindTile(UINT16 map_w, unsigned char* map, UINT8 bank, UINT8 tile, UINT8 mask,
+	UINT16 start_x, UINT16 start_y, UINT8 w, UINT8 h,
 	UINT16* x, UINT16* y);
 
 #endif

@@ -39,6 +39,10 @@ UINT8 scroll_bank;
 UINT8 scroll_offset_x = 0;
 UINT8 scroll_offset_y = 0;
 
+// used to control where the scroll_target is (left/center/right of the screen)
+// 0 = left of screen, SCREENWIDTH >> 1 = center of screen, etc.
+UINT8 adjustableOffsetX;
+
 INT16 pending_h_x, pending_h_y;
 UINT8 pending_h_i;
 unsigned char* pending_h_map = 0;
@@ -200,7 +204,8 @@ void ScrollSetMapColor(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 ban
 void InitScrollColor(UINT16 map_w, UINT16 map_h, unsigned char* map, const UINT8* coll_list, const UINT8* coll_list_down, UINT8 bank, unsigned char* color_map) {
 	UINT8 i;
 	INT16 y;
-	
+	// by default the scroll target is drawn at the screen's center
+	adjustableOffsetX = SCREENWIDTH >> 1;
 	ScrollSetMapColor(map_w, map_h, map, bank, color_map);
 
 	for(i = 0u; i != 128; ++i) {
@@ -334,7 +339,7 @@ void RefreshScroll() {
 			ny = scroll_target->y - TOP_MOVEMENT_LIMIT;
 		}
 
-		MoveScroll(scroll_target->x - (SCREENWIDTH >> 1), ny);
+		MoveScroll(scroll_target->x - adjustableOffsetX, ny);
 	}
 }
 
