@@ -1,7 +1,7 @@
 ZGB
 ===
 
-A little engine for creating games for the original Game Boy.
+A little engine for creating games for the original GameBoy
 
 Features <a name="features"></a>
 --------------------------------
