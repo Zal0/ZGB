@@ -15,6 +15,6 @@ INT16 DespRight(INT16 a, INT16 b);
 
 #define SET_BIT_MASK(N, MASK) N |= MASK
 #define UNSET_BIT_MASK(N, MASK) N &= ~MASK
-#define GET_BIT_MASK(N, MASH) (N & MASK)
+#define GET_BIT_MASK(N, MASK) (N & MASK)
 
 #endif
