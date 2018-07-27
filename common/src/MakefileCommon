@@ -1,3 +1,6 @@
+GBDK_HOME := $(ZGB_PATH)/../env/gbdk
+PATH := C:/Users/gsantos/Documents/gb/projs/ZGB/env/make-3.81-bin/bin;C:/Users/gsantos/Documents/gb/projs/ZGB/env/SDCC/bin;C:/Users/gsantos/Documents/gb/projs/ZGB/env/MSYS-20111123/msys/bin;$(PATH)
+
 #--- Default build will be release. Can be overiden passing BUILD_TYPE = debug as a parameter
 BUILD_TYPE = Release
 CGB = yes
