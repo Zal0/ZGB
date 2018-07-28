@@ -1,3 +1,6 @@
+GBDK_HOME := $(ZGB_PATH)/../env/gbdk
+PATH := $(ZGB_PATH)/../env/make-3.81-bin/bin;$(ZGB_PATH)/../env/SDCC/bin;$(ZGB_PATH)/../env/msys/bin;$(PATH)
+
 #--- Default build will be release. Can be overiden passing BUILD_TYPE = debug as a parameter
 BUILD_TYPE = Release
 CGB = yes
@@ -15,8 +18,8 @@ BINDIR = ../bin
 LCC = $(GBDK_HOME)/bin/lcc
 SDCC = sdcc
 SDASGB = sdasgb
-MOD2GBT = $(GBDK_HOME)/bin/mod2gbt
-BGB = $(GBDK_HOME)/bin/bgb/bgb
+MOD2GBT = $(ZGB_PATH)/../env/mod2gbt
+BGB = $(ZGB_PATH)/../env/bgb/bgb
 
 ifneq ($(strip $(N_BANKS)),)
 	LFLAGS_NBANKS = -Wl-yt1 -Wl-yo$(N_BANKS)

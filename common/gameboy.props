@@ -4,12 +4,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <NMakeBuildCommandLine>cd src
-make run BUILD_TYPE=$(Configuration)</NMakeBuildCommandLine>
+$(ZGB_PATH)\..\env\make-3.81-bin\bin\make run BUILD_TYPE=$(Configuration)</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>cd src
-make clean BUILD_TYPE=$(Configuration)
-make BUILD_TYPE=$(Configuration)</NMakeReBuildCommandLine>
+$(ZGB_PATH)\..\env\make-3.81-bin\bin\make clean BUILD_TYPE=$(Configuration)
+$(ZGB_PATH)\..\env\make-3.81-bin\bin\make BUILD_TYPE=$(Configuration)</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>cd src
-make clean BUILD_TYPE=$(Configuration)</NMakeCleanCommandLine>
+$(ZGB_PATH)\..\env\make-3.81-bin\bin\make clean BUILD_TYPE=$(Configuration)</NMakeCleanCommandLine>
     <NMakeIncludeSearchPath>C:\gbdk\include;$(ZGB_PATH)\include;.\include;.\src;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <OutDir>$(SolutionDir)bin\</OutDir>
   </PropertyGroup>
