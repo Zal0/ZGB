@@ -27,7 +27,7 @@ void Printf(const char* txt, ...);
 #define DPRINT
 #else
 #define INIT_CONSOLE(FONT, FONT_BANK, NLINES) \
-	INIT_FONT(FONT, FONT_BANK, PRINT_WIN) \
+	INIT_FONT(FONT, FONT_BANK, PRINT_WIN); \
 	print_x = 0;\
 	print_y = 0;\
 	WX_REG = 7;\
