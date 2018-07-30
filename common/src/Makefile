@@ -1,5 +1,3 @@
-PROJECT_NAME = Common
+run:
 
-all: build_lib
-
-include ../../common/src/MakefileCommon
+clean:

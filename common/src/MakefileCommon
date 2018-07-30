@@ -14,6 +14,7 @@ endif
 
 OBJDIR = ../$(BUILD_TYPE)
 OBJDIR_RES = ../$(BUILD_TYPE)/res
+OBJDIR_ZGB = ../$(BUILD_TYPE)/zgb
 BINDIR = ../bin
 
 LCC = $(GBDK_HOME)/bin/lcc
@@ -40,15 +41,13 @@ LFLAGS = $(LFLAGS_NBANKS)
 
 current_dir = $(shell pwd)
 
-ASMS      = $(foreach dir,.,$(notdir $(wildcard $(dir)/*.s)))
-CLASSES   = $(foreach dir,.,$(notdir $(wildcard $(dir)/*.c)))
-RESOURCES = $(foreach dir,../res/src,$(notdir $(wildcard $(dir)/*.c)))
-MUSICS    = $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.mod)))
-OBJS = $(RESOURCES:%.c=$(OBJDIR_RES)/%.o) $(MUSICS:%.mod=$(OBJDIR_RES)/%.mod.o) $(CLASSES:%.c=$(OBJDIR)/%.o) $(ASMS:%.s=$(OBJDIR)/%.o)
-
-
-#until I can find a way to create a .lib I'll be linking the.o files from my common library
-COMMON_OBJS = $(wildcard $(ZGB_PATH_UNIX)/$(BUILD_TYPE)/*.o)
+ASMS_ZGB    = $(foreach dir,$(ZGB_PATH_UNIX)/src,$(notdir $(wildcard $(dir)/*.s)))
+CLASSES_ZGB = $(foreach dir,$(ZGB_PATH_UNIX)/src,$(notdir $(wildcard $(dir)/*.c)))
+ASMS        = $(foreach dir,.,$(notdir $(wildcard $(dir)/*.s))) 
+CLASSES     = $(foreach dir,.,$(notdir $(wildcard $(dir)/*.c))) 
+RESOURCES   = $(foreach dir,../res/src,$(notdir $(wildcard $(dir)/*.c)))
+MUSICS      = $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.mod)))
+OBJS = $(RESOURCES:%.c=$(OBJDIR_RES)/%.o) $(MUSICS:%.mod=$(OBJDIR_RES)/%.mod.o) $(ASMS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.o)  $(ASMS:%.s=$(OBJDIR)/%.o) $(CLASSES:%.c=$(OBJDIR)/%.o)
 
 $(BINDIR):
 	@echo Creating folder $(BINDIR)
@@ -61,6 +60,10 @@ $(OBJDIR):
 $(OBJDIR_RES):
 	@echo Creating folder $(OBJDIR_RES)
 	@mkdir $(OBJDIR_RES)
+	
+$(OBJDIR_ZGB):
+	@echo Creating folder $(OBJDIR_ZGB)
+	@mkdir $(OBJDIR_ZGB)
 
 $(OBJDIR)/%.o: %.s
 	@echo compiling $<
@@ -69,6 +72,15 @@ $(OBJDIR)/%.o: %.s
 $(OBJDIR)/%.o: %.c
 	@echo compiling $<
 	@$(SDCC) $(CFLAGS) $(filter --constseg CODE_%, $(subst .b,--constseg CODE_,$(suffix $(<:%.c=%)))) -c -o $@ $<
+	
+$(OBJDIR)/zgb/%.o: $(ZGB_PATH_UNIX)/src/%.s
+	@echo compiling $<
+	@$(SDASGB) -plosgff -I"libc" $(filter --constseg CODE_%, $(subst .b,--constseg CODE_,$(suffix $(<:%.s=%)))) -c -o $@ $<
+
+$(OBJDIR)/zgb/%.o: $(ZGB_PATH_UNIX)/src/%.c
+	@echo compiling $<
+	@$(SDCC) $(CFLAGS) $(filter --constseg CODE_%, $(subst .b,--constseg CODE_,$(suffix $(<:%.c=%)))) -c -o $@ $<
+	
 
 $(OBJDIR_RES)/%.o: ../res/src/%.c
 	@echo compiling resource: $<
@@ -83,7 +95,7 @@ $(OBJDIR_RES)/%.mod.o: ../res/music/%.mod
 	@mv output.c $(OBJDIR)/music_tmp.c
 	@$(SDCC) $(CFLAGS) -c -o $@ $(OBJDIR)/music_tmp.c
 	
-$(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR) $(OBJDIR_RES) $(BINDIR) $(OBJS) $(COMMON_OBJS)
+$(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR) $(OBJDIR_RES) $(OBJDIR_ZGB) $(BINDIR) $(OBJS) $(COMMON_OBJS)
 	@echo Linking
 	$(LCC) $(LFLAGS) -o $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) $(OBJS) $(COMMON_OBJS)
 	mv $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
@@ -96,6 +108,7 @@ clean:
 	@echo Cleaning $(PROJECT_NAME)
 	@rm -rf $(BINDIR)
 	@rm  -f $(OBJDIR)/*.*
+	@rm -rf $(OBJDIR_ZGB)
 	@rm -rf .map
 	@rm -rf .lst
 
