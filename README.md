@@ -22,5 +22,5 @@ Features <a name="features"></a>
 
 For more info and detailed instructions please refer to the [wiki](https://github.com/Zal0/ZGB/wiki)
 
-![gif](https://github.com/Zal0/bitbitjam2016/blob/develop/bitbit3/res/marketing/screenshots/pretty.gif?raw=true) ![gif](https://github.com/Zal0/gbjam2016/raw/develop/res/marketing/gifs/fly.gif?raw=true)
+![gif](https://raw.githubusercontent.com/Zal0/ZGB/master/doc%20files/tuto.gif) ![gif](https://github.com/Zal0/bitbitjam2016/blob/develop/bitbit3/res/marketing/screenshots/pretty.gif?raw=true) ![gif](https://github.com/Zal0/gbjam2016/raw/develop/res/marketing/gifs/fly.gif?raw=true)
 
