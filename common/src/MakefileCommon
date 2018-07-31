@@ -49,6 +49,20 @@ RESOURCES   = $(foreach dir,../res/src,$(notdir $(wildcard $(dir)/*.c)))
 MUSICS      = $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.mod)))
 OBJS = $(RESOURCES:%.c=$(OBJDIR_RES)/%.o) $(MUSICS:%.mod=$(OBJDIR_RES)/%.mod.o) $(ASMS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.o)  $(ASMS:%.s=$(OBJDIR)/%.o) $(CLASSES:%.c=$(OBJDIR)/%.o)
 
+#dependencies -------------------------------------------------------------------------------------------
+-include $(CLASSES:%.c=$(OBJDIR)/%.d) $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.d)
+
+create_d = @set -e; rm -f $@; \
+	       $(SDCC) -MM $(CFLAGS) $< > $@.$$$$; \
+ 	       sed 's,\($*\)\.rel[ :]*,$(OBJDIR)/$*.o $@ : ,g' < $@.$$$$ > $@;
+
+$(OBJDIR)/zgb/%.d: $(ZGB_PATH_UNIX)/src/%.c
+	$(create_d)
+
+$(OBJDIR)/%.d: %.c
+	$(create_d)
+#---------------------------------------------------------------------------------------------------------
+
 $(BINDIR):
 	@echo Creating folder $(BINDIR)
 	@mkdir $(BINDIR)
