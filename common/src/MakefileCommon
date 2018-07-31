@@ -122,7 +122,6 @@ clean:
 	@echo Cleaning $(PROJECT_NAME)
 	@rm -rf $(BINDIR)
 	@rm  -f $(OBJDIR)/*.*
-	@rm -rf $(OBJDIR_ZGB)
 	@rm -rf .map
 	@rm -rf .lst
 
