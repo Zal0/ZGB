@@ -54,7 +54,8 @@ OBJS = $(RESOURCES:%.c=$(OBJDIR_RES)/%.o) $(MUSICS:%.mod=$(OBJDIR_RES)/%.mod.o) 
 
 create_d = @set -e; rm -f $@; \
 	       $(SDCC) -MM $(CFLAGS) $< > $@.$$$$; \
- 	       sed 's,\($*\)\.rel[ :]*,$(OBJDIR)/$*.o $@ : ,g' < $@.$$$$ > $@;
+ 	       sed 's,\($*\)\.rel[ :]*,$(OBJDIR)/$*.o $@ : ,g' < $@.$$$$ > $@; \
+		   rm -f $@.$$$$
 
 $(OBJDIR)/zgb/%.d: $(ZGB_PATH_UNIX)/src/%.c
 	$(create_d)
