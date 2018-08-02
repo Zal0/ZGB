@@ -50,18 +50,22 @@ MUSICS      = $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.mod)))
 OBJS = $(RESOURCES:%.c=$(OBJDIR_RES)/%.o) $(MUSICS:%.mod=$(OBJDIR_RES)/%.mod.o) $(ASMS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.o)  $(ASMS:%.s=$(OBJDIR)/%.o) $(CLASSES:%.c=$(OBJDIR)/%.o)
 
 #dependencies -------------------------------------------------------------------------------------------
--include $(CLASSES:%.c=$(OBJDIR)/%.d) $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.d)
+ifneq ($(MAKECMDGOALS),clean)
+-include $(CLASSES:%.c=$(OBJDIR)/%.d) 
+-include $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.d)
+endif
 
-create_d = @set -e; rm -f $@; \
-	       $(SDCC) -MM $(CFLAGS) $< > $@.$$$$; \
- 	       sed 's,\($*\)\.rel[ :]*,$(OBJDIR)/$*.o $@ : ,g' < $@.$$$$ > $@; \
-		   rm -f $@.$$$$
-
-$(OBJDIR)/zgb/%.d: $(ZGB_PATH_UNIX)/src/%.c
-	$(create_d)
+$(OBJDIR_ZGB)/%.d: $(ZGB_PATH_UNIX)/src/%.c
+	@set -e; mkdir -p $(OBJDIR_ZGB); rm -f $@; \
+	$(SDCC) -MM $(CFLAGS) $< > $@.$$$$; \
+ 	sed 's,\($*\)\.rel[ :]*,$(OBJDIR_ZGB)/$*.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
 
 $(OBJDIR)/%.d: %.c
-	$(create_d)
+	@set -e; mkdir -p $(OBJDIR);rm -f $@; \
+	$(SDCC) -MM $(CFLAGS) $< > $@.$$$$; \
+ 	sed 's,\($*\)\.rel[ :]*,$(OBJDIR)/$*.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
 #---------------------------------------------------------------------------------------------------------
 
 $(BINDIR):
@@ -123,6 +127,7 @@ clean:
 	@echo Cleaning $(PROJECT_NAME)
 	@rm -rf $(BINDIR)
 	@rm  -f $(OBJDIR)/*.*
+	@rm  -f $(OBJDIR_ZGB)/*.*
 	@rm -rf .map
 	@rm -rf .lst
 
