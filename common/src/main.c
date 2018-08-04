@@ -19,21 +19,6 @@ UINT8 delta_time;
 UINT8 current_state;
 UINT8 state_running = 0;
 
-extern UINT8 stateBanks[];
-extern Void_Func_Void startFuncs[];
-extern Void_Func_Void updateFuncs[];
-
-extern UINT8 spriteBanks[];
-extern Void_Func_Void spriteStartFuncs[];
-extern Void_Func_Void spriteUpdateFuncs[];
-extern Void_Func_Void spriteDestroyFuncs[];
-extern UINT8* spriteDatas[];
-extern UINT8 spriteDataBanks[];
-extern FrameSize spriteFrameSizes[];
-extern UINT8 spriteNumFrames[];
-extern UINT8 spriteIdxs[];
-extern UINT8* spritePalDatas[];
-
 void SetState(UINT8 state) {
 	state_running = 0;
 	next_state = state;
@@ -76,21 +61,6 @@ void vbl_update() {
 		}
 	}
 }
-
-void InitSpriteInfo(UINT8 type, UINT8 bank, Void_Func_Void startFunc, Void_Func_Void updateFunc, Void_Func_Void destroyFunc, 
-	              UINT8* data, UINT8 dataBank, FrameSize size, UINT8 num_frames, UINT8* pal_data) {
-	spriteBanks[type] = bank;
-	spriteStartFuncs[type] = startFunc;
-	spriteUpdateFuncs[type] = updateFunc;
-	spriteDestroyFuncs[type] = destroyFunc;
-
-	spriteDatas[type] = data;
-	spriteDataBanks[type] = dataBank;
-	spriteFrameSizes[type] = size;
-	spriteNumFrames[type] = num_frames << size;
-
-	spritePalDatas[type] = pal_data;
-}  
 
 void InitStates();
 void InitSprites();
