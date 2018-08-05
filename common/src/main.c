@@ -13,7 +13,6 @@
 #include "Palette.h"
 
 extern UINT8 next_state;
-extern UINT8 init_bank;
 
 UINT8 delta_time;
 UINT8 current_state;
@@ -93,7 +92,7 @@ void main() {
 	cpu_fast();
 #endif
 
-	PUSH_BANK(init_bank);
+	PUSH_BANK(1);
 	InitStates();
 	InitSprites();
 	POP_BANK;
