@@ -7,6 +7,7 @@ Features <a name="features"></a>
 --------------------------------
 
  - Coding in C using [gbdk](http://gbdk.sourceforge.net/)
+ - Updated to the latest version of SDCC (3.6.0)
  - Based on States and Sprites
  - 4-directional scroll 
  - Support maps bigger than 32x32
