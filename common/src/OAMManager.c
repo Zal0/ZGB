@@ -23,6 +23,8 @@ UINT8 LoadSprite(UINT8 n_tiles, unsigned char* data, UINT8 bank, UINT8 frame_siz
 	return last_sprite_loaded - n_tiles;
 }
 
+UINT8 __at (0xCF00) oam_mirror[160];
+
 UINT8* oam  = (__REG)0xC000;
 UINT8* oam0 = (__REG)0xC000;
 UINT8* oam1 = (__REG)0xCF00;
