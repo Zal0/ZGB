@@ -28,7 +28,6 @@ ifneq ($(strip $(N_BANKS)),)
 endif
 
 CFLAGS = -mgbz80 --no-std-crt0 --fsigned-char --use-stdout -Dnonbanked=  -I $(GBDK_HOME)/include -I $(GBDK_HOME)/include/asm $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include 
-#-Wa-l -Wl-m -Wl-j 
 
 EXTENSION = gb
 ifneq (,$(findstring Color,$(BUILD_TYPE)))
@@ -37,7 +36,7 @@ ifneq (,$(findstring Color,$(BUILD_TYPE)))
 	EXTENSION = gbc
 endif
 
-LFLAGS = $(LFLAGS_NBANKS)
+LFLAGS = $(LFLAGS_NBANKS) -Wl-m
 
 current_dir = $(shell pwd)
 
@@ -117,6 +116,7 @@ $(OBJDIR_RES)/%.mod.o: ../res/music/%.mod
 $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR) $(OBJDIR_RES) $(OBJDIR_ZGB) $(BINDIR) $(OBJS) $(COMMON_OBJS)
 	@echo Linking
 	$(LCC) $(LFLAGS) -o $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) $(OBJS) $(COMMON_OBJS)
+	mv .map $(OBJDIR)/$(PROJECT_NAME).map
 	mv $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
 
 build_lib: $(OBJDIR) $(OBJS)
