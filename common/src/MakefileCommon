@@ -46,7 +46,9 @@ ASMS        = $(foreach dir,.,$(notdir $(wildcard $(dir)/*.s)))
 CLASSES     = $(foreach dir,.,$(notdir $(wildcard $(dir)/*.c))) 
 RESOURCES   = $(foreach dir,../res/src,$(notdir $(wildcard $(dir)/*.c)))
 MUSICS      = $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.mod)))
-OBJS = $(RESOURCES:%.c=$(OBJDIR_RES)/%.o) $(MUSICS:%.mod=$(OBJDIR_RES)/%.mod.o) $(ASMS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.o)  $(ASMS:%.s=$(OBJDIR)/%.o) $(CLASSES:%.c=$(OBJDIR)/%.o)
+OBJS = $(RESOURCES:%.c=$(OBJDIR_RES)/%.o) $(MUSICS:%.mod=$(OBJDIR_RES)/%.mod.o) $(ASMS:%.s=$(OBJDIR)/%.o) $(CLASSES:%.c=$(OBJDIR)/%.o)
+OBJS_ZGB = $(ASMS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.o)
+OBJS_ZGB_LIB = $(ASMS_ZGB:%.s=\n%.o) $(CLASSES_ZGB:%.c=\n%.o)
 
 #dependencies -------------------------------------------------------------------------------------------
 ifneq ($(MAKECMDGOALS),clean)
@@ -113,11 +115,16 @@ $(OBJDIR_RES)/%.mod.o: ../res/music/%.mod
 	@mv output.c $(OBJDIR)/music_tmp.c
 	@$(SDCC) $(CFLAGS) -c -o $@ $(OBJDIR)/music_tmp.c
 	
-$(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR) $(OBJDIR_RES) $(OBJDIR_ZGB) $(BINDIR) $(OBJS) $(COMMON_OBJS)
+$(OBJDIR_ZGB)/zgb.lib: $(OBJDIR_ZGB) $(OBJS_ZGB)
+	@echo creating zgb.lib
+	@rm -f $(OBJDIR_ZGB)/zgb.lib
+	@echo -e "$(OBJS_ZGB_LIB)" >> $(OBJDIR_ZGB)/zgb.lib
+
+$(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR_ZGB)/zgb.lib $(OBJDIR) $(OBJDIR_RES) $(BINDIR) $(OBJS)
 	@echo Linking
-	$(LCC) $(LFLAGS) -o $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) $(OBJS) $(COMMON_OBJS)
-	mv .map $(OBJDIR)/$(PROJECT_NAME).map
-	mv $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
+	@$(LCC) $(LFLAGS) -k$(OBJDIR_ZGB) -lzgb.lib -o $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) $(OBJS)
+	@mv .map $(OBJDIR)/$(PROJECT_NAME).map
+	@mv $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
 
 build_lib: $(OBJDIR) $(OBJS)
 
