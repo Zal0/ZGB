@@ -139,7 +139,7 @@ int main(int argc, char* argv[])
 	fprintf(file, "UINT8 %s_width = %d;\n", export_name, map.width);
 	fprintf(file, "UINT8 %s_height = %d;\n", export_name, map.height);
 	fprintf(file, "const unsigned char %s[] = {", export_name);
-	for(int i = 0; i < map.width * map.height; ++i) {
+	for(INTEGER i = 0; i < map.width * map.height; ++i) {
 		if(i != 0)
 			fprintf(file, ",");
 		if((i % 10) == 0)
