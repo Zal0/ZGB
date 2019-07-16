@@ -86,7 +86,7 @@ struct TilePal {
 
 int main(int argc, char* argv[]) {
 	if(argc != 3) {
-		printf("usage: gbr2c file_in.gbr file_out.c");
+		printf("usage: gbr2c file_in.gbr export_folder");
 		return 1;
 	}
 
