@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 typedef unsigned short WORD;
 typedef unsigned int LONG;
@@ -63,6 +64,31 @@ struct MapTileData {
 	bool v_flip;
 };
 
+struct MapExportSettings {
+	char file_name[256];
+	BYTE file_type;
+	char section_name[39];
+	char label_name[40];
+	BYTE bank;
+	WORD plane_count;
+	WORD plane_order;
+	WORD map_layout;
+	bool split;
+	INTEGER split_size;
+	bool split_bank;
+	BYTE sel_tab;
+	WORD prop_count;
+	WORD tile_offset;
+};
+
+int GetBank(char* str) {
+	char* bank_info = strstr(str, ".b");
+	if(bank_info) {
+		return atoi(bank_info + 2);
+	}
+	return 0;
+}
+
 int main(int argc, char* argv[])
 {
 	if(argc != 3) {
@@ -79,6 +105,7 @@ int main(int argc, char* argv[])
 	ObjectHeader object_header;
 	Map map;
 	MapTileData* map_tiles_data;
+	MapExportSettings map_export_settings;
 
 	char marker[3];
 	char version;
@@ -116,6 +143,23 @@ int main(int argc, char* argv[])
  				break;
 			}
 
+			case OBJECT_TYPE_MAP_EXPORT_SETTINGS:
+				READ(map_export_settings.file_name);
+				READ(map_export_settings.file_type);
+				READ(map_export_settings.section_name);
+				READ(map_export_settings.label_name);
+				READ(map_export_settings.bank);
+				READ(map_export_settings.plane_count);
+				READ(map_export_settings.plane_order);
+				READ(map_export_settings.map_layout);
+				READ(map_export_settings.split);
+				READ(map_export_settings.split_size);
+				READ(map_export_settings.split_bank);
+				READ(map_export_settings.sel_tab);
+				READ(map_export_settings.prop_count);
+				READ(map_export_settings.tile_offset);
+				break;
+
 			default:
 				fseek(file, object_header.length, SEEK_CUR);
 				break;
@@ -123,10 +167,15 @@ int main(int argc, char* argv[])
 	}
 	fclose(file);
 
-	char export_name[512];
-	char* slash_pos = strrchr(argv[1], '/') + 1;
-	strncpy(export_name, slash_pos, strlen(slash_pos) - 4);
-	export_name[strlen(slash_pos) - 4] = '\0';
+	char export_name[256];
+	if(strcmp(map_export_settings.label_name, "") == 0) {
+		char* slash_pos = strrchr(argv[1], '/') + 1;
+		strncpy(export_name, slash_pos, strlen(slash_pos) - 4);
+		export_name[strlen(slash_pos) - 4] = '\0';
+	} else {
+		//For backwards compatilibilty: "" is the default name, if it has been modified then use that value
+		strcpy(export_name, map_export_settings.label_name);
+	}
 
 	char export_file[512];
 	sprintf(export_file, "%s/%s.c", argv[2], export_name);
@@ -135,6 +184,14 @@ int main(int argc, char* argv[])
 		printf("Error writing file");
 		return 1;
 	}
+
+	int bank = GetBank(argv[1]);
+	if(bank == 0) //for backwards compatibility, extract the bank from tile_export.name
+		bank = GetBank(map_export_settings.file_name);
+	if(bank == 0)
+		bank = map_export_settings.bank;
+	
+	fprintf(file, "#pragma bank %d\n", bank);
 
 	fprintf(file, "UINT8 %s_width = %d;\n", export_name, map.width);
 	fprintf(file, "UINT8 %s_height = %d;\n", export_name, map.height);
