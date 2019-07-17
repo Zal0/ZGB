@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 typedef unsigned short WORD;
 typedef unsigned int LONG;
@@ -83,6 +84,14 @@ struct TilePal {
 
 #define BIT(V, B) (1 & (V >> B))
 #define BYTE(B0, B1, B2, B3, B4, B5, B6, B7) ((B0 << 7) | (B1 << 6) | (B2 << 5) | (B3 << 4) | (B4 << 3) | (B5 << 2) | (B6 << 1) | B7)
+
+int GetBank(char* str) {
+	char* bank_info = strstr(str, ".b");
+	if(bank_info) {
+		return atoi(bank_info + 2);
+	}
+	return 0;
+}
 
 int main(int argc, char* argv[]) {
 	if(argc != 3) {
@@ -181,10 +190,15 @@ int main(int argc, char* argv[]) {
 	}
 	fclose(file);
 
-	char export_name[512];
-	char* slash_pos = strrchr(argv[1], '/') + 1;
-	strncpy(export_name, slash_pos, strlen(slash_pos) - 4);
-	export_name[strlen(slash_pos) - 4] = '\0';
+	char export_name[256];
+	if(strcmp(tile_export.label_name, "TileLabel") == 0) {
+		char* slash_pos = strrchr(argv[1], '/') + 1;
+		strncpy(export_name, slash_pos, strlen(slash_pos) - 4);
+		export_name[strlen(slash_pos) - 4] = '\0';
+	} else {
+		//For backwards compatilibilty: TileLabel is the default name, if it has been modified then use that value
+		strcpy(export_name, tile_export.label_name);
+	}
 
 	char export_file[512];
 	sprintf(export_file, "%s/%s.h", argv[2], export_name);
@@ -215,6 +229,14 @@ int main(int argc, char* argv[]) {
 		printf("Error writing file");
 		return 1;
 	}
+
+	int bank = GetBank(argv[1]);
+	if(bank == 0) //for backwards compatibility, extract the bank from tile_export.name
+		bank = GetBank(tile_export.file_name);
+	if(bank == 0)
+		bank = tile_export.bank;
+	
+	fprintf(file, "#pragma bank %d\n", bank);
 
 	if(tile_export.include_colors){
 		fprintf(file, "const unsigned char %sCGB[] = {\n\t", export_name);
