@@ -190,18 +190,21 @@ int main(int argc, char* argv[]) {
 	}
 	fclose(file);
 
+	char export_file_name[256];
+	char* slash_pos = strrchr(argv[1], '/') + 1;
+	strncpy(export_file_name, slash_pos, strlen(slash_pos) - 4);
+	export_file_name[strlen(slash_pos) - 4] = '\0';
+
 	char export_name[256];
 	if(strcmp(tile_export.label_name, "TileLabel") == 0) {
-		char* slash_pos = strrchr(argv[1], '/') + 1;
-		strncpy(export_name, slash_pos, strlen(slash_pos) - 4);
-		export_name[strlen(slash_pos) - 4] = '\0';
+		strcpy(export_name, export_file_name);
 	} else {
 		//For backwards compatilibilty: TileLabel is the default name, if it has been modified then use that value
 		strcpy(export_name, tile_export.label_name);
 	}
 
 	char export_file[512];
-	sprintf(export_file, "%s/%s.h", argv[2], export_name);
+	sprintf(export_file, "%s/%s.h", argv[2], export_file_name);
 	file = fopen(export_file, "w");
 	if(!file) {
 		printf("Error writing file");
@@ -223,7 +226,7 @@ int main(int argc, char* argv[]) {
 
 	fclose(file);
 
-	sprintf(export_file, "%s/%s.c", argv[2], export_name);
+	sprintf(export_file, "%s/%s.c", argv[2], export_file_name);
 	file = fopen(export_file, "w");
 	if(!file) {
 		printf("Error writing file");
