@@ -252,9 +252,9 @@ int main(int argc, char* argv[]) {
 		fprintf(file, "\n};\n\n");
 	}
 
-	fprintf(file, "UINT8 %s_width = %d;\n", export_name, tile_set.info.width);
-	fprintf(file, "UINT8 %s_height = %d;\n", export_name, tile_set.info.height);
-	fprintf(file, "UINT8 %s_num_frames = %d;\n", export_name, tile_export.up_to - tile_export.from + 1);
+	fprintf(file, "const unsigned char %s_width = %d;\n", export_name, tile_set.info.width);
+	fprintf(file, "const unsigned char %s_height = %d;\n", export_name, tile_set.info.height);
+	fprintf(file, "const unsigned char %s_num_frames = %d;\n", export_name, tile_export.up_to - tile_export.from + 1);
 	fprintf(file, "const unsigned char %s[] = {", export_name);
 	for(int tile = tile_export.from; tile <= tile_export.up_to; ++ tile) {
 		for(int y = 0; y < tile_set.info.height; y += 16) {
