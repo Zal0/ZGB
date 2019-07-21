@@ -196,8 +196,8 @@ int main(int argc, char* argv[])
 	
 	fprintf(file, "#pragma bank %d\n", bank);
 
-	fprintf(file, "UINT8 %s_width = %d;\n", export_name, map.width);
-	fprintf(file, "UINT8 %s_height = %d;\n", export_name, map.height);
+	fprintf(file, "unsigned char %s_width = %d;\n", export_name, map.width);
+	fprintf(file, "unsigned char %s_height = %d;\n", export_name, map.height);
 	fprintf(file, "const unsigned char %s[] = {", export_name);
 	for(INTEGER i = 0; i < map.width * map.height; ++i) {
 		if(i != 0)
