@@ -89,6 +89,24 @@ int GetBank(char* str) {
 	return 0;
 }
 
+void ExtractFileName(char* path, char* file_name) {
+	char* slash_pos = strrchr(path, '/');
+	if(slash_pos == 0)
+		slash_pos = strrchr(path, '\\');
+	if(slash_pos != 0)
+		slash_pos ++;
+	else
+		slash_pos = path;
+
+	char* dot_pos = strchr(slash_pos, '.');
+	if(dot_pos == 0) {
+ 		strcpy(file_name, slash_pos);
+	} else {
+		strncpy(file_name, slash_pos, dot_pos - slash_pos);
+		file_name[dot_pos - slash_pos] = '\0';
+	}
+}
+
 int main(int argc, char* argv[])
 {
 	if(argc != 3) {
@@ -167,32 +185,47 @@ int main(int argc, char* argv[])
 	}
 	fclose(file);
 
-	char export_file_name[256];
-	char* slash_pos = strrchr(argv[1], '/') + 1;
-	strncpy(export_file_name, slash_pos, strlen(slash_pos) - 4);
-	export_file_name[strlen(slash_pos) - 4] = '\0';
+	//Extract bank
+	int bank = GetBank(argv[1]);
+	if(bank == 0) //for backwards compatibility, extract the bank from tile_export.name
+		bank = GetBank(map_export_settings.file_name);
+	if(bank == 0)
+		bank = map_export_settings.bank;
 
-	char export_name[256];
-	if(strcmp(map_export_settings.label_name, "") == 0) {
-		strcpy(export_name, export_file_name);
-	} else {
-		//For backwards compatilibilty: "" is the default name, if it has been modified then use that value
-		strcpy(export_name, map_export_settings.label_name);
+	//Adjust export file name and label name
+	if(strcmp(map_export_settings.file_name, "") == 0) { //Default value
+		ExtractFileName(argv[1], map_export_settings.file_name);  //Set argv[1] instead
 	}
 
+	if(strcmp(map_export_settings.label_name, "") == 0) { //Default value
+		ExtractFileName(argv[1], map_export_settings.label_name);  //Set argv[1] instead
+	}
+
+	char export_file_name[256]; //For both .h and .c
+	ExtractFileName(map_export_settings.file_name, export_file_name);
+
+	char export_name[256]; //For vars
+	ExtractFileName(map_export_settings.label_name, export_name);
+
 	char export_file[512];
-	sprintf(export_file, "%s/%s.c", argv[2], export_file_name);
+	sprintf(export_file, "%s/%s.h", argv[2], export_file_name);
 	file = fopen(export_file, "w");
 	if(!file) {
 		printf("Error writing file");
 		return 1;
 	}
 
-	int bank = GetBank(argv[1]);
-	if(bank == 0) //for backwards compatibility, extract the bank from tile_export.name
-		bank = GetBank(map_export_settings.file_name);
-	if(bank == 0)
-		bank = map_export_settings.bank;
+	fprintf(file, "extern unsigned char %s[];\n", export_name);
+
+	fclose(file);
+
+
+	sprintf(export_file, "%s/%s.c", argv[2], export_file_name);
+	file = fopen(export_file, "w");
+	if(!file) {
+		printf("Error writing file");
+		return 1;
+	}
 	
 	fprintf(file, "#pragma bank %d\n", bank);
 
