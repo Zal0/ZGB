@@ -90,7 +90,7 @@ int GetBank(char* str) {
 	if(bank_info) {
 		return atoi(bank_info + 2);
 	}
-	return 0;
+	return -1;
 }
 
 void ExtractFileName(char* path, char* file_name) {
@@ -210,10 +210,10 @@ int main(int argc, char* argv[]) {
 
 	//Extract bank
 	int bank = GetBank(argv[1]);
-	if(bank == 0) //for backwards compatibility, extract the bank from tile_export.name
+	if(bank == -1) //for backwards compatibility, extract the bank from tile_export.name
 		bank = GetBank(tile_export.file_name);
-	if(bank == 0)
-		bank = tile_export.bank;
+	if(bank == -1)
+		bank = tile_export.bank == 0 ? 2 : tile_export.bank;
 
 	//Adjust export file name and label name
 	if(strcmp(tile_export.file_name, "Export.z80") == 0) { //Default value
