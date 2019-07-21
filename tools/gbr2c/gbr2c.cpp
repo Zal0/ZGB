@@ -220,9 +220,8 @@ int main(int argc, char* argv[]) {
 			fprintf(file, "\n");
 		}
 		fprintf(file, "extern unsigned char %sCGB[];\n", export_name);
-		fprintf(file, "extern unsigned char %s[];\n", export_name);
 	}
-
+	fprintf(file, "extern unsigned char %s[];\n", export_name);
 
 	fclose(file);
 
