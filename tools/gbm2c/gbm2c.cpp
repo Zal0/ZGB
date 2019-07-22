@@ -158,6 +158,9 @@ int main(int argc, char* argv[])
 					map_tiles_data[i].h_flip = 0x1 & (record >> 22);
 					map_tiles_data[i].v_flip = 0x1 & (record >> 23);
 				}
+				int pending = object_header.length - num_tiles * 3;
+				if(pending)
+					fseek(file, pending, SEEK_CUR);
  				break;
 			}
 
