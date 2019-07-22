@@ -90,10 +90,10 @@ int GetBank(char* str) {
 	if(bank_info) {
 		return atoi(bank_info + 2);
 	}
-	return -1;
+	return 0;
 }
 
-void ExtractFileName(char* path, char* file_name) {
+void ExtractFileName(char* path, char* file_name, bool include_bank) {
 	char* slash_pos = strrchr(path, '/');
 	if(slash_pos == 0)
 		slash_pos = strrchr(path, '\\');
@@ -102,7 +102,7 @@ void ExtractFileName(char* path, char* file_name) {
 	else
 		slash_pos = path;
 
-	char* dot_pos = strchr(slash_pos, '.');
+	char* dot_pos = include_bank ? strrchr(slash_pos, '.') : strchr(slash_pos, '.');
 	if(dot_pos == 0) {
  		strcpy(file_name, slash_pos);
 	} else {
@@ -210,28 +210,24 @@ int main(int argc, char* argv[]) {
 
 	//Extract bank
 	int bank = GetBank(argv[1]);
-	if(bank == -1) //for backwards compatibility, extract the bank from tile_export.name
+	if(bank == 0) //for backwards compatibility, extract the bank from tile_export.name
 		bank = GetBank(tile_export.file_name);
-	if(bank == -1)
-		bank = tile_export.bank == 0 ? 2 : tile_export.bank;
+	if(bank == 0)
+		bank = tile_export.bank;
 
 	//Adjust export file name and label name
 	if(strcmp(tile_export.file_name, "Export.z80") == 0) { //Default value
-		ExtractFileName(argv[1], tile_export.file_name); //Set argv[1] instead
+		ExtractFileName(argv[1], tile_export.file_name, false); //Set argv[1] instead
 	}
 
 	if(strcmp(tile_export.label_name, "TileLabel") == 0) { //Default value
-		ExtractFileName(argv[1], tile_export.label_name); //Set argv[1] instead
+		ExtractFileName(argv[1], tile_export.label_name, false); //Set argv[1] instead
 	}
 
 	char export_file_name[256]; //For both .h and .c
-	ExtractFileName(tile_export.file_name, export_file_name);
-
-	char export_name[256]; //For vars
-	ExtractFileName(tile_export.label_name, export_name);
-
 	char export_file[512];
-	sprintf(export_file, "%s/%s.h", argv[2], export_file_name);
+	ExtractFileName(tile_export.file_name, export_file_name, false); //For backwards compatibility the header will be taken from the export filename (and not argv[1])
+	sprintf(export_file, "%s/%s.h", argv[2], export_file_name); 
 	file = fopen(export_file, "w");
 	if(!file) {
 		printf("Error writing file");
@@ -242,17 +238,18 @@ int main(int argc, char* argv[]) {
 		for(int i = 0; i < palettes.count; ++i) {
 			for(int c = 0; c < 4; ++c) {
 				Color color = palettes.colors[i].colors[c];
-				fprintf(file, "#define %sCGBPal%dc%d %d\n", export_name, i, c, (color.r >> 3) | ((color.g >> 3) << 5) | ((color.b >> 3) << 10));
+				fprintf(file, "#define %sCGBPal%dc%d %d\n", tile_export.label_name, i, c, (color.r >> 3) | ((color.g >> 3) << 5) | ((color.b >> 3) << 10));
 			}
 			fprintf(file, "\n");
 		}
-		fprintf(file, "extern unsigned char %sCGB[];\n", export_name);
+		fprintf(file, "extern unsigned char %sCGB[];\n", tile_export.label_name);
 	}
-	fprintf(file, "extern unsigned char %s[];\n", export_name);
+	fprintf(file, "extern unsigned char %s[];\n", tile_export.label_name);
 
 	fclose(file);
 
-	sprintf(export_file, "%s/%s.c", argv[2], export_file_name);
+	ExtractFileName(argv[1], export_file_name, true);
+	sprintf(export_file, "%s/%s.gbr.c", argv[2], export_file_name);
 	file = fopen(export_file, "w");
 	if(!file) {
 		printf("Error writing file");
@@ -262,7 +259,7 @@ int main(int argc, char* argv[]) {
 	fprintf(file, "#pragma bank %d\n", bank);
 
 	if(tile_export.include_colors){
-		fprintf(file, "const unsigned char %sCGB[] = {\n\t", export_name);
+		fprintf(file, "const unsigned char %sCGB[] = {\n\t", tile_export.label_name);
 		for(int tile = tile_export.from; tile <= tile_export.up_to; ++ tile) {
 			if(tile != tile_export.from)
 				fprintf(file, ",");
@@ -272,15 +269,16 @@ int main(int argc, char* argv[]) {
 		fprintf(file, "\n};\n\n");
 	}
 
-	fprintf(file, "const unsigned char %s_width = %d;\n", export_name, tile_set.info.width);
-	fprintf(file, "const unsigned char %s_height = %d;\n", export_name, tile_set.info.height);
-	fprintf(file, "const unsigned char %s_num_frames = %d;\n", export_name, tile_export.up_to - tile_export.from + 1);
-	fprintf(file, "const unsigned char %s[] = {", export_name);
+	fprintf(file, "const unsigned char %s_width = %d;\n", tile_export.label_name, tile_set.info.width);
+	fprintf(file, "const unsigned char %s_height = %d;\n", tile_export.label_name, tile_set.info.height);
+	fprintf(file, "const unsigned char %s_num_frames = %d;\n", tile_export.label_name, tile_export.up_to - tile_export.from + 1);
+	fprintf(file, "const unsigned char %s[] = {", tile_export.label_name);
+	int line_h = tile_set.info.height == 8 ? 8 : 16;
 	for(int tile = tile_export.from; tile <= tile_export.up_to; ++ tile) {
-		for(int y = 0; y < tile_set.info.height; y += 16) {
+		for(int y = 0; y < tile_set.info.height; y += line_h) {
 			for(int x = 0; x < tile_set.info.width; x += 8) {
 				unsigned char* data_ptr = &tile_set.data[(tile_set.info.width * tile_set.info.height) * tile +  tile_set.info.width * y + x];
-				for(int line = 0; line < 16; ++ line) {
+				for(int line = 0; line < line_h; ++ line) {
 					unsigned char l = BYTE(
 						BIT(data_ptr[0], 1), BIT(data_ptr[1], 1), BIT(data_ptr[2], 1), BIT(data_ptr[3], 1), 
 						BIT(data_ptr[4], 1), BIT(data_ptr[5], 1), BIT(data_ptr[6], 1), BIT(data_ptr[7], 1)

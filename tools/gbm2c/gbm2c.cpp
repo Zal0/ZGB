@@ -86,10 +86,10 @@ int GetBank(char* str) {
 	if(bank_info) {
 		return atoi(bank_info + 2);
 	}
-	return -1;
+	return 0;
 }
 
-void ExtractFileName(char* path, char* file_name) {
+void ExtractFileName(char* path, char* file_name, bool include_bank) {
 	char* slash_pos = strrchr(path, '/');
 	if(slash_pos == 0)
 		slash_pos = strrchr(path, '\\');
@@ -98,7 +98,7 @@ void ExtractFileName(char* path, char* file_name) {
 	else
 		slash_pos = path;
 
-	char* dot_pos = strchr(slash_pos, '.');
+	char* dot_pos = include_bank ? strrchr(slash_pos, '.') : strchr(slash_pos, '.');
 	if(dot_pos == 0) {
  		strcpy(file_name, slash_pos);
 	} else {
@@ -187,28 +187,23 @@ int main(int argc, char* argv[])
 
 	//Extract bank
 	int bank = GetBank(argv[1]);
-	if(bank == -1) //for backwards compatibility, extract the bank from tile_export.name
+	if(bank == 0) //for backwards compatibility, extract the bank from tile_export.name
 		bank = GetBank(map_export_settings.file_name);
-	if(bank == -1) {
-		bank = map_export_settings.bank == 0 ? 2 : map_export_settings.bank;
-	}
+	if(bank == 0)
+		bank = map_export_settings.bank;
 
 	//Adjust export file name and label name
 	if(strcmp(map_export_settings.file_name, "") == 0) { //Default value
-		ExtractFileName(argv[1], map_export_settings.file_name);  //Set argv[1] instead
+		ExtractFileName(argv[1], map_export_settings.file_name, false);  //Set argv[1] instead
 	}
 
 	if(strcmp(map_export_settings.label_name, "") == 0) { //Default value
-		ExtractFileName(argv[1], map_export_settings.label_name);  //Set argv[1] instead
+		ExtractFileName(argv[1], map_export_settings.label_name, false);  //Set argv[1] instead
 	}
 
 	char export_file_name[256]; //For both .h and .c
-	ExtractFileName(map_export_settings.file_name, export_file_name);
-
-	char export_name[256]; //For vars
-	ExtractFileName(map_export_settings.label_name, export_name);
-
 	char export_file[512];
+	ExtractFileName(map_export_settings.file_name, export_file_name, false); //For backwards compatibility the header will be taken from the export filename (and not argv[1])
 	sprintf(export_file, "%s/%s.h", argv[2], export_file_name);
 	file = fopen(export_file, "w");
 	if(!file) {
@@ -216,12 +211,14 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	fprintf(file, "extern unsigned char %s[];\n", export_name);
+	fprintf(file, "#define %sWidth %d\n", map_export_settings.label_name, map.width);
+	fprintf(file, "#define %sHeight %d\n", map_export_settings.label_name, map.height);
+	fprintf(file, "extern unsigned char %s[];\n", map_export_settings.label_name);
 
 	fclose(file);
 
-
-	sprintf(export_file, "%s/%s.c", argv[2], export_file_name);
+	ExtractFileName(argv[1], export_file_name, true);
+	sprintf(export_file, "%s/%s.gbm.c", argv[2], export_file_name);
 	file = fopen(export_file, "w");
 	if(!file) {
 		printf("Error writing file");
@@ -229,10 +226,7 @@ int main(int argc, char* argv[])
 	}
 	
 	fprintf(file, "#pragma bank %d\n", bank);
-
-	fprintf(file, "unsigned char %s_width = %d;\n", export_name, map.width);
-	fprintf(file, "unsigned char %s_height = %d;\n", export_name, map.height);
-	fprintf(file, "const unsigned char %s[] = {", export_name);
+	fprintf(file, "const unsigned char %s[] = {", map_export_settings.label_name);
 	for(INTEGER i = 0; i < map.width * map.height; ++i) {
 		if(i != 0)
 			fprintf(file, ",");
