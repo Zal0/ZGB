@@ -224,6 +224,23 @@ int main(int argc, char* argv[]) {
 		ExtractFileName(argv[1], tile_export.label_name, false); //Set argv[1] instead
 	}
 
+	//Check 
+	if(tile_export.from == 0 && tile_export.up_to == 0) {
+		int tile = tile_set.info.count - 1;
+		while(tile > 0 && tile_export.up_to == 0) {
+			unsigned char* data_ptr = &tile_set.data[tile_set.info.width * tile_set.info.height * tile];
+			unsigned char* data_end = data_ptr + tile_set.info.width * tile_set.info.height;
+			while(data_ptr != data_end) {
+				if(0x3 & (*data_ptr)) {
+					tile_export.up_to = tile;
+				}
+				data_ptr ++;
+			}
+
+			tile --;
+		}
+	}
+
 	char export_file_name[256]; //For both .h and .c
 	char export_file[512];
 	ExtractFileName(tile_export.file_name, export_file_name, false); //For backwards compatibility the header will be taken from the export filename (and not argv[1])
