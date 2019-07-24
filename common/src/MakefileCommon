@@ -30,7 +30,8 @@ ifneq ($(strip $(N_BANKS)),)
 	LFLAGS_NBANKS = -Wl-yt1 -Wl-yo$(N_BANKS)
 endif
 
-CFLAGS = -mgbz80 --no-std-crt0 --fsigned-char --use-stdout -Dnonbanked=  -I$(GBDK_HOME)/include -I$(GBDK_HOME)/include/asm $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include
+CFLAGS = -mgbz80 --no-std-crt0 --fsigned-char --use-stdout -Dnonbanked= -I$(GBDK_HOME)/include -I$(GBDK_HOME)/include/asm $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include
+CFLAGS += -DFILE_NAME=$(basename $(<F))
 
 EXTENSION = gb
 ifneq (,$(findstring Color,$(BUILD_TYPE)))
