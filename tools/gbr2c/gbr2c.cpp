@@ -111,6 +111,18 @@ void ExtractFileName(char* path, char* file_name, bool include_bank) {
 	}
 }
 
+bool IsTileEmpty(TileSet* tile_set, int tile){
+	unsigned char* data_ptr = &tile_set->data[tile_set->info.width * tile_set->info.height * tile];
+	unsigned char* data_end = data_ptr + tile_set->info.width * tile_set->info.height;
+	while(data_ptr != data_end) {
+		if(0x3 & (*data_ptr)) {
+			return false;
+		}
+		data_ptr ++;
+	}
+	return true;
+}
+
 int main(int argc, char* argv[]) {
 	if(argc != 3) {
 		printf("usage: gbr2c file_in.gbr export_folder");
@@ -224,17 +236,20 @@ int main(int argc, char* argv[]) {
 		ExtractFileName(argv[1], tile_export.label_name, false); //Set argv[1] instead
 	}
 
-	//Check 
+	//Check tiles to export
 	if(tile_export.from == 0 && tile_export.up_to == 0) {
 		int tile = tile_set.info.count - 1;
+		if(tile_set.info.count == 256) { //Special case for maps, the last tiles are for mapping enemies
+			tile = 254;
+			while(!IsTileEmpty(&tile_set, tile)) {
+				tile --;
+			}
+		}
+
 		while(tile > 0 && tile_export.up_to == 0) {
 			unsigned char* data_ptr = &tile_set.data[tile_set.info.width * tile_set.info.height * tile];
-			unsigned char* data_end = data_ptr + tile_set.info.width * tile_set.info.height;
-			while(data_ptr != data_end) {
-				if(0x3 & (*data_ptr)) {
-					tile_export.up_to = tile;
-				}
-				data_ptr ++;
+			if(!IsTileEmpty(&tile_set, tile)) {
+				tile_export.up_to = tile;
 			}
 
 			tile --;
