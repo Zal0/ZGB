@@ -274,9 +274,10 @@ int main(int argc, char* argv[]) {
 			}
 			fprintf(file, "\n");
 		}
-		fprintf(file, "extern unsigned char %sCGB[];\n", tile_export.label_name);
 	}
-	fprintf(file, "extern unsigned char %s[];\n", tile_export.label_name);
+	fprintf(file, "#include \"TilesInfo.h\"\n");
+	fprintf(file, "extern unsigned char bank_%s;\n", tile_export.label_name, bank);
+	fprintf(file, "extern struct TilesInfo %s;\n", tile_export.label_name);
 
 	fclose(file);
 
@@ -302,10 +303,10 @@ int main(int argc, char* argv[]) {
 		fprintf(file, "\n};\n\n");
 	}
 
-	fprintf(file, "const unsigned char %s_width = %d;\n", tile_export.label_name, tile_set.info.width);
-	fprintf(file, "const unsigned char %s_height = %d;\n", tile_export.label_name, tile_set.info.height);
-	fprintf(file, "const unsigned char %s_num_frames = %d;\n", tile_export.label_name, tile_export.up_to - tile_export.from + 1);
-	fprintf(file, "const unsigned char %s[] = {", tile_export.label_name);
+	//fprintf(file, "const unsigned char %s_width = %d;\n", tile_export.label_name, tile_set.info.width);
+	//fprintf(file, "const unsigned char %s_height = %d;\n", tile_export.label_name, tile_set.info.height);
+	//fprintf(file, "const unsigned char %s_num_frames = %d;\n", tile_export.label_name, tile_export.up_to - tile_export.from + 1);
+	fprintf(file, "const unsigned char %s_tiles[] = {", tile_export.label_name);
 	int line_h = tile_set.info.height == 8 ? 8 : 16;
 	for(int tile = tile_export.from; tile <= tile_export.up_to; ++ tile) {
 		for(int y = 0; y < tile_set.info.height; y += line_h) {
@@ -337,7 +338,21 @@ int main(int argc, char* argv[]) {
 			}
 		}
 	}
-	fprintf(file, "\n};");
+	fprintf(file, "\n};\n");
+	
+	fprintf(file, "\n#include \"TilesInfo.h\"\n");
+	fprintf(file, "const struct TilesInfo %s = {\n", tile_export.label_name);
+	fprintf(file, "\t%d, //width\n", tile_set.info.width);
+	fprintf(file, "\t%d, //height\n", tile_set.info.height);
+	fprintf(file, "\t%d, //num_tiles\n", tile_export.up_to - tile_export.from + 1);
+	fprintf(file, "\t%s_tiles, //tiles\n", tile_export.label_name);
+	if(tile_export.include_colors) {
+		fprintf(file, "\t%sCGB, //CGB palette\n", tile_export.label_name);
+	} else {
+		fprintf(file, "\t0, //CGB palette\n");
+	}
+	fprintf(file, "};");
+	
 	fclose(file);
 
     return 0;

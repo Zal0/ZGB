@@ -4,6 +4,7 @@
 #include <gb/gb.h>
 
 #include "Sprite.h"
+#include "TilesInfo.h"
 
 typedef void (*Void_Func_Void)();
 typedef void (*Void_Func_SpritePtr)(struct Sprite*);
@@ -18,12 +19,9 @@ extern UINT8 spriteBanks[];
 extern Void_Func_Void spriteStartFuncs[];
 extern Void_Func_Void spriteUpdateFuncs[];
 extern Void_Func_Void spriteDestroyFuncs[];
-extern UINT8* spriteDatas[];
+extern struct TilesInfo* spriteDatas[];
 extern UINT8 spriteDataBanks[];
-extern FrameSize spriteFrameSizes[];
-extern UINT8 spriteNumFrames[];
 extern UINT8 spriteIdxs[];
-extern UINT8* spritePalDatas[];
 
 
 extern UINT8 current_state;

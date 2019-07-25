@@ -40,7 +40,9 @@ void SpriteManagerReset() {
 }
 
 void SpriteManagerLoad(UINT8 sprite_type) {
-	spriteIdxs[sprite_type] = LoadSprite(spriteNumFrames[sprite_type], spriteDatas[sprite_type], spriteDataBanks[sprite_type], spriteFrameSizes[sprite_type], spritePalDatas[sprite_type]);
+	PUSH_BANK(spriteDataBanks[sprite_type])
+	spriteIdxs[sprite_type] = LoadSprite(spriteDatas[sprite_type]);
+	POP_BANK
 }
 
 struct Sprite* cachedSprite; //This has to be declared outside because of an LCC bug (easy to see with the Princess' Axe)
@@ -59,7 +61,9 @@ struct Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y) {
 
 	VectorAdd(sprite_manager_updatables, sprite_idx);
 
-	InitSprite(sprite, spriteFrameSizes[sprite_type], spriteIdxs[sprite_type]);
+	PUSH_BANK(spriteDataBanks[sprite->type]);
+		InitSprite(sprite, spriteDatas[sprite_type]->width >> 3, spriteIdxs[sprite_type]);
+	POP_BANK;
 	sprite->x = x;
 	sprite->y = y;
 

@@ -62,6 +62,9 @@
     <ClInclude Include="include\ZGBMain_Init.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\TilesInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Frame.c">

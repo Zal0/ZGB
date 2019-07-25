@@ -4,12 +4,14 @@
 UINT8 last_sprite_loaded = 0;
 UINT8 sprites_pal[256];
 
-UINT8 LoadSprite(UINT8 n_tiles, unsigned char* data, UINT8 bank, UINT8 frame_size, unsigned char* palette_idx) {
+UINT8 LoadSprite(struct TilesInfo* data) {
 	UINT8 i;
 	UINT8* sprites_pal_ptr = &sprites_pal[last_sprite_loaded];
+	UINT8 frame_size = data->width >> 3;
+	UINT8 n_tiles = data->num_frames << frame_size;
+	UINT8* palette_idx = data->color_data;
 
-	PUSH_BANK(bank);
-	set_sprite_data(last_sprite_loaded, n_tiles, data);
+	set_sprite_data(last_sprite_loaded, n_tiles, data->data);
 	last_sprite_loaded += n_tiles;
 
 	for(i = 0; i != n_tiles; ++i, sprites_pal_ptr ++) {
@@ -18,7 +20,6 @@ UINT8 LoadSprite(UINT8 n_tiles, unsigned char* data, UINT8 bank, UINT8 frame_siz
 		else
 			*sprites_pal_ptr = 0; 
 	}
-	POP_BANK;
 
 	return last_sprite_loaded - n_tiles;
 }

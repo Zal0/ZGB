@@ -22,52 +22,49 @@ void InitStates() {
 #undef _STATE
 
 //-------------------------------------------------------------------------------------------------
-#define _SPRITE(SPRITE_ID, DATA, SIZE, NFRAMES, PAL_DATA) DECLARE_SPRITE(SPRITE_ID); extern UINT8 bank_##DATA;
+#include "TilesInfo.h"
+#define _SPRITE(SPRITE_ID, DATA) DECLARE_SPRITE(SPRITE_ID); extern UINT8 bank_##DATA;
 SPRITES
 #undef _SPRITE
 
-#define _SPRITE(SPRITE_ID, DATA, SIZE, NFRAMES, PAL_DATA) extern unsigned char DATA[];
-SPRITES
-#undef _SPRITE
-
-#define _SPRITE(SPRITE_ID, DATA, SIZE, NFRAMES, PAL_DATA) extern unsigned char DATA##CGB[];
+#define _SPRITE(SPRITE_ID, DATA) extern struct TilesInfo DATA;
 SPRITES
 #undef _SPRITE
 
 UINT8 spriteBanks[N_SPRITE_TYPES];
 UINT8 spriteDataBanks[N_SPRITE_TYPES];
 
-#define _SPRITE(SPRITE_ID, DATA, SIZE, NFRAMES, PAL_DATA) Start_##SPRITE_ID,
+#define _SPRITE(SPRITE_ID, DATA) Start_##SPRITE_ID,
 Void_Func_Void spriteStartFuncs[] = {SPRITES};
 #undef _SPRITE
 
-#define _SPRITE(SPRITE_ID, DATA, SIZE, NFRAMES, PAL_DATA) Update_##SPRITE_ID,
+#define _SPRITE(SPRITE_ID, DATA) Update_##SPRITE_ID,
 Void_Func_Void spriteUpdateFuncs[] = {SPRITES};
 #undef _SPRITE
 
-#define _SPRITE(SPRITE_ID, DATA, SIZE, NFRAMES, PAL_DATA) Destroy_##SPRITE_ID,
+#define _SPRITE(SPRITE_ID, DATA) Destroy_##SPRITE_ID,
 Void_Func_Void spriteDestroyFuncs[] = {SPRITES};
 #undef _SPRITE
 
-#define _SPRITE(SPRITE_ID, DATA, SIZE, NFRAMES, PAL_DATA) DATA,
-UINT8* spriteDatas[] = {SPRITES};
+#define _SPRITE(SPRITE_ID, DATA) &DATA,
+struct TilesInfo* spriteDatas[] = {SPRITES};
 #undef _SPRITE
 
-#define _SPRITE(SPRITE_ID, DATA, SIZE, NFRAMES, PAL_DATA) SIZE,
-FrameSize spriteFrameSizes[] = {SPRITES};
-#undef _SPRITE
+//#define _SPRITE(SPRITE_ID, DATA) SIZE,
+//FrameSize spriteFrameSizes[] = {SPRITES};
+//#undef _SPRITE
 
-#define _SPRITE(SPRITE_ID, DATA, SIZE, NFRAMES, PAL_DATA) (NFRAMES << SIZE),
-UINT8 spriteNumFrames[] = {SPRITES};
-#undef _SPRITE
+//#define _SPRITE(SPRITE_ID, DATA) (NFRAMES << SIZE),
+//UINT8 spriteNumFrames[] = {SPRITES};
+//#undef _SPRITE
 
 UINT8 spriteIdxs[N_SPRITE_TYPES];
 
-#define _SPRITE(SPRITE_ID, DATA, SIZE, NFRAMES, PAL_DATA) PAL_DATA,
-UINT8* spritePalDatas[] = {SPRITES};
-#undef _SPRITE
+//#define _SPRITE(SPRITE_ID, DATA) PAL_DATA,
+//UINT8* spritePalDatas[] = {SPRITES};
+//#undef _SPRITE
 
-#define _SPRITE(SPRITE_ID, DATA, SIZE, NFRAMES, PAL_DATA) spriteBanks[SPRITE_ID] = bank_##SPRITE_ID; spriteDataBanks[SPRITE_ID] = bank_##DATA;
+#define _SPRITE(SPRITE_ID, DATA) spriteBanks[SPRITE_ID] = bank_##SPRITE_ID; spriteDataBanks[SPRITE_ID] = bank_##DATA;
 void InitSprites() {
 	SPRITES
 }

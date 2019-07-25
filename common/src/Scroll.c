@@ -132,11 +132,16 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	#endif
 }
 
-void ZInitScrollTilesColor(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 tile_bank, UINT8* palette_entries) {
+void InitScrollTiles(UINT8 first_tile, struct TilesInfo* tiles, UINT8 tile_bank) {
 	UINT8 i;
+	UINT8 n_tiles;
+	UINT8* palette_entries;
 
 	PUSH_BANK(tile_bank);
-	set_bkg_data(first_tile, n_tiles, tile_data);
+	n_tiles = tiles->num_frames;
+	palette_entries = tiles->color_data;
+
+	set_bkg_data(first_tile, n_tiles, tiles->data);
 	for(i = first_tile; i < first_tile + n_tiles; ++i) {
 		scroll_tile_info[i] = palette_entries ? palette_entries[i] : 0;
 	}

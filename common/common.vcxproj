@@ -33,6 +33,7 @@
     <ClInclude Include="include\Sprite.h" />
     <ClInclude Include="include\SpriteManager.h" />
     <ClInclude Include="include\Stack.h" />
+    <ClInclude Include="include\TilesInfo.h" />
     <ClInclude Include="include\Vector.h" />
     <ClInclude Include="include\Print.h" />
     <ClInclude Include="include\ZGBMain_Init.h" />
