@@ -132,6 +132,12 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	#endif
 }
 
+void InitScrollTilesLEGACY(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 tile_bank) {
+	PUSH_BANK(tile_bank);
+	set_bkg_data(first_tile, n_tiles, tile_data);
+	POP_BANK;
+}
+
 void InitScrollTiles(UINT8 first_tile, struct TilesInfo* tiles, UINT8 tile_bank) {
 	UINT8 i;
 	UINT8 n_tiles;
