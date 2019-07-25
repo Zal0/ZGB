@@ -289,6 +289,7 @@ int main(int argc, char* argv[]) {
 	}
 	
 	fprintf(file, "#pragma bank %d\n", bank);
+	fprintf(file, "unsigned char bank_%s = %d;\n", tile_export.label_name, bank);
 
 	if(tile_export.include_colors){
 		fprintf(file, "const unsigned char %sCGB[] = {\n\t", tile_export.label_name);
