@@ -256,6 +256,18 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
+	//Check palettes export
+	if(!tile_export.include_colors) {
+		for(int i = 0; i < palettes.count; ++i) {
+			if((*(int*)&palettes.colors[i].colors[0]) != 0x0029efe0 ||
+			   (*(int*)&palettes.colors[i].colors[1]) != 0x0042b939 ||
+			   (*(int*)&palettes.colors[i].colors[2]) != 0x00317520 ||
+			   (*(int*)&palettes.colors[i].colors[3]) != 0x002e3907) {
+				tile_export.include_colors = true;
+			}
+		}
+	}
+
 	char export_file_name[256]; //For both .h and .c
 	char export_file[512];
 	ExtractFileName(tile_export.file_name, export_file_name, false); //For backwards compatibility the header will be taken from the export filename (and not argv[1])
