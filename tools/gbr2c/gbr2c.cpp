@@ -228,11 +228,11 @@ int main(int argc, char* argv[]) {
 		bank = tile_export.bank;
 
 	//Adjust export file name and label name
-	if(strcmp(tile_export.file_name, "Export.z80") == 0) { //Default value
+	if(strcmp(tile_export.file_name, "Export.z80") == 0 || strcmp(tile_export.file_name, "") == 0) { //Default value
 		ExtractFileName(argv[1], tile_export.file_name, false); //Set argv[1] instead
 	}
 
-	if(strcmp(tile_export.label_name, "TileLabel") == 0) { //Default value
+	if(strcmp(tile_export.label_name, "TileLabel") == 0 || strcmp(tile_export.label_name, "") == 0) { //Default value
 		ExtractFileName(argv[1], tile_export.label_name, false); //Set argv[1] instead
 	}
 
