@@ -42,6 +42,9 @@ endif
 
 LFLAGS = $(LFLAGS_NBANKS) -Wl-m
 
+#since I am placing my OAM mirror at the end of the ram (0xDF00-0xDFFF) I need to move the stack to 0xDEFF
+LFLAGS += -Wl-g.STACK=0xDEFF
+
 current_dir = $(shell pwd)
 
 ASMS_ZGB    = $(foreach dir,$(ZGB_PATH_UNIX)/src,$(notdir $(wildcard $(dir)/*.s)))

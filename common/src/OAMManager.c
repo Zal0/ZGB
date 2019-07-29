@@ -28,6 +28,7 @@ UINT8 LoadSprite(struct TilesInfo* data) {
 //c000 is where GBDK OAM is allocated
 //c000 + 160 = c0a0 but we cannot user c0a0, we need c100
 //c100 crashes (__at not working??) so I am gonna use df00-dfff (last 255 ram bytes)
+//This address overlaps with the stack eventually so I am also moving the stack to 0xDEFF (see the makefile)
 #define OAM_MIRROR_ADDRESS_HI 0xdf
 #define OAM_MIRROR_ADDRESS 0xdf00
 UINT8 __at (OAM_MIRROR_ADDRESS) oam_mirror[160];
