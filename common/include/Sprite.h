@@ -24,7 +24,8 @@ struct Sprite {
 	UINT8 flags;
 
 	//Collider (box)
-	UINT8 coll_x, coll_y, coll_w, coll_h;
+	INT8 coll_x, coll_y;
+	UINT8 coll_w, coll_h;
 
 	//For the sprite manager
 	UINT8 type; //Customizable per game
