@@ -21,6 +21,9 @@ extern UINT8 scroll_offset_y;
 extern struct Sprite* scroll_target;
 extern UINT8 clamp_enabled;
 
+extern UINT8 scroll_top_movement_limit;
+extern UINT8 scroll_bottom_movement_limit;
+
 #define InitScroll(map_w, map_h, map, coll_list, coll_list_down, bank) InitScrollColor(map_w, map_h, map, coll_list, coll_list_down, bank, 0) 
 #define ScrollSetMap(map_w, map_h, map, bank) ScrollSetMapColor(map_w, map_h, map, bank, 0)
 
