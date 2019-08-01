@@ -217,6 +217,9 @@ int main(int argc, char* argv[])
 
 	fprintf(file, "#ifndef MAP_%s_H\n",  map_export_settings.label_name);
 	fprintf(file, "#define MAP_%s_H\n",  map_export_settings.label_name);
+	
+	fprintf(file, "#define %sWidth %d\n", map_export_settings.label_name, map.width);
+    fprintf(file, "#define %sHeight %d\n", map_export_settings.label_name, map.height);
 
 	fprintf(file, "#include \"MapInfo.h\"\n");
 	fprintf(file, "extern unsigned char bank_%s;\n", map_export_settings.label_name);
