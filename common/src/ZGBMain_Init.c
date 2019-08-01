@@ -46,8 +46,8 @@ Void_Func_Void spriteUpdateFuncs[] = {SPRITES};
 Void_Func_Void spriteDestroyFuncs[] = {SPRITES};
 #undef _SPRITE
 
-#define _SPRITE(SPRITE_ID, DATA) &DATA,
-struct TilesInfo* spriteDatas[] = {SPRITES};
+#define _SPRITE(SPRITE_ID, DATA) DATA.data,
+struct TilesInfoInternal* spriteDatas[] = {SPRITES};
 #undef _SPRITE
 
 //#define _SPRITE(SPRITE_ID, DATA) SIZE,
@@ -64,7 +64,7 @@ UINT8 spriteIdxs[N_SPRITE_TYPES];
 //UINT8* spritePalDatas[] = {SPRITES};
 //#undef _SPRITE
 
-#define _SPRITE(SPRITE_ID, DATA) spriteBanks[SPRITE_ID] = bank_##SPRITE_ID; spriteDataBanks[SPRITE_ID] = bank_##DATA;
+#define _SPRITE(SPRITE_ID, DATA) spriteBanks[SPRITE_ID] = bank_##SPRITE_ID; spriteDataBanks[SPRITE_ID] = DATA.bank;
 void InitSprites() {
 	SPRITES
 }

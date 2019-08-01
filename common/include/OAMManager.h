@@ -15,7 +15,7 @@ struct OAMData {
 
 extern UINT8 last_sprite_loaded;
 
-UINT8 LoadSprite(struct TilesInfo* data);
+UINT8 LoadSprite(struct TilesInfoInternal* data);
 void SwapOAMs();
 void ClearOAMs();
 void DrawOAMSprite(UINT8 y, UINT8 x, UINT8 idx, UINT8 flags);

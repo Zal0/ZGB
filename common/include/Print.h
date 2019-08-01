@@ -3,7 +3,7 @@
 
 #include <gb/gb.h> 
 
-#define INIT_FONT(FONT, TARGET) InitScrollTiles(255 - 45, &FONT, bank_##FONT); font_idx = 255 - 45; print_target = TARGET
+#define INIT_FONT(FONT, TARGET) InitScrollTiles(255 - 45, &FONT); font_idx = 255 - 45; print_target = TARGET
 
 extern UINT8 print_x, print_y, font_idx, print_target;
 extern INT8 scroll_h_border;

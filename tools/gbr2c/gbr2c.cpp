@@ -307,7 +307,7 @@ int main(int argc, char* argv[]) {
 	}
 	
 	fprintf(file, "#pragma bank %d\n", bank);
-	fprintf(file, "unsigned char bank_%s = %d;\n", tile_export.label_name, bank);
+	//fprintf(file, "unsigned char bank_%s = %d;\n", tile_export.label_name, bank);
 
 	if(tile_export.include_colors){
 		fprintf(file, "const unsigned char %sCGB[] = {\n\t", tile_export.label_name);
@@ -358,7 +358,7 @@ int main(int argc, char* argv[]) {
 	fprintf(file, "\n};\n");
 	
 	fprintf(file, "\n#include \"TilesInfo.h\"\n");
-	fprintf(file, "const struct TilesInfo %s = {\n", tile_export.label_name);
+	fprintf(file, "const struct TilesInfoInternal %s_internal = {\n", tile_export.label_name);
 	fprintf(file, "\t%d, //width\n", tile_set.info.width);
 	fprintf(file, "\t%d, //height\n", tile_set.info.height);
 	fprintf(file, "\t%d, //num_tiles\n", tile_export.up_to - tile_export.from + 1);
@@ -368,6 +368,11 @@ int main(int argc, char* argv[]) {
 	} else {
 		fprintf(file, "\t0, //CGB palette\n");
 	}
+	fprintf(file, "};");
+
+	fprintf(file, "\nstruct TilesInfo %s = {\n", tile_export.label_name);
+	fprintf(file, "\t%d, //bank\n", bank);
+	fprintf(file, "\t&%s_internal, //data\n", tile_export.label_name);
 	fprintf(file, "};");
 	
 	fclose(file);

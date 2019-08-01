@@ -4,7 +4,7 @@
 UINT8 last_sprite_loaded = 0;
 UINT8 sprites_pal[256];
 
-UINT8 LoadSprite(struct TilesInfo* data) {
+UINT8 LoadSprite(struct TilesInfoInternal* data) {
 	UINT8 i;
 	UINT8* sprites_pal_ptr = &sprites_pal[last_sprite_loaded];
 	UINT8 frame_size = data->width >> 3;
