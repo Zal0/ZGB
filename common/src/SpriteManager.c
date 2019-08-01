@@ -62,7 +62,7 @@ struct Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y) {
 	VectorAdd(sprite_manager_updatables, sprite_idx);
 
 	PUSH_BANK(spriteDataBanks[sprite->type]);
-		InitSprite(sprite, spriteDatas[sprite_type]->width >> 3, spriteIdxs[sprite_type]);
+		InitSprite(sprite, spriteDatas[sprite_type]->height == 8 ? 0 : spriteDatas[sprite_type]->width >> 3, spriteIdxs[sprite_type]);
 	POP_BANK;
 	sprite->x = x;
 	sprite->y = y;

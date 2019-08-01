@@ -15,8 +15,8 @@
 #define SCREEN_TILE_REFRES_W (SCREEN_TILES_W + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT)
 #define SCREEN_TILE_REFRES_H (SCREEN_TILES_H + SCREEN_PAD_TOP  + SCREEN_PAD_BOTTOM)
 
-#define TOP_MOVEMENT_LIMIT 30u
-#define BOTTOM_MOVEMENT_LIMIT 100u
+extern UINT8 scroll_top_movement_limit = 30;
+extern UINT8 scroll_bottom_movement_limit = 100;
 
 //To be defined on the main app
 UINT8 GetTileReplacement(UINT8* tile_ptr, UINT8* tile);
@@ -208,7 +208,7 @@ void ScrollSetMap(struct MapInfo* map_data, UINT8 bank) {
 	scroll_bank = bank;
 	if(scroll_target) {
 		scroll_x = scroll_target->x - (SCREENWIDTH >> 1);
-		scroll_y = scroll_target->y - BOTTOM_MOVEMENT_LIMIT; //Move the camera to its bottom limit
+		scroll_y = scroll_target->y - scroll_bottom_movement_limit; //Move the camera to its bottom limit
 		ClampScrollLimits(&scroll_x, &scroll_y);
 	}
 	pending_h_i = 0;
@@ -347,10 +347,10 @@ void RefreshScroll() {
 	UINT16 ny = scroll_y;
 
 	if(scroll_target) {
-		if(U_LESS_THAN(BOTTOM_MOVEMENT_LIMIT, scroll_target->y - scroll_y)) {
-			ny = scroll_target->y - BOTTOM_MOVEMENT_LIMIT;
-		} else if(U_LESS_THAN(scroll_target->y - scroll_y, TOP_MOVEMENT_LIMIT)) {
-			ny = scroll_target->y - TOP_MOVEMENT_LIMIT;
+		if(U_LESS_THAN(scroll_bottom_movement_limit, scroll_target->y - scroll_y)) {
+			ny = scroll_target->y - scroll_bottom_movement_limit;
+		} else if(U_LESS_THAN(scroll_target->y - scroll_y, scroll_top_movement_limit)) {
+			ny = scroll_target->y - scroll_top_movement_limit;
 		}
 
 		MoveScroll(scroll_target->x - (SCREENWIDTH >> 1), ny);

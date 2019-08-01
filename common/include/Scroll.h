@@ -22,6 +22,9 @@ extern UINT8 scroll_offset_y;
 extern struct Sprite* scroll_target;
 extern UINT8 clamp_enabled;
 
+extern UINT8 scroll_top_movement_limit;
+extern UINT8 scroll_bottom_movement_limit;
+
 void InitScrollTilesLEGACY(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 tile_bank);
 void ScrollSetMapLEGACY(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, unsigned char* color_map);
 

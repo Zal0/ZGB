@@ -17,10 +17,7 @@ void DrawFrame(FrameSize size, int idx, UINT8 x, UINT8 y, UINT8 flags){
 #endif
 
 	switch(size) {
-		//case FRAME_8x8: //For some reason enabling this, breaks the compiler
-		//	DrawOAMSprite(idx, x + 8u, y + 16u, flags);
-		//	break;
-
+		case FRAME_8x8:
 		case FRAME_8x16:
 			DrawOAMSprite(y + 16u, x + 8u, idx, flags);
 			break;
