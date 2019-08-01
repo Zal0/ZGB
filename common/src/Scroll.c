@@ -3,6 +3,7 @@
 #include "SpriteManager.h"
 #include "BankManager.h"
 #include "Math.h"
+#include <string.h>
 
 
 #define SCREEN_TILES_W       20 // 160 >> 3 = 20
@@ -168,15 +169,14 @@ void InitScrollTiles(UINT8 first_tile, struct TilesInfo* tiles) {
 	POP_BANK;
 }
 
-void InitWindow(UINT8 x, UINT8 y, UINT8 w, UINT8 h, UINT8* map, UINT8 bank, UINT8* cmap) {
-	cmap;
-	PUSH_BANK(bank);
-	set_win_tiles(x, y, w, h, map);
+void InitWindow(UINT8 x, UINT8 y, struct MapInfo* map) {
+	PUSH_BANK(map->bank);
+	set_win_tiles(x, y, map->data->width, map->data->height, map->data->data);
 	
 	#ifdef CGB
-	if(cmap) {
+	if(map->data->attributes) {
 		VBK_REG = 1;
-			set_win_tiles(x, y, w, h, cmap);
+			set_win_tiles(x, y, map->data->width, map->data->height, map->data->attributes);
 		VBK_REG = 0;
 	}
 	#endif
@@ -419,17 +419,17 @@ UINT8 GetScrollTile(UINT16 x, UINT16 y) {
 	return ret;
 }
 
-UINT8 ScrollFindTile(UINT16 map_w, unsigned char* map, UINT8 bank, UINT8 tile,
+UINT8 ScrollFindTile(struct MapInfo* map, UINT8 tile,
 	UINT8 start_x, UINT8 start_y, UINT8 w, UINT8 h,
 	UINT16* x, UINT16* y) {
 	UINT16 xt = 0;
 	UINT16 yt = 0;
 	UINT8 found = 1;
 
-	PUSH_BANK(bank);
+	PUSH_BANK(map->bank);
 	for(xt = start_x; xt != start_x + w; ++ xt) {
 		for(yt = start_y; yt != start_y + h; ++ yt) {
-			if(map[map_w * yt + xt] == (UINT16)tile) { //That cast over there is mandatory and gave me a lot of headaches
+			if(map->data->data[map->data->width * yt + xt] == (UINT16)tile) { //That cast over there is mandatory and gave me a lot of headaches
 				goto done;
 			}
 		}

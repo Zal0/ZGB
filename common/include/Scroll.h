@@ -33,7 +33,7 @@ void InitScrollTiles(UINT8 first_tile, struct TilesInfo* tile_data);
 void InitScroll(struct MapInfo* map_data, const UINT8* coll_list, const UINT8* coll_list_down);
 void ScrollSetMap(struct MapInfo* map_data);
 
-void InitWindow(UINT8 x, UINT8 y, UINT8 w, UINT8 h, UINT8* map, UINT8 bank, unsigned char* color_map);
+void InitWindow(UINT8 x, UINT8 y, struct MapInfo* map);
 void ScrollUpdateRow(INT16 x, INT16 y);
 void ScrollUpdateColumn(INT16 x, INT16 y);
 void MoveScroll(INT16 x, INT16 y);
@@ -42,7 +42,7 @@ void FinishPendingScrollUpdates();
 
 UINT8* GetScrollTilePtr(UINT16 x, UINT16 y);
 UINT8 GetScrollTile(UINT16 x, UINT16 y);
-UINT8 ScrollFindTile(UINT16 map_w, unsigned char* map, UINT8 bank, UINT8 tile,
+UINT8 ScrollFindTile(struct MapInfo* map, UINT8 tile,
 	UINT8 start_x, UINT8 start_y, UINT8 w, UINT8 h,
 	UINT16* x, UINT16* y);
 
