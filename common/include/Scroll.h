@@ -3,6 +3,7 @@
 
 #include <gb/gb.h>
 #include "TilesInfo.h"
+#include "MapInfo.h"
 
 extern unsigned char* scroll_map;
 extern INT16 scroll_x;
@@ -21,14 +22,14 @@ extern UINT8 scroll_offset_y;
 extern struct Sprite* scroll_target;
 extern UINT8 clamp_enabled;
 
-#define InitScroll(map_w, map_h, map, coll_list, coll_list_down, bank) InitScrollColor(map_w, map_h, map, coll_list, coll_list_down, bank, 0) 
-#define ScrollSetMap(map_w, map_h, map, bank) ScrollSetMapColor(map_w, map_h, map, bank, 0)
-
 void InitScrollTilesLEGACY(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 tile_bank);
+void ScrollSetMapLEGACY(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, unsigned char* color_map);
+
 void InitScrollTiles(UINT8 first_tile, struct TilesInfo* tile_data, UINT8 tile_bank);
-void InitScrollColor(UINT16 map_w, UINT16 map_h, unsigned char* map, const UINT8* coll_list, const UINT8* coll_list_down, UINT8 bank, unsigned char* color_map);
+void InitScroll(struct MapInfo* map_data, UINT8 map_bank, const UINT8* coll_list, const UINT8* coll_list_down);
+void ScrollSetMap(struct MapInfo* map_data, UINT8 bank);
+
 void InitWindow(UINT8 x, UINT8 y, UINT8 w, UINT8 h, UINT8* map, UINT8 bank, unsigned char* color_map);
-void ScrollSetMapColor(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, unsigned char* color_map);
 void ScrollUpdateRow(INT16 x, INT16 y);
 void ScrollUpdateColumn(INT16 x, INT16 y);
 void MoveScroll(INT16 x, INT16 y);

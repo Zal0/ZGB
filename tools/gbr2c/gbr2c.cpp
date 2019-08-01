@@ -266,6 +266,9 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
+	fprintf(file, "#ifndef TILES_%s_H\n",  tile_export.label_name);
+	fprintf(file, "#define TILES_%s_H\n",  tile_export.label_name);
+
 	if(tile_export.include_colors){
 		for(int i = 0; i < palettes.count; ++i) {
 			for(int c = 0; c < 4; ++c) {
@@ -276,8 +279,10 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	fprintf(file, "#include \"TilesInfo.h\"\n");
-	fprintf(file, "extern unsigned char bank_%s;\n", tile_export.label_name, bank);
+	fprintf(file, "extern unsigned char bank_%s;\n", tile_export.label_name);
 	fprintf(file, "extern struct TilesInfo %s;\n", tile_export.label_name);
+
+	fprintf(file, "#endif\n");
 
 	fclose(file);
 

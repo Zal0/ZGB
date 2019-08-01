@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 typedef unsigned short WORD;
 typedef unsigned int LONG;
@@ -214,9 +215,14 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	fprintf(file, "#define %sWidth %d\n", map_export_settings.label_name, map.width);
-	fprintf(file, "#define %sHeight %d\n", map_export_settings.label_name, map.height);
-	fprintf(file, "extern unsigned char %s[];\n", map_export_settings.label_name);
+	fprintf(file, "#ifndef MAP_%s_H\n",  map_export_settings.label_name);
+	fprintf(file, "#define MAP_%s_H\n",  map_export_settings.label_name);
+
+	fprintf(file, "#include \"MapInfo.h\"\n");
+	fprintf(file, "extern unsigned char bank_%s;\n", map_export_settings.label_name);
+	fprintf(file, "extern struct MapInfo %s;\n", map_export_settings.label_name);
+
+	fprintf(file, "#endif\n");
 
 	fclose(file);
 
@@ -229,7 +235,8 @@ int main(int argc, char* argv[])
 	}
 	
 	fprintf(file, "#pragma bank %d\n", bank);
-	fprintf(file, "const unsigned char %s[] = {", map_export_settings.label_name);
+	fprintf(file, "unsigned char bank_%s = %d;\n", map_export_settings.label_name, bank);
+	fprintf(file, "const unsigned char %s_map[] = {", map_export_settings.label_name);
 	for(INTEGER i = 0; i < map.width * map.height; ++i) {
 		if(i != 0)
 			fprintf(file, ",");
@@ -239,6 +246,15 @@ int main(int argc, char* argv[])
 		fprintf(file, "0x%02x", map_tiles_data[i].tile_number);
 	}
 	fprintf(file, "\n};");
+
+	fprintf(file, "\n#include \"MapInfo.h\"\n");
+	fprintf(file, "const struct MapInfo %s = {\n", map_export_settings.label_name);
+	fprintf(file, "\t%d, //width\n", map.width);
+	fprintf(file, "\t%d, //height\n", map.height);
+	fprintf(file, "\t%s_map, //map\n", map_export_settings.label_name);
+	fprintf(file, "\t%s, //attributes\n", "0"); //TODO
+	fprintf(file, "\t%s, //tiles info\n", "0"); //TODO
+	fprintf(file, "};");
 
     return 0;
 }

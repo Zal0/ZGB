@@ -138,6 +138,12 @@ void InitScrollTilesLEGACY(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UI
 	POP_BANK;
 }
 
+void ScrollSetMapLEGACY(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, unsigned char* color_map)
+{
+	struct MapInfo data = {map_w, map_h, map, color_map, 0};
+	ScrollSetMap(&data, bank);
+}
+
 void InitScrollTiles(UINT8 first_tile, struct TilesInfo* tiles, UINT8 tile_bank) {
 	UINT8 i;
 	UINT8 n_tiles;
@@ -189,15 +195,16 @@ void ClampScrollLimits(UINT16* x, UINT16* y) {
 	}
 }
 
-void ScrollSetMapColor(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, unsigned char* cmap) {
-	scroll_tiles_w = map_w;
-	scroll_tiles_h = map_h;
-	scroll_map = map;
-	scroll_cmap = cmap;
+void ScrollSetMap(struct MapInfo* map_data, UINT8 bank) {
+	PUSH_BANK(bank);
+	scroll_tiles_w = map_data->width;
+	scroll_tiles_h = map_data->height;
+	scroll_map = map_data->data;
+	scroll_cmap = map_data->attributes;
 	scroll_x = 0;
 	scroll_y = 0;
-	scroll_w = map_w << 3;
-	scroll_h = map_h << 3;
+	scroll_w = scroll_tiles_w << 3;
+	scroll_h = scroll_tiles_h << 3;
 	scroll_bank = bank;
 	if(scroll_target) {
 		scroll_x = scroll_target->x - (SCREENWIDTH >> 1);
@@ -206,13 +213,14 @@ void ScrollSetMapColor(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 ban
 	}
 	pending_h_i = 0;
 	pending_w_i = 0;
+	POP_BANK;
 }
 
-void InitScrollColor(UINT16 map_w, UINT16 map_h, unsigned char* map, const UINT8* coll_list, const UINT8* coll_list_down, UINT8 bank, unsigned char* color_map) {
+void InitScroll(struct MapInfo* map_data, UINT8 map_bank, const UINT8* coll_list, const UINT8* coll_list_down) {
 	UINT8 i;
 	INT16 y;
 	
-	ScrollSetMapColor(map_w, map_h, map, bank, color_map);
+	ScrollSetMap(map_data, map_bank);
 
 	for(i = 0u; i != 128; ++i) {
 		scroll_collisions[i] = 0u;
@@ -230,7 +238,7 @@ void InitScrollColor(UINT16 map_w, UINT16 map_h, unsigned char* map, const UINT8
 	}
 
 	//Change bank now, after copying the collision array (it can be in a different bank)
-	PUSH_BANK(bank);
+	PUSH_BANK(map_bank);
 	y = scroll_y >> 3;
 	for(i = 0u; i != (SCREEN_TILE_REFRES_H) && y != scroll_h; ++i, y ++) {
 		ScrollUpdateRow((scroll_x >> 3) - SCREEN_PAD_LEFT,  y - SCREEN_PAD_TOP);
