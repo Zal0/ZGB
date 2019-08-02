@@ -125,6 +125,7 @@ int main(int argc, char* argv[])
 	Map map;
 	MapTileData* map_tiles_data;
 	MapExportSettings map_export_settings;
+	bool export_attributes = false;
 
 	char marker[3];
 	char version;
@@ -158,6 +159,10 @@ int main(int argc, char* argv[])
 					map_tiles_data[i].sgb_palette = 0x7 & (record >> 16);
 					map_tiles_data[i].h_flip = 0x1 & (record >> 22);
 					map_tiles_data[i].v_flip = 0x1 & (record >> 23);
+
+					if(map_tiles_data[i].gbc_palette != 0 || map_tiles_data[i].h_flip || map_tiles_data[i].v_flip || map_tiles_data[i].tile_number > 255) {
+						export_attributes = true;
+					}
 				}
 				int pending = object_header.length - num_tiles * 3;
 				if(pending)
@@ -248,12 +253,33 @@ int main(int argc, char* argv[])
 
 		fprintf(file, "0x%02x", map_tiles_data[i].tile_number);
 	}
-	fprintf(file, "\n};");
+	fprintf(file, "\n};\n");
 
-	fprintf(file, "\n#include \"MapInfo.h\"\n");
+	if(export_attributes) {
+		fprintf(file, "const unsigned char %s_attributes[] = {", map_export_settings.label_name);
+		for(INTEGER i = 0; i < map.width * map.height; ++i) {
+			if(i != 0)
+				fprintf(file, ",");
+			if((i % 10) == 0)
+				fprintf(file, "\n\t");
+
+			MapTileData data = map_tiles_data[i];
+			//Bit 4 is not used, so I am gonna use it to indicate using default palette
+			bool use_default = data.gbc_palette == 0;
+			bool vram_bank = map_tiles_data[i].tile_number > 255;
+			fprintf(file, "0x%02x", (use_default ? 0 : data.gbc_palette - 1) | (vram_bank << 3) | (use_default << 4) | (data.h_flip << 5) | (data.v_flip << 6));
+		}
+		fprintf(file, "\n};\n");
+	}
+
+	fprintf(file, "#include \"MapInfo.h\"\n");
 	fprintf(file, "const struct MapInfoInternal %s_internal = {\n", map_export_settings.label_name);
 	fprintf(file, "\t%s_map, //map\n", map_export_settings.label_name);
-	fprintf(file, "\t%s, //attributes\n", "0"); //TODO
+	if(export_attributes) {
+		fprintf(file, "\t%s_attributes, //attributes\n", map_export_settings.label_name);
+	} else {
+		fprintf(file, "\t%s, //attributes\n", "0");
+	}
 	fprintf(file, "\t%s, //tiles info\n", "0"); //TODO
 	fprintf(file, "};");
 

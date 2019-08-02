@@ -121,8 +121,8 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	#ifdef CGB
 		if (_cpu == CGB_TYPE) {
 			VBK_REG = 1;
-			if(!scroll_cmap) {
-				i = 0x7 & scroll_tile_info[replacement];
+			if(!scroll_cmap || (0x10 & *c)) { //Bit 4 on, means default palette 
+				i = scroll_tile_info[replacement];
 				c = &i;
 			}
 			set_bkg_tiles(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), 1, 1, c);
@@ -174,7 +174,7 @@ void InitWindow(UINT8 x, UINT8 y, struct MapInfo* map) {
 	#ifdef CGB
 	if(map->data->attributes) {
 		VBK_REG = 1;
-			set_win_tiles(x, y, map->data->width, map->data->height, map->data->attributes);
+			set_win_tiles(x, y, map->width, map->height, map->data->attributes);
 		VBK_REG = 0;
 	}
 	#endif
