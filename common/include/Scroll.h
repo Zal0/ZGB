@@ -5,6 +5,8 @@
 #include "TilesInfo.h"
 #include "MapInfo.h"
 
+#define SPRITE_UNIQUE_ID(TILE_X, TILE_Y) ((0x00FF & TILE_X) | ((0xFF00 & (TILE_Y << 8))))
+
 extern unsigned char* scroll_map;
 extern INT16 scroll_x;
 extern INT16 scroll_y;

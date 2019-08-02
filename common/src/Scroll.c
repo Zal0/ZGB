@@ -90,7 +90,6 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	struct Sprite* s = 0;
 	UINT8 type = 255u;
 	UINT16 id = 0u;
-	UINT16 tmp_y;
 	c;
 
 	if(x < 0 || y < 0 || U_LESS_THAN(scroll_tiles_w - 1, x) || U_LESS_THAN(scroll_tiles_h - 1, y)) {
@@ -98,8 +97,7 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	} else {
 		type = GetTileReplacement(t, &replacement);
 		if(type != 255u) {
-			tmp_y = y << 8;
-			id = (0x00FF & x) | ((0xFF00 & tmp_y)); // (y >> 3) << 8 == y << 5
+			id = SPRITE_UNIQUE_ID(x, y);
 			for(i = 0u; i != sprite_manager_updatables[0]; ++i) {
 				s = sprite_manager_sprites[sprite_manager_updatables[i + 1]];
 				if((s->unique_id == id) && ((UINT16)s->type == (UINT16)type)) {
