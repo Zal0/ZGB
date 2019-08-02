@@ -141,15 +141,15 @@ void InitScrollTilesLEGACY(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UI
 
 void InitScrollLEGACY(UINT16 map_w, UINT16 map_h, unsigned char* map, const UINT8* coll_list, const UINT8* coll_list_down, UINT8 bank, unsigned char* color_map)
 {
-	struct MapInfoInternal internal_data = {map_w, map_h, map, color_map, 0};
-	struct MapInfo data = {bank, &internal_data};
+	struct MapInfoInternal internal_data = {map, color_map, 0};
+	struct MapInfo data = {bank, map_w, map_h, &internal_data};
 	InitScroll(&data, coll_list, coll_list_down);
 }
 
 void ScrollSetMapLEGACY(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, unsigned char* color_map)
 {
-	struct MapInfoInternal internal_data = {map_w, map_h, map, color_map, 0};
-	struct MapInfo data = {bank, &internal_data};
+	struct MapInfoInternal internal_data = {map, color_map, 0};
+	struct MapInfo data = {bank, map_w, map_h, &internal_data};
 	ScrollSetMap(&data);
 }
 
@@ -171,7 +171,7 @@ void InitScrollTiles(UINT8 first_tile, struct TilesInfo* tiles) {
 
 void InitWindow(UINT8 x, UINT8 y, struct MapInfo* map) {
 	PUSH_BANK(map->bank);
-	set_win_tiles(x, y, map->data->width, map->data->height, map->data->data);
+	set_win_tiles(x, y, map->width, map->height, map->data->data);
 	
 	#ifdef CGB
 	if(map->data->attributes) {
@@ -205,8 +205,8 @@ void ClampScrollLimits(UINT16* x, UINT16* y) {
 
 void ScrollSetMap(struct MapInfo* map_data) {
 	PUSH_BANK(map_data->bank);
-	scroll_tiles_w = map_data->data->width;
-	scroll_tiles_h = map_data->data->height;
+	scroll_tiles_w = map_data->width;
+	scroll_tiles_h = map_data->height;
 	scroll_map = map_data->data->data;
 	scroll_cmap = map_data->data->attributes;
 	scroll_x = 0;
@@ -429,7 +429,7 @@ UINT8 ScrollFindTile(struct MapInfo* map, UINT8 tile,
 	PUSH_BANK(map->bank);
 	for(xt = start_x; xt != start_x + w; ++ xt) {
 		for(yt = start_y; yt != start_y + h; ++ yt) {
-			if(map->data->data[map->data->width * yt + xt] == (UINT16)tile) { //That cast over there is mandatory and gave me a lot of headaches
+			if(map->data->data[map->width * yt + xt] == (UINT16)tile) { //That cast over there is mandatory and gave me a lot of headaches
 				goto done;
 			}
 		}

@@ -252,8 +252,6 @@ int main(int argc, char* argv[])
 
 	fprintf(file, "\n#include \"MapInfo.h\"\n");
 	fprintf(file, "const struct MapInfoInternal %s_internal = {\n", map_export_settings.label_name);
-	fprintf(file, "\t%d, //width\n", map.width);
-	fprintf(file, "\t%d, //height\n", map.height);
 	fprintf(file, "\t%s_map, //map\n", map_export_settings.label_name);
 	fprintf(file, "\t%s, //attributes\n", "0"); //TODO
 	fprintf(file, "\t%s, //tiles info\n", "0"); //TODO
@@ -261,6 +259,8 @@ int main(int argc, char* argv[])
 
 	fprintf(file, "\nstruct MapInfo %s = {\n", map_export_settings.label_name);
 	fprintf(file, "\t%d, //bank\n", bank);
+	fprintf(file, "\t%d, //width\n", map.width);
+	fprintf(file, "\t%d, //height\n", map.height);
 	fprintf(file, "\t&%s_internal, //data\n", map_export_settings.label_name);
 	fprintf(file, "};");
 

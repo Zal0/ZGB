@@ -4,8 +4,6 @@
 #include "TilesInfo.h"
 
 struct MapInfoInternal {
-	unsigned char width;
-	unsigned char height;
 	unsigned char* data;
 	unsigned char* attributes;
 	struct TilesInfo* tiles;
@@ -13,6 +11,8 @@ struct MapInfoInternal {
 
 struct MapInfo {
 	unsigned char bank;
+	unsigned char width;
+	unsigned char height;
 	struct MapInfoInternal const* data;
 };
 
