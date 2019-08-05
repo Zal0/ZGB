@@ -46,7 +46,7 @@ Void_Func_Void spriteUpdateFuncs[] = {SPRITES};
 Void_Func_Void spriteDestroyFuncs[] = {SPRITES};
 #undef _SPRITE
 
-#define _SPRITE(SPRITE_ID, DATA) DATA.data,
+#define _SPRITE(SPRITE_ID, DATA) (struct TilesInfoInternal*)(void*)DATA.data,
 struct TilesInfoInternal* spriteDatas[] = {SPRITES};
 #undef _SPRITE
 
