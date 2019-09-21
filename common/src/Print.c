@@ -84,6 +84,11 @@ void Printf(const char* txt, ...){
 							UIntToString(va_arg(list, UINT16), tmp);
 							Printf(tmp);
 							txt += 2;
+							continue;
+
+						case 's':
+							Printf(va_arg(list, char*));
+							txt += 2;
 							break;
 					}
 					break;
