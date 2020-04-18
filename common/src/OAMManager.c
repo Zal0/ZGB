@@ -36,11 +36,11 @@ UINT8 __at (OAM_MIRROR_ADDRESS) oam_mirror[160];
 UINT8* oam  = (__REG)0xC000;
 UINT8* oam0 = (__REG)0xC000;
 UINT8* oam1 = (__REG)OAM_MIRROR_ADDRESS;
-UINT8* cached_oam = (__REG)0xC000;
+UINT8* oam_end = (__REG)0xC000;
 void SwapOAMs() {
 	//Clean the previous oam struct
 	UINT8* tmp = oam;
-	while(oam < cached_oam) {
+	while(oam < oam_end) {
 		*oam = 200;
 		oam += 4;
 	}
@@ -49,12 +49,12 @@ void SwapOAMs() {
 		*(__REG)0xFF81 = 0xC0;
 		oam0 = tmp;
 		oam = (__REG)OAM_MIRROR_ADDRESS;
-		cached_oam = oam1;
+		oam_end = oam1;
 	} else {
 		*(__REG)0xFF81 = OAM_MIRROR_ADDRESS_HI;
 		oam1 = tmp;
 		oam = (__REG)0xC000;
-		cached_oam = oam0;
+		oam_end = oam0;
 	}
 }
 
