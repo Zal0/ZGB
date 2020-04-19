@@ -1,6 +1,6 @@
 ZGB_PATH_UNIX := $(subst ',,$(subst \,/,'$(ZGB_PATH)'))
 GBDK_HOME := $(ZGB_PATH_UNIX)/../env/gbdk
-PATH := $(ZGB_PATH_UNIX)/../env/make-3.81-bin/bin;$(ZGB_PATH_UNIX)/../env/gbdk/bin/SDCC/bin;$(ZGB_PATH_UNIX)/../env/msys/bin;$(PATH)
+PATH := $(ZGB_PATH_UNIX)/../env/make-3.81-bin/bin;$(ZGB_PATH_UNIX)/../env/SDCC/bin;$(ZGB_PATH_UNIX)/../env/msys/bin;$(PATH)
 
 #--- Default build will be release. Can be overiden passing BUILD_TYPE = debug as a parameter
 BUILD_TYPE = Release
