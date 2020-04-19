@@ -11,7 +11,7 @@
 
 //Pool
 extern struct Sprite* sprite_manager_sprites[];
-extern UINT8 sprite_manager_sprites_pool[];
+extern UINT8* sprite_manager_sprites_pool;
 
 //Current sprites
 extern UINT8 sprite_manager_updatables[];
