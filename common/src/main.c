@@ -143,7 +143,7 @@ void main() {
 			SetPalette(SPRITES_PALETTE, 0, 1, default_palette, 1);
 		} else 
 #endif
-			BGP_REG = OBP0_REG = OBP1_REG = PAL_DEF(0, 1, 2, 3);
+		BGP_REG = OBP0_REG = OBP1_REG = PAL_DEF(0, 1, 2, 3);
 
 		PUSH_BANK(stateBanks[current_state]);
 			(startFuncs[current_state])();

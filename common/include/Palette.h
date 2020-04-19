@@ -2,7 +2,7 @@
 #define PALETTE_H
 
 //For DMG
-#define PAL_DEF(C3, C2, C1, C0) ((C0 << 4 << 2) | (C1 << 4) | (C2 << 2) | C3)
+#define PAL_DEF(C3, C2, C1, C0) (UINT8)((C0 << 4 << 2) | (C1 << 4) | (C2 << 2) | C3)
 
 #define PALETTE_INDEX(PAL, IDX) PAL##CGBPal##IDX##c0, PAL##CGBPal##IDX##c1, PAL##CGBPal##IDX##c2, PAL##CGBPal##IDX##c3                       
 #define PALETTE_FROM_HEADER(PAL) PALETTE_INDEX(PAL, 0), \
