@@ -114,6 +114,22 @@ void SpriteManagerFlushRemove() {
 	sprite_manager_removal_check = 0;
 }
 
+void SetBank(UINT8 bank)
+{
+__asm
+	ldhl	sp,	#2
+	ld	a, (hl)
+//*bank_stack = bank;
+	ld	hl, #_bank_stackSTACK
+	ld  (hl), a
+//SWITCH_ROM_MBC1(bank);
+	ld	hl, #0x2000
+	ld (hl), a
+__endasm;
+	//*bank_stack = bank;
+	//SWITCH_ROM_MBC1(bank);
+}
+
 extern UINT8* oam;
 extern UINT8* oam0;
 extern UINT8* oam1;
@@ -124,15 +140,15 @@ void SpriteManagerUpdate() {
 		THIS = sprite_manager_sprites[sprite_manager_updatables[THIS_IDX + 1]];
 		if(!THIS->marked_for_removal) {
 
-			PUSH_BANK(spriteBanks[THIS->type]);
+			//No need to call push and pop here, just change the current bank
+			SetBank(spriteBanks[THIS->type]);
+
 			spriteUpdateFuncs[THIS->type]();
 
 			if(THIS == scroll_target)
 				RefreshScroll();
 
 			DrawSprite(THIS); //this needs to be done using the sprite bank because the animation array is stored there
-
-			POP_BANK;
 		}
 	}
 
