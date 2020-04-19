@@ -3,9 +3,8 @@
 DECLARE_STAKCK_AND_PUSH(bank_stack, N_PUSH_BANKS, 1);
 
 void PushBank(UINT8 b) {
-	/*bank_stack ++;
-	*bank_stack = b;
-	SWITCH_ROM_MBC1(b);*/
+	//StackPush(bank_stack, b);
+	//SWITCH_ROM_MBC1(b);
 __asm
 	ldhl	sp,	#2
 	ld	a, (hl)
@@ -24,6 +23,8 @@ __endasm;
 }
 
 void PopBank() {
+	//StackPop(bank_stack);
+	//SWITCH_ROM_MBC1(*bank_stack);
 __asm
 //bank_stack --;
 	ld	hl, #_bank_stack
