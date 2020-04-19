@@ -116,6 +116,7 @@ void SpriteManagerFlushRemove() {
 
 void SetBank(UINT8 bank)
 {
+bank;
 __asm
 	ldhl	sp,	#2
 	ld	a, (hl)
