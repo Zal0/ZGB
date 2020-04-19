@@ -1,6 +1,6 @@
 #include "BankManager.h"
 
-DECLARE_STACK(bank_stack, N_PUSH_BANKS);
+DECLARE_STAKCK_AND_PUSH(bank_stack, N_PUSH_BANKS, 1);
 
 void PushBank(UINT8 b) {
 	/*bank_stack ++;
