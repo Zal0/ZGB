@@ -70,17 +70,19 @@ void DrawSprite(struct Sprite* sprite) {
 
 unsigned char* tile_coll;
 UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
-	UINT16 start_x, start_y, n_its;
+	UINT16 start_x, start_y, n_its,tmp;
 	UINT8 i;
 	UINT8 ret = 0;
 
-	PUSH_BANK(scroll_bank);
 	if(scroll_map) {
 		if(x > 0) {
-			start_x = (sprite->x + sprite->coll_x + sprite->coll_w - 1 + x);
+			tmp = (sprite->x + sprite->coll_x + sprite->coll_w - 1);
+			start_x = tmp  + x;
+			if(((INT8)tmp & (INT8)0xF8) != ((INT8)start_x & (INT8)0xF8)) {
 			start_y = (sprite->y + sprite->coll_y);
 			if(((start_y & 0xF000) | (start_x & 0xF000)) == 0u) {
 				n_its = ((start_y + sprite->coll_h - 1u) >> 3) - (start_y >> 3) + 1u;
+					PUSH_BANK(scroll_bank);
 				tile_coll = GetScrollTilePtr(start_x >> 3, start_y >> 3);
 			
 				for(i = 0u; i != n_its; ++i, tile_coll += scroll_tiles_w) {
@@ -90,13 +92,18 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 						break;
 					}
 				}
+					POP_BANK;
+				}
 			}
 		}
 		if(x < 0) {
-			start_x = (sprite->x + sprite->coll_x + (INT16)x);
+			tmp = sprite->x + sprite->coll_x;
+			start_x = tmp + (INT16)x;
+			if(((INT8)tmp & (INT8)0xF8) != ((INT8)start_x & (INT8)0xF8)) {
 			start_y = (sprite->y + sprite->coll_y);
 			if(((start_y & 0xF000) | (start_x & 0xF000)) == 0u) {
 				n_its = ((start_y + sprite->coll_h - 1u) >> 3) - (start_y >> 3) + 1u;
+					PUSH_BANK(scroll_bank);
 				tile_coll = GetScrollTilePtr(start_x >> 3, start_y >> 3);
 			
 				for(i = 0u; i != n_its; ++i, tile_coll += scroll_tiles_w) {
@@ -106,13 +113,18 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 						break;
 					}
 				}
+					POP_BANK;
+				}
 			}
 		}
 		if(y > 0) {
+			tmp = sprite->y + sprite->coll_y + sprite->coll_h - 1;
+			start_y = tmp + y;
+			if(((INT8)tmp & (INT8)0xF8) != ((INT8)start_y & (INT8)0xF8)) {
 			start_x = (sprite->x + sprite->coll_x);
-			start_y = (sprite->y + sprite->coll_y + sprite->coll_h - 1 + y);
 			if(((start_y & 0xF000) | (start_x & 0xF000)) == 0u) {
 				n_its = ((start_x + sprite->coll_w - 1u) >> 3) - (start_x >> 3) + 1u;
+					PUSH_BANK(scroll_bank);
 				tile_coll = GetScrollTilePtr(start_x >> 3, start_y >> 3);
 			
 				for(i = 0u; i != n_its; ++i, tile_coll += 1u) {
@@ -126,13 +138,18 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 						break;
 					}
 				}
+					POP_BANK;
+				}
 			}
 		}
 		if(y < 0) {
+			tmp = sprite->y + sprite->coll_y;
+			start_y = tmp + (INT16)y;
+			if(((start_y & 0xF000) | (start_x & 0xF000)) == 0u) {
 			start_x = (sprite->x + sprite->coll_x);
-			start_y = (sprite->y + sprite->coll_y + (INT16)y);
 			if(((start_y & 0xF000) | (start_x & 0xF000)) == 0u) {
 				n_its = ((start_x + sprite->coll_w - 1u) >> 3) - (start_x >> 3) + 1u;
+					PUSH_BANK(scroll_bank);
 				tile_coll = GetScrollTilePtr(start_x >> 3, start_y >> 3);
 			
 				for(i = 0u; i != n_its; ++i, tile_coll += 1u) {
@@ -142,10 +159,11 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 						break;
 					}
 				}
+					POP_BANK;
+				}
 			}
 		}
 	}
-	POP_BANK;
 
 	sprite->x += (INT16)x;
 	sprite->y += (INT16)y;
