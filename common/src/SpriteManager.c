@@ -137,10 +137,8 @@ extern UINT8* oam1;
 UINT8 THIS_IDX;
 struct Sprite* THIS;
 void SpriteManagerUpdate() {
-	for(THIS_IDX = 0u; THIS_IDX != sprite_manager_updatables[0]; ++THIS_IDX) {
-		THIS = sprite_manager_sprites[sprite_manager_updatables[THIS_IDX + 1]];
+	SPRITEMANAGER_ITERATE(THIS_IDX, THIS) {
 		if(!THIS->marked_for_removal) {
-
 			//No need to call push and pop here, just change the current bank
 			SetBank(spriteBanks[THIS->type]);
 
