@@ -3,6 +3,7 @@
 DECLARE_STAKCK_AND_PUSH(bank_stack, N_PUSH_BANKS, 1);
 
 void PushBank(UINT8 b) {
+b;
 	//StackPush(bank_stack, b);
 	//SWITCH_ROM_MBC1(b);
 __asm
