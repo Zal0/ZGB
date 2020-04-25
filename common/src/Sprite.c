@@ -7,7 +7,7 @@ void InitSprite(struct Sprite* sprite, FrameSize size, UINT8 first_tile) {
 	sprite->size = size;
 	sprite->first_tile = first_tile;
 	sprite->anim_data = 0u;
-	sprite->current_frame = 0u;
+	SET_FRAME(sprite, 0);
 	sprite->anim_speed = 33u;
 
 	sprite->x = 0;
@@ -26,8 +26,9 @@ void InitSprite(struct Sprite* sprite, FrameSize size, UINT8 first_tile) {
 void SetSpriteAnim(struct Sprite* sprite, UINT8* data, UINT8 speed) {
 	if(sprite->anim_data !=  data) {
 		sprite->anim_data = data;
-		sprite->current_frame = 0;
-		sprite->accum_ticks = 0;
+		sprite->anim_frame = 0;
+		SET_FRAME(sprite, data[1]);
+		sprite->anim_accum_ticks = 0;
 		sprite->anim_speed = speed;
 	}
 }
@@ -38,27 +39,24 @@ extern UINT8 delta_time;
 void DrawSprite(struct Sprite* sprite) {
 	UINT16 screen_x;
 	UINT16 screen_y;
-	UINT8 frame;
 	if(sprite->anim_data) {	
-		sprite->accum_ticks += sprite->anim_speed << delta_time;
-		if(sprite->accum_ticks > 100u) {
-			sprite->current_frame ++;
-			if(sprite->current_frame == sprite->anim_data[0]){
-				sprite->current_frame = 0;
+		sprite->anim_accum_ticks += sprite->anim_speed << delta_time;
+		if(sprite->anim_accum_ticks > (UINT8)100u) {
+			sprite->anim_frame ++;
+			if(sprite->anim_frame == sprite->anim_data[0]){
+				sprite->anim_frame = 0;
 			}
 
-			sprite->accum_ticks -= 100u;
+			SET_FRAME(sprite, sprite->anim_data[(UINT8)1u + sprite->anim_frame]);
+			sprite->anim_accum_ticks -= 100u;
 		}
-		frame = sprite->anim_data[1 + sprite->current_frame];
-	} else {
-		frame = sprite->current_frame;
 	}
 
 	screen_x = sprite->x - scroll_x;
 	screen_y = sprite->y - scroll_y;
 	//It might sound stupid adding 32 in both sides but remember the values are unsigned! (and maybe truncated after substracting scroll_)
 	if((screen_x + 32u < SCREENWIDTH_PLUS_32) && (screen_y + 32 < SCREENHEIGHT_PLUS_32)) {
-		DrawFrame(sprite->size, sprite->first_tile + (frame << sprite->size), screen_x, screen_y, sprite->flags);		
+		DrawFrame(sprite->size, sprite->frame, screen_x, screen_y, sprite->flags);		
 	} else {
 		if((screen_x + THIS->lim_x + 16) > ((THIS->lim_x << 1) + 16 + SCREENWIDTH) ||
 				(screen_y + THIS->lim_y + 16) > ((THIS->lim_y << 1) + 16 + SCREENHEIGHT)

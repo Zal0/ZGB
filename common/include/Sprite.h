@@ -6,6 +6,8 @@
 
 #define CUSTOM_DATA_SIZE 8
 
+#define SET_FRAME(SPRITE, IDX) SPRITE->frame = SPRITE->first_tile + (IDX << SPRITE->size)
+
 struct Sprite {
 	//Frame info
 	FrameSize size;
@@ -13,9 +15,10 @@ struct Sprite {
 
 	//Anim data
 	UINT8* anim_data;
-	UINT8 current_frame;
-	UINT8 accum_ticks;
+	UINT8 anim_accum_ticks;
 	UINT8 anim_speed;
+	UINT8 anim_frame;
+	UINT8 frame;
 
 	UINT16 x;
 	UINT16 y;
