@@ -75,7 +75,7 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 	if(scroll_map) {
 		if(x > 0) {
 			tmp = (sprite->x + sprite->coll_x + sprite->coll_w - 1);
-			start_x = tmp  + x;
+			start_x = tmp + x;
 			if(((INT8)tmp & (INT8)0xF8) != ((INT8)start_x & (INT8)0xF8)) {
 				start_y = (sprite->y + sprite->coll_y);
 				if(((start_y & 0xF000) | (start_x & 0xF000)) == 0u) {
@@ -94,7 +94,7 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 				}
 			}
 		}
-		if(x < 0) {
+		else if(x < 0) {
 			tmp = sprite->x + sprite->coll_x;
 			start_x = tmp + (INT16)x;
 			if(((INT8)tmp & (INT8)0xF8) != ((INT8)start_x & (INT8)0xF8)) {
@@ -115,6 +115,8 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 				}
 			}
 		}
+		sprite->x += (INT16)x;
+
 		if(y > 0) {
 			tmp = sprite->y + sprite->coll_y + sprite->coll_h - 1;
 			start_y = tmp + y;
@@ -140,7 +142,7 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 				}
 			}
 		}
-		if(y < 0) {
+		else if(y < 0) {
 			tmp = sprite->y + sprite->coll_y;
 			start_y = tmp + (INT16)y;
 			if(((INT8)tmp & (INT8)0xF8) != ((INT8)start_y & (INT8)0xF8)) {
@@ -162,9 +164,8 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 			}
 		}
 	}
-
-	sprite->x += (INT16)x;
 	sprite->y += (INT16)y;
+
 	return ret;
 }
 
