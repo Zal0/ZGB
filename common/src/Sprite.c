@@ -27,7 +27,7 @@ void SetSpriteAnim(struct Sprite* sprite, UINT8* data, UINT8 speed) {
 	if(sprite->anim_data !=  data) {
 		sprite->anim_data = data;
 		sprite->anim_frame = 0;
-		SET_FRAME(sprite, data[1]);
+		sprite->frame = sprite->first_tile + (data[1] << sprite->size);
 		sprite->anim_accum_ticks = 0;
 		sprite->anim_speed = speed;
 	}
@@ -47,7 +47,7 @@ void DrawSprite(struct Sprite* sprite) {
 				sprite->anim_frame = 0;
 			}
 
-			SET_FRAME(sprite, sprite->anim_data[(UINT8)1u + sprite->anim_frame]);
+			sprite->frame = sprite->first_tile + ((sprite->anim_data[(UINT8)1u + sprite->anim_frame]) << sprite->size);
 			sprite->anim_accum_ticks -= 100u;
 		}
 	}
