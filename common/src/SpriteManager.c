@@ -121,14 +121,10 @@ __asm
 	ldhl	sp,	#2
 	ld	a, (hl)
 //*bank_stack = bank;
-	ld	hl, #_bank_stackSTACK
-	ld  (hl), a
+	ld  (#_bank_stackSTACK), a
 //SWITCH_ROM_MBC1(bank);
-	ld	hl, #0x2000
-	ld (hl), a
+	ld (#0x2000), a
 __endasm;
-	//*bank_stack = bank;
-	//SWITCH_ROM_MBC1(bank);
 }
 
 extern UINT8* oam;
