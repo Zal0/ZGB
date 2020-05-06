@@ -36,27 +36,27 @@ void SetSpriteAnim(struct Sprite* sprite, UINT8* data, UINT8 speed) {
 #define SCREENWIDTH_PLUS_32 192 //160 + 32
 #define SCREENHEIGHT_PLUS_32 176 //144 + 32
 extern UINT8 delta_time;
-void DrawSprite(struct Sprite* sprite) {
+void DrawSprite() {
 	UINT16 screen_x;
 	UINT16 screen_y;
-	if(sprite->anim_data) {	
-		sprite->anim_accum_ticks += sprite->anim_speed << delta_time;
-		if(sprite->anim_accum_ticks > (UINT8)100u) {
-			sprite->anim_frame ++;
-			if(sprite->anim_frame == sprite->anim_data[0]){
-				sprite->anim_frame = 0;
+	if(THIS->anim_data) {	
+		THIS->anim_accum_ticks += THIS->anim_speed << delta_time;
+		if(THIS->anim_accum_ticks > (UINT8)100u) {
+			THIS->anim_frame ++;
+			if(THIS->anim_frame == THIS->anim_data[0]){
+				THIS->anim_frame = 0;
 			}
 
-			sprite->frame = sprite->first_tile + ((sprite->anim_data[(UINT8)1u + sprite->anim_frame]) << sprite->size);
-			sprite->anim_accum_ticks -= 100u;
+			THIS->frame = THIS->first_tile + ((THIS->anim_data[(UINT8)1u + THIS->anim_frame]) << THIS->size);
+			THIS->anim_accum_ticks -= 100u;
 		}
 	}
 
-	screen_x = sprite->x - scroll_x;
-	screen_y = sprite->y - scroll_y;
+	screen_x = THIS->x - scroll_x;
+	screen_y = THIS->y - scroll_y;
 	//It might sound stupid adding 32 in both sides but remember the values are unsigned! (and maybe truncated after substracting scroll_)
 	if((screen_x + 32u < SCREENWIDTH_PLUS_32) && (screen_y + 32 < SCREENHEIGHT_PLUS_32)) {
-		DrawFrame(sprite->size, sprite->frame, screen_x, screen_y, sprite->flags);		
+		DrawFrame(THIS->size, THIS->frame, screen_x, screen_y, THIS->flags);		
 	} else {
 		if((screen_x + THIS->lim_x + 16) > ((THIS->lim_x << 1) + 16 + SCREENWIDTH) ||
 				(screen_y + THIS->lim_y + 16) > ((THIS->lim_y << 1) + 16 + SCREENHEIGHT)

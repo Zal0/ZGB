@@ -143,7 +143,7 @@ void SpriteManagerUpdate() {
 			if(THIS == scroll_target)
 				RefreshScroll();
 
-			DrawSprite(THIS); //this needs to be done using the sprite bank because the animation array is stored there
+			DrawSprite(); //this needs to be done using the sprite bank because the animation array is stored there
 		}
 	}
 

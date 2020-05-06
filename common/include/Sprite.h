@@ -57,7 +57,7 @@ struct Sprite {
 
 void InitSprite(struct Sprite* sprite, FrameSize size, UINT8 first_tile);
 void SetSpriteAnim(struct Sprite* sprite, UINT8* data, UINT8 speed);
-void DrawSprite(struct Sprite* sprite);
+void DrawSprite();
 
 UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y);
 
