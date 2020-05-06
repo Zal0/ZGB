@@ -41,7 +41,7 @@ ifneq (,$(findstring Color,$(BUILD_TYPE)))
 	EXTENSION = gbc
 endif
 
-LFLAGS = $(LFLAGS_NBANKS) -Wl-m
+LFLAGS = -Wl-m -Wl-j $(LFLAGS_NBANKS)
 
 #since I am placing my OAM mirror at the end of the ram (0xDF00-0xDFFF) I need to move the stack to 0xDEFF
 LFLAGS += -Wl-g.STACK=0xDEFF
@@ -150,6 +150,7 @@ $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR_ZGB)/zgb.lib $(OBJDIR) $(OBJDIR
 	@echo Linking
 	$(LCC) $(LFLAGS) -k$(OBJDIR_ZGB) -lzgb.lib -o $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) $(OBJS)
 	mv .map $(OBJDIR)/$(PROJECT_NAME).map
+	mv .sym $(OBJDIR)/$(PROJECT_NAME).sym
 	mv $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
 
 build_lib: $(OBJDIR) $(OBJS)
