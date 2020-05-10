@@ -1,41 +1,43 @@
 #include "BankManager.h"
 
-DECLARE_STAKCK_AND_PUSH(bank_stack, N_PUSH_BANKS, 1);
+DECLARE_STACK(bank_stack, N_PUSH_BANKS);
+
+
 
 void PushBank(UINT8 b) {
 b;
-	//StackPush(bank_stack, b);
-	//SWITCH_ROM_MBC1(b);
 __asm
-	ldhl	sp,	#2
-	ld	a, (hl)
-//;C:/Users/Zalo/Desktop/gb/ZGB/common/src/BankManager.c:6: bank_stack ++;
+	//bank_stack ++;
 	ld	hl, #_bank_stack
 	inc	(hl)
-//;C:/Users/Zalo/Desktop/gb/ZGB/common/src/BankManager.c:7: *bank_stack = b;
+	//*bank_stack = _current_bank;
 	ld	c, (hl)
 	inc	hl
 	ld	b, (hl)
+	ld  a, (#__current_bank)
 	ld	(bc), a
-//;C:/Users/Zalo/Desktop/gb/ZGB/common/src/BankManager.c:8: SWITCH_ROM_MBC1(b);
-	ld	bc, #0x2000
-	ld	(bc), a
+	//_current_bank = b;
+	ldhl	sp,	#2
+	ld	a, (hl)
+	ld (#__current_bank), a
+	//SWITCH_ROM_MBC1(b);
+	ld (#0x2000), a
 __endasm;
 }
 
 void PopBank() {
-	//StackPop(bank_stack);
-	//SWITCH_ROM_MBC1(*bank_stack);
 __asm
-//bank_stack --;
-	ld	hl, #_bank_stack
-	dec	(hl)
-//SWITCH_ROM_MBC1(*bank_stack);
+//_current_bank = *(bank_stack);
+	ld   hl, #_bank_stack
 	ld	c, (hl)
 	inc	hl
 	ld	b, (hl)
 	ld	a, (bc)
-	ld	bc, #0x2000
-	ld	(bc), a
+	ld  (#__current_bank), a
+//SWITCH_ROM_MBC1(_current_bank);
+	ld  (#0x2000), a
+//bank_stack --;
+	dec hl
+	dec	(hl)
 __endasm;
 }
