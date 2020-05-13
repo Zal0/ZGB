@@ -33,10 +33,10 @@ UINT8 LoadSprite(struct TilesInfoInternal* data) {
 #define OAM_MIRROR_ADDRESS 0xdf00
 UINT8 __at (OAM_MIRROR_ADDRESS) oam_mirror[160];
 
-UINT8* oam  = (__REG)0xC000;
-UINT8* oam0 = (__REG)0xC000;
-UINT8* oam1 = (__REG)OAM_MIRROR_ADDRESS;
-UINT8* oam_end = (__REG)0xC000;
+UINT8* oam  = (UINT8*)0xC000;
+UINT8* oam0 = (UINT8*)0xC000;
+UINT8* oam1 = (UINT8*)OAM_MIRROR_ADDRESS;
+UINT8* oam_end = (UINT8*)0xC000;
 void SwapOAMs() {
 	//Clean the previous oam struct
 	UINT8* tmp = oam;
@@ -46,22 +46,22 @@ void SwapOAMs() {
 	}
 
 	if((0xFF00 & (UINT16)oam) == 0xC000) {
-		*(__REG)0xFF81 = 0xC0;
+		*(UINT8*)0xFF81 = 0xC0;
 		oam0 = tmp;
-		oam = (__REG)OAM_MIRROR_ADDRESS;
+		oam = (UINT8*)OAM_MIRROR_ADDRESS;
 		oam_end = oam1;
 	} else {
-		*(__REG)0xFF81 = OAM_MIRROR_ADDRESS_HI;
+		*(UINT8*)0xFF81 = OAM_MIRROR_ADDRESS_HI;
 		oam1 = tmp;
-		oam = (__REG)0xC000;
+		oam = (UINT8*)0xC000;
 		oam_end = oam0;
 	}
 }
 
 void ClearOAMs() {
 	UINT8 i;
-	oam0 = (__REG)0xC000;
-	oam1 = (__REG)OAM_MIRROR_ADDRESS;
+	oam0 = (UINT8*)0xC000;
+	oam1 = (UINT8*)OAM_MIRROR_ADDRESS;
 	for(i = 0; i < 40; ++i, oam0 += 4, oam1 += 4) {
 		*oam0 = 200;
 		*oam1 = 200;
