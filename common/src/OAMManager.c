@@ -68,9 +68,11 @@ void ClearOAMs() {
 	}
 }
 
-void DrawOAMSprite(UINT8 y, UINT8 x, UINT8 idx, UINT8 flags) {
-	y; x; idx; flags; // to avoid warning: unreferenced function argument
-
+UINT8 next_oam_sprite_y;
+UINT8 next_oam_sprite_x;
+UINT8 next_oam_sprite_idx;
+UINT8 next_oam_sprite_flags;
+void FlushOAMSprite() {
 __asm
 ;store in bc the address stored in oam ptr
 	ld	hl,#_oam
@@ -78,7 +80,7 @@ __asm
 	inc	hl
 	ld	b,(hl)
 ;store in hl the beginning of data (pointer to first param)
-	ldhl	sp,#2
+	ld	hl, #_next_oam_sprite_y
 ;OAMManager.c:35: *(oam ++) = y;
 	ld	a,(hl+)
 	ld	(bc),a

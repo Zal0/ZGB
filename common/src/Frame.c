@@ -8,7 +8,7 @@
 
 extern UINT8 sprites_pal[];
 
-void DrawFrame32x32(int idx, UINT8 x, UINT8 y, UINT8 flags);
+void DrawFrame32x32(int idx, UINT8 x, UINT8 y, UINT8 flags) BANKED;
 void DrawFrame(FrameSize size, int idx, UINT8 x, UINT8 y, UINT8 flags){
 #ifdef CGB
 	if(_cpu == CGB_TYPE && (flags & 0x10) == 0) { //In GBC I am gonna use bit 4 to know if this sprite is using a custom palette 
@@ -19,23 +19,21 @@ void DrawFrame(FrameSize size, int idx, UINT8 x, UINT8 y, UINT8 flags){
 	switch(size) {
 		case FRAME_8x8:
 		case FRAME_8x16:
-			DrawOAMSprite(y + 16u, x + 8u, idx, flags);
+			next_oam_sprite_y = y + 16u; next_oam_sprite_x = x + 8u; next_oam_sprite_idx = idx; next_oam_sprite_flags = flags; FlushOAMSprite();
 			break;
 
 		case FRAME_16x16:
 			if(flags & 32){
-				DrawOAMSprite(y + 16u, x + 8u,  idx + 2u, flags);
-				DrawOAMSprite(y + 16u, x + 16u, idx,      flags);
+				next_oam_sprite_y = y + 16u; next_oam_sprite_x = x + 8u; next_oam_sprite_idx = idx + 2u; next_oam_sprite_flags = flags; FlushOAMSprite();				
+				next_oam_sprite_x += 8u; next_oam_sprite_idx = idx; FlushOAMSprite();
 			} else {
-				DrawOAMSprite(y + 16u, x + 8u,  idx,      flags);
-				DrawOAMSprite(y + 16u, x + 16u, idx + 2u, flags);
+				next_oam_sprite_y = y + 16u; next_oam_sprite_x = x + 8u; next_oam_sprite_idx = idx; next_oam_sprite_flags = flags; FlushOAMSprite();
+				next_oam_sprite_x += 8u; next_oam_sprite_idx += 2u; FlushOAMSprite();
 			}
 			break;
 
 		case FRAME_32x32:
-			PUSH_BANK(1);
 			DrawFrame32x32(idx, x, y, flags);
-			POP_BANK;
 			break;
 	}
 }

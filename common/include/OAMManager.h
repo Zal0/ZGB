@@ -18,6 +18,11 @@ extern UINT8 last_sprite_loaded;
 UINT8 LoadSprite(struct TilesInfoInternal* data);
 void SwapOAMs();
 void ClearOAMs();
-void DrawOAMSprite(UINT8 y, UINT8 x, UINT8 idx, UINT8 flags);
+
+extern UINT8 next_oam_sprite_x;
+extern UINT8 next_oam_sprite_y;
+extern UINT8 next_oam_sprite_idx;
+extern UINT8 next_oam_sprite_flags;
+void FlushOAMSprite();
 
 #endif
