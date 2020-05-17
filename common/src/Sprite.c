@@ -170,18 +170,17 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 }
 
 UINT8 CheckCollision(struct Sprite* sprite1, struct Sprite* sprite2) {
-	INT8 diff = (INT8)(sprite1->x - sprite2->x) + sprite1->coll_x  - sprite2->coll_x; 
 	
-	if( (diff + sprite1->coll_w < 0) ||
-	    (sprite2->coll_w - diff < 0))
-		return 0;
-
-	diff = (INT8)(sprite1->y - sprite2->y) + sprite1->coll_y - sprite2->coll_y; 
-	if( (diff + sprite1->coll_h < 0) ||
-			(sprite2->coll_h - diff < 0)
-	) {
+	UINT16 diff = sprite1->x - sprite2->x + sprite1->coll_x  - sprite2->coll_x; 
+	if((diff + sprite1->coll_w) > (sprite2->coll_w + sprite1->coll_w)) {
 		return 0;
 	}
-		
+
+	diff = sprite1->y - sprite2->y + sprite1->coll_y - sprite2->coll_y; 
+	if((diff + sprite1->coll_h) > (sprite2->coll_h + sprite1->coll_h)) {
+		return 0;
+	}
+	
+	
 	return 1;
 }
