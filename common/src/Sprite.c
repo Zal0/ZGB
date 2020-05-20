@@ -174,13 +174,13 @@ UINT8 CheckCollision(struct Sprite* sprite1, struct Sprite* sprite2) {
 	INT8 diff;
 	
 	diff16 = sprite1->x - sprite2->x;
-	if(diff16 > 32 || diff16 < -32)
+	if((UINT16)(diff16 + 32) > 64) //diff16 > 32 || diff16 < -32
 		return 0;
 
 	diff = (INT8)diff16 + sprite1->coll_x - sprite2->coll_x;
 
 	diff16 = sprite1->y - sprite2->y;
-	if(diff16 > 32 || diff16 < -32)
+	if((UINT16)(diff16 + 32) > 64)
 		return 0;
 
 	if( (diff + sprite1->coll_w) < 0 ||
