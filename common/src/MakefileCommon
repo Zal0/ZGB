@@ -26,6 +26,7 @@ GBM2C = $(ZGB_PATH_UNIX)/../tools/gbm2c/gbm2c
 PNGB = $(ZGB_PATH_UNIX)/../tools/pngb/bin/pngb
 MOD2GBT = $(ZGB_PATH_UNIX)/../env/mod2gbt
 BGB = $(ZGB_PATH_UNIX)/../env/bgb/bgb
+ROMVIEW = $(ZGB_PATH_UNIX)/../env/romview/romview.exe
 
 ifneq ($(strip $(N_BANKS)),)
 	LFLAGS_NBANKS = -Wl-yt1 -Wl-yo$(N_BANKS)
@@ -151,6 +152,7 @@ $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR_ZGB)/zgb.lib $(OBJDIR) $(OBJDIR
 	$(LCC) $(LFLAGS) -k$(OBJDIR_ZGB) -lzgb.lib -o $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) $(OBJS)
 	mv .map $(OBJDIR)/$(PROJECT_NAME).map
 	mv .sym $(OBJDIR)/$(PROJECT_NAME).sym
+	$(ROMVIEW) $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) 255
 	mv $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
 
 build_lib: $(OBJDIR) $(OBJS)
