@@ -5,14 +5,14 @@
 
 struct MapInfoInternal {
 	unsigned char* data;
+	unsigned char width;
+	unsigned char height;
 	unsigned char* attributes;
 	struct TilesInfo* tiles;
 };
 
 struct MapInfo {
 	unsigned char bank;
-	unsigned char width;
-	unsigned char height;
 	struct MapInfoInternal const* data;
 };
 

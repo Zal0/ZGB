@@ -42,6 +42,7 @@ void MoveScroll(INT16 x, INT16 y);
 void RefreshScroll();
 void FinishPendingScrollUpdates();
 
+void GetMapSize(struct MapInfo* map, UINT8* tiles_w, UINT8* tiles_h);
 UINT8* GetScrollTilePtr(UINT16 x, UINT16 y);
 UINT8 GetScrollTile(UINT16 x, UINT16 y);
 UINT8 ScrollFindTile(struct MapInfo* map, UINT8 tile,
