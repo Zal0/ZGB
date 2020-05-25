@@ -243,7 +243,10 @@ int main(int argc, char* argv[])
 	}
 	
 	fprintf(file, "#pragma bank %d\n", bank);
-	fprintf(file, "unsigned char bank_%s = %d;\n", map_export_settings.label_name, bank);
+
+	fprintf(file, "\nvoid empty(void) __nonbanked {}\n");
+  fprintf(file, "__addressmod empty const CODE;\n\n");
+
 	fprintf(file, "const unsigned char %s_map[] = {", map_export_settings.label_name);
 	for(INTEGER i = 0; i < map.width * map.height; ++i) {
 		if(i != 0)
@@ -291,7 +294,7 @@ int main(int argc, char* argv[])
 	fprintf(file, "\t&%s, //tiles info\n", tile_file);
 	fprintf(file, "};");
 
-	fprintf(file, "\nstruct MapInfo %s = {\n", map_export_settings.label_name);
+	fprintf(file, "\nCODE struct MapInfo %s = {\n", map_export_settings.label_name);
 	fprintf(file, "\t%d, //bank\n", bank);
 	fprintf(file, "\t&%s_internal, //data\n", map_export_settings.label_name);
 	fprintf(file, "};");

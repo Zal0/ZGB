@@ -9,6 +9,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Header Files\Banks">
+      <UniqueIdentifier>{74ff96da-d054-4d0a-b262-d8653300b26c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Frame.h">
@@ -67,6 +70,57 @@
     </ClInclude>
     <ClInclude Include="include\MapInfo.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Banks\SetBank0.h">
+      <Filter>Header Files\Banks</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Banks\SetBank1.h">
+      <Filter>Header Files\Banks</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Banks\SetBank2.h">
+      <Filter>Header Files\Banks</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Banks\SetBank3.h">
+      <Filter>Header Files\Banks</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Banks\SetBank4.h">
+      <Filter>Header Files\Banks</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Banks\SetBank5.h">
+      <Filter>Header Files\Banks</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Banks\SetBank6.h">
+      <Filter>Header Files\Banks</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Banks\SetBank7.h">
+      <Filter>Header Files\Banks</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Banks\SetBank8.h">
+      <Filter>Header Files\Banks</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Banks\SetBank9.h">
+      <Filter>Header Files\Banks</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Banks\SetBank10.h">
+      <Filter>Header Files\Banks</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Banks\SetBank11.h">
+      <Filter>Header Files\Banks</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Banks\SetBank12.h">
+      <Filter>Header Files\Banks</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Banks\SetBank13.h">
+      <Filter>Header Files\Banks</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Banks\SetBank14.h">
+      <Filter>Header Files\Banks</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Banks\SetBank15.h">
+      <Filter>Header Files\Banks</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Banks\SetBankCommon.h">
+      <Filter>Header Files\Banks</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

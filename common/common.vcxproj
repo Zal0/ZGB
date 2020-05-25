@@ -20,6 +20,23 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\BankManager.h" />
+    <ClInclude Include="include\Banks\SetBank0.h" />
+    <ClInclude Include="include\Banks\SetBank1.h" />
+    <ClInclude Include="include\Banks\SetBank10.h" />
+    <ClInclude Include="include\Banks\SetBank11.h" />
+    <ClInclude Include="include\Banks\SetBank12.h" />
+    <ClInclude Include="include\Banks\SetBank13.h" />
+    <ClInclude Include="include\Banks\SetBank14.h" />
+    <ClInclude Include="include\Banks\SetBank15.h" />
+    <ClInclude Include="include\Banks\SetBank2.h" />
+    <ClInclude Include="include\Banks\SetBank3.h" />
+    <ClInclude Include="include\Banks\SetBank4.h" />
+    <ClInclude Include="include\Banks\SetBank5.h" />
+    <ClInclude Include="include\Banks\SetBank6.h" />
+    <ClInclude Include="include\Banks\SetBank7.h" />
+    <ClInclude Include="include\Banks\SetBank8.h" />
+    <ClInclude Include="include\Banks\SetBank9.h" />
+    <ClInclude Include="include\Banks\SetBankCommon.h" />
     <ClInclude Include="include\Fade.h" />
     <ClInclude Include="include\Frame.h" />
     <ClInclude Include="include\gbt_player.h" />

@@ -309,6 +309,9 @@ int main(int argc, char* argv[]) {
 	fprintf(file, "#pragma bank %d\n", bank);
 	//fprintf(file, "unsigned char bank_%s = %d;\n", tile_export.label_name, bank);
 
+	fprintf(file, "\nvoid empty(void) __nonbanked {}\n");
+  fprintf(file, "__addressmod empty const CODE;\n\n");
+
 	if(tile_export.include_colors){
 		fprintf(file, "const unsigned char %sCGB[] = {\n\t", tile_export.label_name);
 		for(int tile = tile_export.from; tile <= tile_export.up_to; ++ tile) {
@@ -370,7 +373,7 @@ int main(int argc, char* argv[]) {
 	}
 	fprintf(file, "};");
 
-	fprintf(file, "\nstruct TilesInfo %s = {\n", tile_export.label_name);
+	fprintf(file, "\nCODE struct TilesInfo %s = {\n", tile_export.label_name);
 	fprintf(file, "\t%d, //bank\n", bank);
 	fprintf(file, "\t&%s_internal, //data\n", tile_export.label_name);
 	fprintf(file, "};");
