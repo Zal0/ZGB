@@ -131,7 +131,7 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	#endif
 }
 
-void InitScrollTilesLEGACY(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 tile_bank) {
+/*void InitScrollTilesLEGACY(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 tile_bank) {
 	PUSH_BANK(tile_bank);
 	set_bkg_data(first_tile, n_tiles, tile_data);
 	POP_BANK;
@@ -149,9 +149,9 @@ void ScrollSetMapLEGACY(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 ba
 	struct MapInfoInternal internal_data = {map, map_w, map_h, color_map, 0};
 	struct MapInfo data = {bank, &internal_data};
 	ScrollSetMap(&data);
-}
+}*/
 
-void InitScrollTiles(UINT8 first_tile, struct TilesInfo* tiles) {
+void ScrollSetTiles(UINT8 first_tile, struct TilesInfo* tiles) {
 	UINT8 i;
 	UINT8 n_tiles;
 	UINT8* palette_entries;
@@ -174,7 +174,7 @@ void InitWindow(UINT8 x, UINT8 y, struct MapInfo* map) {
 	#ifdef CGB
 	if(map->data->attributes) {
 		VBK_REG = 1;
-			set_win_tiles(x, y, map->width, map->height, map->data->attributes);
+			set_win_tiles(x, y, map->data->width, map->data->height, map->data->attributes);
 		VBK_REG = 0;
 	}
 	#endif
@@ -201,7 +201,7 @@ void ClampScrollLimits(UINT16* x, UINT16* y) {
 	}
 }
 
-void ScrollSetMap(struct MapInfo* map_data) {
+void ScrollSetMap(const struct MapInfo* map_data) {
 	PUSH_BANK(map_data->bank);
 	scroll_tiles_w = map_data->data->width;
 	scroll_tiles_h = map_data->data->height;
@@ -222,10 +222,17 @@ void ScrollSetMap(struct MapInfo* map_data) {
 	POP_BANK;
 }
 
-void InitScroll(struct MapInfo* map_data, const UINT8* coll_list, const UINT8* coll_list_down) {
+void InitScroll(const struct MapInfo* map_data, const UINT8* coll_list, const UINT8* coll_list_down) {
 	UINT8 i;
 	INT16 y;
-	
+	struct TilesInfo* tiles_info;
+
+	//Init Tiles
+	PUSH_BANK(map_data->bank)
+		tiles_info = map_data->data->tiles;
+	POP_BANK;
+	ScrollSetTiles(0, tiles_info);
+
 	ScrollSetMap(map_data);
 
 	for(i = 0u; i != 128; ++i) {
@@ -417,7 +424,7 @@ UINT8 GetScrollTile(UINT16 x, UINT16 y) {
 	return ret;
 }
 
-void GetMapSize(struct MapInfo* map, UINT8* tiles_w, UINT8* tiles_h)
+void GetMapSize(const struct MapInfo* map, UINT8* tiles_w, UINT8* tiles_h)
 {
 	PUSH_BANK(map->bank);
 		*tiles_w = map->data->width;
@@ -425,7 +432,7 @@ void GetMapSize(struct MapInfo* map, UINT8* tiles_w, UINT8* tiles_h)
 	POP_BANK;
 }
 
-UINT8 ScrollFindTile(struct MapInfo* map, UINT8 tile,
+UINT8 ScrollFindTile(const struct MapInfo* map, UINT8 tile,
 	UINT8 start_x, UINT8 start_y, UINT8 w, UINT8 h,
 	UINT16* x, UINT16* y) {
 	UINT16 xt = 0;

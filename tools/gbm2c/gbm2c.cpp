@@ -272,6 +272,12 @@ int main(int argc, char* argv[])
 		fprintf(file, "\n};\n");
 	}
 
+	char tile_file[256];
+	int tile_file_size = strchr(map.tile_file, '.') - map.tile_file;
+	strncpy(tile_file, map.tile_file, tile_file_size);
+	tile_file[tile_file_size] = '\0';
+	fprintf(file, "#include \"%s.h\"\n", tile_file);
+
 	fprintf(file, "#include \"MapInfo.h\"\n");
 	fprintf(file, "const struct MapInfoInternal %s_internal = {\n", map_export_settings.label_name);
 	fprintf(file, "\t%s_map, //map\n", map_export_settings.label_name);
@@ -282,7 +288,7 @@ int main(int argc, char* argv[])
 	} else {
 		fprintf(file, "\t%s, //attributes\n", "0");
 	}
-	fprintf(file, "\t%s, //tiles info\n", "0"); //TODO
+	fprintf(file, "\t&%s, //tiles info\n", tile_file);
 	fprintf(file, "};");
 
 	fprintf(file, "\nstruct MapInfo %s = {\n", map_export_settings.label_name);
