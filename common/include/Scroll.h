@@ -32,9 +32,10 @@ extern UINT8 scroll_bottom_movement_limit;
 //void InitScrollLEGACY(UINT16 map_w, UINT16 map_h, unsigned char* map, const UINT8* coll_list, const UINT8* coll_list_down, UINT8 bank, unsigned char* color_map);
 
 #define InitScrollTiles(FIRST_TILE, TILE_DATA) 
-void ScrollSetTiles(UINT8 first_tile, struct TilesInfo* tile_data);
+void ScrollSetTiles(UINT8 first_tile, const struct TilesInfo* tile_data);
 void ScrollSetMap(const struct MapInfo* map_data);
 void InitScroll(const struct MapInfo* map_data, const UINT8* coll_list, const UINT8* coll_list_down);
+void InitScrollWithTiles(const struct MapInfo* map_data, const struct TilesInfo* tiles_info, const UINT8* coll_list, const UINT8* coll_list_down);
 
 void InitWindow(UINT8 x, UINT8 y, struct MapInfo* map);
 void ScrollUpdateRow(INT16 x, INT16 y);

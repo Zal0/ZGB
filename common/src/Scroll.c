@@ -151,7 +151,7 @@ void ScrollSetMapLEGACY(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 ba
 	ScrollSetMap(&data);
 }*/
 
-void ScrollSetTiles(UINT8 first_tile, struct TilesInfo* tiles) {
+void ScrollSetTiles(UINT8 first_tile, const struct TilesInfo* tiles) {
 	UINT8 i;
 	UINT8 n_tiles;
 	UINT8* palette_entries;
@@ -223,14 +223,22 @@ void ScrollSetMap(const struct MapInfo* map_data) {
 }
 
 void InitScroll(const struct MapInfo* map_data, const UINT8* coll_list, const UINT8* coll_list_down) {
-	UINT8 i;
-	INT16 y;
+	
 	struct TilesInfo* tiles_info;
 
 	//Init Tiles
 	PUSH_BANK(map_data->bank)
 		tiles_info = map_data->data->tiles;
 	POP_BANK;
+	
+	InitScrollWithTiles(map_data, tiles_info, coll_list, coll_list_down);
+}
+
+void InitScrollWithTiles(const struct MapInfo* map_data, const struct TilesInfo* tiles_info, const UINT8* coll_list, const UINT8* coll_list_down)
+{
+	UINT8 i;
+	INT16 y;
+
 	ScrollSetTiles(0, tiles_info);
 
 	ScrollSetMap(map_data);
