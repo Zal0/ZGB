@@ -1,5 +1,6 @@
 #include "OAMManager.h"
 #include "BankManager.h"
+#include <gb/hardware.h>
 
 UINT8 last_sprite_loaded = 0;
 UINT8 sprites_pal[256];
@@ -7,7 +8,7 @@ UINT8 sprites_pal[256];
 UINT8 LoadSprite(struct TilesInfoInternal* data) {
 	UINT8 i;
 	UINT8* sprites_pal_ptr = &sprites_pal[last_sprite_loaded];
-	UINT8 frame_size = data->width >> 3;
+	UINT8 frame_size = data->width >> ((LCDC_REG & 0x4) ? 3 : 4);
 	UINT8 n_tiles = data->num_frames << frame_size;
 	UINT8* palette_idx = data->color_data;
 
