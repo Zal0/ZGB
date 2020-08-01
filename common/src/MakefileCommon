@@ -21,6 +21,8 @@ BINDIR = ../bin
 LCC = $(GBDK_HOME)/bin/lcc
 SDCC = sdcc
 SDASGB = sdasgb
+SDLGB = sdldgb 
+
 GBR2C = $(ZGB_PATH_UNIX)/../tools/gbr2c/gbr2c
 GBM2C = $(ZGB_PATH_UNIX)/../tools/gbm2c/gbm2c
 PNGB = $(ZGB_PATH_UNIX)/../env/pngb
@@ -29,7 +31,7 @@ BGB = $(ZGB_PATH_UNIX)/../env/bgb/bgb
 ROMVIEW = $(ZGB_PATH_UNIX)/../env/romview/romview.exe
 
 ifneq ($(strip $(N_BANKS)),)
-	LFLAGS_NBANKS = -Wl-yt1 -Wl-yo$(N_BANKS)
+	BINFLAGS = -yt 1 -yo $(N_BANKS)
 endif
 
 CFLAGS = -mgbz80 --no-std-crt0 --fsigned-char --use-stdout -Dnonbanked= -I$(GBDK_HOME)/include -I$(GBDK_HOME)/include/asm $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include
@@ -37,15 +39,14 @@ CFLAGS += -DFILE_NAME=$(basename $(<F))
 
 EXTENSION = gb
 ifneq (,$(findstring Color,$(BUILD_TYPE)))
-	LFLAGS_NBANKS += -Wl-yp0x143=0xC0
+	BINFLAGS += -yc
 	CFLAGS += -DCGB
 	EXTENSION = gbc
 endif
 
-LFLAGS = -Wl-m -Wl-j $(LFLAGS_NBANKS)
-
 #since I am placing my OAM mirror at the end of the ram (0xDF00-0xDFFF) I need to move the stack to 0xDEFF
-LFLAGS += -Wl-g.STACK=0xDEFF
+LNAMES=-g .OAM=0xC000 -g .STACK=0xDEFF -g .refresh_OAM=0xFF80 -b _DATA=0xc0a0 -b _CODE=0x0200
+LFLAGS=-n -m -j -w -i -k $(GBDK_HOME)/lib/small/asxxxx/gbz80/ -l gbz80.lib -k $(GBDK_HOME)/lib/small/asxxxx/gb/ -l gb.lib -k $(OBJDIR_ZGB)/ -l zgb.lib $(LNAMES)
 
 current_dir = $(shell pwd)
 
@@ -127,7 +128,7 @@ $(OBJDIR_ZGB):
 
 $(OBJDIR)/zgb/%.o: $(ZGB_PATH_UNIX)/src/%.s
 	@echo compiling $<
-	@$(SDASGB) -plosgff -I"libc" $(filter --constseg CODE_%, $(subst .b,--constseg CODE_,$(suffix $(<:%.s=%)))) -c -o $@ $<
+	@$(SDASGB) -plosgff -I"libc" -I$(GBDK_HOME)/lib/small/asxxxx $(filter --constseg CODE_%, $(subst .b,--constseg CODE_,$(suffix $(<:%.s=%)))) -c -o $@ $<
 
 $(OBJDIR)/zgb/%.o: $(ZGB_PATH_UNIX)/src/%.c
 	@echo compiling $<
@@ -149,10 +150,9 @@ $(OBJDIR)/%.o: %.c
 
 $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR_ZGB)/zgb.lib $(OBJDIR) $(OBJDIR_RES) $(OBJDIR_RES_SRC) $(BINDIR) $(OBJS)
 	@echo Linking
-	$(LCC) $(LFLAGS) -k$(OBJDIR_ZGB) -lzgb.lib -o $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) $(OBJS)
-	mv .map $(OBJDIR)/$(PROJECT_NAME).map
-	mv .sym $(OBJDIR)/$(PROJECT_NAME).sym
-	$(ROMVIEW) $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) 255
+	sdldgb $(LFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(GBDK_HOME)/lib/small/asxxxx/gb/crt0.o $(OBJS)
+	@echo makebin
+	makebin -Z $(BINFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION)
 	mv $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
 
 build_lib: $(OBJDIR) $(OBJS)
