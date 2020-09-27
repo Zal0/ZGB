@@ -1,6 +1,6 @@
 ZGB_PATH_UNIX := $(subst ',,$(subst \,/,'$(ZGB_PATH)'))
 GBDK_HOME := $(ZGB_PATH_UNIX)/../env/gbdk
-PATH := $(ZGB_PATH_UNIX)/../env/make-3.81-bin/bin;$(ZGB_PATH_UNIX)/../env/gbdk/bin/SDCC/bin;$(ZGB_PATH_UNIX)/../env/msys/bin;$(PATH)
+PATH := $(ZGB_PATH_UNIX)/../env/make-3.81-bin/bin;$(ZGB_PATH_UNIX)/../env/gbdk/bin;$(ZGB_PATH_UNIX)/../env/msys/bin;$(PATH)
 
 #--- Default build will be release. Can be overiden passing BUILD_TYPE = debug as a parameter
 BUILD_TYPE = Release
@@ -21,7 +21,8 @@ BINDIR = ../bin
 LCC = $(GBDK_HOME)/bin/lcc
 SDCC = sdcc
 SDASGB = sdasgb
-SDLGB = sdldgb 
+SDLDGB = sdldgb
+MAKEBIN = makebin
 
 GBR2C = $(ZGB_PATH_UNIX)/../tools/gbr2c/gbr2c
 GBM2C = $(ZGB_PATH_UNIX)/../tools/gbm2c/gbm2c
@@ -45,7 +46,7 @@ ifneq (,$(findstring Color,$(BUILD_TYPE)))
 endif
 
 #since I am placing my OAM mirror at the end of the ram (0xDF00-0xDFFF) I need to move the stack to 0xDEFF
-LNAMES=-g .OAM=0xC000 -g .STACK=0xDEFF -g .refresh_OAM=0xFF80 -b _DATA=0xc0a0 -b _CODE=0x0200
+LNAMES=-g _shadow_OAM=0xC000 -g .STACK=0xDEFF -g .refresh_OAM=0xFF80 -b _DATA=0xc0a0 -b _CODE=0x0200
 LFLAGS=-n -m -j -w -i -k $(GBDK_HOME)/lib/small/asxxxx/gbz80/ -l gbz80.lib -k $(GBDK_HOME)/lib/small/asxxxx/gb/ -l gb.lib -k $(OBJDIR_ZGB)/ -l zgb.lib $(LNAMES)
 
 current_dir = $(shell pwd)
@@ -150,9 +151,9 @@ $(OBJDIR)/%.o: %.c
 
 $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR_ZGB)/zgb.lib $(OBJDIR) $(OBJDIR_RES) $(OBJDIR_RES_SRC) $(BINDIR) $(OBJS)
 	@echo Linking
-	sdldgb $(LFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(GBDK_HOME)/lib/small/asxxxx/gb/crt0.o $(OBJS)
+	$(SDLDGB) $(LFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(GBDK_HOME)/lib/small/asxxxx/gb/crt0.o $(OBJS)
 	@echo makebin
-	makebin -Z $(BINFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION)
+	$(MAKEBIN) -Z $(BINFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION)
 	$(ROMVIEW) $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) 255
 	mv $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
 
