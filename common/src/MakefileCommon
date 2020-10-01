@@ -4,13 +4,6 @@ PATH := $(ZGB_PATH_UNIX)/../env/make-3.81-bin/bin;$(ZGB_PATH_UNIX)/../env/gbdk/b
 
 #--- Default build will be release. Can be overiden passing BUILD_TYPE = debug as a parameter
 BUILD_TYPE = Release
-CGB = yes
-
-ifneq (,$(findstring Release,$(BUILD_TYPE)))
-	BUILD_DEFS += -DNDEBUG
-else
-	PROJECT_NAME := $(PROJECT_NAME)_Debug
-endif
 
 OBJDIR = ../$(BUILD_TYPE)
 OBJDIR_RES_SRC = ../res/src
@@ -18,7 +11,6 @@ OBJDIR_RES = ../$(BUILD_TYPE)/res
 OBJDIR_ZGB = ../$(BUILD_TYPE)/zgb
 BINDIR = ../bin
 
-LCC = $(GBDK_HOME)/bin/lcc
 SDCC = sdcc
 SDASGB = sdasgb
 SDLDGB = sdldgb
@@ -31,13 +23,18 @@ MOD2GBT = $(ZGB_PATH_UNIX)/../env/mod2gbt
 BGB = $(ZGB_PATH_UNIX)/../env/bgb/bgb
 ROMVIEW = $(ZGB_PATH_UNIX)/../env/romview/romview.exe
 
+CFLAGS = -mgbz80 --no-std-crt0 --fsigned-char --use-stdout -Dnonbanked= -I$(GBDK_HOME)/include -I$(GBDK_HOME)/include/asm $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include
+CFLAGS += -DFILE_NAME=$(basename $(<F))
+
+#since I am placing my OAM mirror at the end of the ram (0xDF00-0xDFFF) I need to move the stack to 0xDEFF
+LNAMES=-g _shadow_OAM=0xC000 -g .STACK=0xDEFF -g .refresh_OAM=0xFF80 -b _DATA=0xc0a0 -b _CODE=0x0200
+LFLAGS=-n -m -j -w -i -k $(GBDK_HOME)/lib/small/asxxxx/gbz80/ -l gbz80.lib -k $(GBDK_HOME)/lib/small/asxxxx/gb/ -l gb.lib -k $(OBJDIR_ZGB)/ -l zgb.lib $(LNAMES)
+
 ifneq ($(strip $(N_BANKS)),)
 	BINFLAGS = -yt 1 -yo $(N_BANKS)
 endif
 
-CFLAGS = -mgbz80 --no-std-crt0 --fsigned-char --use-stdout -Dnonbanked= -I$(GBDK_HOME)/include -I$(GBDK_HOME)/include/asm $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include
-CFLAGS += -DFILE_NAME=$(basename $(<F))
-
+# DMG/Color flags
 EXTENSION = gb
 ifneq (,$(findstring Color,$(BUILD_TYPE)))
 	BINFLAGS += -yc
@@ -45,9 +42,14 @@ ifneq (,$(findstring Color,$(BUILD_TYPE)))
 	EXTENSION = gbc
 endif
 
-#since I am placing my OAM mirror at the end of the ram (0xDF00-0xDFFF) I need to move the stack to 0xDEFF
-LNAMES=-g _shadow_OAM=0xC000 -g .STACK=0xDEFF -g .refresh_OAM=0xFF80 -b _DATA=0xc0a0 -b _CODE=0x0200
-LFLAGS=-n -m -j -w -i -k $(GBDK_HOME)/lib/small/asxxxx/gbz80/ -l gbz80.lib -k $(GBDK_HOME)/lib/small/asxxxx/gb/ -l gb.lib -k $(OBJDIR_ZGB)/ -l zgb.lib $(LNAMES)
+# Release/Debug flags
+ifneq (,$(findstring Debug,$(BUILD_TYPE)))
+	CFLAGS += --debug
+	LFLAGS += -y
+	PROJECT_NAME := $(PROJECT_NAME)_Debug
+else
+	CFLAGS += -DNDEBUG
+endif
 
 current_dir = $(shell pwd)
 
@@ -147,7 +149,7 @@ $(OBJDIR)/%.o: %.s
 
 $(OBJDIR)/%.o: %.c
 	@echo compiling $<
-	@$(SDCC) $(CFLAGS) $(filter --constseg CODE_%, $(subst .b,--constseg CODE_,$(suffix $(<:%.c=%)))) -c -o $@ $<	
+	$(SDCC) $(CFLAGS) $(filter --constseg CODE_%, $(subst .b,--constseg CODE_,$(suffix $(<:%.c=%)))) -c -o $@ $<	
 
 $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR_ZGB)/zgb.lib $(OBJDIR) $(OBJDIR_RES) $(OBJDIR_RES_SRC) $(BINDIR) $(OBJS)
 	@echo Linking
