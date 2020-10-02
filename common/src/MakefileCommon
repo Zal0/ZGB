@@ -149,15 +149,15 @@ $(OBJDIR)/%.o: %.s
 
 $(OBJDIR)/%.o: %.c
 	@echo compiling $<
-	$(SDCC) $(CFLAGS) $(filter --constseg CODE_%, $(subst .b,--constseg CODE_,$(suffix $(<:%.c=%)))) -c -o $@ $<	
+	@$(SDCC) $(CFLAGS) $(filter --constseg CODE_%, $(subst .b,--constseg CODE_,$(suffix $(<:%.c=%)))) -c -o $@ $<	
 
 $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR_ZGB)/zgb.lib $(OBJDIR) $(OBJDIR_RES) $(OBJDIR_RES_SRC) $(BINDIR) $(OBJS)
 	@echo Linking
-	$(SDLDGB) $(LFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(GBDK_HOME)/lib/small/asxxxx/gb/crt0.o $(OBJS)
-	@echo makebin
-	$(MAKEBIN) -Z $(BINFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION)
-	$(ROMVIEW) $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) 255
-	mv $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
+	@$(SDLDGB) $(LFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(GBDK_HOME)/lib/small/asxxxx/gb/crt0.o $(OBJS)
+	@$(MAKEBIN) -Z $(BINFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION)
+	@$(ROMVIEW) $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) 255
+	@mv $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
+	@rm *.adb
 
 build_lib: $(OBJDIR) $(OBJS)
 
