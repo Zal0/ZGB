@@ -15,6 +15,7 @@ SDCC = sdcc
 SDASGB = sdasgb
 SDLDGB = sdldgb
 MAKEBIN = makebin
+IHXCHECK = ihxcheck
 
 GBR2C = $(ZGB_PATH_UNIX)/../tools/gbr2c/gbr2c
 GBM2C = $(ZGB_PATH_UNIX)/../tools/gbm2c/gbm2c
@@ -154,6 +155,7 @@ $(OBJDIR)/%.o: %.c
 $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR_ZGB)/zgb.lib $(OBJDIR) $(OBJDIR_RES) $(OBJDIR_RES_SRC) $(BINDIR) $(OBJS)
 	@echo Linking
 	@$(SDLDGB) $(LFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(GBDK_HOME)/lib/small/asxxxx/gb/crt0.o $(OBJS)
+	@$(IHXCHECK) $(OBJDIR)/$(PROJECT_NAME).ihx -e
 	@$(MAKEBIN) -Z $(BINFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION)
 	@$(ROMVIEW) $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) 255
 	@mv $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
