@@ -2,7 +2,7 @@
 
 DECLARE_STACK(bank_stack, N_PUSH_BANKS);
 
-
+void empty(void) __nonbanked {}
 
 void PushBank(UINT8 b) {
 b;

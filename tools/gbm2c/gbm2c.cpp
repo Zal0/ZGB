@@ -244,7 +244,7 @@ int main(int argc, char* argv[])
 	
 	fprintf(file, "#pragma bank %d\n", bank);
 
-	fprintf(file, "\nvoid empty(void) __nonbanked {}\n");
+	fprintf(file, "\nvoid empty(void) __nonbanked;\n");
   fprintf(file, "__addressmod empty const CODE;\n\n");
 
 	fprintf(file, "const unsigned char %s_map[] = {", map_export_settings.label_name);

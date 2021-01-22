@@ -1,4 +1,4 @@
 #include "Keys.h"
 
-UBYTE previous_KEYS = 0;
+UBYTE previous_keys = 0;
 UBYTE keys = 0;
