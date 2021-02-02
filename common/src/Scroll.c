@@ -115,7 +115,7 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	#ifdef CGB
 		if (_cpu == CGB_TYPE) {
 			VBK_REG = 1;
-			if(!scroll_cmap || (0x10 & *c)) { //Bit 4 on, means default palette 
+			if(!scroll_cmap || (0x10 & *c)) { //I am using bit 4 (unused) to select the default palette (the one stored on the tile)
 				i = scroll_tile_info[replacement];
 				c = &i;
 			}
