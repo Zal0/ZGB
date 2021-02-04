@@ -79,7 +79,7 @@ PNGS        = $(foreach dir,../res,$(notdir $(wildcard $(dir)/*.png)))
 MUSICS      = $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.mod)))
 OBJS = $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.o) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.o) $(PNGS:%.png=$(OBJDIR_RES)/%.png.o) $(MUSICS:%.mod=$(OBJDIR_RES)/%.mod.o) $(ASMS:%.s=$(OBJDIR)/%.o) $(CLASSES:%.c=$(OBJDIR)/%.o)
 OBJS_ZGB = $(ASMS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.o)
-OBJS_ZGB_LIB = $(ASMS_ZGB:%.s=\n%.o) $(CLASSES_ZGB:%.c=\n%.o)
+OBJS_ZGB_LIB = $(ASMS_ZGB:%.s=%.o) $(CLASSES_ZGB:%.c=%.o)
 
 #prevent gbr2c and gbm2c intermediate files from being deleted
 .SECONDARY: $(GBMS:%.gbm=$(OBJDIR_RES_SRC)/%.gbm.c) $(GBRS:%.gbr=$(OBJDIR_RES_SRC)/%.gbr.c) $(PNGS:%.png=$(OBJDIR_RES_SRC)/%.png.c)
@@ -156,7 +156,12 @@ $(OBJDIR)/zgb/%.o: $(ZGB_PATH_UNIX)/src/%.c
 $(OBJDIR_ZGB)/zgb.lib: $(OBJDIR_ZGB) $(OBJS_ZGB)
 	@echo creating zgb.lib
 	@rm -f $(OBJDIR_ZGB)/zgb.lib
+ifeq ($(OS),Windows_NT)
 	@echo -e "$(OBJS_ZGB_LIB)" >> $(OBJDIR_ZGB)/zgb.lib
+else
+	@echo "$(OBJS_ZGB_LIB)" >> $(OBJDIR_ZGB)/zgb.lib
+endif
+	@sed -i -e 's/ /\n/g' $(OBJDIR_ZGB)/zgb.lib
 
 #Project files------------------------------------
 $(OBJDIR)/%.o: %.s
