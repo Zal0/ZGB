@@ -1,5 +1,20 @@
 ZGB_PATH_UNIX := $(subst ',,$(subst \,/,'$(ZGB_PATH)'))
-GBDK_HOME := $(ZGB_PATH_UNIX)/../env/gbdk
+
+# default to no extension for all OSes
+EXEEXTENSION =
+
+# Only set GBDK_HOME if not already set
+# This allows override with local version
+ifeq ($(GBDK_HOME),)
+	GBDK_HOME := $(ZGB_PATH_UNIX)/../env/gbdk
+	# If GBDK_HOME is not defined and the OS is not Windows
+	# then the ENV binaries will get used, which mean they
+	# need a .exe extension to work with WINE on Linux/etc.
+	ifneq ($(OS),Windows_NT)
+		EXEEXTENSION=.exe
+	endif
+endif
+
 PATH := $(ZGB_PATH_UNIX)/../env/make-3.81-bin/bin;$(ZGB_PATH_UNIX)/../env/gbdk/bin;$(ZGB_PATH_UNIX)/../env/msys/bin;$(PATH)
 
 #--- Default build will be release. Can be overiden passing BUILD_TYPE = debug as a parameter
@@ -11,18 +26,18 @@ OBJDIR_RES = ../$(BUILD_TYPE)/res
 OBJDIR_ZGB = ../$(BUILD_TYPE)/zgb
 BINDIR = ../bin
 
-SDCC = sdcc
-SDASGB = sdasgb
-SDLDGB = sdldgb
-MAKEBIN = makebin
-IHXCHECK = ihxcheck
+SDCC = $(GBDK_HOME)/bin/sdcc$(EXEEXTENSION)
+SDASGB = $(GBDK_HOME)/bin/sdasgb$(EXEEXTENSION)
+SDLDGB = $(GBDK_HOME)/bin/sdldgb$(EXEEXTENSION)
+MAKEBIN = $(GBDK_HOME)/bin/makebin$(EXEEXTENSION)
+IHXCHECK = $(GBDK_HOME)/bin/ihxcheck$(EXEEXTENSION)
 
-GBR2C = $(ZGB_PATH_UNIX)/../tools/gbr2c/gbr2c
-GBM2C = $(ZGB_PATH_UNIX)/../tools/gbm2c/gbm2c
-PNGB = $(ZGB_PATH_UNIX)/../env/pngb
-MOD2GBT = $(ZGB_PATH_UNIX)/../env/mod2gbt
-BGB = $(ZGB_PATH_UNIX)/../env/bgb/bgb
-ROMVIEW = $(ZGB_PATH_UNIX)/../env/romview/romview.exe
+GBR2C = $(ZGB_PATH_UNIX)/../tools/gbr2c/gbr2c$(EXEEXTENSION)
+GBM2C = $(ZGB_PATH_UNIX)/../tools/gbm2c/gbm2c$(EXEEXTENSION)
+PNGB = $(ZGB_PATH_UNIX)/../env/pngb$(EXEEXTENSION)
+MOD2GBT = $(ZGB_PATH_UNIX)/../env/mod2gbt$(EXEEXTENSION)
+BGB = $(ZGB_PATH_UNIX)/../env/bgb/bgb$(EXEEXTENSION)
+ROMVIEW = $(ZGB_PATH_UNIX)/../env/romview/romview$(EXEEXTENSION)
 
 CFLAGS = -mgbz80 --no-std-crt0 --fsigned-char --use-stdout -Dnonbanked= -I$(GBDK_HOME)/include -I$(GBDK_HOME)/include/asm $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include
 CFLAGS += -DFILE_NAME=$(basename $(<F))
