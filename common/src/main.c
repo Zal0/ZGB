@@ -92,6 +92,7 @@ void main() {
 	cpu_fast();
 #endif
 	gbt_stop();
+  SpriteManagerInit();
 
 	PUSH_BANK(1);
 	InitStates();
