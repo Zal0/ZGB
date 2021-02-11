@@ -309,7 +309,7 @@ int main(int argc, char* argv[]) {
 	fprintf(file, "#pragma bank %d\n", bank);
 	//fprintf(file, "unsigned char bank_%s = %d;\n", tile_export.label_name, bank);
 
-	fprintf(file, "\nvoid empty(void) __nonbanked {}\n");
+	fprintf(file, "\nvoid empty(void) __nonbanked;\n");
   fprintf(file, "__addressmod empty const CODE;\n\n");
 
 	if(tile_export.include_colors){

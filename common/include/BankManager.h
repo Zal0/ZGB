@@ -2,10 +2,10 @@
 #define BANK_MANAGER_H
 
 #include "Stack.h"
+#include <gb/gb.h>
 
 #define N_PUSH_BANKS 10
 
-extern UINT8 _current_bank; //defined in crt0.s Used by banked_call and banked ret
 extern UINT8* bank_stack;
 
 void PushBank(UINT8 b);
