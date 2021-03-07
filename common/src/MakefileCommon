@@ -24,7 +24,7 @@ MOD2GBT = $(ZGB_PATH_UNIX)/../env/mod2gbt
 BGB = $(ZGB_PATH_UNIX)/../env/bgb/bgb
 ROMVIEW = $(ZGB_PATH_UNIX)/../env/romview/romview.exe
 
-CFLAGS = -mgbz80 --no-std-crt0 --fsigned-char --use-stdout -Dnonbanked= -I$(GBDK_HOME)/include -I$(GBDK_HOME)/include/asm $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include
+CFLAGS += -mgbz80 --no-std-crt0 --fsigned-char --use-stdout -Dnonbanked= -I$(GBDK_HOME)/include -I$(GBDK_HOME)/include/asm $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include
 CFLAGS += -DFILE_NAME=$(basename $(<F))
 
 #since I am placing my OAM mirror at the end of the ram (0xDF00-0xDFFF) I need to move the stack to 0xDEFF
