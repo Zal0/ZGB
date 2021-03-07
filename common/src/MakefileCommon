@@ -32,7 +32,7 @@ LNAMES=-g _shadow_OAM=0xC000 -g .STACK=0xDEFF -g .refresh_OAM=0xFF80 -b _DATA=0x
 LFLAGS=-n -m -j -w -i -k $(GBDK_HOME)/lib/small/asxxxx/gbz80/ -l gbz80.lib -k $(GBDK_HOME)/lib/small/asxxxx/gb/ -l gb.lib -k $(OBJDIR_ZGB)/ -l zgb.lib $(LNAMES)
 
 ifneq ($(strip $(N_BANKS)),)
-	BINFLAGS = -yt 1 -yo $(N_BANKS)
+	BINFLAGS += -yt 1 -yo $(N_BANKS)
 endif
 
 # DMG/Color flags
