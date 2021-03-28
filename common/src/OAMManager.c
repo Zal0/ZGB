@@ -24,12 +24,11 @@ UINT8 LoadSprite(struct TilesInfoInternal* data) {
 	return last_sprite_loaded - n_tiles;
 }
 
-//Ram addresses: 0c00 - dfff
+//Ram addresses: c000 - dfff
 //c000 is where GBDK OAM is allocated
 //c000 + 160 = c0a0 but we cannot user c0a0, we need c100
 //c100 crashes (__at not working??) so I am gonna use df00-dfff (last 255 ram bytes)
 //This address overlaps with the stack eventually so I am also moving the stack to 0xDEFF (see the makefile)
-#define OAM_MIRROR_ADDRESS_HI 0xdf
 #define OAM_MIRROR_ADDRESS 0xdf00
 UINT8 __at (OAM_MIRROR_ADDRESS) oam_mirror[160];
 
@@ -46,12 +45,12 @@ void SwapOAMs() {
 	}
 
 	if((0xFF00 & (UINT16)oam) == 0xC000) {
-		*(UINT8*)0xFF81 = 0xC0;
+		SET_SHADOW_OAM_ADDRESS((void*)0xC000);
 		oam0 = tmp;
 		oam = (UINT8*)OAM_MIRROR_ADDRESS;
 		oam_end = oam1;
 	} else {
-		*(UINT8*)0xFF81 = OAM_MIRROR_ADDRESS_HI;
+		SET_SHADOW_OAM_ADDRESS((void*)OAM_MIRROR_ADDRESS);
 		oam1 = tmp;
 		oam = (UINT8*)0xC000;
 		oam_end = oam0;
