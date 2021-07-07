@@ -19,6 +19,7 @@ extern UINT8 sprite_manager_updatables[];
 extern UINT8 THIS_IDX;
 extern struct Sprite* THIS;
 
+void SpriteManagerInit();
 void SpriteManagerReset();
 
 void SpriteManagerLoad(UINT8 sprite_type);

@@ -15,6 +15,15 @@ DECLARE_VECTOR(sprite_manager_updatables, N_SPRITE_MANAGER_SPRITES);
 
 UINT8 sprite_manager_removal_check;
 
+void SpriteManagerInit() {
+	UINT8 i;
+
+	// Zero out array since compiler doesn't do it for N with [N] = {0};
+	for(i = 0u; i != N_SPRITE_MANAGER_SPRITES; ++ i) {
+		sprite_manager_updatables[i] = 0;
+	}
+}
+
 void SpriteManagerReset() {
 	UINT8 i;
 
@@ -130,8 +139,8 @@ __endasm;
 extern UINT8* oam;
 extern UINT8* oam0;
 extern UINT8* oam1;
-UINT8 THIS_IDX;
-struct Sprite* THIS;
+UINT8 THIS_IDX = 0;
+struct Sprite* THIS = 0;
 void SpriteManagerUpdate() {
 	SPRITEMANAGER_ITERATE(THIS_IDX, THIS) {
 		if(!THIS->marked_for_removal) {

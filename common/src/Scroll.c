@@ -24,8 +24,8 @@ UINT8 GetTileReplacement(UINT8* tile_ptr, UINT8* tile);
 
 unsigned char* scroll_map = 0;
 unsigned char* scroll_cmap = 0;
-INT16 scroll_x;
-INT16 scroll_y;
+INT16 scroll_x = 0;
+INT16 scroll_y = 0;
 UINT16 scroll_w;
 UINT16 scroll_h;
 UINT16 scroll_tiles_w;
