@@ -13,22 +13,26 @@ UINT8 FadeInOp(UINT16 c, UINT16 i) {
 	return U_LESS_THAN(c, i) ? 0: (c - i);
 }
 
+typedef volatile UINT8 * REG_PTR;
+
+const REG_PTR pals[] = {(REG_PTR)0xFF47, (REG_PTR)0xFF48, (REG_PTR)0xFF49};
+
 void FadeDMG(UINT8 fadeout) {
 	UINT8 colors[12];
-	UINT8* pals[] = {(UINT8*)0xFF47, (UINT8*)0xFF48, (UINT8*)0xFF49};
 	UINT8 i, j; 
 	UINT8* c = colors;
 	UINT8 p;
 
 	//Pick current palette colors
 	for(i = 0; i != 3; ++i) {
-		p = (UINT8)*(pals[i]);
+		p = *(pals[i]);
 		for(j = 0; j != 8; j += 2, ++c) {
 			*c = (DespRight(p, j)) & 0x3;
 		}
 	}
 
 	for(i = 0; i != 4; ++i) {
+		wait_vbl_done();
 		p = fadeout ? 3 - i : i;
 		for(j = 0; j != 3; ++j) {
 			c = &colors[j << 2];
@@ -59,6 +63,7 @@ void FadeStepColor(UINT8 i) {
 				palette[c] = UpdateColor(i, *col);
 				palette_s[c] = UpdateColor(i, *col_s);
 		};
+		wait_vbl_done();
 		set_bkg_palette(pal, 1, palette);
 		set_sprite_palette(pal, 1, palette_s);
 	}
