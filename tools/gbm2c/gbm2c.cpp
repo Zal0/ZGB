@@ -111,7 +111,7 @@ void ExtractFileName(char* path, char* file_name, bool include_bank) {
 int main(int argc, char* argv[])
 {
 	if(argc != 3) {
-		printf("usage: gbrmc file_in.gbm export_folder");
+		printf("usage: gbm2c file_in.gbm export_folder");
 		return 1;
 	}
 
