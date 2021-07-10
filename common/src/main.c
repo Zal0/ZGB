@@ -11,6 +11,7 @@
 #include "BankManager.h"
 #include "Fade.h"
 #include "Palette.h"
+#include "gb\cgb.h"
 
 extern UINT8 next_state;
 
