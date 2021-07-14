@@ -50,18 +50,19 @@ Void_Func_Void spriteDestroyFuncs[N_SPRITE_TYPES];
 #undef _SPRITE
 
 #define _SPRITE(SPRITE_ID, DATA) (struct TilesInfoInternal*)(void*)DATA.data,
-struct TilesInfoInternal* spriteDatas[N_SPRITE_TYPES];
+struct MetaSpriteInfoInternal* spriteDatas[N_SPRITE_TYPES];
 #undef _SPRITE
 
 UINT8 spriteIdxs[N_SPRITE_TYPES];
 
+//TODO: we could store SpriteDataBanks and spriteDatas in a single var pointing to a struct MetaSpriteInfo* and save a few bytes
 #define _SPRITE(SPRITE_ID, DATA) \
 	spriteBanks[SPRITE_ID] = bank_##SPRITE_ID; \
 	spriteDataBanks[SPRITE_ID] = DATA.bank; \
 	spriteStartFuncs[SPRITE_ID] = Start_##SPRITE_ID; \
 	spriteUpdateFuncs[SPRITE_ID] = Update_##SPRITE_ID; \
 	spriteDestroyFuncs[SPRITE_ID] = Destroy_##SPRITE_ID; \
-	spriteDatas[SPRITE_ID] = (struct TilesInfoInternal*)(void*)DATA.data;
+	spriteDatas[SPRITE_ID] = (struct MetaSpriteInfoInternal*)(void*)DATA.data;
 void InitSprites() {
 	SPRITES
 }

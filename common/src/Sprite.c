@@ -2,32 +2,41 @@
 #include "Scroll.h"
 #include "BankManager.h"
 #include "SpriteManager.h"
+#include "MetaSpriteInfo.h"
 
-void InitSprite(struct Sprite* sprite, FrameSize size, UINT8 first_tile) {
+void SetFrame(struct Sprite* sprite, UINT8 frame)
+{
+	PUSH_BANK(sprite->mt_sprite_bank);
+		sprite->mt_sprite = sprite->mt_sprite_info->metasprites[frame];
+	POP_BANK;
+}
+
+void InitSprite(struct Sprite* sprite, FrameSize size, UINT8 first_tile, UINT8 spriteDataBank, struct MetaSpriteInfoInternal* mt_sprite_info) {
+	sprite->mt_sprite_info = mt_sprite_info;
+	sprite->mt_sprite_bank = spriteDataBank;
+
 	sprite->size = size;
 	sprite->first_tile = first_tile;
 	sprite->anim_data = 0u;
-	SET_FRAME(sprite, 0);
+	
+	SetFrame(sprite, 0);
+
 	sprite->anim_speed = 33u;
 
 	sprite->x = 0;
 	sprite->y = 0;
 
-	sprite->coll_x = 0u;
-	sprite->coll_y = 0u;
-	switch(size) {
-		case FRAME_8x8:   sprite->coll_w =  8u; sprite->coll_h =  8u; break;
-		case FRAME_8x16:  sprite->coll_w =  8u; sprite->coll_h = 16u; break;
-		case FRAME_16x16: sprite->coll_w = 16u; sprite->coll_h = 16u; break;
-		case FRAME_32x32: sprite->coll_w = 32u; sprite->coll_h = 32u; break;
-	}
+	PUSH_BANK(spriteDataBank);
+		sprite->coll_w = mt_sprite_info->width;
+		sprite->coll_h = mt_sprite_info->height;
+	POP_BANK;
 }
 
 void SetSpriteAnim(struct Sprite* sprite, UINT8* data, UINT8 speed) {
-	if(sprite->anim_data !=  data) {
+	if(sprite->anim_data != data) {
 		sprite->anim_data = data;
 		sprite->anim_frame = 0;
-		sprite->frame = sprite->first_tile + (data[1] << sprite->size);
+		SetFrame(sprite, data[1]);
 		sprite->anim_accum_ticks = 0;
 		sprite->anim_speed = speed;
 	}
@@ -36,9 +45,11 @@ void SetSpriteAnim(struct Sprite* sprite, UINT8* data, UINT8 speed) {
 #define SCREENWIDTH_PLUS_32 192 //160 + 32
 #define SCREENHEIGHT_PLUS_32 176 //144 + 32
 extern UINT8 delta_time;
+extern UINT8 next_oam_idx;
 void DrawSprite() {
 	UINT16 screen_x;
 	UINT16 screen_y;
+	UINT8 tmp;
 	if(THIS->anim_data) {	
 		THIS->anim_accum_ticks += THIS->anim_speed << delta_time;
 		if(THIS->anim_accum_ticks > (UINT8)100u) {
@@ -47,7 +58,10 @@ void DrawSprite() {
 				THIS->anim_frame = 0;
 			}
 
-			THIS->frame = THIS->first_tile + ((THIS->anim_data[(UINT8)1u + THIS->anim_frame]) << THIS->size);
+			tmp = THIS->anim_data[(UINT8)1u + THIS->anim_frame]; //Do this before changing banks, anim_data is stored on current bank
+			PUSH_BANK(THIS->mt_sprite_bank);
+				THIS->mt_sprite = THIS->mt_sprite_info->metasprites[tmp];
+			POP_BANK;
 			THIS->anim_accum_ticks -= 100u;
 		}
 	}
@@ -56,7 +70,9 @@ void DrawSprite() {
 	screen_y = THIS->y - scroll_y;
 	//It might sound stupid adding 32 in both sides but remember the values are unsigned! (and maybe truncated after substracting scroll_)
 	if((screen_x + 32u < SCREENWIDTH_PLUS_32) && (screen_y + 32 < SCREENHEIGHT_PLUS_32)) {
-		DrawFrame(THIS->size, THIS->frame, screen_x, screen_y, THIS->flags);		
+		PUSH_BANK(THIS->mt_sprite_bank);
+			next_oam_idx += move_metasprite(THIS->mt_sprite, THIS->first_tile, next_oam_idx, screen_x, screen_y);
+		POP_BANK;
 	} else {
 		if((screen_x + THIS->lim_x + 16) > ((THIS->lim_x << 1) + 16 + SCREENWIDTH) ||
 				(screen_y + THIS->lim_y + 16) > ((THIS->lim_y << 1) + 16 + SCREENHEIGHT)

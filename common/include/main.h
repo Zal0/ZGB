@@ -19,7 +19,7 @@ extern UINT8 spriteBanks[];
 extern Void_Func_Void spriteStartFuncs[];
 extern Void_Func_Void spriteUpdateFuncs[];
 extern Void_Func_Void spriteDestroyFuncs[];
-extern struct TilesInfoInternal* spriteDatas[];
+extern struct MetaSpriteInfoInternal* spriteDatas[];
 extern UINT8 spriteDataBanks[];
 extern UINT8 spriteIdxs[];
 

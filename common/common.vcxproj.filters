@@ -122,6 +122,9 @@
     <ClInclude Include="include\Banks\SetBankCommon.h">
       <Filter>Header Files\Banks</Filter>
     </ClInclude>
+    <ClInclude Include="include\MetaSpriteInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Frame.c">

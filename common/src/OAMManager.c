@@ -4,11 +4,10 @@
 UINT8 last_sprite_loaded = 0;
 UINT8 sprites_pal[256];
 
-UINT8 LoadSprite(struct TilesInfoInternal* data) {
+UINT8 LoadSprite(struct MetaSpriteInfoInternal* data) {
 	UINT8 i;
 	UINT8* sprites_pal_ptr = &sprites_pal[last_sprite_loaded];
-	UINT8 frame_size = data->width >> 3;
-	UINT8 n_tiles = data->num_frames << frame_size;
+	UINT8 n_tiles = data->num_tiles;
 	UINT8* palette_idx = data->color_data;
 
 	set_sprite_data(last_sprite_loaded, n_tiles, data->data);
@@ -16,7 +15,7 @@ UINT8 LoadSprite(struct TilesInfoInternal* data) {
 
 	for(i = 0; i != n_tiles; ++i, sprites_pal_ptr ++) {
 		if(palette_idx)
-			*sprites_pal_ptr = *(palette_idx + (i >> frame_size)); 
+			*sprites_pal_ptr = *(palette_idx + i); 
 		else
 			*sprites_pal_ptr = 0; 
 	}
@@ -32,15 +31,18 @@ UINT8 LoadSprite(struct TilesInfoInternal* data) {
 #define OAM_MIRROR_ADDRESS 0xdf00
 UINT8 __at (OAM_MIRROR_ADDRESS) oam_mirror[160];
 
+UINT8 next_oam_idx = 0;
 UINT8* oam  = (UINT8*)0xC000;
 UINT8* oam0 = (UINT8*)0xC000;
 UINT8* oam1 = (UINT8*)OAM_MIRROR_ADDRESS;
 UINT8* oam_end = (UINT8*)0xC000;
+extern UBYTE __render_shadow_OAM;
 void SwapOAMs() {
 	//Clean the previous oam struct
+	oam += (next_oam_idx << 2);
 	UINT8* tmp = oam;
-	while(oam < oam_end) {
-		*oam = 200;
+	while(oam < oam_end) { //TODO: check if memset is faster
+		*oam = 0;
 		oam += 4;
 	}
 
@@ -55,6 +57,8 @@ void SwapOAMs() {
 		oam = (UINT8*)0xC000;
 		oam_end = oam0;
 	}
+	__render_shadow_OAM = ((UWORD)oam) >> 8;
+	next_oam_idx = 0;
 }
 
 void ClearOAMs() {
@@ -62,9 +66,10 @@ void ClearOAMs() {
 	oam0 = (UINT8*)0xC000;
 	oam1 = (UINT8*)OAM_MIRROR_ADDRESS;
 	for(i = 0; i < 40; ++i, oam0 += 4, oam1 += 4) {
-		*oam0 = 200;
-		*oam1 = 200;
+		*oam0 = 0;
+		*oam1 = 0;
 	}
+	next_oam_idx = 0;
 }
 
 UINT8 next_oam_sprite_y;

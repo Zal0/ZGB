@@ -3,12 +3,15 @@
 
 #include "Frame.h"
 #include "OAMManager.h"
+#include "MetaSpriteInfo.h"
 
 #define CUSTOM_DATA_SIZE 8
 
-#define SET_FRAME(SPRITE, IDX) SPRITE->anim_frame = IDX; SPRITE->frame = SPRITE->first_tile + (IDX << SPRITE->size)
-
 struct Sprite {
+	//Meta sprite info
+	UINT8 mt_sprite_bank;
+	const struct MetaSpriteInfoInternal* mt_sprite_info;
+
 	//Frame info
 	FrameSize size;
 	UINT8 first_tile; //tile offset, for animation indices
@@ -18,7 +21,7 @@ struct Sprite {
 	UINT8 anim_accum_ticks;
 	UINT8 anim_speed;
 	UINT8 anim_frame;
-	UINT8 frame;
+	struct metasprite_t* mt_sprite;
 
 	UINT16 x;
 	UINT16 y;
@@ -55,7 +58,8 @@ struct Sprite {
 #define SPRITE_SET_PALETTE(SPRITE, PALETTE) SPRITE_SET_DMG_PALETTE(SPRITE, PALETTE)
 #endif
 
-void InitSprite(struct Sprite* sprite, FrameSize size, UINT8 first_tile);
+void SetFrame(struct Sprite* sprite, UINT8 frame);
+void InitSprite(struct Sprite* sprite, FrameSize size, UINT8 first_tile, UINT8 spriteDataBank, struct MetaSpriteInfoInternal* mt_sprite_info);
 void SetSpriteAnim(struct Sprite* sprite, UINT8* data, UINT8 speed);
 void DrawSprite();
 
