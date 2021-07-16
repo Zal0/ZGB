@@ -7,13 +7,19 @@
 
 #define CUSTOM_DATA_SIZE 8
 
+typedef enum {
+	NO_MIRROR,
+	H_MIRROR,
+	V_MIRROR,
+	HV_MIRROR
+} MirroMode;
+
 struct Sprite {
 	//Meta sprite info
 	UINT8 mt_sprite_bank;
 	const struct MetaSpriteInfoInternal* mt_sprite_info;
 
 	//Frame info
-	FrameSize size;
 	UINT8 first_tile; //tile offset, for animation indices
 
 	//Anim data
@@ -27,10 +33,9 @@ struct Sprite {
 	UINT16 y;
 
 	//Flags, currentlu used for mirror
-	UINT8 flags;
+	MirroMode mirror;
 
 	//Collider (box)
-	INT8 coll_x, coll_y;
 	UINT8 coll_w, coll_h;
 
 	//For the sprite manager
@@ -42,10 +47,14 @@ struct Sprite {
 	UINT8 custom_data[CUSTOM_DATA_SIZE];
 };
 
-//Mirror flag
+//Mirror flags
 #define SPRITE_SET_VMIRROR(SPRITE)   (SPRITE->flags |= 32)
 #define SPRITE_UNSET_VMIRROR(SPRITE) (SPRITE->flags &= ~32)
 #define SPRITE_GET_VMIRROR(SPRITE)   (SPRITE->flags & 32)
+
+#define SPRITE_SET_HMIRROR(SPRITE)   (SPRITE->flags |= 64)
+#define SPRITE_UNSET_HMIRROR(SPRITE) (SPRITE->flags &= ~64)
+#define SPRITE_GET_HMIRROR(SPRITE)   (SPRITE->flags & 64)
 
 //Palette flag
 #define SPRITE_SET_CGB_PALETTE(SPRITE, PALETTE) SPRITE->flags = ((SPRITE->flags & 0xF8) | PALETTE | 0x10)
@@ -59,7 +68,7 @@ struct Sprite {
 #endif
 
 void SetFrame(struct Sprite* sprite, UINT8 frame);
-void InitSprite(struct Sprite* sprite, FrameSize size, UINT8 first_tile, UINT8 spriteDataBank, struct MetaSpriteInfoInternal* mt_sprite_info);
+void InitSprite(struct Sprite* sprite, UINT8 first_tile, UINT8 spriteDataBank, struct MetaSpriteInfoInternal* mt_sprite_info);
 void SetSpriteAnim(struct Sprite* sprite, UINT8* data, UINT8 speed);
 void DrawSprite();
 

@@ -16,7 +16,7 @@ void DrawFrame(FrameSize size, int idx, UINT8 x, UINT8 y, UINT8 flags){
 	}
 #endif
 
-	switch(size) {
+	/*switch(size) {
 		case FRAME_8x8:
 		case FRAME_8x16:
 			next_oam_sprite_y = y + 16u; next_oam_sprite_x = x + 8u; next_oam_sprite_idx = idx; next_oam_sprite_flags = flags; FlushOAMSprite();
@@ -35,5 +35,5 @@ void DrawFrame(FrameSize size, int idx, UINT8 x, UINT8 y, UINT8 flags){
 		case FRAME_32x32:
 			DrawFrame32x32(idx, x, y, flags);
 			break;
-	}
+	}*/
 }

@@ -11,11 +11,10 @@ void SetFrame(struct Sprite* sprite, UINT8 frame)
 	POP_BANK;
 }
 
-void InitSprite(struct Sprite* sprite, FrameSize size, UINT8 first_tile, UINT8 spriteDataBank, struct MetaSpriteInfoInternal* mt_sprite_info) {
+void InitSprite(struct Sprite* sprite, UINT8 first_tile, UINT8 spriteDataBank, struct MetaSpriteInfoInternal* mt_sprite_info) {
 	sprite->mt_sprite_info = mt_sprite_info;
 	sprite->mt_sprite_bank = spriteDataBank;
 
-	sprite->size = size;
 	sprite->first_tile = first_tile;
 	sprite->anim_data = 0u;
 	
@@ -70,8 +69,16 @@ void DrawSprite() {
 	screen_y = THIS->y - scroll_y;
 	//It might sound stupid adding 32 in both sides but remember the values are unsigned! (and maybe truncated after substracting scroll_)
 	if((screen_x + 32u < SCREENWIDTH_PLUS_32) && (screen_y + 32 < SCREENHEIGHT_PLUS_32)) {
+		screen_x += 8u;
+		screen_y += 16u;
 		PUSH_BANK(THIS->mt_sprite_bank);
-			next_oam_idx += move_metasprite(THIS->mt_sprite, THIS->first_tile, next_oam_idx, screen_x, screen_y);
+			switch(THIS->mirror)
+			{
+				case NO_MIRROR: next_oam_idx += move_metasprite       (THIS->mt_sprite, THIS->first_tile, next_oam_idx, screen_x,                screen_y               ); break;
+				case H_MIRROR:  next_oam_idx += move_metasprite_hflip (THIS->mt_sprite, THIS->first_tile, next_oam_idx, screen_x,                screen_y + THIS->coll_h); break;
+				case V_MIRROR:  next_oam_idx += move_metasprite_vflip (THIS->mt_sprite, THIS->first_tile, next_oam_idx, screen_x + THIS->coll_w, screen_y               ); break;
+				case HV_MIRROR: next_oam_idx += move_metasprite_hvflip(THIS->mt_sprite, THIS->first_tile, next_oam_idx, screen_x + THIS->coll_w, screen_y + THIS->coll_h); break;
+			}
 		POP_BANK;
 	} else {
 		if((screen_x + THIS->lim_x + 16) > ((THIS->lim_x << 1) + 16 + SCREENWIDTH) ||
@@ -90,10 +97,10 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 
 	if(scroll_map) {
 		if(x > 0) {
-			tmp = (sprite->x + sprite->coll_x + sprite->coll_w - 1);
+			tmp = (sprite->x + sprite->coll_w - 1);
 			start_x = tmp + x;
 			if(((INT8)tmp & (INT8)0xF8) != ((INT8)start_x & (INT8)0xF8)) {
-				start_y = (sprite->y + sprite->coll_y);
+				start_y = (sprite->y);
 				if(((start_y & 0xF000) | (start_x & 0xF000)) == 0u) {
 					n_its = ((start_y + sprite->coll_h - 1u) >> 3) - (start_y >> 3) + 1u;
 					PUSH_BANK(scroll_bank);
@@ -111,10 +118,10 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 			}
 		}
 		else if(x < 0) {
-			tmp = sprite->x + sprite->coll_x;
+			tmp = sprite->x;
 			start_x = tmp + (INT16)x;
 			if(((INT8)tmp & (INT8)0xF8) != ((INT8)start_x & (INT8)0xF8)) {
-				start_y = (sprite->y + sprite->coll_y);
+				start_y = (sprite->y);
 				if(((start_y & 0xF000) | (start_x & 0xF000)) == 0u) {
 					n_its = ((start_y + sprite->coll_h - 1u) >> 3) - (start_y >> 3) + 1u;
 					PUSH_BANK(scroll_bank);
@@ -134,10 +141,10 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 		sprite->x += (INT16)x;
 
 		if(y > 0) {
-			tmp = sprite->y + sprite->coll_y + sprite->coll_h - 1;
+			tmp = sprite->y + sprite->coll_h - 1;
 			start_y = tmp + y;
 			if(((INT8)tmp & (INT8)0xF8) != ((INT8)start_y & (INT8)0xF8)) {
-				start_x = (sprite->x + sprite->coll_x);
+				start_x = (sprite->x);
 				if(((start_y & 0xF000) | (start_x & 0xF000)) == 0u) {
 					n_its = ((start_x + sprite->coll_w - 1u) >> 3) - (start_x >> 3) + 1u;
 					PUSH_BANK(scroll_bank);
@@ -159,15 +166,14 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 			}
 		}
 		else if(y < 0) {
-			tmp = sprite->y + sprite->coll_y;
+			tmp = sprite->y;
 			start_y = tmp + (INT16)y;
 			if(((INT8)tmp & (INT8)0xF8) != ((INT8)start_y & (INT8)0xF8)) {
-				start_x = (sprite->x + sprite->coll_x);
+				start_x = (sprite->x);
 				if(((start_y & 0xF000) | (start_x & 0xF000)) == 0u) {
 					n_its = ((start_x + sprite->coll_w - 1u) >> 3) - (start_x >> 3) + 1u;
 					PUSH_BANK(scroll_bank);
 					tile_coll = GetScrollTilePtr(start_x >> 3, start_y >> 3);
-			
 					for(i = 0u; i != n_its; ++i, tile_coll += 1u) {
 						if(scroll_collisions[*tile_coll] == 1u) {
 							y = (INT16)y + (8u - (start_y & (UINT16)7u));
@@ -193,7 +199,7 @@ UINT8 CheckCollision(struct Sprite* sprite1, struct Sprite* sprite2) {
 	if((UINT16)(diff16 + 32) > 64) //diff16 > 32 || diff16 < -32
 		return 0;
 
-	diff = (INT8)diff16 + sprite1->coll_x - sprite2->coll_x;
+	diff = (INT8)diff16;
 
 	diff16 = sprite1->y - sprite2->y;
 	if((UINT16)(diff16 + 32) > 64)
@@ -204,7 +210,7 @@ UINT8 CheckCollision(struct Sprite* sprite1, struct Sprite* sprite2) {
 		return 0;
 	}
 
-	diff = (INT8)diff16 + sprite1->coll_y - sprite2->coll_y; 
+	diff = (INT8)diff16; 
 	if( (diff + sprite1->coll_h) < 0 ||
 			(sprite2->coll_h - diff) < 0) {
 		return 0;
