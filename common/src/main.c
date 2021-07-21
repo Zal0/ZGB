@@ -6,7 +6,7 @@
 #include "OAMManager.h"
 #include "Scroll.h"
 #include "Keys.h"
-#include "gbt_player.h"
+#include "Music.h"
 #include "SpriteManager.h"
 #include "BankManager.h"
 #include "Fade.h"
@@ -22,16 +22,6 @@ UINT8 state_running = 0;
 void SetState(UINT8 state) {
 	state_running = 0;
 	next_state = state;
-}
-
-void* last_music = 0;
-void PlayMusic(const unsigned char* music[], unsigned char bank, unsigned char loop) {
-	if(music != last_music) {
-		last_music = music;
-		gbt_play(music, bank, 7);
-		gbt_loop(loop);
-		REFRESH_BANK;
-	}
 }
 
 UINT8 vbl_count;
@@ -57,19 +47,13 @@ void vbl_update() {
 	if(music_mute_frames != 0) {
 		music_mute_frames --;
 		if(music_mute_frames == 0) {
-			gbt_enable_channels(0xF);
+			UNMUTE_ALL_CHANNELS;
 		}
 	}
 }
 
 void InitStates();
 void InitSprites();
-
-void MusicUpdate() {
-	gbt_update();
-	REFRESH_BANK;
-}
-
 
 extern UWORD ZGB_Fading_BPal[32];
 extern UWORD ZGB_Fading_SPal[32];
@@ -98,9 +82,10 @@ void main() {
 	InitSprites();
 	POP_BANK;
 
-	disable_interrupts();
-	add_VBL(vbl_update);
-	add_TIM(MusicUpdate);
+	CRITICAL {
+		add_VBL(vbl_update);
+		add_TIM(MusicCallback);
+	}
 #ifdef CGB
 	TMA_REG = _cpu == CGB_TYPE ? 120U : 0xBCU;
 #else
@@ -109,7 +94,6 @@ void main() {
   TAC_REG = 0x04U;
 
 	set_interrupts(VBL_IFLAG | TIM_IFLAG);
-	enable_interrupts();
 
 	while(1) {
 		while (state_running) {
@@ -129,8 +113,7 @@ void main() {
 		FadeIn();
 		DISPLAY_OFF
 
-		gbt_stop();
-		last_music = 0;
+		StopMusic;
 
 		last_sprite_loaded = 0;
 		SpriteManagerReset();

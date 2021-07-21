@@ -28,8 +28,6 @@ extern UINT8 current_state;
 void SetState(UINT8 state);
 extern UINT8 delta_time;
 
-void PlayMusic(const unsigned char* music[], unsigned char bank, unsigned char loop);
-
 #ifdef CGB
 typedef enum {
 	BG_PALETTE,
