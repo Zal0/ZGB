@@ -13,15 +13,14 @@ void PlayFx(SOUND_CHANNEL channel, UINT8 mute_frames, ...) {
 	UINT8* reg = (UINT8*)FX_ADDRESS[channel];
 	va_list list;
 
+	if(channel != CHANNEL_5) {
+		MUTE_CHANNEL(channel);
+	}
+	music_mute_frames = mute_frames;
+
 	va_start(list, mute_frames);
 	for(i = 0; i < FX_REG_SIZES[channel]; ++i, ++reg) {
 		*reg = va_arg(list, INT16);
 	}
 	va_end(list);
-	
-	if(channel != CHANNEL_5) {
-		MUTE_CHANNEL(channel);
-	}
-
-	music_mute_frames = mute_frames;
 }

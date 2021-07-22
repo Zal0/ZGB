@@ -6,7 +6,9 @@ const hUGESong_t * hUGE_current_track;
 UBYTE hUGE_current_track_bank;
 
 void MusicCallback() __nonbanked {
-    if (hUGE_paused) return;
+    if (hUGE_paused) 
+			return;
+
     UBYTE __save = _current_bank;
     SWITCH_ROM_MBC1(hUGE_current_track_bank);
     hUGE_dosound();
