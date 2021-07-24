@@ -21,8 +21,7 @@ SDASGB = sdasgb
 SDLDGB = sdldgb
 MAKEBIN = makebin
 IHXCHECK = ihxcheck
-#PNG2MTSPR = png2mtspr
-PNG2MTSPR = C:\Users\Zalo\Desktop\gb\gbdk-2020\gbdk-support\png2mtspr\Release\png2mtspr
+PNG2MTSPR = png2mtspr
 
 GBR2C = $(ZGB_PATH_UNIX)/../tools/gbr2c/gbr2c
 GBM2C = $(ZGB_PATH_UNIX)/../tools/gbm2c/gbm2c
@@ -131,9 +130,11 @@ $(OBJDIR_RES_SRC)/%.gbm.c: ../res/%.gbm
 $(OBJDIR_RES_SRC)/%.gbr.c: ../res/%.gbr
 	@$(GBR2C) $< $(OBJDIR_RES_SRC)
 
-$(OBJDIR_RES_SRC)/%.png.c: ../res/%.png
+$(OBJDIR_RES_SRC)/%.png.c: ../res/%.png ../res/%.png.meta
 #	@$(PNGB) -mgse $< $@
-	$(PNG2MTSPR) $< -sh 48 -spr8x16 -b $(subst .b,,$(suffix $(<:%.png=%))) -px 0 -py 0 -c $@ 
+	$(PNG2MTSPR) $< `cat <$<.meta` -b $(subst .b,,$(suffix $(<:%.png=%))) -c $@ 
+	
+#$(PNG2MTSPR) $< -sh 48 -spr8x16 -b $(subst .b,,$(suffix $(<:%.png=%))) -px 0 -py 0 -c $@ 
 	
 
 $(OBJDIR_RES_SRC)/%.mod.c: ../res/music/%.mod

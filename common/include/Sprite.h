@@ -1,7 +1,6 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
-#include "Frame.h"
 #include "OAMManager.h"
 #include "MetaSpriteInfo.h"
 
@@ -17,7 +16,7 @@ typedef enum {
 struct Sprite {
 	//Meta sprite info
 	UINT8 mt_sprite_bank;
-	const struct MetaSpriteInfoInternal* mt_sprite_info;
+	const struct MetaSpriteInfo* mt_sprite_info;
 
 	//Frame info
 	UINT8 first_tile; //tile offset, for animation indices
@@ -68,7 +67,7 @@ struct Sprite {
 #endif
 
 void SetFrame(struct Sprite* sprite, UINT8 frame);
-void InitSprite(struct Sprite* sprite, UINT8 first_tile, UINT8 spriteDataBank, struct MetaSpriteInfoInternal* mt_sprite_info);
+void InitSprite(struct Sprite* sprite, UINT8 first_tile, UINT8 spriteDataBank, const struct MetaSpriteInfo* mt_sprite_info);
 void SetSpriteAnim(struct Sprite* sprite, UINT8* data, UINT8 speed);
 void DrawSprite();
 

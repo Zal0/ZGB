@@ -15,7 +15,7 @@ struct OAMData {
 
 extern UINT8 last_sprite_loaded;
 
-UINT8 LoadSprite(struct MetaSpriteInfoInternal* data);
+UINT8 LoadSprite(const struct MetaSpriteInfo* data);
 void SwapOAMs();
 void ClearOAMs();
 

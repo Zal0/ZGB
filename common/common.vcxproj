@@ -38,12 +38,12 @@
     <ClInclude Include="include\Banks\SetBank9.h" />
     <ClInclude Include="include\Banks\SetBankCommon.h" />
     <ClInclude Include="include\Fade.h" />
-    <ClInclude Include="include\Frame.h" />
     <ClInclude Include="include\gbt_player.h" />
     <ClInclude Include="include\Keys.h" />
     <ClInclude Include="include\main.h" />
     <ClInclude Include="include\MapInfo.h" />
     <ClInclude Include="include\Math.h" />
+    <ClInclude Include="include\MetaSpriteInfo.h" />
     <ClInclude Include="include\Music.h" />
     <ClInclude Include="include\OAMManager.h" />
     <ClInclude Include="include\Palette.h" />
@@ -61,8 +61,6 @@
     <ClCompile Include="src\BankManager.c" />
     <ClCompile Include="src\Fade.c" />
     <ClCompile Include="src\Fade_b.c" />
-    <ClCompile Include="src\Frame.c" />
-    <ClCompile Include="src\Frame_b.c" />
     <ClCompile Include="src\Keys.c" />
     <ClCompile Include="src\main.c" />
     <ClCompile Include="src\Math.c" />

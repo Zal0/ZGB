@@ -11,7 +11,7 @@ void SetFrame(struct Sprite* sprite, UINT8 frame)
 	POP_BANK;
 }
 
-void InitSprite(struct Sprite* sprite, UINT8 first_tile, UINT8 spriteDataBank, struct MetaSpriteInfoInternal* mt_sprite_info) {
+void InitSprite(struct Sprite* sprite, UINT8 first_tile, UINT8 spriteDataBank, const struct MetaSpriteInfo* mt_sprite_info) {
 	sprite->mt_sprite_info = mt_sprite_info;
 	sprite->mt_sprite_bank = spriteDataBank;
 

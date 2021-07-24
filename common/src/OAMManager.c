@@ -4,7 +4,7 @@
 UINT8 last_sprite_loaded = 0;
 UINT8 sprites_pal[256];
 
-UINT8 LoadSprite(struct MetaSpriteInfoInternal* data) {
+UINT8 LoadSprite(const struct MetaSpriteInfo* data) {
 	UINT8 i;
 	UINT8* sprites_pal_ptr = &sprites_pal[last_sprite_loaded];
 	UINT8 n_tiles = data->num_tiles;
@@ -70,39 +70,4 @@ void ClearOAMs() {
 		*oam1 = 0;
 	}
 	next_oam_idx = 0;
-}
-
-UINT8 next_oam_sprite_y;
-UINT8 next_oam_sprite_x;
-UINT8 next_oam_sprite_idx;
-UINT8 next_oam_sprite_flags;
-void FlushOAMSprite() {
-__asm
-;store in bc the address stored in oam ptr
-	ld	hl,#_oam
-	ld	c,(hl)
-	inc	hl
-	ld	b,(hl)
-;store in hl the beginning of data (pointer to first param)
-	ld	hl, #_next_oam_sprite_y
-;OAMManager.c:35: *(oam ++) = y;
-	ld	a,(hl+)
-	ld	(bc),a
-	inc	c
-;OAMManager.c:36: *(oam ++) = x;
-	ld	a,(hl+)
-	ld	(bc),a
-	inc	c
-;OAMManager.c:37: *(oam ++) = idx;
-	ld	a,(hl+)
-	ld	(bc),a
-	inc	c
-;OAMManager.c:38: *(oam ++) = flags;
-	ld	a,(hl+)
-	ld	(bc),a
-	inc	c
-;refresh oam value
-	ld	hl,#_oam
-	ld  (hl), c
-__endasm;
 }

@@ -14,12 +14,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Frame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\OAMManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Sprite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -125,14 +119,14 @@
     <ClInclude Include="include\Music.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\MetaSpriteInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OAMManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Frame.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\OAMManager.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Sprite.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -172,13 +166,13 @@
     <ClCompile Include="src\Fade.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Frame_b.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\ZGBMain_Init.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Music.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OAMManager.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

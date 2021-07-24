@@ -4,7 +4,7 @@
 #include <gb/gb.h>
 #include <gb/metasprites.h>
 
-struct MetaSpriteInfoInternal {
+struct MetaSpriteInfo {
 	unsigned char width;
 	unsigned char height;
 	unsigned char num_tiles;
@@ -12,11 +12,6 @@ struct MetaSpriteInfoInternal {
 	unsigned char* color_data;
 	unsigned char num_sprites;
 	metasprite_t** metasprites;
-};
-
-struct MetaSpriteInfo {
-	unsigned char bank;
-	struct MetaSpriteInfoInternal const* data;
 };
 
 #endif
