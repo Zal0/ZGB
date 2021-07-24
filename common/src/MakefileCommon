@@ -5,6 +5,11 @@ PATH := $(ZGB_PATH_UNIX)/../env/make-3.81-bin/bin;$(ZGB_PATH_UNIX)/../env/gbdk/b
 #--- Default build will be release. Can be overiden passing BUILD_TYPE = debug as a parameter
 BUILD_TYPE = Release
 
+#--- Default player will be huge tracker HUGETRACKER/GBT_PLAYER
+ifeq ($(MUSIC_PLAYER), )
+	MUSIC_PLAYER = HUGETRACKER
+endif
+
 OBJDIR = ../$(BUILD_TYPE)
 OBJDIR_RES_SRC = ../res/src
 OBJDIR_RES = ../$(BUILD_TYPE)/res
@@ -23,6 +28,7 @@ GBR2C = $(ZGB_PATH_UNIX)/../tools/gbr2c/gbr2c
 GBM2C = $(ZGB_PATH_UNIX)/../tools/gbm2c/gbm2c
 PNGB = $(ZGB_PATH_UNIX)/../env/pngb
 MOD2GBT = $(ZGB_PATH_UNIX)/../env/mod2gbt
+UGE2SOURCE = $(ZGB_PATH_UNIX)/../env/uge2source
 BGB = $(ZGB_PATH_UNIX)/../env/bgb/bgb
 ROMVIEW = $(ZGB_PATH_UNIX)/../env/romview/romview.exe
 
@@ -45,6 +51,13 @@ ifneq (,$(findstring Color,$(BUILD_TYPE)))
 	EXTENSION = gbc
 endif
 
+# gbt-player/Hugetracker flags
+ifeq ($(MUSIC_PLAYER), HUGETRACKER)
+	CFLAGS += -DMUSIC_DRIVER_HUGE
+else
+	CFLAGS += -DMUSIC_DRIVER_GBT
+endif
+
 # Release/Debug flags
 ifneq (,$(findstring Debug,$(BUILD_TYPE)))
 	CFLAGS += --debug
@@ -63,13 +76,17 @@ CLASSES     = $(foreach dir,.,$(notdir $(wildcard $(dir)/*.c)))
 GBRS        = $(foreach dir,../res,$(notdir $(wildcard $(dir)/*.gbr)))
 GBMS        = $(foreach dir,../res,$(notdir $(wildcard $(dir)/*.gbm)))
 PNGS        = $(foreach dir,../res,$(notdir $(wildcard $(dir)/*.png)))
-MUSICS      = $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.mod)))
-OBJS = $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.o) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.o) $(PNGS:%.png=$(OBJDIR_RES)/%.png.o) $(MUSICS:%.mod=$(OBJDIR_RES)/%.mod.o) $(ASMS:%.s=$(OBJDIR)/%.o) $(CLASSES:%.c=$(OBJDIR)/%.o)
-OBJS_ZGB = $(ASMS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.o)
+ifeq ($(MUSIC_PLAYER), GBT_PLAYER)
+	MUSICS_MOD = $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.mod)))
+else
+	MUSICS_UGE = $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.uge)))
+endif
+OBJS = $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.o) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.o) $(PNGS:%.png=$(OBJDIR_RES)/%.png.o) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.o) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.o) $(ASMS:%.s=$(OBJDIR)/%.o) $(CLASSES:%.c=$(OBJDIR)/%.o)
+OBJS_ZGB = $(ASMS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.o) $(OBJ_DIR_ZGB)
 OBJS_ZGB_LIB = $(ASMS_ZGB:%.s=\n%.o) $(CLASSES_ZGB:%.c=\n%.o)
 
 #prevent gbr2c and gbm2c intermediate files from being deleted
-.SECONDARY: $(GBMS:%.gbm=$(OBJDIR_RES_SRC)/%.gbm.c) $(GBRS:%.gbr=$(OBJDIR_RES_SRC)/%.gbr.c) $(PNGS:%.png=$(OBJDIR_RES_SRC)/%.png.c)
+.SECONDARY: $(GBMS:%.gbm=$(OBJDIR_RES_SRC)/%.gbm.c) $(GBRS:%.gbr=$(OBJDIR_RES_SRC)/%.gbr.c) $(PNGS:%.png=$(OBJDIR_RES_SRC)/%.png.c) $(MUSICS_MOD:%.mod=$(OBJDIR_RES_SRC)/%.mod.c) $(MUSICS_UGE:%.uge=$(OBJDIR_RES_SRC)/%.uge.c)
 
 #dependencies -------------------------------------------------------------------------------------------
 ifneq ($(MAKECMDGOALS),clean)
@@ -119,16 +136,17 @@ $(OBJDIR_RES_SRC)/%.png.c: ../res/%.png
 	$(PNG2MTSPR) $< -sh 48 -spr8x16 -b $(subst .b,,$(suffix $(<:%.png=%))) -px 0 -py 0 -c $@ 
 	
 
+$(OBJDIR_RES_SRC)/%.mod.c: ../res/music/%.mod
+	@$(MOD2GBT) $< $(basename $(basename $(notdir $<)))_mod $(subst .b,,$(suffix $(<:%.mod=%))) > /dev/null
+	@mv output.c $@
+
+$(OBJDIR_RES_SRC)/%.uge.c: ../res/music/%.uge
+	$(UGE2SOURCE) $< -b $(subst .b,,$(suffix $(<:%.uge=%))) $(basename $(basename $(notdir $<)))_uge $@
+
 $(OBJDIR_RES)/%.o: $(OBJDIR_RES_SRC)/%.c
 	@echo compiling resource $<
 	@$(SDCC) $(CFLAGS) -c -o $@ $<
-
-$(OBJDIR_RES)/%.mod.o: ../res/music/%.mod
-	@echo compiling music: $<
-	@$(MOD2GBT) $< $(basename $(basename $(notdir $<)))_mod -c $(subst .b,,$(suffix $(<:%.mod=%))) > /dev/null
-	@mv output.c $(OBJDIR)/music_tmp.c
-	@$(SDCC) $(CFLAGS) -c -o $@ $(OBJDIR)/music_tmp.c
-
+	
 #ZGB---------------------------------------------	
 $(OBJDIR_ZGB):
 	@echo Creating folder $(OBJDIR_ZGB)
@@ -142,7 +160,7 @@ $(OBJDIR)/zgb/%.o: $(ZGB_PATH_UNIX)/src/%.c
 	@echo compiling $<
 	@$(SDCC) $(CFLAGS) $(filter --constseg CODE_%, $(subst .b,--constseg CODE_,$(suffix $(<:%.c=%)))) -c -o $@ $<
 
-$(OBJDIR_ZGB)/zgb.lib: $(OBJDIR_ZGB) $(OBJS_ZGB)
+$(OBJDIR_ZGB)/zgb.lib: $(OBJDIR_ZGB) $(OBJS_ZGB) 
 	@echo creating zgb.lib
 	@rm -f $(OBJDIR_ZGB)/zgb.lib
 	@echo -e "$(OBJS_ZGB_LIB)" >> $(OBJDIR_ZGB)/zgb.lib
@@ -158,7 +176,7 @@ $(OBJDIR)/%.o: %.c
 
 $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR_ZGB)/zgb.lib $(OBJDIR) $(OBJDIR_RES) $(OBJDIR_RES_SRC) $(BINDIR) $(OBJS)
 	@echo Linking
-	@$(SDLDGB) $(LFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(GBDK_HOME)/lib/small/asxxxx/gb/crt0.o $(OBJS)
+	@$(SDLDGB) $(LFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(GBDK_HOME)/lib/small/asxxxx/gb/crt0.o $(OBJS) $(ZGB_PATH_UNIX)/lib/hUGEDriver.obj.o
 	@$(IHXCHECK) $(OBJDIR)/$(PROJECT_NAME).ihx -e
 	@$(MAKEBIN) -Z $(BINFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION)
 	@$(ROMVIEW) $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) 255

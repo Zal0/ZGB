@@ -122,7 +122,7 @@
     <ClInclude Include="include\Banks\SetBankCommon.h">
       <Filter>Header Files\Banks</Filter>
     </ClInclude>
-    <ClInclude Include="include\MetaSpriteInfo.h">
+    <ClInclude Include="include\Music.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -176,6 +176,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ZGBMain_Init.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Music.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
