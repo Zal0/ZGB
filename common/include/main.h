@@ -38,4 +38,7 @@ void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *
 #define SetPalette(PALETTE_TYPE, first_palette, nb_palettes, rgb_data, bank);
 #endif
 
+#define IMPORT_MAP(MAP) extern struct MapInfo MAP
+#define IMPORT_FONT(FONT) extern const UINT8 FONT[]
+
 #endif
