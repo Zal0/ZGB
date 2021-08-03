@@ -388,11 +388,24 @@ int main(int argc, char* argv[]) {
 	ExtractFileName(argv[1], export_file_name, true);
 	sprintf(export_file, "%s/%s.gbr.png", argv[2], export_file_name);
 	
+	//Check which palettes are being used and assign idx to these ones
+	char palette_order[] = {-1, -1, -1, -1, -1, -1, -1, -1};
+	for(int tile = tile_export.from; tile <= tile_export.up_to; ++ tile) {
+		LONG palette_idx = tile_pal.color_set[tile];
+		palette_order[palette_idx] = 0; //mark palette as being used
+	}
+	for(int p = 0, order = 0; p < 8; ++p)
+	{
+		if(palette_order[p] == 0)
+			palette_order[p] = order ++;
+	}
+
 	int num_tiles_to_export = tile_export.up_to - tile_export.from  + 1;
 	unsigned char* png_data = new unsigned char[tile_set.info.width * tile_set.info.height * num_tiles_to_export];
 	int line_h = tile_set.info.height == 8 ? 8 : 16;
 	for(int tile = tile_export.from; tile <= tile_export.up_to; ++ tile) {
-		LONG palette_idx = tile_pal.color_set[tile];
+		LONG source_palette_idx = tile_pal.color_set[tile];
+		char palette_idx = palette_order[source_palette_idx];
 		for(int y = 0; y < tile_set.info.height; y ++) {
 			for(int x = 0; x < tile_set.info.width; x ++) {
 				unsigned char* data_ptr = &tile_set.data[(tile_set.info.width * tile_set.info.height) * tile + tile_set.info.width * y + x];
@@ -405,15 +418,16 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
-	//unsigned error = lodepng::encode(export_file, png_data, tile_set.info.width, tile_set.info.height * num_tiles_to_export, LCT_PALETTE, 8);
-
 	lodepng::State state;
 #define ADD_PALETTE(R, G, B, A) lodepng_palette_add(&state.info_png.color, R, G, B, A); lodepng_palette_add(&state.info_raw, R, G, B, A)
 	if(tile_export.include_colors){
 		for(int p = 0; p < palettes.count; ++p) {
-			for(int c = 0; c < 4; ++c) {
-				Color color = palettes.colors[p].colors[c];
-				ADD_PALETTE(color.r, color.g, color.b, c == 0 ? 0 : 255);
+			if(palette_order[p] != -1)
+			{
+				for(int c = 0; c < 4; ++c) {
+					Color color = palettes.colors[p].colors[c];
+					ADD_PALETTE(color.r, color.g, color.b, c == 0 ? 0 : 255);
+				}
 			}
 		}
 	} else {
