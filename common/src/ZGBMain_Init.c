@@ -37,6 +37,7 @@ Void_Func_Void spriteDestroyFuncs[N_SPRITE_TYPES];
 
 const struct MetaSpriteInfo* spriteDatas[N_SPRITE_TYPES];
 UINT8 spriteIdxs[N_SPRITE_TYPES];
+UINT8 spritePalsOffset[N_SPRITE_TYPES];
 
 #define _SPRITE(SPRITE_ID, DATA) \
 	spriteBanks[SPRITE_ID] = bank_##SPRITE_ID; \

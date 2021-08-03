@@ -11,11 +11,12 @@ void SetFrame(struct Sprite* sprite, UINT8 frame)
 	POP_BANK;
 }
 
-void InitSprite(struct Sprite* sprite, UINT8 first_tile, UINT8 spriteDataBank, const struct MetaSpriteInfo* mt_sprite_info) {
+void InitSprite(struct Sprite* sprite, UINT8 first_tile, UINT8 spriteDataBank, UINT8 pal_offset, const struct MetaSpriteInfo* mt_sprite_info) {
 	sprite->mt_sprite_info = mt_sprite_info;
 	sprite->mt_sprite_bank = spriteDataBank;
 
 	sprite->first_tile = first_tile;
+	sprite->pal_offset = pal_offset;
 	sprite->anim_data = 0u;
 	
 	SetFrame(sprite, 0);
@@ -45,10 +46,13 @@ void SetSpriteAnim(struct Sprite* sprite, UINT8* data, UINT8 speed) {
 #define SCREENHEIGHT_PLUS_32 176 //144 + 32
 extern UINT8 delta_time;
 extern UINT8 next_oam_idx;
+extern UINT8* oam;
 void DrawSprite() {
 	UINT16 screen_x;
 	UINT16 screen_y;
 	UINT8 tmp;
+	UINT8 i;
+
 	if(THIS->anim_data) {	
 		THIS->anim_accum_ticks += THIS->anim_speed << delta_time;
 		if(THIS->anim_accum_ticks > (UINT8)100u) {
@@ -71,6 +75,7 @@ void DrawSprite() {
 	if((screen_x + 32u < SCREENWIDTH_PLUS_32) && (screen_y + 32 < SCREENHEIGHT_PLUS_32)) {
 		screen_x += 8u;
 		screen_y += 16u;
+		tmp = next_oam_idx;
 		PUSH_BANK(THIS->mt_sprite_bank);
 			switch(THIS->mirror)
 			{
@@ -80,6 +85,15 @@ void DrawSprite() {
 				case HV_MIRROR: next_oam_idx += move_metasprite_hvflip(THIS->mt_sprite, THIS->first_tile, next_oam_idx, screen_x + THIS->coll_w, screen_y + THIS->coll_h); break;
 			}
 		POP_BANK;
+
+#ifdef CGB
+		if (_cpu == CGB_TYPE && THIS->pal_offset) {
+			for(i = tmp; i != next_oam_idx; i += 1)
+			{
+				oam[(i << 2) + 3] += THIS->pal_offset;
+			}
+		}
+#endif
 	} else {
 		if((screen_x + THIS->lim_x + 16) > ((THIS->lim_x << 1) + 16 + SCREENWIDTH) ||
 				(screen_y + THIS->lim_y + 16) > ((THIS->lim_y << 1) + 16 + SCREENHEIGHT)

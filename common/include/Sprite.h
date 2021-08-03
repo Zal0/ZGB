@@ -20,6 +20,7 @@ struct Sprite {
 
 	//Frame info
 	UINT8 first_tile; //tile offset, for animation indices
+	UINT8 pal_offset;
 
 	//Anim data
 	UINT8* anim_data;
@@ -67,7 +68,7 @@ struct Sprite {
 #endif
 
 void SetFrame(struct Sprite* sprite, UINT8 frame);
-void InitSprite(struct Sprite* sprite, UINT8 first_tile, UINT8 spriteDataBank, const struct MetaSpriteInfo* mt_sprite_info);
+void InitSprite(struct Sprite* sprite, UINT8 first_tile, UINT8 spriteDataBank, UINT8 pal_offset, const struct MetaSpriteInfo* mt_sprite_info);
 void SetSpriteAnim(struct Sprite* sprite, UINT8* data, UINT8 speed);
 void DrawSprite();
 

@@ -115,7 +115,6 @@ void main() {
 
 		StopMusic;
 
-		last_sprite_loaded = 0;
 		SpriteManagerReset();
 		state_running = 1;
 		current_state = next_state;

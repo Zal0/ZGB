@@ -1,27 +1,6 @@
 #include "OAMManager.h"
 #include "BankManager.h"
-
-UINT8 last_sprite_loaded = 0;
-UINT8 sprites_pal[256];
-
-UINT8 LoadSprite(const struct MetaSpriteInfo* data) {
-	UINT8 i;
-	UINT8* sprites_pal_ptr = &sprites_pal[last_sprite_loaded];
-	UINT8 n_tiles = data->num_tiles;
-	UINT8* palette_idx = data->color_data;
-
-	set_sprite_data(last_sprite_loaded, n_tiles, data->data);
-	last_sprite_loaded += n_tiles;
-
-	for(i = 0; i != n_tiles; ++i, sprites_pal_ptr ++) {
-		if(palette_idx)
-			*sprites_pal_ptr = *(palette_idx + i); 
-		else
-			*sprites_pal_ptr = 0; 
-	}
-
-	return last_sprite_loaded - n_tiles;
-}
+#include "main.h"
 
 //Ram addresses: c000 - dfff
 //c000 is where GBDK OAM is allocated

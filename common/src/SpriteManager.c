@@ -15,8 +15,14 @@ DECLARE_VECTOR(sprite_manager_updatables, N_SPRITE_MANAGER_SPRITES);
 
 UINT8 sprite_manager_removal_check;
 
+UINT8 last_sprite_loaded = 0;
+UINT8 last_pal_loaded = 0;
+
 void SpriteManagerReset() {
 	UINT8 i;
+
+	last_sprite_loaded = 0;
+	last_pal_loaded = 0;
 
 	//Call Destroy on all sprites still on the list
 	for(i = 0u; i != sprite_manager_updatables[0]; ++ i) {
@@ -41,7 +47,20 @@ void SpriteManagerReset() {
 
 void SpriteManagerLoad(UINT8 sprite_type) {
 	PUSH_BANK(spriteDataBanks[sprite_type])
-	spriteIdxs[sprite_type] = LoadSprite(spriteDatas[sprite_type]);
+	
+	const struct MetaSpriteInfo* data = spriteDatas[sprite_type];
+	UINT8 n_tiles = data->num_tiles;
+	UINT8 n_pals = data->num_palettes;
+
+	spriteIdxs[sprite_type] = last_sprite_loaded;
+	set_sprite_data(last_sprite_loaded, n_tiles, data->data);
+	last_sprite_loaded += n_tiles;
+
+	//Load palettes
+	spritePalsOffset[sprite_type] = last_pal_loaded;
+	SetPalette(SPRITES_PALETTE, last_pal_loaded, n_pals, data->palettes, _current_bank);
+	last_pal_loaded += n_pals;
+
 	POP_BANK
 }
 
@@ -62,7 +81,7 @@ struct Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y) {
 	VectorAdd(sprite_manager_updatables, sprite_idx);
 
 	PUSH_BANK(spriteDataBanks[sprite->type]);
-		InitSprite(sprite, spriteIdxs[sprite_type], spriteDataBanks[sprite->type], spriteDatas[sprite_type]);
+		InitSprite(sprite, spriteIdxs[sprite_type], spriteDataBanks[sprite->type], spritePalsOffset[sprite->type], spriteDatas[sprite_type]);
 	POP_BANK;
 	sprite->x = x;
 	sprite->y = y;

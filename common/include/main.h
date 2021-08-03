@@ -22,6 +22,7 @@ extern Void_Func_Void spriteDestroyFuncs[];
 extern const struct MetaSpriteInfo* spriteDatas[];
 extern UINT8 spriteDataBanks[];
 extern UINT8 spriteIdxs[];
+extern UINT8 spritePalsOffset[];
 
 
 extern UINT8 current_state;

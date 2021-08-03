@@ -13,9 +13,6 @@ struct OAMData {
 #define OAMS  ((UINT8*)((UINT16)oam & 0xFF00))
 #define OAM(A) ((struct OAMData*)(oams + (A << 2)))
 
-extern UINT8 last_sprite_loaded;
-
-UINT8 LoadSprite(const struct MetaSpriteInfo* data);
 void SwapOAMs();
 void ClearOAMs();
 
