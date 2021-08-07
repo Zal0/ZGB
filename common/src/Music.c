@@ -34,6 +34,7 @@ void MusicCallback() __nonbanked {
 
 void* last_music = 0;
 void __PlayMusic(void* music, unsigned char bank, unsigned char loop) {
+loop;
 	if(music != last_music) {
 		last_music = music;
 #ifdef MUSIC_DRIVER_GBT
