@@ -59,6 +59,9 @@ extern UWORD ZGB_Fading_BPal[32];
 extern UWORD ZGB_Fading_SPal[32];
 #ifdef CGB	
 void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *rgb_data, UINT8 bank) {
+	if(first_palette + nb_palettes > 7)
+		return; //Adding more palettes than supported
+
 	UWORD* pal_ptr = (t == BG_PALETTE) ? ZGB_Fading_BPal : ZGB_Fading_SPal;
 	PUSH_BANK(bank);
 	if(t == BG_PALETTE) {
@@ -71,6 +74,7 @@ void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *
 }
 #endif
 
+extern UINT8 last_bg_pal_loaded;
 UINT16 default_palette[] = {RGB(31, 31, 31), RGB(20, 20, 20), RGB(10, 10, 10), RGB(0, 0, 0)};
 void main() {
 #ifdef CGB
@@ -119,6 +123,7 @@ void main() {
 		state_running = 1;
 		current_state = next_state;
 		scroll_target = 0;
+		last_bg_pal_loaded = 0;
 		
 #ifdef CGB
 		if (_cpu == CGB_TYPE) {

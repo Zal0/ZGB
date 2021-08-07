@@ -6,6 +6,8 @@ struct TilesInfoInternal {
 	unsigned char height;
 	unsigned char num_frames;
 	unsigned char* data;
+	unsigned char num_pals;
+	unsigned int* pals;
 	unsigned char* color_data;
 };
 

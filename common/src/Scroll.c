@@ -3,6 +3,7 @@
 #include "SpriteManager.h"
 #include "BankManager.h"
 #include "Math.h"
+#include "main.h"
 #include <string.h>
 
 
@@ -50,6 +51,8 @@ unsigned char* pending_w_cmap = 0;
 #endif
 INT16 pending_w_x, pending_w_y;
 UINT8 pending_w_i;
+
+UINT8 last_bg_pal_loaded = 0;
 
 extern UINT8 vbl_count;
 UINT8 current_vbl_count;
@@ -158,6 +161,13 @@ void ScrollSetTiles(UINT8 first_tile, const struct TilesInfo* tiles) {
 	for(i = first_tile; i < first_tile + n_tiles; ++i) {
 		scroll_tile_info[i] = palette_entries ? palette_entries[i] : 0;
 	}
+
+#ifdef CGB
+	//Load palettes
+	SetPalette(BG_PALETTE, last_bg_pal_loaded, tiles->data->num_pals, tiles->data->pals, tiles->bank);
+	last_bg_pal_loaded += tiles->data->num_pals;
+#endif
+
 	POP_BANK;
 }
 

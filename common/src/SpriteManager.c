@@ -16,13 +16,13 @@ DECLARE_VECTOR(sprite_manager_updatables, N_SPRITE_MANAGER_SPRITES);
 UINT8 sprite_manager_removal_check;
 
 UINT8 last_sprite_loaded = 0;
-UINT8 last_pal_loaded = 0;
+UINT8 last_sprite_pal_loaded = 0;
 
 void SpriteManagerReset() {
 	UINT8 i;
 
 	last_sprite_loaded = 0;
-	last_pal_loaded = 0;
+	last_sprite_pal_loaded = 0;
 
 	//Call Destroy on all sprites still on the list
 	for(i = 0u; i != sprite_manager_updatables[0]; ++ i) {
@@ -45,7 +45,9 @@ void SpriteManagerReset() {
 	sprite_manager_removal_check = 0;
 }
 
+extern UWORD ZGB_Fading_SPal[32];
 void SpriteManagerLoad(UINT8 sprite_type) {
+	UINT8 i;
 	PUSH_BANK(spriteDataBanks[sprite_type])
 	
 	const struct MetaSpriteInfo* data = spriteDatas[sprite_type];
@@ -56,10 +58,21 @@ void SpriteManagerLoad(UINT8 sprite_type) {
 	set_sprite_data(last_sprite_loaded, n_tiles, data->data);
 	last_sprite_loaded += n_tiles;
 
+#ifdef CGB
+	for(i = 0; i != last_sprite_pal_loaded; ++ i)
+	{
+		if(strncmp(&ZGB_Fading_SPal[i << 2], data->palettes, n_pals << 3) == 0)
+			break;
+	}
+
 	//Load palettes
-	spritePalsOffset[sprite_type] = last_pal_loaded;
-	SetPalette(SPRITES_PALETTE, last_pal_loaded, n_pals, data->palettes, _current_bank);
-	last_pal_loaded += n_pals;
+	spritePalsOffset[sprite_type] = i;
+	if(i == last_sprite_pal_loaded)
+	{
+		SetPalette(SPRITES_PALETTE, last_sprite_pal_loaded, n_pals, data->palettes, _current_bank);
+		last_sprite_pal_loaded += n_pals;
+	}
+#endif
 
 	POP_BANK
 }
