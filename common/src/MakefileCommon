@@ -87,7 +87,7 @@ OBJS_ZGB = $(ASMS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.o
 OBJS_ZGB_LIB = $(ASMS_ZGB:%.s=\n%.o) $(CLASSES_ZGB:%.c=\n%.o)
 
 #prevent gbr2c and gbm2c intermediate files from being deleted
-.SECONDARY: $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.c) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.c) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.c) $(PNGS:%.png=$(OBJDIR_RES)/%.png.c) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.c) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.c)
+.SECONDARY: $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.c) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.c) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.c) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.c) $(PNGS:%.png=$(OBJDIR_RES)/%.png.c) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.c) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.c)
 
 #dependencies -------------------------------------------------------------------------------------------
 ifneq ($(MAKECMDGOALS),clean)
@@ -137,7 +137,7 @@ $(OBJDIR_RES)/%.gbm.c: ../res/%.gbm
 .SECONDEXPANSION:
 $(OBJDIR_RES)/sprites/%.gbr.c: ../res/sprites/%.gbr $$(wildcard ../res/sprites/%.gbr.meta)
 	@$(GBR2PNG) $< $(OBJDIR_RES)/sprites
-	@$(PNG2MTSPR) $(@D)/$(<F).png `cat <$(@D)/$(<F).png.meta` -b $(subst .b,,$(suffix $(<:%.gbr=%))) -c $@
+	@$(PNG2MTSPR) $(@D)/$(<F).png `cat <$(@D)/$(<F).png.meta` -b $(subst .b,,$(suffix $(<:%.gbr=%))) -keep_palette_order -c $@
 
 .SECONDEXPANSION:
 $(OBJDIR_RES)/sprites/%.png.c: ../res/sprites/%.png $$(wildcard ../res/sprites/%.png.meta)
