@@ -3,6 +3,7 @@
 #include "BankManager.h"
 #include "SpriteManager.h"
 #include "MetaSpriteInfo.h"
+#include "main.h"
 
 void SetFrame(struct Sprite* sprite, UINT8 frame)
 {
@@ -11,12 +12,14 @@ void SetFrame(struct Sprite* sprite, UINT8 frame)
 	POP_BANK;
 }
 
-void InitSprite(struct Sprite* sprite, UINT8 first_tile, UINT8 spriteDataBank, UINT8 pal_offset, const struct MetaSpriteInfo* mt_sprite_info) {
-	sprite->mt_sprite_info = mt_sprite_info;
-	sprite->mt_sprite_bank = spriteDataBank;
+void InitSprite(struct Sprite* sprite, UINT8 sprite_type) {
+	const struct MetaSpriteInfo* mt_sprite_info = spriteDatas[sprite_type];
 
-	sprite->first_tile = first_tile;
-	sprite->pal_offset = pal_offset;
+	sprite->mt_sprite_info = mt_sprite_info;
+	sprite->mt_sprite_bank = spriteDataBanks[sprite_type];
+
+	sprite->first_tile = spriteIdxs[sprite_type];
+	sprite->pal_offset = spritePalsOffset[sprite_type];
 	sprite->anim_data = 0u;
 	
 	SetFrame(sprite, 0);
@@ -26,7 +29,7 @@ void InitSprite(struct Sprite* sprite, UINT8 first_tile, UINT8 spriteDataBank, U
 	sprite->x = 0;
 	sprite->y = 0;
 
-	PUSH_BANK(spriteDataBank);
+	PUSH_BANK(spriteDataBanks[sprite_type]);
 		sprite->coll_w = mt_sprite_info->width;
 		sprite->coll_h = mt_sprite_info->height;
 	POP_BANK;
@@ -51,7 +54,9 @@ void DrawSprite() {
 	UINT16 screen_x;
 	UINT16 screen_y;
 	UINT8 tmp;
+#ifdef CGB
 	UINT8 i;
+#endif
 
 	if(THIS->anim_data) {	
 		THIS->anim_accum_ticks += THIS->anim_speed << delta_time;

@@ -293,7 +293,7 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	fprintf(file, "#include \"TilesInfo.h\"\n");
-	fprintf(file, "extern unsigned char bank_%s;\n", tile_export.label_name);
+	fprintf(file, "extern const void __bank_%s;\n", tile_export.label_name);
 	fprintf(file, "extern struct TilesInfo %s;\n", tile_export.label_name);
 
 	fprintf(file, "#endif\n");
@@ -309,9 +309,6 @@ int main(int argc, char* argv[]) {
 	}
 	
 	fprintf(file, "#pragma bank %d\n", bank);
-
-	fprintf(file, "\nvoid empty(void) __nonbanked;\n");
-  fprintf(file, "__addressmod empty const CODE;\n\n");
 
 	fprintf(file, "#include <gb/gb.h>\n");
 	fprintf(file, "#include <gb/cgb.h>\n");
@@ -401,9 +398,8 @@ int main(int argc, char* argv[]) {
 	fprintf(file, "\n};\n");
 	
 	fprintf(file, "\n#include \"TilesInfo.h\"\n");
-	fprintf(file, "const struct TilesInfoInternal %s_internal = {\n", tile_export.label_name);
-	fprintf(file, "\t%d, //width\n", tile_set.info.width);
-	fprintf(file, "\t%d, //height\n", tile_set.info.height);
+	fprintf(file, "const void __at(%d) __bank_%s;\n", bank, tile_export.label_name);
+	fprintf(file, "const struct TilesInfo %s = {\n", tile_export.label_name);
 	fprintf(file, "\t%d, //num_tiles\n", tile_export.up_to - tile_export.from + 1);
 	fprintf(file, "\t%s_tiles, //tiles\n", tile_export.label_name);
 	fprintf(file, "\t%d, //num_palettes\n", num_palettes);
@@ -414,11 +410,6 @@ int main(int argc, char* argv[]) {
 		fprintf(file, "\t0, //palettes\n");
 		fprintf(file, "\t0, //CGB palette\n");
 	}
-	fprintf(file, "};");
-
-	fprintf(file, "\nCODE struct TilesInfo %s = {\n", tile_export.label_name);
-	fprintf(file, "\t%d, //bank\n", bank);
-	fprintf(file, "\t&%s_internal, //data\n", tile_export.label_name);
 	fprintf(file, "};");
 	
 	fclose(file);

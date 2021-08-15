@@ -383,9 +383,10 @@ int main(int argc, char* argv[]) {
 	
 	fclose(file);*/
 
-	char export_file_name[256]; //For both .h and .c
+	char export_file_name[256]; 
 	char export_file[512];
 	ExtractFileName(argv[1], export_file_name, true);
+	//sprintf(export_file_name, "%s", tile_export.label_name, bank);
 	sprintf(export_file, "%s/%s.gbr.png", argv[2], export_file_name);
 	
 	//Check which palettes are being used and assign idx to these ones
@@ -494,7 +495,7 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
-	fprintf(file, "-sh %d %s", tile_set.info.height, meta_line);
+	fprintf(file, "-sh %d -b %d %s", tile_set.info.height, bank, meta_line);
 	fclose(file);
 
 	return 0;

@@ -32,22 +32,22 @@ extern UINT8 scroll_bottom_movement_limit;
 //void InitScrollLEGACY(UINT16 map_w, UINT16 map_h, unsigned char* map, const UINT8* coll_list, const UINT8* coll_list_down, UINT8 bank, unsigned char* color_map);
 
 #define InitScrollTiles(FIRST_TILE, TILE_DATA) 
-void ScrollSetTiles(UINT8 first_tile, const struct TilesInfo* tile_data);
-void ScrollSetMap(const struct MapInfo* map_data);
-void InitScroll(const struct MapInfo* map_data, const UINT8* coll_list, const UINT8* coll_list_down);
-void InitScrollWithTiles(const struct MapInfo* map_data, const struct TilesInfo* tiles_info, const UINT8* coll_list, const UINT8* coll_list_down);
+void ScrollSetTiles(UINT8 first_tile, UINT8 tile_data_bank, const struct TilesInfo* tile_data);
+void ScrollSetMap(UINT8 map_bank, const struct MapInfo* map);
+void InitScroll(UINT8 map_bank, const struct MapInfo* map, const UINT8* coll_list, const UINT8* coll_list_down);
+void InitScrollWithTiles(UINT8 map_bank, const struct MapInfo* map, UINT8 tile_info_bank, const struct TilesInfo* tiles_info, const UINT8* coll_list, const UINT8* coll_list_down);
 
-void InitWindow(UINT8 x, UINT8 y, struct MapInfo* map);
+void InitWindow(UINT8 x, UINT8 y, UINT8 map_bank, struct MapInfo* map);
 void ScrollUpdateRow(INT16 x, INT16 y);
 void ScrollUpdateColumn(INT16 x, INT16 y);
 void MoveScroll(INT16 x, INT16 y);
 void RefreshScroll();
 void FinishPendingScrollUpdates();
 
-void GetMapSize(const struct MapInfo* map, UINT8* tiles_w, UINT8* tiles_h);
+void GetMapSize(UINT8 map_bank, const struct MapInfo* map, UINT8* tiles_w, UINT8* tiles_h);
 UINT8* GetScrollTilePtr(UINT16 x, UINT16 y);
 UINT8 GetScrollTile(UINT16 x, UINT16 y);
-UINT8 ScrollFindTile(const struct MapInfo* map, UINT8 tile,
+UINT8 ScrollFindTile(UINT8 map_bank, const struct MapInfo* map, UINT8 tile,
 	UINT8 start_x, UINT8 start_y, UINT8 w, UINT8 h,
 	UINT16* x, UINT16* y);
 

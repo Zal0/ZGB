@@ -47,7 +47,9 @@ void SpriteManagerReset() {
 
 extern UWORD ZGB_Fading_SPal[32];
 void SpriteManagerLoad(UINT8 sprite_type) {
+#ifdef CGB
 	UINT8 i;
+#endif
 	PUSH_BANK(spriteDataBanks[sprite_type])
 	
 	const struct MetaSpriteInfo* data = spriteDatas[sprite_type];
@@ -93,9 +95,7 @@ struct Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y) {
 
 	VectorAdd(sprite_manager_updatables, sprite_idx);
 
-	PUSH_BANK(spriteDataBanks[sprite->type]);
-		InitSprite(sprite, spriteIdxs[sprite_type], spriteDataBanks[sprite->type], spritePalsOffset[sprite->type], spriteDatas[sprite_type]);
-	POP_BANK;
+	InitSprite(sprite, sprite_type);
 	sprite->x = x;
 	sprite->y = y;
 
