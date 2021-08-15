@@ -135,8 +135,8 @@ $(OBJDIR_RES)/%.gbm.c: ../res/%.gbm
 #- $(<F) is the filename without dir of the first prerrequisite
 .SECONDEXPANSION:
 $(OBJDIR_RES)/sprites/%.gbr.c: ../res/sprites/%.gbr $$(wildcard ../res/sprites/%.gbr.meta)
-	$(GBR2PNG) $< $(OBJDIR_RES)/sprites
-	$(PNG2MTSPR) $(@D)/$(<F).png `cat <$(@D)/$(<F).png.meta` -keep_palette_order -c $@
+	@$(GBR2PNG) $< $(OBJDIR_RES)/sprites
+	@$(PNG2MTSPR) $(@D)/$(<F).png `cat <$(@D)/$(<F).png.meta` -keep_palette_order -c $@
 
 .SECONDEXPANSION:
 $(OBJDIR_RES)/sprites/%.png.c: ../res/sprites/%.png $$(wildcard ../res/sprites/%.png.meta)
