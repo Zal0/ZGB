@@ -25,7 +25,6 @@ PNG2MTSPR = png2mtspr
 GBR2C = $(ZGB_PATH_UNIX)/../tools/gbr2c/gbr2c
 GBR2PNG = $(ZGB_PATH_UNIX)/../tools/gbr2png/gbr2png
 GBM2C = $(ZGB_PATH_UNIX)/../tools/gbm2c/gbm2c
-PNGB = $(ZGB_PATH_UNIX)/../env/pngb
 MOD2GBT = $(ZGB_PATH_UNIX)/../env/mod2gbt
 UGE2SOURCE = $(ZGB_PATH_UNIX)/../env/uge2source
 BGB = $(ZGB_PATH_UNIX)/../env/bgb/bgb
@@ -136,8 +135,8 @@ $(OBJDIR_RES)/%.gbm.c: ../res/%.gbm
 #- $(<F) is the filename without dir of the first prerrequisite
 .SECONDEXPANSION:
 $(OBJDIR_RES)/sprites/%.gbr.c: ../res/sprites/%.gbr $$(wildcard ../res/sprites/%.gbr.meta)
-	@$(GBR2PNG) $< $(OBJDIR_RES)/sprites
-	@$(PNG2MTSPR) $(@D)/$(<F).png `cat <$(@D)/$(<F).png.meta` -b $(subst .b,,$(suffix $(<:%.gbr=%))) -keep_palette_order -c $@
+	$(GBR2PNG) $< $(OBJDIR_RES)/sprites
+	$(PNG2MTSPR) $(@D)/$(<F).png `cat <$(@D)/$(<F).png.meta` -keep_palette_order -c $@
 
 .SECONDEXPANSION:
 $(OBJDIR_RES)/sprites/%.png.c: ../res/sprites/%.png $$(wildcard ../res/sprites/%.png.meta)
@@ -146,9 +145,8 @@ $(OBJDIR_RES)/sprites/%.png.c: ../res/sprites/%.png $$(wildcard ../res/sprites/%
 $(OBJDIR_RES)/%.gbr.c: ../res/%.gbr
 	@$(GBR2C) $< $(OBJDIR_RES)
 
-$(OBJDIR_RES)/%.png.c: ../res/%.png ../res/%.png.meta
-#	@$(PNGB) -mgse $< $@
-	$(PNG2MTSPR) $< `cat <$<.meta` -b $(subst .b,,$(suffix $(<:%.png=%))) -c $@ 	
+$(OBJDIR_RES)/%.png.c: ../res/%.png $$(wildcard ../res/%.png.meta)
+	@$(PNG2MTSPR) $< `cat <$<.meta` -b $(subst .b,,$(suffix $(<:%.png=%))) -map -c $@ 	
 
 $(OBJDIR_RES)/%.mod.c: ../res/music/%.mod
 	@$(MOD2GBT) $< $(basename $(basename $(notdir $<)))_mod $(subst .b,,$(suffix $(<:%.mod=%))) > /dev/null
