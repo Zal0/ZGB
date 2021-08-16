@@ -10,6 +10,7 @@ void SetFrame(struct Sprite* sprite, UINT8 frame)
 	PUSH_BANK(sprite->mt_sprite_bank);
 		sprite->mt_sprite = sprite->mt_sprite_info->metasprites[frame];
 	POP_BANK;
+	sprite->anim_frame = frame; //anim_frame contains the animation frame if anim_data is assigned or the metasprite index otherwise
 }
 
 void InitSprite(struct Sprite* sprite, UINT8 sprite_type) {
@@ -38,8 +39,8 @@ void InitSprite(struct Sprite* sprite, UINT8 sprite_type) {
 void SetSpriteAnim(struct Sprite* sprite, UINT8* data, UINT8 speed) {
 	if(sprite->anim_data != data) {
 		sprite->anim_data = data;
-		sprite->anim_frame = 0;
 		SetFrame(sprite, data[1]);
+		sprite->anim_frame = 0;
 		sprite->anim_accum_ticks = 0;
 		sprite->anim_speed = speed;
 	}
