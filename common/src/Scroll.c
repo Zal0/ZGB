@@ -87,6 +87,7 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	struct Sprite* s = 0;
 	UINT8 type = 255u;
 	UINT16 id = 0u;
+	UINT16 sprite_y;
 	c;
 
 	if(x < 0 || y < 0 || U_LESS_THAN(scroll_tiles_w - 1, x) || U_LESS_THAN(scroll_tiles_h - 1, y)) {
@@ -103,7 +104,10 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 			}
 
 			if(i == sprite_manager_updatables[0]) {
-				s = SpriteManagerAdd(type, x << 3, (y - 1) << 3);
+				PUSH_BANK(spriteDataBanks[type]);
+					sprite_y = ((y + 1) << 3) - spriteDatas[type]->height;
+				POP_BANK;
+				s = SpriteManagerAdd(type, x << 3, sprite_y);
 				if(s) {
 					s->unique_id = id;
 				}
