@@ -85,17 +85,18 @@ void main() {
 	InitStates();
 	InitSprites();
 	POP_BANK;
-
+	
 	CRITICAL {
+#ifdef CGB
+		TMA_REG = _cpu == CGB_TYPE ? 120U : 0xBCU;
+#else
+		TMA_REG = 0xBCU;
+#endif
+		TAC_REG = 0x04U;
+
 		add_VBL(vbl_update);
 		add_TIM(MusicCallback);
 	}
-#ifdef CGB
-	TMA_REG = _cpu == CGB_TYPE ? 120U : 0xBCU;
-#else
-	TMA_REG = 0xBCU;
-#endif
-  TAC_REG = 0x04U;
 
 	set_interrupts(VBL_IFLAG | TIM_IFLAG);
 
