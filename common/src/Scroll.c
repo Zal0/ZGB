@@ -240,7 +240,8 @@ void InitScroll(UINT8 map_bank, const struct MapInfo* map, const UINT8* coll_lis
 		tiles = map->tiles;
 	POP_BANK;
 	
-	InitScrollWithTiles(map_bank, map, tiles_bank, tiles, coll_list, coll_list_down);
+	//tiles_bank can be 255 right now because png2mtspr is exporting tiles and map in the same file 
+	InitScrollWithTiles(map_bank, map, tiles_bank == 255 ? map_bank : tiles_bank, tiles, coll_list, coll_list_down);
 }
 
 void InitScrollWithTiles(UINT8 map_bank, const struct MapInfo* map, UINT8 tiles_info_bank, const struct TilesInfo* tiles_info, const UINT8* coll_list, const UINT8* coll_list_down)

@@ -195,11 +195,12 @@ int main(int argc, char* argv[])
 	fclose(file);
 
 	//Extract bank
-	int bank = GetBank(argv[1]);
+	/*int bank = GetBank(argv[1]);
 	if(bank == 0) //for backwards compatibility, extract the bank from tile_export.name
 		bank = GetBank(map_export_settings.file_name);
 	if(bank == 0)
-		bank = map_export_settings.bank;
+		bank = map_export_settings.bank;*/
+	int bank = 255;
 
 	//Adjust export file name and label name
 	if(strcmp(map_export_settings.file_name, "") == 0) { //Default value

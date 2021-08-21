@@ -21,6 +21,7 @@ SDLDGB = sdldgb
 MAKEBIN = makebin
 IHXCHECK = ihxcheck
 PNG2MTSPR = png2mtspr
+BANKPACK = bankpack
 
 GBR2C = $(ZGB_PATH_UNIX)/../tools/gbr2c/gbr2c
 GBR2PNG = $(ZGB_PATH_UNIX)/../tools/gbr2png/gbr2png
@@ -85,6 +86,8 @@ OBJS = $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.o) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.o) $
 OBJS_ZGB = $(ASMS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.o) $(OBJ_DIR_ZGB)
 OBJS_ZGB_LIB = $(ASMS_ZGB:%.s=\n%.o) $(CLASSES_ZGB:%.c=\n%.o)
 
+RELS = $(OBJS:%.o=%.rel)
+
 #prevent gbr2c and gbm2c intermediate files from being deleted
 .SECONDARY: $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.c) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.c) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.c) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.c) $(PNGS:%.png=$(OBJDIR_RES)/%.png.c) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.c) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.c)
 
@@ -125,9 +128,6 @@ $(OBJDIR_RES)/sprites:
 	@mkdir $(OBJDIR_RES)/sprites
 
 #resources---------------------------------------------
-$(OBJDIR_RES)/%.gbm.c: ../res/%.gbm
-	@$(GBM2C) $< $(OBJDIR_RES)
-
 #a few notes of this rule (for future me)
 #- SECONDEXPANSION is required to create an optional prerrequisite (meta doesn't exist the first time the sprite is created)
 #- I have grouped GBR2PNG and PNG2MTSR in the same rule because the others rule had preference otherwise
@@ -140,20 +140,23 @@ $(OBJDIR_RES)/sprites/%.gbr.c: ../res/sprites/%.gbr $$(wildcard ../res/sprites/%
 
 .SECONDEXPANSION:
 $(OBJDIR_RES)/sprites/%.png.c: ../res/sprites/%.png $$(wildcard ../res/sprites/%.png.meta)
-	@$(PNG2MTSPR) $< `cat <$<.meta` -b 255 $(subst .b,-b ,$(suffix $(<:%.gbr=%))) -c $@
+	@$(PNG2MTSPR) $< `cat <$<.meta` -b 255 -c $@
+
+$(OBJDIR_RES)/%.gbm.c: ../res/%.gbm
+	@$(GBM2C) $< $(OBJDIR_RES)
 
 $(OBJDIR_RES)/%.gbr.c: ../res/%.gbr
 	@$(GBR2C) $< $(OBJDIR_RES)
 
 $(OBJDIR_RES)/%.png.c: ../res/%.png $$(wildcard ../res/%.png.meta)
-	$(PNG2MTSPR) $< $(if $(wildcard $<.meta),`cat <$<.meta`) -b 255 $(subst .b,-b ,$(suffix $(<:%.png=%))) -map -c $@ 	
+	$(PNG2MTSPR) $< $(if $(wildcard $<.meta),`cat <$<.meta`) -b 255 -map -c $@ 	
 
 $(OBJDIR_RES)/%.mod.c: ../res/music/%.mod
-	@$(MOD2GBT) $< $(basename $(basename $(notdir $<)))_mod $(subst .b,,$(suffix $(<:%.mod=%))) > /dev/null
+	@$(MOD2GBT) $< $(basename $(basename $(notdir $<)))_mod 255 > /dev/null
 	@mv output.c $@
 
 $(OBJDIR_RES)/%.uge.c: ../res/music/%.uge
-	@$(UGE2SOURCE) $< $(subst .b,-b ,$(suffix $(<:%.uge=%))) $(basename $(basename $(notdir $<)))_uge $@
+	@$(UGE2SOURCE) $< -b 255 $(basename $(basename $(notdir $<)))_uge $@
 
 $(OBJDIR_RES)/%.o: $(OBJDIR_RES)/%.c
 	@echo compiling resource $<
@@ -166,11 +169,11 @@ $(OBJDIR_ZGB):
 
 $(OBJDIR)/zgb/%.o: $(ZGB_PATH_UNIX)/src/%.s
 	@echo compiling $<
-	@$(SDASGB) -plosgff -I"libc" -I$(GBDK_HOME)/lib/small/asxxxx $(filter --constseg CODE_%, $(subst .b,--constseg CODE_,$(suffix $(<:%.s=%)))) -c -o $@ $<
+	@$(SDASGB) -plosgff -I"libc" -I$(GBDK_HOME)/lib/small/asxxxx -c -o $@ $<
 
 $(OBJDIR)/zgb/%.o: $(ZGB_PATH_UNIX)/src/%.c
 	@echo compiling $<
-	@$(SDCC) $(CFLAGS) $(filter --constseg CODE_%, $(subst .b,--constseg CODE_,$(suffix $(<:%.c=%)))) -c -o $@ $<
+	@$(SDCC) $(CFLAGS) -c -o $@ $<
 
 $(OBJDIR_ZGB)/zgb.lib: $(OBJDIR_ZGB) $(OBJS_ZGB) 
 	@echo creating zgb.lib
@@ -180,15 +183,16 @@ $(OBJDIR_ZGB)/zgb.lib: $(OBJDIR_ZGB) $(OBJS_ZGB)
 #Project files------------------------------------
 $(OBJDIR)/%.o: %.s
 	@echo compiling $<
-	@$(SDASGB) -plosgff -I"libc" $(filter --constseg CODE_%, $(subst .b,--constseg CODE_,$(suffix $(<:%.s=%)))) -c -o $@ $<
+	@$(SDASGB) -plosgff -I"libc" -c -o $@ $<
 
 $(OBJDIR)/%.o: %.c
 	@echo compiling $<
-	@$(SDCC) $(CFLAGS) $(filter --constseg CODE_%, $(subst .b,--constseg CODE_,$(suffix $(<:%.c=%)))) -c -o $@ $<	
+	@$(SDCC) $(CFLAGS) -c -o $@ $<	
 
 $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR_ZGB)/zgb.lib $(OBJDIR) $(OBJDIR_RES) $(OBJDIR_RES)/sprites $(BINDIR) $(OBJS)
 	@echo Linking
-	@$(SDLDGB) $(LFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(GBDK_HOME)/lib/small/asxxxx/gb/crt0.o $(OBJS) $(ZGB_PATH_UNIX)/lib/hUGEDriver.obj.o
+	$(BANKPACK) -ext=.rel -yt1  $(OBJS)
+	$(SDLDGB) $(LFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(GBDK_HOME)/lib/small/asxxxx/gb/crt0.o $(RELS) $(ZGB_PATH_UNIX)/lib/hUGEDriver.obj.o
 	@$(IHXCHECK) $(OBJDIR)/$(PROJECT_NAME).ihx -e
 	@$(MAKEBIN) -Z $(BINFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION)
 	@$(ROMVIEW) $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) 255

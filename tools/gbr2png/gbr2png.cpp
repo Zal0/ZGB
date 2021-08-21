@@ -224,11 +224,12 @@ int main(int argc, char* argv[]) {
 	fclose(file);
 
 	//Extract bank
-	int bank = GetBank(argv[1]);
+	/*int bank = GetBank(argv[1]);
 	if(bank == 0) //for backwards compatibility, extract the bank from tile_export.name
 		bank = GetBank(tile_export.file_name);
 	if(bank == 0)
-		bank = tile_export.bank;
+		bank = tile_export.bank;*/
+	int bank = 255;
 
 	//Adjust export file name and label name
 	if(strcmp(tile_export.file_name, "Export.z80") == 0 || strcmp(tile_export.file_name, "") == 0) { //Default value
@@ -495,7 +496,7 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
-	fprintf(file, "-sh %d -b %d %s", tile_set.info.height, bank, meta_line);
+	fprintf(file, "-sh %d -b %d %s", tile_set.info.height, 255, meta_line);
 	fclose(file);
 
 	return 0;
