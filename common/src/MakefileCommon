@@ -140,20 +140,20 @@ $(OBJDIR_RES)/sprites/%.gbr.c: ../res/sprites/%.gbr $$(wildcard ../res/sprites/%
 
 .SECONDEXPANSION:
 $(OBJDIR_RES)/sprites/%.png.c: ../res/sprites/%.png $$(wildcard ../res/sprites/%.png.meta)
-	@$(PNG2MTSPR) $< `cat <$<.meta` -b $(subst .b,,$(suffix $(<:%.gbr=%))) -c $@
+	@$(PNG2MTSPR) $< `cat <$<.meta` -b 255 $(subst .b,-b ,$(suffix $(<:%.gbr=%))) -c $@
 
 $(OBJDIR_RES)/%.gbr.c: ../res/%.gbr
 	@$(GBR2C) $< $(OBJDIR_RES)
 
 $(OBJDIR_RES)/%.png.c: ../res/%.png $$(wildcard ../res/%.png.meta)
-	@$(PNG2MTSPR) $< `cat <$<.meta` -b $(subst .b,,$(suffix $(<:%.png=%))) -map -c $@ 	
+	$(PNG2MTSPR) $< $(if $(wildcard $<.meta),`cat <$<.meta`) -b 255 $(subst .b,-b ,$(suffix $(<:%.png=%))) -map -c $@ 	
 
 $(OBJDIR_RES)/%.mod.c: ../res/music/%.mod
 	@$(MOD2GBT) $< $(basename $(basename $(notdir $<)))_mod $(subst .b,,$(suffix $(<:%.mod=%))) > /dev/null
 	@mv output.c $@
 
 $(OBJDIR_RES)/%.uge.c: ../res/music/%.uge
-	@$(UGE2SOURCE) $< -b $(subst .b,,$(suffix $(<:%.uge=%))) $(basename $(basename $(notdir $<)))_uge $@
+	@$(UGE2SOURCE) $< $(subst .b,-b ,$(suffix $(<:%.uge=%))) $(basename $(basename $(notdir $<)))_uge $@
 
 $(OBJDIR_RES)/%.o: $(OBJDIR_RES)/%.c
 	@echo compiling resource $<
