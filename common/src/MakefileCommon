@@ -149,7 +149,7 @@ $(OBJDIR_RES)/%.gbr.c: ../res/%.gbr
 	@$(GBR2C) $< $(OBJDIR_RES)
 
 $(OBJDIR_RES)/%.png.c: ../res/%.png $$(wildcard ../res/%.png.meta)
-	$(PNG2MTSPR) $< $(if $(wildcard $<.meta),`cat <$<.meta`) -b 255 -map -c $@ 	
+	@$(PNG2MTSPR) $< $(if $(wildcard $<.meta),`cat <$<.meta`) -b 255 -map -c $@ 	
 
 $(OBJDIR_RES)/%.mod.c: ../res/music/%.mod
 	@$(MOD2GBT) $< $(basename $(basename $(notdir $<)))_mod 255 > /dev/null
@@ -191,7 +191,7 @@ $(OBJDIR)/%.o: %.c
 
 $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR_ZGB)/zgb.lib $(OBJDIR) $(OBJDIR_RES) $(OBJDIR_RES)/sprites $(BINDIR) $(OBJS)
 	@echo Linking
-	$(BANKPACK) -ext=.rel -yt1  $(OBJS)
+	$(BANKPACK) -ext=.rel -min=2 -yt1 $(OBJS) $(OBJS_ZGB)
 	$(SDLDGB) $(LFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(GBDK_HOME)/lib/small/asxxxx/gb/crt0.o $(RELS) $(ZGB_PATH_UNIX)/lib/hUGEDriver.obj.o
 	@$(IHXCHECK) $(OBJDIR)/$(PROJECT_NAME).ihx -e
 	@$(MAKEBIN) -Z $(BINFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION)
