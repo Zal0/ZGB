@@ -31,7 +31,7 @@ UGE2SOURCE = $(ZGB_PATH_UNIX)/../env/uge2source
 BGB = $(ZGB_PATH_UNIX)/../env/bgb/bgb
 ROMVIEW = $(ZGB_PATH_UNIX)/../env/romview/romview
 
-CFLAGS += -mgbz80 --no-std-crt0 --fsigned-char --use-stdout -Dnonbanked= -I$(GBDK_HOME)/include -D__PORT_gbz80 -I$(GBDK_HOME)/include/asm $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include
+CFLAGS += -Wa-n -mgbz80 --no-std-crt0 --fsigned-char --use-stdout -Dnonbanked= -I$(GBDK_HOME)/include -D__PORT_gbz80 -D__TARGET_gb -I$(GBDK_HOME)/include/asm $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include
 CFLAGS += -DFILE_NAME=$(basename $(<F))
 
 #since I am placing my OAM mirror at the end of the ram (0xDF00-0xDFFF) I need to move the stack to 0xDEFF
@@ -169,7 +169,7 @@ $(OBJDIR_ZGB):
 
 $(OBJDIR)/zgb/%.o: $(ZGB_PATH_UNIX)/src/%.s
 	@echo compiling $<
-	@$(SDASGB) -plosgff -I"libc" -I$(GBDK_HOME)/lib/small/asxxxx -c -o $@ $<
+	@$(SDASGB) -plosgffn -I"libc" -I$(GBDK_HOME)/lib/small/asxxxx -c -o $@ $<
 
 $(OBJDIR)/zgb/%.o: $(ZGB_PATH_UNIX)/src/%.c
 	@echo compiling $<
@@ -183,7 +183,7 @@ $(OBJDIR_ZGB)/zgb.lib: $(OBJDIR_ZGB) $(OBJS_ZGB)
 #Project files------------------------------------
 $(OBJDIR)/%.o: %.s
 	@echo compiling $<
-	@$(SDASGB) -plosgff -I"libc" -c -o $@ $<
+	@$(SDASGB) -plosgffn -I"libc" -c -o $@ $<
 
 $(OBJDIR)/%.o: %.c
 	@echo compiling $<
