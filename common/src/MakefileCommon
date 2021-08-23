@@ -30,7 +30,6 @@ MOD2GBT = $(ZGB_PATH_UNIX)/../env/mod2gbt
 UGE2SOURCE = $(ZGB_PATH_UNIX)/../env/uge2source
 BGB = $(ZGB_PATH_UNIX)/../env/bgb/bgb
 ROMVIEW = $(ZGB_PATH_UNIX)/../env/romview/romview
-GBSPACK = $(ZGB_PATH_UNIX)/../env/gbspack
 
 CFLAGS += -mgbz80 --no-std-crt0 --fsigned-char --use-stdout -Dnonbanked= -I$(GBDK_HOME)/include -I$(GBDK_HOME)/include/asm $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include
 CFLAGS += -DFILE_NAME=$(basename $(<F))
@@ -192,8 +191,7 @@ $(OBJDIR)/%.o: %.c
 
 $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR_ZGB)/zgb.lib $(OBJDIR) $(OBJDIR_RES) $(OBJDIR_RES)/sprites $(BINDIR) $(OBJS)
 	@echo Linking
-	#$(BANKPACK) -ext=.rel -min=2 -yt1 $(OBJS) $(OBJS_ZGB)
-	$(GBSPACK) --ext rel -b 1 -f 255 $(OBJS) $(OBJS_ZGB)
+	$(BANKPACK) -ext=.rel -min=1 -yt1 $(OBJS) $(OBJS_ZGB)
 	@$(SDLDGB) $(LFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(GBDK_HOME)/lib/small/asxxxx/gb/crt0.o $(RELS) $(ZGB_PATH_UNIX)/lib/hUGEDriver.obj.o
 	@$(IHXCHECK) $(OBJDIR)/$(PROJECT_NAME).ihx -e
 	@$(MAKEBIN) -Z $(BINFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION)
