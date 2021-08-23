@@ -149,7 +149,7 @@ $(OBJDIR_RES)/%.gbr.c: ../res/%.gbr
 	@$(GBR2C) $< $(OBJDIR_RES)
 
 $(OBJDIR_RES)/%.png.c: ../res/%.png $$(wildcard ../res/%.png.meta)
-	@$(PNG2ASSET) $< $(if $(wildcard $<.meta),`cat <$<.meta`) -b 255 -map -use_structs -c $@ 	
+	@$(PNG2ASSET) $< -b 255 -map -noflip -use_structs $(if $(wildcard $<.meta),`cat <$<.meta`) -c $@ 	
 
 $(OBJDIR_RES)/%.mod.c: ../res/music/%.mod
 	@$(MOD2GBT) $< $(basename $(basename $(notdir $<)))_mod 255 > /dev/null
