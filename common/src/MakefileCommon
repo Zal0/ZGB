@@ -191,7 +191,7 @@ $(OBJDIR)/%.o: %.c
 
 $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR_ZGB)/zgb.lib $(OBJDIR) $(OBJDIR_RES) $(OBJDIR_RES)/sprites $(BINDIR) $(OBJS)
 	@echo Linking
-	$(BANKPACK) -ext=.rel -min=1 -yt1 $(OBJS) $(OBJS_ZGB)
+	@$(BANKPACK) -ext=.rel -min=1 -yt1 $(OBJS) $(OBJS_ZGB)
 	@$(SDLDGB) $(LFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(GBDK_HOME)/lib/small/asxxxx/gb/crt0.o $(RELS) $(ZGB_PATH_UNIX)/lib/hUGEDriver.obj.o
 	@$(IHXCHECK) $(OBJDIR)/$(PROJECT_NAME).ihx -e
 	@$(MAKEBIN) -Z $(BINFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION)
