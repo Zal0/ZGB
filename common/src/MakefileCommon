@@ -20,7 +20,7 @@ SDASGB = sdasgb
 SDLDGB = sdldgb
 MAKEBIN = makebin
 IHXCHECK = ihxcheck
-PNG2MTSPR = png2mtspr
+PNG2ASSET = png2asset
 BANKPACK = bankpack
 
 GBR2C = $(ZGB_PATH_UNIX)/../tools/gbr2c/gbr2c
@@ -31,7 +31,7 @@ UGE2SOURCE = $(ZGB_PATH_UNIX)/../env/uge2source
 BGB = $(ZGB_PATH_UNIX)/../env/bgb/bgb
 ROMVIEW = $(ZGB_PATH_UNIX)/../env/romview/romview
 
-CFLAGS += -mgbz80 --no-std-crt0 --fsigned-char --use-stdout -Dnonbanked= -I$(GBDK_HOME)/include -I$(GBDK_HOME)/include/asm $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include
+CFLAGS += -mgbz80 --no-std-crt0 --fsigned-char --use-stdout -Dnonbanked= -I$(GBDK_HOME)/include -D__PORT_gbz80 -I$(GBDK_HOME)/include/asm $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include
 CFLAGS += -DFILE_NAME=$(basename $(<F))
 
 #since I am placing my OAM mirror at the end of the ram (0xDF00-0xDFFF) I need to move the stack to 0xDEFF
@@ -136,11 +136,11 @@ $(OBJDIR_RES)/sprites:
 .SECONDEXPANSION:
 $(OBJDIR_RES)/sprites/%.gbr.c: ../res/sprites/%.gbr $$(wildcard ../res/sprites/%.gbr.meta)
 	@$(GBR2PNG) $< $(OBJDIR_RES)/sprites
-	@$(PNG2MTSPR) $(@D)/$(<F).png `cat <$(@D)/$(<F).png.meta` -keep_palette_order -c $@
+	@$(PNG2ASSET) $(@D)/$(<F).png `cat <$(@D)/$(<F).png.meta` -keep_palette_order -use_structs -c $@
 
 .SECONDEXPANSION:
 $(OBJDIR_RES)/sprites/%.png.c: ../res/sprites/%.png $$(wildcard ../res/sprites/%.png.meta)
-	@$(PNG2MTSPR) $< `cat <$<.meta` -b 255 -c $@
+	@$(PNG2ASSET) $< `cat <$<.meta`-use_structs -b 255 -c $@
 
 $(OBJDIR_RES)/%.gbm.c: ../res/%.gbm
 	@$(GBM2C) $< $(OBJDIR_RES)
@@ -149,7 +149,7 @@ $(OBJDIR_RES)/%.gbr.c: ../res/%.gbr
 	@$(GBR2C) $< $(OBJDIR_RES)
 
 $(OBJDIR_RES)/%.png.c: ../res/%.png $$(wildcard ../res/%.png.meta)
-	@$(PNG2MTSPR) $< $(if $(wildcard $<.meta),`cat <$<.meta`) -b 255 -map -c $@ 	
+	@$(PNG2ASSET) $< $(if $(wildcard $<.meta),`cat <$<.meta`) -b 255 -map -use_structs -c $@ 	
 
 $(OBJDIR_RES)/%.mod.c: ../res/music/%.mod
 	@$(MOD2GBT) $< $(basename $(basename $(notdir $<)))_mod 255 > /dev/null
