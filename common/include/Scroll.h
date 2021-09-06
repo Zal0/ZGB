@@ -38,8 +38,8 @@ void InitScroll(UINT8 map_bank, const struct MapInfo* map, const UINT8* coll_lis
 void InitScrollWithTiles(UINT8 map_bank, const struct MapInfo* map, UINT8 tile_info_bank, const struct TilesInfo* tiles_info, const UINT8* coll_list, const UINT8* coll_list_down);
 
 void InitWindow(UINT8 x, UINT8 y, UINT8 map_bank, struct MapInfo* map);
-void ScrollUpdateRow(INT16 x, INT16 y);
-void ScrollUpdateColumn(INT16 x, INT16 y);
+void ScrollUpdateRow(INT8 x, INT8 y);
+void ScrollUpdateColumn(INT8 x, INT8 y);
 void MoveScroll(INT16 x, INT16 y);
 void RefreshScroll();
 void FinishPendingScrollUpdates();
