@@ -80,7 +80,7 @@ void main() {
 #ifdef CGB
 	cpu_fast();
 #endif
-	StopMusic;
+	INIT_MUSIC;
 
 	PUSH_BANK(1);
 	InitStates();
