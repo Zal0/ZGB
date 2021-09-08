@@ -1,6 +1,7 @@
 #include "OAMManager.h"
 #include "BankManager.h"
 #include "main.h"
+#include <string.h>
 
 //Ram addresses: c000 - dfff
 //c000 is where GBDK OAM is allocated
@@ -41,12 +42,9 @@ void SwapOAMs() {
 }
 
 void ClearOAMs() {
-	UINT8 i;
 	oam0 = (UINT8*)0xC000;
 	oam1 = (UINT8*)OAM_MIRROR_ADDRESS;
-	for(i = 0; i < 40; ++i, oam0 += 4, oam1 += 4) {
-		*oam0 = 0;
-		*oam1 = 0;
-	}
+	memset(oam0, 0, sizeof(oam_mirror));
+	memset(oam1, 0, sizeof(oam_mirror));
 	next_oam_idx = 0;
 }

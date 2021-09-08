@@ -34,8 +34,8 @@ UINT16 scroll_tiles_h;
 struct Sprite* scroll_target = 0;
 INT16 scroll_target_offset_x = 0;
 INT16 scroll_target_offset_y = 0;
-UINT8 scroll_collisions[128];
-UINT8 scroll_collisions_down[128];
+UINT8 scroll_collisions[256];
+UINT8 scroll_collisions_down[256];
 UINT8 scroll_tile_info[256];
 UINT8 scroll_bank;
 UINT8 scroll_offset_x = 0;
@@ -98,7 +98,7 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 			id = SPRITE_UNIQUE_ID(x, y);
 			for(i = 0u; i != sprite_manager_updatables[0]; ++i) {
 				s = sprite_manager_sprites[sprite_manager_updatables[i + 1]];
-				if((s->unique_id == id) && ((UINT16)s->type == (UINT16)type)) {
+				if((s->type == type) && (s->unique_id == id)) {
 					break;
 				}
 			}
@@ -252,10 +252,9 @@ void InitScrollWithTiles(UINT8 map_bank, const struct MapInfo* map, UINT8 tiles_
 
 	ScrollSetMap(map_bank, map);
 
-	for(i = 0u; i != 128; ++i) {
-		scroll_collisions[i] = 0u;
-		scroll_collisions_down[i] = 0u;
-	}
+	memset(scroll_collisions, 0, sizeof(scroll_collisions));
+	memset(scroll_collisions_down, 0, sizeof(scroll_collisions_down));
+
 	if(coll_list) {
 		for(i = 0u; coll_list[i] != 0u; ++i) {
 			scroll_collisions[coll_list[i]] = 1u;
