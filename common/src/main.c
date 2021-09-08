@@ -24,16 +24,6 @@ void SetState(UINT8 state) {
 	next_state = state;
 }
 
-void* last_music = 0;
-void PlayMusic(const unsigned char* music[], unsigned char bank, unsigned char loop) {
-	if(music != last_music) {
-		last_music = music;
-		gbt_play(music, bank, 7);
-		gbt_loop(loop);
-		REFRESH_BANK;
-	}
-}
-
 UINT8 vbl_count = 0;
 INT16 old_scroll_x = 0, old_scroll_y = 0;
 UINT8 music_mute_frames = 0;
@@ -90,7 +80,7 @@ void main() {
 #ifdef CGB
 	cpu_fast();
 #endif
-	gbt_stop();
+	StopMusic;
 
 	PUSH_BANK(1);
 	InitStates();
