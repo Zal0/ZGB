@@ -108,9 +108,6 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 					sprite_y = ((y + 1) << 3) - spriteDatas[type]->height;
 				POP_BANK;
 				s = SpriteManagerAdd(type, x << 3, sprite_y);
-				if(s) {
-					s->unique_id = id;
-				}
 			}
 		}
 	}
