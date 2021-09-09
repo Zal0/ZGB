@@ -24,8 +24,8 @@ void SetState(UINT8 state) {
 	next_state = state;
 }
 
-UINT8 vbl_count;
-INT16 old_scroll_x, old_scroll_y;
+UINT8 vbl_count = 0;
+INT16 old_scroll_x = 0, old_scroll_y = 0;
 UINT8 music_mute_frames = 0;
 void vbl_update() {
 	vbl_count ++;
@@ -80,6 +80,7 @@ void main() {
 #ifdef CGB
 	cpu_fast();
 #endif
+	INIT_MUSIC;
 
 	PUSH_BANK(1);
 	InitStates();

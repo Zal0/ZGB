@@ -20,7 +20,9 @@ void InitSprite(struct Sprite* sprite, UINT8 sprite_type) {
 	sprite->mt_sprite_bank = spriteDataBanks[sprite_type];
 
 	sprite->first_tile = spriteIdxs[sprite_type];
+#ifdef CGB
 	sprite->pal_offset = spritePalsOffset[sprite_type];
+#endif
 	sprite->anim_data = 0u;
 	
 	SetFrame(sprite, 0);

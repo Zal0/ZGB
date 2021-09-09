@@ -11,10 +11,9 @@ void MusicCallback() __nonbanked;
 	#include "hUGEDriver.h"
 
 	extern BYTE hUGE_paused;
-	void player_ISR() __nonbanked;
 	void hUGE_mute(UBYTE mute);
 
-	#define INIT_MUSIC_DRIVER add_VBL(player_ISR)	
+	#define INIT_MUSIC hUGE_init(0)
 	#define DECLARE_MUSIC(SONG) extern const void __bank_ ## SONG ## _uge; extern const hUGESong_t SONG ## _uge
 	#define PlayMusic(SONG, LOOP) __PlayMusic(&SONG ## _uge, (uint8_t)&__bank_ ## SONG ## _uge, 0)
 	#define StopMusic hUGE_paused = 1; hUGE_mute(HT_CH_MUTE); last_music = 0
@@ -27,6 +26,7 @@ void MusicCallback() __nonbanked;
 	#include "gbt_player.h"
 	#include "BankManager.h"
 
+	#define INIT_MUSIC gbt_stop()
 	#define DECLARE_MUSIC(SONG) extern const void __bank_ ## SONG ## _mod_Data; extern const unsigned char * SONG ## _mod_Data[]
 	#define PlayMusic(SONG, LOOP) __PlayMusic(SONG ## _mod_Data, (uint8_t)&__bank_ ## SONG ## _mod_Data, LOOP)
 	#define StopMusic gbt_stop(); last_music = 0
