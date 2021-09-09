@@ -30,6 +30,7 @@ MOD2GBT = $(ZGB_PATH_UNIX)/../env/mod2gbt
 UGE2SOURCE = $(ZGB_PATH_UNIX)/../env/uge2source
 BGB = $(ZGB_PATH_UNIX)/../env/bgb/bgb
 ROMVIEW = $(ZGB_PATH_UNIX)/../env/romview/romview
+SRC2SYM = $(ZGB_PATH_UNIX)/../env/src2sym.pl
 
 CFLAGS += -Wa-n -mgbz80 --no-std-crt0 --fsigned-char --use-stdout -Dnonbanked= -I$(GBDK_HOME)/include -D__PORT_gbz80 -D__TARGET_gb -I$(GBDK_HOME)/include/asm $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include
 CFLAGS += -DFILE_NAME=$(basename $(<F))
@@ -198,6 +199,7 @@ $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR_ZGB)/zgb.lib $(OBJDIR) $(OBJDIR
 	@$(ROMVIEW) $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) 255
 	@mv $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
 	@mv $(OBJDIR)/$(PROJECT_NAME).cdb $(BINDIR)/$(PROJECT_NAME).cdb
+#	@perl $(SRC2SYM) $(OBJDIR)/$(PROJECT_NAME).noi > $(BINDIR)/$(PROJECT_NAME).sym
 	@rm -f *.adb
 
 build_lib: $(OBJDIR) $(OBJS)
