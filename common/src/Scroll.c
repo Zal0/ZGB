@@ -355,7 +355,7 @@ void ScrollUpdateRow(UINT8 x, UINT8 y) {
 	}*/
 	
 	if(y >= scroll_tiles_h) {
-		memset(buff, 1, SCREEN_TILE_REFRES_W);
+		memset(buff, 0, SCREEN_TILE_REFRES_W);
 	} else {
 		tile_replacement_tile_ptr = scroll_map + scroll_tiles_w * y + x; 
 		tile_replacement_ptr = buff;
@@ -364,7 +364,7 @@ void ScrollUpdateRow(UINT8 x, UINT8 y) {
 				tile_replacement_tile_ptr = scroll_map + scroll_tiles_w * y; 
 
 			if((UINT8)(x + i) >= scroll_tiles_w) { //cast to UINT8 is important, x + i will be promoted to UINT16 otherwise
-				*tile_replacement_ptr = 1;
+				*tile_replacement_ptr = 0;
 			} else {	
 				GetTileReplacement();
 				if(tile_replacement_enemy_type != 255)
@@ -444,7 +444,7 @@ void ScrollUpdateColumn(UINT8 x, UINT8 y) {
 	}*/
 
 	if(x >= scroll_tiles_w) {
-		memset(buff, 2, SCREEN_TILE_REFRES_H);
+		memset(buff, 0, SCREEN_TILE_REFRES_H);
 	} else {
 		tile_replacement_tile_ptr = scroll_map + scroll_tiles_w * y + x;
 		tile_replacement_ptr = buff;
@@ -453,7 +453,7 @@ void ScrollUpdateColumn(UINT8 x, UINT8 y) {
 				tile_replacement_tile_ptr = scroll_map + x;
 
 			if((UINT8)(y + i) >= scroll_tiles_h){
-				*tile_replacement_ptr = 2;
+				*tile_replacement_ptr = 0;
 			} else {
 				GetTileReplacement();
 				if(tile_replacement_enemy_type != 255)
