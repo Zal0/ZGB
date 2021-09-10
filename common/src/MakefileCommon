@@ -141,7 +141,7 @@ $(OBJDIR_RES)/sprites/%.gbr.c: ../res/sprites/%.gbr $$(wildcard ../res/sprites/%
 
 .SECONDEXPANSION:
 $(OBJDIR_RES)/sprites/%.png.c: ../res/sprites/%.png $$(wildcard ../res/sprites/%.png.meta)
-	@$(PNG2ASSET) $< `cat <$<.meta`-use_structs -b 255 -c $@
+	@$(PNG2ASSET) $< `cat <$<.meta`-use_structs -b 255 -use_structs -c $@
 
 $(OBJDIR_RES)/%.gbm.c: ../res/%.gbm
 	@$(GBM2C) $< $(OBJDIR_RES)
@@ -198,7 +198,7 @@ $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR_ZGB)/zgb.lib $(OBJDIR) $(OBJDIR
 	@$(MAKEBIN) -Z $(BINFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION)
 	@$(ROMVIEW) $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) 255
 	@mv $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
-	@mv $(OBJDIR)/$(PROJECT_NAME).cdb $(BINDIR)/$(PROJECT_NAME).cdb
+	@[ -f $(OBJDIR)/$(PROJECT_NAME).cdb ] &&  mv $(OBJDIR)/$(PROJECT_NAME).cdb $(BINDIR)/$(PROJECT_NAME).cdb
 #	@perl $(SRC2SYM) $(OBJDIR)/$(PROJECT_NAME).noi > $(BINDIR)/$(PROJECT_NAME).sym
 	@rm -f *.adb
 
