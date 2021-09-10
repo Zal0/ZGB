@@ -336,7 +336,7 @@ UINT8  tile_replacement_enemy_type = 255;
 
 unsigned char buff[SCREEN_TILE_REFRES_W];
 
-void ScrollUpdateRow(INT8 x, INT8 y) {
+void ScrollUpdateRow(UINT8 x, UINT8 y) {
 	UINT8 i = 0u;
 	UINT8 lim;
 	UINT8 enemy_type;
@@ -354,14 +354,17 @@ void ScrollUpdateRow(INT8 x, INT8 y) {
 		#endif
 	}*/
 	
-	if(y < 0 || y >= scroll_tiles_h) {
-		memset(buff, 0, SCREEN_TILE_REFRES_W);
+	if(y >= scroll_tiles_h) {
+		memset(buff, 1, SCREEN_TILE_REFRES_W);
 	} else {
-		tile_replacement_tile_ptr = scroll_map + scroll_tiles_w * y + x;
+		tile_replacement_tile_ptr = scroll_map + scroll_tiles_w * y + x; 
 		tile_replacement_ptr = buff;
 		for(i = 0u; i != SCREEN_TILE_REFRES_W; ++i) {
-			if((x + i) < 0 || (x + i) >= scroll_tiles_w) {
-				*tile_replacement_ptr = 0;
+			if((UINT8)(x + i) == 0)
+				tile_replacement_tile_ptr = scroll_map + scroll_tiles_w * y; 
+
+			if((UINT8)(x + i) >= scroll_tiles_w) { //cast to UINT8 is important, x + i will be promoted to UINT16 otherwise
+				*tile_replacement_ptr = 1;
 			} else {	
 				GetTileReplacement();
 				if(tile_replacement_enemy_type != 255)
@@ -370,7 +373,7 @@ void ScrollUpdateRow(INT8 x, INT8 y) {
 				}
 			}
 
-			tile_replacement_tile_ptr ++;
+			tile_replacement_tile_ptr ++; 
 			tile_replacement_ptr ++;
 		}
 	}
@@ -420,7 +423,7 @@ void ScrollUpdateColumnWithDelay(INT16 x, INT16 y) {
 	#endif
 }*/
 
-void ScrollUpdateColumn(INT8 x, INT8 y) {
+void ScrollUpdateColumn(UINT8 x, UINT8 y) {
 	UINT8 i = 0u;
 	#ifdef CGB
 	unsigned char* cmap = &scroll_cmap[scroll_tiles_w * y + x];
@@ -440,14 +443,17 @@ void ScrollUpdateColumn(INT8 x, INT8 y) {
 		#endif
 	}*/
 
-	if((UINT8)x >= scroll_tiles_w) {
-		memset(buff, 0, SCREEN_TILE_REFRES_H);
+	if(x >= scroll_tiles_w) {
+		memset(buff, 2, SCREEN_TILE_REFRES_H);
 	} else {
-		tile_replacement_tile_ptr = &scroll_map[scroll_tiles_w * y + x];
+		tile_replacement_tile_ptr = scroll_map + scroll_tiles_w * y + x;
 		tile_replacement_ptr = buff;
 		for(i = 0u; i != SCREEN_TILE_REFRES_H; ++i) {
+			if((UINT8)(y + i) == 0)
+				tile_replacement_tile_ptr = scroll_map + x;
+
 			if((UINT8)(y + i) >= scroll_tiles_h){
-				*tile_replacement_ptr = 0;
+				*tile_replacement_ptr = 2;
 			} else {
 				GetTileReplacement();
 				if(tile_replacement_enemy_type != 255)
