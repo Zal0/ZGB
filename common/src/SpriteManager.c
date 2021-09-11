@@ -163,8 +163,8 @@ __endasm;
 extern UINT8* oam;
 extern UINT8* oam0;
 extern UINT8* oam1;
-UINT8 THIS_IDX;
-Sprite* THIS;
+UINT8 THIS_IDX = 0;
+Sprite* THIS = 0;
 void SpriteManagerUpdate() {
 	SPRITEMANAGER_ITERATE(THIS_IDX, THIS) {
 		if(!THIS->marked_for_removal) {
