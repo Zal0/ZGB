@@ -13,7 +13,7 @@ typedef enum {
 	HV_MIRROR
 } MirroMode;
 
-struct Sprite {
+typedef struct {
 	//Meta sprite info
 	UINT8 mt_sprite_bank;
 	const struct MetaSpriteInfo* mt_sprite_info;
@@ -45,7 +45,7 @@ struct Sprite {
 	UINT16 unique_id;
 
 	UINT8 custom_data[CUSTOM_DATA_SIZE];
-};
+} Sprite;
 
 //Mirror flags
 #define SPRITE_SET_VMIRROR(SPRITE)   (SPRITE->flags |= 32)
@@ -67,13 +67,13 @@ struct Sprite {
 #define SPRITE_SET_PALETTE(SPRITE, PALETTE) SPRITE_SET_DMG_PALETTE(SPRITE, PALETTE)
 #endif
 
-void SetFrame(struct Sprite* sprite, UINT8 frame);
-void InitSprite(struct Sprite* sprite, UINT8 sprite_type);
-void SetSpriteAnim(struct Sprite* sprite, UINT8* data, UINT8 speed);
+void SetFrame(Sprite* sprite, UINT8 frame);
+void InitSprite(Sprite* sprite, UINT8 sprite_type);
+void SetSpriteAnim(Sprite* sprite, UINT8* data, UINT8 speed);
 void DrawSprite();
 
-UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y);
+UINT8 TranslateSprite(Sprite* sprite, INT8 x, INT8 y);
 
-UINT8 CheckCollision(struct Sprite* sprite1, struct Sprite* sprite2);
+UINT8 CheckCollision(Sprite* sprite1, Sprite* sprite2);
 
 #endif

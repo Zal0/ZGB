@@ -10,22 +10,22 @@
 #define SPRITEMANAGER_ITERATE(i, spr) for(i = 0u, spr = sprite_manager_sprites[sprite_manager_updatables[1]]; i != sprite_manager_updatables[0]; ++i, spr = sprite_manager_sprites[sprite_manager_updatables[i + 1u]])
 
 //Pool
-extern struct Sprite* sprite_manager_sprites[];
+extern Sprite* sprite_manager_sprites[];
 extern UINT8* sprite_manager_sprites_pool;
 
 //Current sprites
 extern UINT8 sprite_manager_updatables[];
 
 extern UINT8 THIS_IDX;
-extern struct Sprite* THIS;
+extern Sprite* THIS;
 
 void SpriteManagerReset();
 
 void SpriteManagerLoad(UINT8 sprite_type);
 
-struct Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y);
+Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y);
 void SpriteManagerRemove(int idx);
-void SpriteManagerRemoveSprite(struct Sprite* sprite);
+void SpriteManagerRemoveSprite(Sprite* sprite);
 
 void SpriteManagerFlushRemove();
 void SpriteManagerUpdate();

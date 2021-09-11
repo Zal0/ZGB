@@ -5,7 +5,7 @@
 #include "MetaSpriteInfo.h"
 #include "main.h"
 
-void SetFrame(struct Sprite* sprite, UINT8 frame)
+void SetFrame(Sprite* sprite, UINT8 frame)
 {
 	PUSH_BANK(sprite->mt_sprite_bank);
 		sprite->mt_sprite = sprite->mt_sprite_info->metasprites[frame];
@@ -13,7 +13,7 @@ void SetFrame(struct Sprite* sprite, UINT8 frame)
 	sprite->anim_frame = frame; //anim_frame contains the animation frame if anim_data is assigned or the metasprite index otherwise
 }
 
-void InitSprite(struct Sprite* sprite, UINT8 sprite_type) {
+void InitSprite(Sprite* sprite, UINT8 sprite_type) {
 	const struct MetaSpriteInfo* mt_sprite_info = spriteDatas[sprite_type];
 
 	sprite->mt_sprite_info = mt_sprite_info;
@@ -38,7 +38,7 @@ void InitSprite(struct Sprite* sprite, UINT8 sprite_type) {
 	POP_BANK;
 }
 
-void SetSpriteAnim(struct Sprite* sprite, UINT8* data, UINT8 speed) {
+void SetSpriteAnim(Sprite* sprite, UINT8* data, UINT8 speed) {
 	if(sprite->anim_data != data) {
 		sprite->anim_data = data;
 		SetFrame(sprite, data[1]);
@@ -112,7 +112,7 @@ void DrawSprite() {
 }
 
 unsigned char* tile_coll;
-UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
+UINT8 TranslateSprite(Sprite* sprite, INT8 x, INT8 y) {
 	UINT16 start_x, start_y, n_its,tmp;
 	UINT8 i;
 	UINT8 ret = 0;
@@ -213,7 +213,7 @@ UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
 	return ret;
 }
 
-UINT8 CheckCollision(struct Sprite* sprite1, struct Sprite* sprite2) {
+UINT8 CheckCollision(Sprite* sprite1, Sprite* sprite2) {
 	INT16 diff16; 
 	INT8 diff;
 	

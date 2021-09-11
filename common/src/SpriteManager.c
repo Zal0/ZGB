@@ -6,8 +6,8 @@
 #include "main.h"
 
 //Pool
-UINT8 sprite_manager_sprites_mem[N_SPRITE_MANAGER_SPRITES * sizeof(struct Sprite)];
-struct Sprite* sprite_manager_sprites[N_SPRITE_MANAGER_SPRITES];
+UINT8 sprite_manager_sprites_mem[N_SPRITE_MANAGER_SPRITES * sizeof(Sprite)];
+Sprite* sprite_manager_sprites[N_SPRITE_MANAGER_SPRITES];
 DECLARE_STACK(sprite_manager_sprites_pool, N_SPRITE_MANAGER_SPRITES);
 
 //Current sprites
@@ -35,7 +35,7 @@ void SpriteManagerReset() {
 	//place all sprites on the pool
 	StackClear(sprite_manager_sprites_pool);
 	for(i = 0; i != N_SPRITE_MANAGER_SPRITES; ++i) {
-		sprite_manager_sprites[i] = (struct Sprite*)&sprite_manager_sprites_mem[sizeof(struct Sprite) * (UINT16)i];
+		sprite_manager_sprites[i] = (Sprite*)&sprite_manager_sprites_mem[sizeof(Sprite) * (UINT16)i];
 		StackPush(sprite_manager_sprites_pool, i);		
 	}
 	ClearOAMs();
@@ -79,9 +79,9 @@ void SpriteManagerLoad(UINT8 sprite_type) {
 	POP_BANK
 }
 
-struct Sprite* cachedSprite; //This has to be declared outside because of an LCC bug (easy to see with the Princess' Axe)
-struct Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y) {
-	struct Sprite* sprite;
+Sprite* cachedSprite; //This has to be declared outside because of an LCC bug (easy to see with the Princess' Axe)
+Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y) {
+	Sprite* sprite;
 	UINT8 sprite_idx;
 	UINT16 spriteIdxTmp; //Yes, another bug in the compiler forced me to change the type here to UINT16 instead of UINT8
 
@@ -119,9 +119,9 @@ void SpriteManagerRemove(int idx) {
 	sprite_manager_sprites[sprite_manager_updatables[idx + 1]]->marked_for_removal = 1;
 }
 
-void SpriteManagerRemoveSprite(struct Sprite* sprite) {
+void SpriteManagerRemoveSprite(Sprite* sprite) {
 	UINT8 i;
-	struct Sprite* s;
+	Sprite* s;
 	for(i = 0u; i != sprite_manager_updatables[0]; ++i) {
 		s = sprite_manager_sprites[sprite_manager_updatables[i + 1]];
 		if(s == sprite) {
@@ -164,7 +164,7 @@ extern UINT8* oam;
 extern UINT8* oam0;
 extern UINT8* oam1;
 UINT8 THIS_IDX;
-struct Sprite* THIS;
+Sprite* THIS;
 void SpriteManagerUpdate() {
 	SPRITEMANAGER_ITERATE(THIS_IDX, THIS) {
 		if(!THIS->marked_for_removal) {

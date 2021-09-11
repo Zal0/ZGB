@@ -7,7 +7,7 @@
 #include "TilesInfo.h"
 
 typedef void (*Void_Func_Void)();
-typedef void (*Void_Func_SpritePtr)(struct Sprite*);
+typedef void (*Void_Func_SpritePtr)(Sprite*);
 
 #define DECLARE_STATE(STATE_IDX)   extern UINT8 bank_##STATE_IDX;  void Start_##STATE_IDX(); void Update_##STATE_IDX()
 extern UINT8 stateBanks[];
