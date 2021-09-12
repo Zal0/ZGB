@@ -6,6 +6,10 @@ PATH := $(ZGB_PATH_UNIX)/../env/make-3.81-bin/bin;$(ZGB_PATH_UNIX)/../env/gbdk/b
 BUILD_TYPE = Release
 
 #--- Default player will be huge tracker HUGETRACKER/GBT_PLAYER
+ifeq ($(DEFAULT_SPRITES_SIZE), )
+	DEFAULT_SPRITES_SIZE = SPRITES_8x16
+endif
+
 ifeq ($(MUSIC_PLAYER), )
 	MUSIC_PLAYER = HUGETRACKER
 endif
@@ -56,6 +60,14 @@ ifeq ($(MUSIC_PLAYER), HUGETRACKER)
 	CFLAGS += -DMUSIC_DRIVER_HUGE
 else
 	CFLAGS += -DMUSIC_DRIVER_GBT
+endif
+
+ifeq ($(DEFAULT_SPRITES_SIZE), SPRITES_8x16)
+	CFLAGS += -DLCDCF_OBJDEFAULT=LCDCF_OBJ16
+	CFLAGSPNG2ASSET += -spr8x16
+else
+	CFLAGS += -DLCDCF_OBJDEFAULT=LCDCF_OBJ8
+	CFLAGSPNG2ASSET += -spr8x8
 endif
 
 # Release/Debug flags
@@ -137,11 +149,11 @@ $(OBJDIR_RES)/sprites:
 .SECONDEXPANSION:
 $(OBJDIR_RES)/sprites/%.gbr.c: ../res/sprites/%.gbr $$(wildcard ../res/sprites/%.gbr.meta)
 	@$(GBR2PNG) $< $(OBJDIR_RES)/sprites
-	@$(PNG2ASSET) $(@D)/$(<F).png `cat <$(@D)/$(<F).png.meta` -keep_palette_order -use_structs -c $@
+	@$(PNG2ASSET) $(@D)/$(<F).png `cat <$(@D)/$(<F).png.meta` -keep_palette_order -use_structs $(CFLAGSPNG2ASSET) -c $@
 
 .SECONDEXPANSION:
 $(OBJDIR_RES)/sprites/%.png.c: ../res/sprites/%.png $$(wildcard ../res/sprites/%.png.meta)
-	@$(PNG2ASSET) $< `cat <$<.meta`-use_structs -b 255 -use_structs -c $@
+	@$(PNG2ASSET) $< `cat <$<.meta`-use_structs -b 255 -use_structs $(CFLAGSPNG2ASSET) -c $@
 
 $(OBJDIR_RES)/%.gbm.c: ../res/%.gbm
 	@$(GBM2C) $< $(OBJDIR_RES)
