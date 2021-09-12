@@ -119,8 +119,8 @@ void main() {
 		if (_cpu == CGB_TYPE) {
 			for(i = 0; i < 8; ++ i)
 			{
-				SetPalette(BG_PALETTE, i, 8, default_palette, 1);
-				SetPalette(SPRITES_PALETTE, i, 8, default_palette, 1);
+				SetPalette(BG_PALETTE, i, 1, default_palette, 1);
+				SetPalette(SPRITES_PALETTE, i, 1, default_palette, 1);
 			}
 		} else 
 #endif
