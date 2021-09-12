@@ -27,8 +27,11 @@ void hUGE_mute(UBYTE mute) {
 #include "BankManager.h"
 
 void MusicCallback() __nonbanked {
-	gbt_update();
-	REFRESH_BANK;
+	if(last_music)
+	{
+		gbt_update();
+		REFRESH_BANK;
+	}
 }
 #endif
 
