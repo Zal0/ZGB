@@ -36,6 +36,7 @@ void SpriteManagerReset() {
 	StackClear(sprite_manager_sprites_pool);
 	for(i = 0; i != N_SPRITE_MANAGER_SPRITES; ++i) {
 		sprite_manager_sprites[i] = (Sprite*)&sprite_manager_sprites_mem[sizeof(Sprite) * (UINT16)i];
+		spriteIdxs[i] = 255;
 		StackPush(sprite_manager_sprites_pool, i);		
 	}
 	ClearOAMs();
@@ -84,6 +85,11 @@ Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y) {
 	Sprite* sprite;
 	UINT8 sprite_idx;
 	UINT16 spriteIdxTmp; //Yes, another bug in the compiler forced me to change the type here to UINT16 instead of UINT8
+
+	if(spriteIdxs[sprite_type] == 255)
+	{
+		SpriteManagerLoad(sprite_type);
+	}
 
 	sprite_idx = StackPop(sprite_manager_sprites_pool);
 	sprite = sprite_manager_sprites[sprite_idx];
