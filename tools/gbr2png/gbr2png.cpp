@@ -473,7 +473,7 @@ int main(int argc, char* argv[]) {
 			return 1;
 		}
 
-		fprintf(file, "-spr8x16 -px %d -py %d -pw %d -ph %d", 0, 0, tile_set.info.width, tile_set.info.height);
+		fprintf(file, "-px %d -py %d -pw %d -ph %d", 0, 0, tile_set.info.width, tile_set.info.height);
 		fclose(file);
 
 		file = fopen(export_file, "r");
