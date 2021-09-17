@@ -7,14 +7,12 @@ It uses [GBDK 2020](https://github.com/Zal0/gbdk-2020) but expands it to give yo
 ![gif](https://raw.githubusercontent.com/Zal0/ZGB/master/doc%20files/tuto.gif) ![gif](https://github.com/Zal0/bitbitjam2016/blob/develop/bitbit3/res/marketing/screenshots/pretty.gif?raw=true) ![gif](https://github.com/Zal0/gbjam2016/raw/develop/res/marketing/gifs/fly.gif?raw=true)
 
 ## Getting started
-- Download the latest [release](https://github.com/Zal0/ZGB/releases)
-
-- Run install.bat (this will create a new environment var ZGB_PATH pointing to %ZGB%/common)
-
-- Download the [ZGB-template](https://github.com/Zal0/ZGB-template/archive/master.zip) and build it running build.bat 
-
-- Follow the tutorial on the [wiki](https://github.com/Zal0/ZGB/wiki) to understand the basic concepts of the engine
-
+- Installing ZGB
+  - Download the latest [release](https://github.com/Zal0/ZGB/releases)
+  - Run install.bat (this will create a new environment var ZGB_PATH pointing to %ZGB%/common)
+- Creating a new project
+  - Download the [ZGB-template](https://github.com/Zal0/ZGB-template/archive/master.zip) and build it running build.bat
+  - Follow the tutorial on the [wiki](https://github.com/Zal0/ZGB/wiki) to understand the basic concepts of the engine
 - (**Optional**) Download [***Microsoft Visual Studio Community Edition***](https://www.visualstudio.com/downloads/) 
 The [ZGB-template](https://github.com/Zal0/ZGB-template) comes with a solution customized for visual studio
 
@@ -22,9 +20,8 @@ The [ZGB-template](https://github.com/Zal0/ZGB-template) comes with a solution c
 Check the [wiki](https://github.com/Zal0/ZGB/wiki)
 
 ## Support
-twitter: [Zal0](https://twitter.com/Zal0)
-
-discord: [gbdk/zgb discord](https://discord.gg/XCbjCvqnUY)
+- twitter: [Zal0](https://twitter.com/Zal0)
+- discord: [gbdk/zgb discord](https://discord.gg/XCbjCvqnUY)
 
 ## Features <a name="features"></a>
 
@@ -36,10 +33,11 @@ discord: [gbdk/zgb discord](https://discord.gg/XCbjCvqnUY)
  - [Sprites modes 8x8 and 8x16](#sprites-modes-8x8-and-8x16)
  - [Sprite animations](#sprite-animations)
  - [Collisions sprite vs sprite and sprite vs background](#collisions)
- - Almost transparent, bank management, now using bankpack
- - Fonts
- - Music support using [gbt-player](https://github.com/AntonioND/gbt-player) or [hUGETracker](https://github.com/SuperDisk/hUGETracker)
- - Sound Effects 
+ - [Auto Banking](#auto-banking)
+ - [Fonts](#fonts)
+ - [Music](#music)
+ - Sound Effects
+ - Game Boy Color
 
 ### Easy makefile support
 
@@ -224,7 +222,7 @@ The Sprite field **anim_frame** contains the animation index if there is an anim
 
 ### Collisions
 
-All sprites have a rectangle collider that will be used to check collisions. By default it will be defined by metasprites width and height but you can adjust it on the sprite .meta file
+All sprites have a rectangle collider that will be used to check collisions. By default it will be defined by the metasprites dimensions but you can adjust it on the sprite .meta file
 ```
 -px 2 -py 0 -pw 12 -ph 19
 ```
@@ -234,7 +232,102 @@ This rectangle will remain constant when the sprite is flipped
 
 #### Sprite vs Background
 
+First you need to declare an array (terminated in 0) indicating which tiles are considered collidables
+```C
+UINT8 collision_tiles[] = {1, 2, 3, 4, 8, 10, 0}; //In this case tiles 1, 2, 3, 4, 8 an 10 will be considered collidables
+```
+
+Then you need to pass this array when you Init the scroll (you can have several arrays depending on the tileset you use)
+```C
+InitScroll(BANK(map), &map, collision_tiles, 0);
+```
+
+And now, instead of directly modify the X and Y coordinates of your Sprite, you need to call TranslateSprite
+```C
+TranslateSprite(THIS, -1, 0); //Move the current sprite 1 pixel to the left checking collisions with the background
+```
+If the Sprite collides then it won't advance and TranslateSprite will return the collision tile (so you can check if there are spikes or other stuff)
+
+You can also declare an array of collision tiles that will be only checked when the Sprite is moving downwards. This is very useful for platform games where the character can jump into a platform from below
+
+![gif](/doc%20files/readme/coll_down.gif)
+
 #### Sprite vs Sprite
+
+To check if two sprites are colliding call the function CheckCollision in "Sprite.h"
+```C
+if(CheckCollision(THIS, other_sprite))
+{
+    //Sprites are colliding!
+}
+```
+
+### Auto Banking
+
+ZGB uses [bankpack](https://bbbbbr.github.io/gbdk-2020/docs/api/docs_toolchain.html#autotoc_md79) so you don't need to worry about where to place your code or resources. Just make sure that:
+- **_#include "Banks/SetAutoBank.h"_** is added at the beggining of your States and Sprites
+- If you need to call an sprite function from another sprite, declare it **BANKED**
+```C
+void HitMe();        //WRONG!!
+void HitMe() BANKED; //RIGHT!
+```
+- If you receive this error after making a build:  
+```C
+**2>EXEC : error : size of the buffer is too small**_ 
+```
+
+You need to increment N_BANKS (must be a power of two: 2, 4, 8, 16...) in your makefile
+- Check the png created in the Debug/Release folder of your build to get an overview of your banks usage. For a more detailed information you can use [RomUsage](https://github.com/bbbbbr/romusage)
+
+### Fonts
+
+Fonts in ZGB are gbr files of **45** tiles, with uppercase characters **_A-Z 0-9 !'()-.:?_** The ZGB-Template already comes with a default font that you can customize
+
+In order to print some texts in your game
+1. Import the font using 
+```C
+#include "Print.h"
+IMPORT_TILES(<font filename>);
+```
+2. Init the font in the START function of your State by calling
+```C
+INIT_FONT(font, PRINT_BKG); //PRINT_BKG to draw on the background or PRINT_WIN to draw on the Window
+```
+3. Print some text using 
+```C
+PRINT(0, 0, "Hello World"); //print Hello World on 0, 0
+```
+
+You can also use **Printf** to draw some vars with %d %i &u and %s
+
+You can change the target (background or window) with the var **print_target**
+
+### Music
+
+You can select witch music drive to use [gbt-player](https://github.com/AntonioND/gbt-player) or [hUGETracker](https://github.com/SuperDisk/hUGETracker) in the Makefile
+```
+# Music player: HUGETRACKER(default) or GBT_PLAYER
+MUSIC_PLAYER = GBT_PLAYER
+```
+
+To play some music in your game
+- Place the .mod or .uge files in the res/music folder
+- Import the music with
+```C
+DECLARE_MUSIC(<music_filename>)
+```
+- Play it with
+```C
+PlayMusic(<music_filename>, LOOP)
+```
+- And Stop it with
+```C
+StopMusic(<music_filename>, LOOP)
+```
+
+### Sound Effects
+
+### Game Boy Color
 
 ## License
 
