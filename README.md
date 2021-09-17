@@ -25,21 +25,8 @@ Check the [wiki](https://github.com/Zal0/ZGB/wiki)
 
 ## Features <a name="features"></a>
 
- - [Easy makefile support](#easy-makefile-support)
- - [Transparent asset management](#transparent-asset-management)
- - [Main Loop](#main-loop)
- - [Big maps scroll support](#big-maps-scroll-support)
- - [Metasprites](#metasprites)
- - [Sprites modes 8x8 and 8x16](#sprites-modes-8x8-and-8x16)
- - [Sprite animations](#sprite-animations)
- - [Collisions sprite vs sprite and sprite vs background](#collisions)
- - [Auto Banking](#auto-banking)
- - [Fonts](#fonts)
- - [Music](#music)
- - Sound Effects
- - Game Boy Color
-
-### Easy makefile support
+<details>
+  <summary>Easy makefile support</summary>
 
 In most cases you just need a small makefile like this
 
@@ -59,9 +46,11 @@ DEFAULT_SPRITES_SIZE = SPRITES_8x16
 include $(ZGB_PATH)/src/MakefileCommon
 ```
 When you make any changes to any of the source files of your project, or any of the assets, only that file will be recompiled. The internal Makefile that comes with ZGB creates a list of dependencies and only compiles what is needed saving you a lot of time. It will also help you a lot if you work with a version control system, like git
+</details>
 
-### Transparent asset management
-
+<details>
+  <summary>Transparent asset management</summary>
+  
 ZGB will automatically turn all your assets files into C data:
 - Graphics
   - .gbr from Game Boy Tile Designer
@@ -70,8 +59,10 @@ ZGB will automatically turn all your assets files into C data:
 - Music
   - .mod for gbt-player
   - .uge for hUGETracker
+</details>
 
-### Main Loop
+<details>
+  <summary>Main Loop</summary>
 
 ![gif](/doc%20files/readme/ZGB-loop.png)
 
@@ -82,7 +73,9 @@ UINT8 next_state = StateGame;
 ```
 When ZGB starts it will call the **START** function of this State. Then on each frame it will call the **UPDATE** function until **SetState** is called to assign a new State
 
-To create a new State:
+<details>
+  <summary>Creating a new State</summary>
+
 1. Create a new file < YourNewState >.c containing this:
 ```C
 #include "Banks/SetAutoBank.h"
@@ -101,6 +94,7 @@ _STATE(<YourNewState>)       \
 STATE_DEF_END
 ````
 Now, whenever you want to enter this new state you just need to call **SetState**(< YourNewState >)
+</details>
 
 #### Sprites
 
@@ -119,7 +113,8 @@ void START() {
 You can create your sprites with the Game Boy Tile Designer or you can use pngs. 
 Create your sprites in the res/sprites folder so that the Makefile can identify them as sprites and pass the proper parameters to png2asset.
 
-##### gbr sprites
+<details>
+  <summary>gbr sprites</summary>
 Use Game Boy Tile Designer included in <ZGB_PATH>/env/tools/gbtd22/GBTD.exe to create gbr sprites. Don't worry too much about the TileSize choosen, remember that empty tiles will be discarded
 
 The first time you compile the gbr a .meta will be created with the default params passed to png2asset. You may want to take a look specially at the collision info to adjust the collider
@@ -127,8 +122,11 @@ The first time you compile the gbr a .meta will be created with the default para
 -px 0 -py 0 -pw 32 -ph 32
 ```
 Check the png2asset params [here](https://gbdk-2020.github.io/gbdk-2020/docs/api/docs_toolchain_settings.html#png2mtspr-settings)
+</details>
 
-##### png sprites
+<details>
+  <summary>png sprites</summary>
+
 GBTD has a few limitations:
 - The maximum sprites size is 32x32
 - It only lets you choose a palette for the whole metasprite
@@ -139,7 +137,10 @@ It is important that you create a .meta and at least indicate the sprite dimensi
 ```
 -sw 32 -sh 16 
 ```
+</details>
 
+<details>
+  <summary>Creating a new Sprite</summary>
 
 The template already comes with a placeholder Sprite but you surely will need to add more. Yo do this by following the next 3 steps:
 1. Create the sprite image data. 
@@ -163,6 +164,19 @@ void DESTROY() {
 _SPRITE_DMG(<YourNewSprite>, <image>)\
 SPRITE_DEF_END
 ```
+</details>
+</details>
+
+ - [Big maps scroll support](#big-maps-scroll-support)
+ - [Metasprites](#metasprites)
+ - [Sprites modes 8x8 and 8x16](#sprites-modes-8x8-and-8x16)
+ - [Sprite animations](#sprite-animations)
+ - [Collisions sprite vs sprite and sprite vs background](#collisions)
+ - [Auto Banking](#auto-banking)
+ - [Fonts](#fonts)
+ - [Music](#music)
+ - Sound Effects
+ - Game Boy Color
 
 ### Big maps scroll support
 
