@@ -26,7 +26,7 @@ Check the [wiki](https://github.com/Zal0/ZGB/wiki)
 ## Features <a name="features"></a>
 
 <details>
-  <summary>Easy makefile support</summary>
+  <summary><strong>Easy makefile support</strong></summary>
 
 In most cases you just need a small makefile like this
 
@@ -35,7 +35,8 @@ PROJECT_NAME = ZGB_TEMPLATE
 
 all: build_gb
 
-N_BANKS = 4
+# Number of banks (must be a power of 2): A (Automatic), 2, 4, 8, 16, 32...
+N_BANKS = A
 
 # Music player: HUGETRACKER(default) or GBT_PLAYER
 MUSIC_PLAYER = GBT_PLAYER
@@ -46,10 +47,12 @@ DEFAULT_SPRITES_SIZE = SPRITES_8x16
 include $(ZGB_PATH)/src/MakefileCommon
 ```
 When you make any changes to any of the source files of your project, or any of the assets, only that file will be recompiled. The internal Makefile that comes with ZGB creates a list of dependencies and only compiles what is needed saving you a lot of time. It will also help you a lot if you work with a version control system, like git
+
+---
 </details>
 
 <details>
-  <summary>Transparent asset management</summary>
+  <summary><strong>Transparent asset management</strong></summary>
   
 ZGB will automatically turn all your assets files into C data:
 - Graphics
@@ -59,14 +62,18 @@ ZGB will automatically turn all your assets files into C data:
 - Music
   - .mod for gbt-player
   - .uge for hUGETracker
+
+---
 </details>
 
 <details>
-  <summary>Main Loop</summary>
+  <summary><strong>Main Loop</strong></summary>
 
 ![gif](/doc%20files/readme/ZGB-loop.png)
 
-#### States
+<details>
+  <summary><strong>States</strong></summary>
+
 All ZGB games must contain at least one State. This state must be assigned on ZGBMain.c
 ```C
 UINT8 next_state = StateGame;
@@ -96,7 +103,10 @@ STATE_DEF_END
 Now, whenever you want to enter this new state you just need to call **SetState**(< YourNewState >)
 </details>
 
-#### Sprites
+</details>
+
+<details>
+  <summary><strong>Sprites</strong></summary>
 
 You can manually add Sprites calling **SpriteMangerAdd**(type, x, y). ZGB will call the **START** function of this Sprite first and then it will call **UPDATE** on each frame until the Sprite is removed. You can manually remove an Sprite with the function **SpriteManagerRemove** (faster) or **SpriteManagerRemoveSprite** and then the engine will call its **DESTROY** function. 
 
@@ -165,20 +175,14 @@ _SPRITE_DMG(<YourNewSprite>, <image>)\
 SPRITE_DEF_END
 ```
 </details>
+
 </details>
 
- - [Big maps scroll support](#big-maps-scroll-support)
- - [Metasprites](#metasprites)
- - [Sprites modes 8x8 and 8x16](#sprites-modes-8x8-and-8x16)
- - [Sprite animations](#sprite-animations)
- - [Collisions sprite vs sprite and sprite vs background](#collisions)
- - [Auto Banking](#auto-banking)
- - [Fonts](#fonts)
- - [Music](#music)
- - Sound Effects
- - Game Boy Color
+---
+</details>
 
-### Big maps scroll support
+<details>
+  <summary><strong>Big maps scroll support</strong></summary>
 
 ZGB support maps up to 16384 bytes with a maximum width or height of 255 tiles. The engine will take care of updating the native 32x32 background as the camera moves
 
@@ -200,7 +204,11 @@ void START() {
 As the scroll updates new rows or columns it will call the function GetTileReplacement located in ZGBMain.c
 The default behaviour of this function is to spawn sprites using sprite_tye = 255 - tile_id, but you can customize it for your custom needs
 
-### Metasprites
+---
+</details>
+
+<details>
+  <summary><strong>Metasprites</strong></summary>
 
 Metasprites are sprites composed of 8x8 or 8x16 native sprites. 
 The tool png2asset from GBDK is used to create the data that will end up in the final build:
@@ -209,7 +217,11 @@ The tool png2asset from GBDK is used to create the data that will end up in the 
 - empty tiles will be ignored
 - palette info will be included
 
-### Sprites modes 8x8 and 8x16
+---
+</details>
+
+<details>
+  <summary><strong>Sprites modes 8x8 and 8x16</strong></summary>
 
 The Game Boy has native support for sprite sizes 8x8 and 8x16. You can use any of them to compose the metasprites in your game.
 
@@ -221,7 +233,12 @@ The default Sprite mode is selected in your makefile
 DEFAULT_SPRITES_SIZE = SPRITES_8x16
 ```
 
-### Sprite animations
+---
+</details>
+
+
+<details>
+  <summary><strong>Sprite animations</strong></summary>
 
 Animations in ZGB are defined by arrays of frames where the first element is the number of frames
 ```C
@@ -234,7 +251,11 @@ Instead of setting an animation you can Set the current frame manually by callin
 
 The Sprite field **anim_frame** contains the animation index if there is an animation running, or the frame index otherwise
 
-### Collisions
+---
+</details>
+
+<details>
+  <summary><strong>Collisions</strong></summary>
 
 All sprites have a rectangle collider that will be used to check collisions. By default it will be defined by the metasprites dimensions but you can adjust it on the sprite .meta file
 ```
@@ -244,7 +265,8 @@ All sprites have a rectangle collider that will be used to check collisions. By 
 
 This rectangle will remain constant when the sprite is flipped
 
-#### Sprite vs Background
+<details>
+  <summary><strong>Sprite vs Background</strong></summary>
 
 First you need to declare an array (terminated in 0) indicating which tiles are considered collidables
 ```C
@@ -266,7 +288,10 @@ You can also declare an array of collision tiles that will be only checked when 
 
 ![gif](/doc%20files/readme/coll_down.gif)
 
-#### Sprite vs Sprite
+</details>
+
+<details>
+  <summary><strong>Sprite vs Sprite</strong></summary>
 
 To check if two sprites are colliding call the function CheckCollision in "Sprite.h"
 ```C
@@ -276,7 +301,13 @@ if(CheckCollision(THIS, other_sprite))
 }
 ```
 
-### Auto Banking
+</details>
+
+---
+</details>
+
+<details>
+  <summary><strong>Auto Banking</strong></summary>
 
 ZGB uses [bankpack](https://bbbbbr.github.io/gbdk-2020/docs/api/docs_toolchain.html#autotoc_md79) so you don't need to worry about where to place your code or resources. Just make sure that:
 - **_#include "Banks/SetAutoBank.h"_** is added at the beggining of your States and Sprites
@@ -285,15 +316,14 @@ ZGB uses [bankpack](https://bbbbbr.github.io/gbdk-2020/docs/api/docs_toolchain.h
 void HitMe();        //WRONG!!
 void HitMe() BANKED; //RIGHT!
 ```
-- If you receive this error after making a build:  
-```C
-**2>EXEC : error : size of the buffer is too small**_ 
-```
 
-You need to increment N_BANKS (must be a power of two: 2, 4, 8, 16...) in your makefile
 - Check the png created in the Debug/Release folder of your build to get an overview of your banks usage. For a more detailed information you can use [RomUsage](https://github.com/bbbbbr/romusage)
 
-### Fonts
+---
+</details>
+
+<details>
+  <summary><strong>Fonts</strong></summary>
 
 Fonts in ZGB are gbr files of **45** tiles, with uppercase characters **_A-Z 0-9 !'()-.:?_** The ZGB-Template already comes with a default font that you can customize
 
@@ -316,7 +346,11 @@ You can also use **Printf** to draw some vars with %d %i &u and %s
 
 You can change the target (background or window) with the var **print_target**
 
-### Music
+---
+</details>
+
+<details>
+  <summary><strong>Music</strong></summary>
 
 You can select witch music drive to use [gbt-player](https://github.com/AntonioND/gbt-player) or [hUGETracker](https://github.com/SuperDisk/hUGETracker) in the Makefile
 ```
@@ -339,9 +373,35 @@ PlayMusic(<music_filename>, LOOP)
 StopMusic(<music_filename>, LOOP)
 ```
 
-### Sound Effects
+---
+</details>
 
-### Game Boy Color
+<details>
+  <summary><strong>Sound Effects</strong></summary>
+
+To play an FX Sound you just need  to call
+```C
+void PlayFx(SOUND_CHANNEL channel, UINT8 mute_frames, ...); // Add register data from GBSound
+```
+
+The channel will be occupied during mute_frames and the music player won't be able to use it
+
+---
+</details>
+
+<details>
+  <summary><strong>Game Boy Color</strong></summary>
+
+Because ZGB uses png2asset, palette data will be always included for each sprite allowing ZGB to load the palette automatically when the Sprite is loaded
+
+Just make sure that:
+- The total Sprites loaded don't need more than 8 different palettes (if two sprites have the same palettes, they will share them)
+- The palette colors are ordered from lighter to darker so that the game will also look good on the original GB
+
+
+---
+</details>
+
 
 ## License
 
