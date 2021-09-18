@@ -195,11 +195,12 @@ int main(int argc, char* argv[])
 	fclose(file);
 
 	//Extract bank
-	int bank = GetBank(argv[1]);
+	/*int bank = GetBank(argv[1]);
 	if(bank == 0) //for backwards compatibility, extract the bank from tile_export.name
 		bank = GetBank(map_export_settings.file_name);
 	if(bank == 0)
-		bank = map_export_settings.bank;
+		bank = map_export_settings.bank;*/
+	int bank = 255;
 
 	//Adjust export file name and label name
 	if(strcmp(map_export_settings.file_name, "") == 0) { //Default value
@@ -244,8 +245,7 @@ int main(int argc, char* argv[])
 	
 	fprintf(file, "#pragma bank %d\n", bank);
 
-	fprintf(file, "\nvoid empty(void) __nonbanked;\n");
-  fprintf(file, "__addressmod empty const CODE;\n\n");
+	fprintf(file, "#include <gb/gb.h>\n");
 
 	fprintf(file, "const unsigned char %s_map[] = {", map_export_settings.label_name);
 	for(INTEGER i = 0; i < map.width * map.height; ++i) {
@@ -282,7 +282,9 @@ int main(int argc, char* argv[])
 	fprintf(file, "#include \"%s.h\"\n", tile_file);
 
 	fprintf(file, "#include \"MapInfo.h\"\n");
-	fprintf(file, "const struct MapInfoInternal %s_internal = {\n", map_export_settings.label_name);
+
+	fprintf(file, "const void __at(%d) __bank_%s;\n", bank, map_export_settings.label_name);
+	fprintf(file, "const struct MapInfo %s = {\n", map_export_settings.label_name);
 	fprintf(file, "\t%s_map, //map\n", map_export_settings.label_name);
 	fprintf(file, "\t%d, //width\n", map.width);
 	fprintf(file, "\t%d, //height\n", map.height);
@@ -291,14 +293,10 @@ int main(int argc, char* argv[])
 	} else {
 		fprintf(file, "\t%s, //attributes\n", "0");
 	}
+	fprintf(file, "\tBANK(%s), //tiles bank\n", tile_file);
 	fprintf(file, "\t&%s, //tiles info\n", tile_file);
 	fprintf(file, "};");
 
-	fprintf(file, "\nCODE struct MapInfo %s = {\n", map_export_settings.label_name);
-	fprintf(file, "\t%d, //bank\n", bank);
-	fprintf(file, "\t&%s_internal, //data\n", map_export_settings.label_name);
-	fprintf(file, "};");
-
-    return 0;
+	return 0;
 }
 

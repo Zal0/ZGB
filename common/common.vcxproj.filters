@@ -14,12 +14,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Frame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\OAMManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Sprite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -71,65 +65,20 @@
     <ClInclude Include="include\MapInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Banks\SetBank0.h">
-      <Filter>Header Files\Banks</Filter>
+    <ClInclude Include="include\Music.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Banks\SetBank1.h">
-      <Filter>Header Files\Banks</Filter>
+    <ClInclude Include="include\MetaSpriteInfo.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Banks\SetBank2.h">
-      <Filter>Header Files\Banks</Filter>
+    <ClInclude Include="include\OAMManager.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Banks\SetBank3.h">
-      <Filter>Header Files\Banks</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Banks\SetBank4.h">
-      <Filter>Header Files\Banks</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Banks\SetBank5.h">
-      <Filter>Header Files\Banks</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Banks\SetBank6.h">
-      <Filter>Header Files\Banks</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Banks\SetBank7.h">
-      <Filter>Header Files\Banks</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Banks\SetBank8.h">
-      <Filter>Header Files\Banks</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Banks\SetBank9.h">
-      <Filter>Header Files\Banks</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Banks\SetBank10.h">
-      <Filter>Header Files\Banks</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Banks\SetBank11.h">
-      <Filter>Header Files\Banks</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Banks\SetBank12.h">
-      <Filter>Header Files\Banks</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Banks\SetBank13.h">
-      <Filter>Header Files\Banks</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Banks\SetBank14.h">
-      <Filter>Header Files\Banks</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Banks\SetBank15.h">
-      <Filter>Header Files\Banks</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Banks\SetBankCommon.h">
+    <ClInclude Include="include\Banks\SetAutoBank.h">
       <Filter>Header Files\Banks</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Frame.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\OAMManager.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Sprite.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -169,10 +118,13 @@
     <ClCompile Include="src\Fade.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Frame_b.c">
+    <ClCompile Include="src\ZGBMain_Init.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ZGBMain_Init.c">
+    <ClCompile Include="src\Music.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OAMManager.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

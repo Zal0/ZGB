@@ -1,6 +1,5 @@
 #pragma bank 1
 #include "Fade.h"
-UINT8 fade_bank = 1;
 
 #include "gb/cgb.h"
 #include "Palette.h"
@@ -77,7 +76,7 @@ void FadeInCOLOR() {
 	}
 }
 
-void FadeIn_b() {
+void FadeIn_b() BANKED{
 #ifdef CGB
 	if (_cpu == CGB_TYPE) {
 		FadeInCOLOR();
@@ -97,7 +96,7 @@ void FadeOutColor() {
 	}
 }
 
-void FadeOut_b() {
+void FadeOut_b() BANKED{
 #ifdef CGB
 	if (_cpu == CGB_TYPE) {
 		FadeOutColor();

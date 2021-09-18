@@ -1,33 +1,41 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
-#include "Frame.h"
 #include "OAMManager.h"
+#include "MetaSpriteInfo.h"
 
 #define CUSTOM_DATA_SIZE 8
 
-#define SET_FRAME(SPRITE, IDX) SPRITE->anim_frame = IDX; SPRITE->frame = SPRITE->first_tile + (IDX << SPRITE->size)
+typedef enum {
+	NO_MIRROR,
+	H_MIRROR,
+	V_MIRROR,
+	HV_MIRROR
+} MirroMode;
 
-struct Sprite {
+typedef struct {
+	//Meta sprite info
+	UINT8 mt_sprite_bank;
+	const struct MetaSpriteInfo* mt_sprite_info;
+
 	//Frame info
-	FrameSize size;
 	UINT8 first_tile; //tile offset, for animation indices
+	UINT8 pal_offset;
 
 	//Anim data
 	UINT8* anim_data;
 	UINT8 anim_accum_ticks;
 	UINT8 anim_speed;
 	UINT8 anim_frame;
-	UINT8 frame;
+	struct metasprite_t* mt_sprite;
 
 	UINT16 x;
 	UINT16 y;
 
 	//Flags, currentlu used for mirror
-	UINT8 flags;
+	MirroMode mirror;
 
 	//Collider (box)
-	INT8 coll_x, coll_y;
 	UINT8 coll_w, coll_h;
 
 	//For the sprite manager
@@ -37,12 +45,16 @@ struct Sprite {
 	UINT16 unique_id;
 
 	UINT8 custom_data[CUSTOM_DATA_SIZE];
-};
+} Sprite;
 
-//Mirror flag
+//Mirror flags
 #define SPRITE_SET_VMIRROR(SPRITE)   (SPRITE->flags |= 32)
 #define SPRITE_UNSET_VMIRROR(SPRITE) (SPRITE->flags &= ~32)
 #define SPRITE_GET_VMIRROR(SPRITE)   (SPRITE->flags & 32)
+
+#define SPRITE_SET_HMIRROR(SPRITE)   (SPRITE->flags |= 64)
+#define SPRITE_UNSET_HMIRROR(SPRITE) (SPRITE->flags &= ~64)
+#define SPRITE_GET_HMIRROR(SPRITE)   (SPRITE->flags & 64)
 
 //Palette flag
 #define SPRITE_SET_CGB_PALETTE(SPRITE, PALETTE) SPRITE->flags = ((SPRITE->flags & 0xF8) | PALETTE | 0x10)
@@ -55,12 +67,13 @@ struct Sprite {
 #define SPRITE_SET_PALETTE(SPRITE, PALETTE) SPRITE_SET_DMG_PALETTE(SPRITE, PALETTE)
 #endif
 
-void InitSprite(struct Sprite* sprite, FrameSize size, UINT8 first_tile);
-void SetSpriteAnim(struct Sprite* sprite, UINT8* data, UINT8 speed);
+void SetFrame(Sprite* sprite, UINT8 frame);
+void InitSprite(Sprite* sprite, UINT8 sprite_type);
+void SetSpriteAnim(Sprite* sprite, UINT8* data, UINT8 speed);
 void DrawSprite();
 
-UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y);
+UINT8 TranslateSprite(Sprite* sprite, INT8 x, INT8 y);
 
-UINT8 CheckCollision(struct Sprite* sprite1, struct Sprite* sprite2);
+UINT8 CheckCollision(Sprite* sprite1, Sprite* sprite2);
 
 #endif

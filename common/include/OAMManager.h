@@ -1,7 +1,7 @@
 #ifndef OAMMANAGER_H
 #define OAMMANAGER_H
 #include <gb/gb.h> 
-#include "TilesInfo.h"
+#include "MetaSpriteInfo.h"
 
 struct OAMData {
 	UINT8 y;
@@ -13,9 +13,6 @@ struct OAMData {
 #define OAMS  ((UINT8*)((UINT16)oam & 0xFF00))
 #define OAM(A) ((struct OAMData*)(oams + (A << 2)))
 
-extern UINT8 last_sprite_loaded;
-
-UINT8 LoadSprite(struct TilesInfoInternal* data);
 void SwapOAMs();
 void ClearOAMs();
 

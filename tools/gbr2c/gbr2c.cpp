@@ -221,11 +221,12 @@ int main(int argc, char* argv[]) {
 	fclose(file);
 
 	//Extract bank
-	int bank = GetBank(argv[1]);
+	/*int bank = GetBank(argv[1]);
 	if(bank == 0) //for backwards compatibility, extract the bank from tile_export.name
 		bank = GetBank(tile_export.file_name);
 	if(bank == 0)
-		bank = tile_export.bank;
+		bank = tile_export.bank;*/
+	int bank = 255;
 
 	//Adjust export file name and label name
 	if(strcmp(tile_export.file_name, "Export.z80") == 0 || strcmp(tile_export.file_name, "") == 0) { //Default value
@@ -268,6 +269,8 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
+	char palette_order[] = {-1, -1, -1, -1, -1, -1, -1, -1};
+	int num_palettes = 0;
 	char export_file_name[256]; //For both .h and .c
 	char export_file[512];
 	ExtractFileName(tile_export.file_name, export_file_name, false); //For backwards compatibility the header will be taken from the export filename (and not argv[1])
@@ -291,7 +294,7 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	fprintf(file, "#include \"TilesInfo.h\"\n");
-	fprintf(file, "extern unsigned char bank_%s;\n", tile_export.label_name);
+	fprintf(file, "extern const void __bank_%s;\n", tile_export.label_name);
 	fprintf(file, "extern struct TilesInfo %s;\n", tile_export.label_name);
 
 	fprintf(file, "#endif\n");
@@ -307,25 +310,60 @@ int main(int argc, char* argv[]) {
 	}
 	
 	fprintf(file, "#pragma bank %d\n", bank);
-	//fprintf(file, "unsigned char bank_%s = %d;\n", tile_export.label_name, bank);
 
-	fprintf(file, "\nvoid empty(void) __nonbanked;\n");
-  fprintf(file, "__addressmod empty const CODE;\n\n");
+	fprintf(file, "#include <gb/gb.h>\n");
+	fprintf(file, "#include <gb/cgb.h>\n");
+	fprintf(file, "\n");
 
 	if(tile_export.include_colors){
+		//check which palettes are being used
+		for(int tile = tile_export.from; tile <= tile_export.up_to; ++ tile) {
+			int pal = tile_pal.color_set[tile];
+			palette_order[pal] = 0; //Mark as used
+		}
+		for(int i = 0, order = 0; i < 8; ++i)
+		{
+			if(palette_order[i] == 0)
+			{
+				palette_order[i] = order ++;
+				num_palettes ++;
+			}
+		}
+
+		//Export palettes
+		fprintf(file, "\n");
+		fprintf(file, "const UINT16 %s_palettes[%d] = {\n", tile_export.label_name, num_palettes * 4);
+		for(int p = 0; p < palettes.count; ++p) 
+		{
+			if(palette_order[p] != -1)
+			{
+				if(palette_order[p] != 0)
+					fprintf(file, ",\n");
+				fprintf(file, "\t");
+			
+				for(int c = 0; c < 4; ++c) {
+					Color color = palettes.colors[p].colors[c];
+					fprintf(file, "RGB(%d, %d, %d)", color.r >> 3, color.g >> 3, color.b >> 3);
+					if(c != 3)
+						fprintf(file, ", ");
+				}
+			}
+		}
+		fprintf(file, "\n};\n");
+
+		//Export palette per tile
+		fprintf(file, "\n");
 		fprintf(file, "const unsigned char %sCGB[] = {\n\t", tile_export.label_name);
 		for(int tile = tile_export.from; tile <= tile_export.up_to; ++ tile) {
 			if(tile != tile_export.from)
 				fprintf(file, ",");
 
-			fprintf(file, "0x%02x", tile_pal.color_set[tile]);
+			fprintf(file, "0x%02x", palette_order[tile_pal.color_set[tile]]);
 		}
-		fprintf(file, "\n};\n\n");
+		fprintf(file, "\n};\n");
 	}
 
-	//fprintf(file, "const unsigned char %s_width = %d;\n", tile_export.label_name, tile_set.info.width);
-	//fprintf(file, "const unsigned char %s_height = %d;\n", tile_export.label_name, tile_set.info.height);
-	//fprintf(file, "const unsigned char %s_num_frames = %d;\n", tile_export.label_name, tile_export.up_to - tile_export.from + 1);
+	fprintf(file, "\n");
 	fprintf(file, "const unsigned char %s_tiles[] = {", tile_export.label_name);
 	int line_h = tile_set.info.height == 8 ? 8 : 16;
 	for(int tile = tile_export.from; tile <= tile_export.up_to; ++ tile) {
@@ -361,21 +399,18 @@ int main(int argc, char* argv[]) {
 	fprintf(file, "\n};\n");
 	
 	fprintf(file, "\n#include \"TilesInfo.h\"\n");
-	fprintf(file, "const struct TilesInfoInternal %s_internal = {\n", tile_export.label_name);
-	fprintf(file, "\t%d, //width\n", tile_set.info.width);
-	fprintf(file, "\t%d, //height\n", tile_set.info.height);
+	fprintf(file, "const void __at(%d) __bank_%s;\n", bank, tile_export.label_name);
+	fprintf(file, "const struct TilesInfo %s = {\n", tile_export.label_name);
 	fprintf(file, "\t%d, //num_tiles\n", tile_export.up_to - tile_export.from + 1);
 	fprintf(file, "\t%s_tiles, //tiles\n", tile_export.label_name);
+	fprintf(file, "\t%d, //num_palettes\n", num_palettes);
 	if(tile_export.include_colors) {
+		fprintf(file, "\t%s_palettes, //palettes\n", tile_export.label_name);
 		fprintf(file, "\t%sCGB, //CGB palette\n", tile_export.label_name);
 	} else {
+		fprintf(file, "\t0, //palettes\n");
 		fprintf(file, "\t0, //CGB palette\n");
 	}
-	fprintf(file, "};");
-
-	fprintf(file, "\nCODE struct TilesInfo %s = {\n", tile_export.label_name);
-	fprintf(file, "\t%d, //bank\n", bank);
-	fprintf(file, "\t&%s_internal, //data\n", tile_export.label_name);
 	fprintf(file, "};");
 	
 	fclose(file);

@@ -7,7 +7,7 @@
 #include "TilesInfo.h"
 
 typedef void (*Void_Func_Void)();
-typedef void (*Void_Func_SpritePtr)(struct Sprite*);
+typedef void (*Void_Func_SpritePtr)(Sprite*);
 
 #define DECLARE_STATE(STATE_IDX)   extern UINT8 bank_##STATE_IDX;  void Start_##STATE_IDX(); void Update_##STATE_IDX()
 extern UINT8 stateBanks[];
@@ -19,16 +19,15 @@ extern UINT8 spriteBanks[];
 extern Void_Func_Void spriteStartFuncs[];
 extern Void_Func_Void spriteUpdateFuncs[];
 extern Void_Func_Void spriteDestroyFuncs[];
-extern struct TilesInfoInternal* spriteDatas[];
+extern const struct MetaSpriteInfo* spriteDatas[];
 extern UINT8 spriteDataBanks[];
 extern UINT8 spriteIdxs[];
+extern UINT8 spritePalsOffset[];
 
 
 extern UINT8 current_state;
 void SetState(UINT8 state);
 extern UINT8 delta_time;
-
-void PlayMusic(const unsigned char* music[], unsigned char bank, unsigned char loop);
 
 #ifdef CGB
 typedef enum {
@@ -39,5 +38,8 @@ void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *
 #else
 #define SetPalette(PALETTE_TYPE, first_palette, nb_palettes, rgb_data, bank);
 #endif
+
+#define IMPORT_MAP(MAP) extern struct MapInfo MAP; extern const void __bank_##MAP
+#define IMPORT_TILES(TILES) extern struct TilesInfo TILES; extern const void __bank_##TILES
 
 #endif

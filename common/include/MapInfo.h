@@ -3,17 +3,14 @@
 
 #include "TilesInfo.h"
 
-struct MapInfoInternal {
+struct MapInfo {
 	unsigned char* data;
 	unsigned char width;
 	unsigned char height;
 	unsigned char* attributes;
-	struct TilesInfo* tiles;
-};
 
-struct MapInfo {
-	unsigned char bank;
-	struct MapInfoInternal const* data;
+	unsigned char tiles_bank;
+	struct TilesInfo* tiles;
 };
 
 #endif

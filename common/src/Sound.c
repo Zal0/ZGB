@@ -1,7 +1,7 @@
 #include "Sound.h"
 
 #include <stdarg.h>
-#include "gbt_player.h"
+#include "Music.h"
 
 typedef volatile UINT8 * REG_PTR;
 
@@ -15,15 +15,14 @@ void PlayFx(SOUND_CHANNEL channel, UINT8 mute_frames, ...) {
 	REG_PTR reg = (REG_PTR)FX_ADDRESS[channel];
 	va_list list;
 
+	if(channel != CHANNEL_5) {
+		MUTE_CHANNEL(channel);
+	}
+	music_mute_frames = mute_frames;
+
 	va_start(list, mute_frames);
 	for(i = 0; i < FX_REG_SIZES[channel]; ++i, ++reg) {
 		*reg = va_arg(list, INT16);
 	}
 	va_end(list);
-	
-	if(channel != CHANNEL_5) {
-		gbt_enable_channels(~(0xF & (1 << channel)));
-	}
-
-	music_mute_frames = mute_frames;
 }
