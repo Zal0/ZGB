@@ -17,13 +17,15 @@ It uses [GBDK 2020](https://github.com/Zal0/gbdk-2020) but expands it to give yo
 The [ZGB-template](https://github.com/Zal0/ZGB-template) comes with a solution customized for visual studio
 
 ## Documentation
-Check the [wiki](https://github.com/Zal0/ZGB/wiki)
+Check the [wiki](https://github.com/Zal0/ZGB/wiki) and this README
 
 ## Support
 - twitter: [Zal0](https://twitter.com/Zal0)
 - discord: [gbdk/zgb discord](https://discord.gg/XCbjCvqnUY)
 
 ## Features <a name="features"></a>
+
+(Click on any feature to expand it)
 
 <details>
   <summary><strong>Easy makefile support</strong></summary>
@@ -59,9 +61,16 @@ ZGB will automatically turn all your assets files into C data:
   - .gbr from Game Boy Tile Designer
   - .gbm from Game Boy Map Builder
   - .png than can be used for backgrounds or sprites
-- Music
+- Musics
   - .mod for gbt-player
   - .uge for hUGETracker
+
+In order to use any of these data in your code you need to declare it first using
+```C
+IMPORT_MAP(<map_filename_without_extension>)
+IMPORT_TILES(<map_filename_without_extension>)
+DECLARE_MUSIC(<map_filename_without_extension>)
+```
 
 ---
 </details>
