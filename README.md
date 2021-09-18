@@ -57,11 +57,11 @@ When you make any changes to any of the source files of your project, or any of 
   <summary><strong>Transparent asset management</strong></summary>
   
 ZGB will automatically turn all your assets files into C data:
-- Graphics
+- **Graphics**
   - .gbr from Game Boy Tile Designer
   - .gbm from Game Boy Map Builder
   - .png than can be used for backgrounds or sprites
-- Musics
+- **Musics**
   - .mod for gbt-player
   - .uge for hUGETracker
 
@@ -379,7 +379,7 @@ PlayMusic(<music_filename>, LOOP)
 ```
 - And Stop it with
 ```C
-StopMusic(<music_filename>, LOOP)
+StopMusic;
 ```
 
 ---
