@@ -4,6 +4,7 @@
 #include "BankManager.h"
 #include <string.h>
 #include "main.h"
+#include "ZGBMain.h"
 
 //Pool
 UINT8 sprite_manager_sprites_mem[N_SPRITE_MANAGER_SPRITES * sizeof(Sprite)];
@@ -36,10 +37,11 @@ void SpriteManagerReset() {
 	StackClear(sprite_manager_sprites_pool);
 	for(i = 0; i != N_SPRITE_MANAGER_SPRITES; ++i) {
 		sprite_manager_sprites[i] = (Sprite*)&sprite_manager_sprites_mem[sizeof(Sprite) * (UINT16)i];
-		spriteIdxs[i] = 255;
 		StackPush(sprite_manager_sprites_pool, i);		
 	}
 	ClearOAMs();
+
+	memset(spriteIdxs, 255, N_SPRITE_TYPES);
 
 	//Clear the list of updatable sprites
 	sprite_manager_updatables[0] = 0;
