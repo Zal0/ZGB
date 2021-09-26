@@ -12,6 +12,7 @@ $(ZGB_PATH)\..\env\make-3.81-bin\bin\make BUILD_TYPE=$(Configuration)</NMakeReBu
 $(ZGB_PATH)\..\env\make-3.81-bin\bin\make clean BUILD_TYPE=$(Configuration)</NMakeCleanCommandLine>
     <NMakeIncludeSearchPath>$(ZGB_PATH)\..\env\gbdk\include;$(ZGB_PATH)\include;.\include;.\src;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <OutDir>$(SolutionDir)bin\</OutDir>
+    <NMakePreprocessorDefinitions>__PORT_gbz80;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <BuildLog>
