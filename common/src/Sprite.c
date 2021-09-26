@@ -21,7 +21,9 @@ void InitSprite(Sprite* sprite, UINT8 sprite_type) {
 
 	sprite->first_tile = spriteIdxs[sprite_type];
 #ifdef CGB
-	sprite->pal_offset = spritePalsOffset[sprite_type];
+	sprite->attr_add = (_cpu == CGB_TYPE) ? spritePalsOffset[sprite_type] : 0;
+#else
+	sprite->attr_add = 0;
 #endif
 	sprite->anim_data = 0u;
 	
@@ -46,6 +48,36 @@ void SetSpriteAnim(Sprite* sprite, UINT8* data, UINT8 speed) {
 		sprite->anim_accum_ticks = 0;
 		sprite->anim_speed = speed;
 	}
+}
+
+void update_attr(uint8_t start, uint8_t count, uint8_t attr) __nonbanked __naked {
+    start; count; attr;
+__asm
+        ldhl sp, #4
+        ld a, (hl-)
+        ld d, a
+        ld a, (hl-)
+        or a
+        ret z
+
+        ld e, a
+        ld a, (hl)
+        add a
+        add a
+        add #3
+        ld l, a
+        ld a, (___render_shadow_OAM)
+        ld h, a
+        ld bc, #4
+1$:
+        ld a, d
+        add (hl)
+        ld (hl), a
+        add hl, bc
+        dec e
+        jr nz, 1$ 
+        ret
+__endasm;
 }
 
 #define SCREENWIDTH_PLUS_32 192 //160 + 32
@@ -94,14 +126,11 @@ void DrawSprite() {
 			}
 		POP_BANK;
 
-#ifdef CGB
-		if (_cpu == CGB_TYPE && THIS->pal_offset) {
-			for(i = tmp; i != next_oam_idx; i += 1)
-			{
-				oam[(i << 2) + 3] += THIS->pal_offset;
-			}
+
+		if (THIS->attr_add) {
+			update_attr(tmp, next_oam_idx - tmp, THIS->attr_add);
 		}
-#endif
+
 	} else {
 		if((screen_x + THIS->lim_x + 16) > ((THIS->lim_x << 1) + 16 + SCREENWIDTH) ||
 				(screen_y + THIS->lim_y + 16) > ((THIS->lim_y << 1) + 16 + SCREENHEIGHT)

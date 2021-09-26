@@ -20,7 +20,8 @@ typedef struct {
 
 	//Frame info
 	UINT8 first_tile; //tile offset, for animation indices
-	UINT8 pal_offset;
+	UINT8 attr_add; //metasprite attributes, used to set the DMG palette (bit 4) or the priority over Bg (bit 7) 
+	                //The engine internally sets the palette  
 
 	//Anim data
 	UINT8* anim_data;
@@ -47,22 +48,13 @@ typedef struct {
 	UINT8 custom_data[CUSTOM_DATA_SIZE];
 } Sprite;
 
-//Mirror flags
-#define SPRITE_SET_VMIRROR(SPRITE)   (SPRITE->flags |= 32)
-#define SPRITE_UNSET_VMIRROR(SPRITE) (SPRITE->flags &= ~32)
-#define SPRITE_GET_VMIRROR(SPRITE)   (SPRITE->flags & 32)
-
-#define SPRITE_SET_HMIRROR(SPRITE)   (SPRITE->flags |= 64)
-#define SPRITE_UNSET_HMIRROR(SPRITE) (SPRITE->flags &= ~64)
-#define SPRITE_GET_HMIRROR(SPRITE)   (SPRITE->flags & 64)
-
 //Palette flag
-#define SPRITE_SET_CGB_PALETTE(SPRITE, PALETTE) SPRITE->flags = ((SPRITE->flags & 0xF8) | PALETTE | 0x10)
-#define SPRITE_SET_DMG_PALETTE(SPRITE, PALETTE) SPRITE->flags = ((SPRITE->flags & 0xEF) | (PALETTE << 4))
+#define SPRITE_SET_CGB_PALETTE(SPRITE, PALETTE) SPRITE->attr_add = ((SPRITE->attr_add & 0xF8) | PALETTE | 0x10)
+#define SPRITE_SET_DMG_PALETTE(SPRITE, PALETTE) SPRITE->attr_add = ((SPRITE->attr_add & 0xEF) | (PALETTE << 4))
 
 #ifdef CGB
 #define SPRITE_SET_PALETTE(SPRITE, PALETTE) if(_cpu == CGB_TYPE) SPRITE_SET_CGB_PALETTE(SPRITE, PALETTE); else SPRITE_SET_DMG_PALETTE(SPRITE, PALETTE)
-#define SPRITE_SET_DEFAULT_PALETTE(SPRITE)  if(_cpu == CGB_TYPE) SPRITE->flags = SPRITE->flags & 0xEF
+#define SPRITE_SET_DEFAULT_PALETTE(SPRITE)  if(_cpu == CGB_TYPE) SPRITE->attr_add = SPRITE->attr_add & 0xEF
 #else
 #define SPRITE_SET_PALETTE(SPRITE, PALETTE) SPRITE_SET_DMG_PALETTE(SPRITE, PALETTE)
 #endif
