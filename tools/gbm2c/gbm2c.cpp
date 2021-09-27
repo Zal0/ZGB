@@ -279,7 +279,10 @@ int main(int argc, char* argv[])
 	int tile_file_size = strchr(map.tile_file, '.') - map.tile_file;
 	strncpy(tile_file, map.tile_file, tile_file_size);
 	tile_file[tile_file_size] = '\0';
-	fprintf(file, "#include \"%s.h\"\n", tile_file);
+	fprintf(file, "#include \"TilesInfo.h\"\n");
+	fprintf(file, "extern const void __bank_%s;\n", tile_file);
+	fprintf(file, "extern const struct TilesInfo %s;\n", tile_file);
+	fprintf(file, "\n");
 
 	fprintf(file, "#include \"MapInfo.h\"\n");
 
