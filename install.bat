@@ -1,1 +1,1 @@
-setx ZGB_PATH %cd%\common
+setx ZGB_PATH "%cd%\common"
