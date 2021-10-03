@@ -154,26 +154,26 @@ UINT8 TranslateSprite(Sprite* sprite, INT8 x, INT8 y) {
 	UINT8 tmp;
 	if(x) {
 		if(x > 0) {
-			pivot_x = sprite->x + sprite->coll_w - 1;
+			pivot_x = sprite->x + (UINT8)(sprite->coll_w - 1u);
 		} else {
 			pivot_x = sprite->x;
 		}
 		
 		//Check tile change
-		tmp = pivot_x >> 3;
+		tmp = ((INT8)pivot_x) >> 3;
 		pivot_x += x;
-		start_tile_x = pivot_x >> 3;
+		start_tile_x = ((INT8)pivot_x) >> 3;
 		if(tmp == start_tile_x) {
 			goto inc_x;
 		}
 		
 		//Check scroll bounds
-		if((UINT16)pivot_x >= scroll_w) {
+		if((UINT16)pivot_x >= scroll_w) { //This checks pivot_x < 0 || pivot_x >= scroll_W
 			goto inc_x;
 		}
 
 		//start_tile_y clamped between scroll limits
-		if(sprite->y >= scroll_h) {
+		if(sprite->y >= scroll_h) { //This checks sprite->y < 0 || sprite->y >= scroll_h
 			if((INT16)sprite->y < 0) 
 				start_tile_y = 0;
 			else 
@@ -184,7 +184,7 @@ UINT8 TranslateSprite(Sprite* sprite, INT8 x, INT8 y) {
 
 		//end_tile_y clamped between scroll limits
 		pivot_y = sprite->y + sprite->coll_h - 1;
-		if((UINT16)pivot_y >= scroll_h) {
+		if((UINT16)pivot_y >= scroll_h) { //This checks pivot_y < 0 || pivot_y >= scroll_h
 			if(pivot_y < 0) 
 				end_tile_y = 0;
 			else  
@@ -218,15 +218,15 @@ done_x:
 	
 	if(y) {
 		if(y > 0) {
-			pivot_y = sprite->y + sprite->coll_h - 1;
+			pivot_y = sprite->y + (UINT8)(sprite->coll_h - 1u);
 		} else {
 			pivot_y = sprite->y;
 		}
 
 		//Check tile change
-		tmp = pivot_y >> 3;
+		tmp = ((INT8)pivot_y) >> 3;
 		pivot_y += y;
-		start_tile_y = pivot_y >> 3;
+		start_tile_y = ((INT8)pivot_y) >> 3;
 		if(tmp == start_tile_y) {
 			goto inc_y;
 		}
