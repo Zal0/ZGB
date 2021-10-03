@@ -160,9 +160,9 @@ UINT8 TranslateSprite(Sprite* sprite, INT8 x, INT8 y) {
 		}
 		
 		//Check tile change
-		tmp = ((INT8)pivot_x) >> 3;
+		tmp = pivot_x >> 3;
 		pivot_x += x;
-		start_tile_x = ((INT8)pivot_x) >> 3;
+		start_tile_x = pivot_x >> 3;
 		if(tmp == start_tile_x) {
 			goto inc_x;
 		}
@@ -224,9 +224,9 @@ done_x:
 		}
 
 		//Check tile change
-		tmp = ((INT8)pivot_y) >> 3;
+		tmp = pivot_y >> 3;
 		pivot_y += y;
-		start_tile_y = ((INT8)pivot_y) >> 3;
+		start_tile_y = pivot_y >> 3;
 		if(tmp == start_tile_y) {
 			goto inc_y;
 		}
