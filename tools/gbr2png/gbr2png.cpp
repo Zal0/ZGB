@@ -7,7 +7,8 @@ typedef unsigned short WORD;
 typedef unsigned int LONG;
 typedef unsigned char BYTE;
 
-#define READ(var) fread((char*)&var, sizeof(var), 1, file)
+#define JUST_READ(var) fread((char*)&var, sizeof(var), 1, file)
+#define READ(var) object_length -= (fread((char*)&var, sizeof(var), 1, file)) * sizeof(var)
 
 enum ObjectTypes {
 	OBJECT_TYPE_PRODUCER = 0x1,
@@ -143,15 +144,15 @@ int main(int argc, char* argv[]) {
 
 	char marker[3];
 	char version;
-	READ(marker);
-	READ(version);
+	JUST_READ(marker);
+	JUST_READ(version);
 		
 	WORD object_type;
 	WORD object_id;
 	LONG object_length;
-	while(READ(object_type)) {
-		READ(object_id);
-		READ(object_length);
+	while(JUST_READ(object_type)) {
+		JUST_READ(object_id);
+		JUST_READ(object_length);
 			
 		switch(object_type) {
 			case OBJECT_TYPE_TILE_DATA: {
@@ -163,7 +164,7 @@ int main(int argc, char* argv[]) {
 
 				int data_size = tile_set.info.width * tile_set.info.height * tile_set.info.count;
 				tile_set.data = new unsigned char[data_size];
-				fread(tile_set.data, data_size, 1, file);
+				object_length -= fread(tile_set.data, data_size, 1, file) * data_size;
 				break;
 			}
 
@@ -195,31 +196,25 @@ int main(int argc, char* argv[]) {
 				READ(palettes.id);
 				READ(palettes.count);
 				palettes.colors = new Palette[palettes.count];
-				fread(palettes.colors, sizeof(Palette), palettes.count, file);
+				object_length -= fread(palettes.colors, sizeof(Palette), palettes.count, file) * sizeof(Palette);
 				READ(palettes.sgb_count);
 				palettes.sgb_colors = new Palette[palettes.sgb_count];
-				fread(palettes.sgb_colors, sizeof(Palette), palettes.sgb_count, file);
-
-				Palette tmp[4];
-				fread(tmp, sizeof(Palette), 4, file);
-				//fseek(file, sizeof(Palette) * 4, SEEK_CUR);//It seems there is a bug here (there are still 4 palettes that need to be read)
+				object_length -= fread(palettes.sgb_colors, sizeof(Palette), palettes.sgb_count, file) * sizeof(Palette);
 				break;
 
 			case OBJECT_TYPE_TILEPAL:
 				READ(tile_pal.id);
 				READ(tile_pal.count);
 				tile_pal.color_set = new LONG[tile_pal.count];
-				fread(tile_pal.color_set, sizeof(LONG), tile_pal.count, file);
+				object_length -= fread(tile_pal.color_set, sizeof(LONG), tile_pal.count, file) * sizeof(LONG);
 				READ(tile_pal.sgb_count);
 				tile_pal.sgb_color_set = new LONG[tile_pal.sgb_count];
-				fread(tile_pal.sgb_color_set, sizeof(LONG), tile_pal.sgb_count, file);
-
-				fseek(file, 8, SEEK_CUR); //8 extra bits (?¿?)
+				object_length -= fread(tile_pal.sgb_color_set, sizeof(LONG), tile_pal.sgb_count, file) * sizeof(LONG);
  				break;
-
-			default:
-				fseek(file, object_length, SEEK_CUR);
 		}
+		
+		if(object_length)
+			fseek(file, object_length, SEEK_CUR);
 	}
 	fclose(file);
 
