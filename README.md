@@ -9,7 +9,8 @@ It uses [GBDK 2020](https://github.com/Zal0/gbdk-2020) but expands it to give yo
 ## Getting started
 - Installing ZGB
   - Download the latest [release](https://github.com/Zal0/ZGB/releases)
-  - Run install.bat (this will create a new environment var ZGB_PATH pointing to %ZGB%/common)
+  - For Windows users, Run install.bat (this will create a new environment var ZGB_PATH pointing to %ZGB%/common)
+  - For MacOS users, Run `source ./install_mac.sh`
 - Creating a new project
   - Download the [ZGB-template](https://github.com/Zal0/ZGB-template/archive/master.zip) and build it running build.bat
   - Follow the tutorial on the [wiki](https://github.com/Zal0/ZGB/wiki) to understand the basic concepts of the engine
