@@ -140,12 +140,8 @@ void DrawSprite() {
 	}
 }
 
-
-#include "gb/bgb_emu.h"
 unsigned char* tile_coll;
 UINT8 TranslateSprite(Sprite* sprite, INT8 x, INT8 y) {
-	BGB_PROFILE_BEGIN("BeginColl");
-
 	UINT8 ret = 0;
 	INT16 pivot_x, pivot_y;
 	UINT8 start_tile_x, end_tile_x;
@@ -281,7 +277,6 @@ inc_y:
 	sprite->y += y;
 done_y:
 
-BGB_PROFILE_END("EndColl ");
 	return ret;
 }
 
