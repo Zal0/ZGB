@@ -255,6 +255,7 @@ void InitScrollWithTiles(UINT8 map_bank, const struct MapInfo* map, UINT8 tiles_
 	if(coll_list) {
 		for(i = 0u; coll_list[i] != 0u; ++i) {
 			scroll_collisions[coll_list[i]] = 1u;
+			scroll_collisions_down[coll_list[i]] = 1u;
 		}
 	}
 	if(coll_list_down) {

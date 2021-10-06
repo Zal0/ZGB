@@ -140,105 +140,148 @@ void DrawSprite() {
 	}
 }
 
+
+#include "gb/bgb_emu.h"
 unsigned char* tile_coll;
 UINT8 TranslateSprite(Sprite* sprite, INT8 x, INT8 y) {
-	UINT16 start_x, start_y, n_its,tmp;
-	UINT8 i;
+	BGB_PROFILE_BEGIN("BeginColl");
+
 	UINT8 ret = 0;
-
-	if(scroll_map) {
+	INT16 pivot_x, pivot_y;
+	UINT8 start_tile_x, end_tile_x;
+	UINT8 start_tile_y, end_tile_y;
+	UINT8* scroll_coll_v;
+	UINT8 tmp;
+	if(x) {
 		if(x > 0) {
-			tmp = (sprite->x + sprite->coll_w - 1);
-			start_x = tmp + x;
-			if(((INT8)tmp & (INT8)0xF8) != ((INT8)start_x & (INT8)0xF8)) {
-				start_y = (sprite->y);
-				if(((start_y & 0xF000) | (start_x & 0xF000)) == 0u) {
-					n_its = ((start_y + sprite->coll_h - 1u) >> 3) - (start_y >> 3) + 1u;
-					PUSH_BANK(scroll_bank);
-					tile_coll = GetScrollTilePtr(start_x >> 3, start_y >> 3);
-			
-					for(i = 0u; i != n_its; ++i, tile_coll += scroll_tiles_w) {
-						if(scroll_collisions[*tile_coll] == 1u) {
-							x -= (start_x & (UINT16)7u) + 1;
-							ret = *tile_coll;
-							break;
-						}
-					}
-					POP_BANK;
-				}
-			}
+			pivot_x = sprite->x + (UINT8)(sprite->coll_w - 1u);
+		} else {
+			pivot_x = sprite->x;
 		}
-		else if(x < 0) {
-			tmp = sprite->x;
-			start_x = tmp + (INT16)x;
-			if(((INT8)tmp & (INT8)0xF8) != ((INT8)start_x & (INT8)0xF8)) {
-				start_y = (sprite->y);
-				if(((start_y & 0xF000) | (start_x & 0xF000)) == 0u) {
-					n_its = ((start_y + sprite->coll_h - 1u) >> 3) - (start_y >> 3) + 1u;
-					PUSH_BANK(scroll_bank);
-					tile_coll = GetScrollTilePtr(start_x >> 3, start_y >> 3);
-			
-					for(i = 0u; i != n_its; ++i, tile_coll += scroll_tiles_w) {
-						if(scroll_collisions[*tile_coll] == 1u) {
-							x = (INT16)x + (8u - (start_x & (UINT16)7u));
-							ret = *tile_coll;
-							break;
-						}
-					}
-					POP_BANK;
-				}
-			}
+		
+		//Check tile change
+		tmp = pivot_x >> 3;
+		pivot_x += x;
+		start_tile_x = pivot_x >> 3;
+		if(tmp == start_tile_x) {
+			goto inc_x;
 		}
-		sprite->x += (INT16)x;
+		
+		//Check scroll bounds
+		if((UINT16)pivot_x >= scroll_w) { //This checks pivot_x < 0 || pivot_x >= scroll_W
+			goto inc_x;
+		}
 
-		if(y > 0) {
-			tmp = sprite->y + sprite->coll_h - 1;
-			start_y = tmp + y;
-			if(((INT8)tmp & (INT8)0xF8) != ((INT8)start_y & (INT8)0xF8)) {
-				start_x = (sprite->x);
-				if(((start_y & 0xF000) | (start_x & 0xF000)) == 0u) {
-					n_its = ((start_x + sprite->coll_w - 1u) >> 3) - (start_x >> 3) + 1u;
-					PUSH_BANK(scroll_bank);
-					tile_coll = GetScrollTilePtr(start_x >> 3, start_y >> 3);
-			
-					for(i = 0u; i != n_its; ++i, tile_coll += 1u) {
-						if(scroll_collisions[*tile_coll] == 1u || 
-							(scroll_collisions_down[*tile_coll] == 1u && //Tile that only checks collisions when going down
-							 scroll_collisions_down[*(tile_coll - scroll_tiles_w)] == 0) &&  //The one above is not collidable (so we can crate a big block putting some of there together)
-							 (((start_y - y) >> 3) != (start_y >> 3)) //The is entering the collidable tile in this moment
-						) {
-							y -= (start_y & (UINT16)7u) + 1;
-							ret = *tile_coll;
-							break;
-						}
-					}
-					POP_BANK;
+		//start_tile_y clamped between scroll limits
+		if(sprite->y >= scroll_h) { //This checks sprite->y < 0 || sprite->y >= scroll_h
+			if((INT16)sprite->y < 0) 
+				start_tile_y = 0;
+			else 
+				start_tile_y = scroll_tiles_h - 1;
+		} else {
+			start_tile_y = sprite->y >> 3;
+		}
+
+		//end_tile_y clamped between scroll limits
+		pivot_y = sprite->y + sprite->coll_h - 1;
+		if((UINT16)pivot_y >= scroll_h) { //This checks pivot_y < 0 || pivot_y >= scroll_h
+			if(pivot_y < 0) 
+				end_tile_y = 0;
+			else  
+				end_tile_y = scroll_tiles_h - 1;
+		}	else {
+			end_tile_y = pivot_y >> 3;
+		}
+
+		PUSH_BANK(scroll_bank);
+		tile_coll = scroll_map + (scroll_tiles_w * start_tile_y + start_tile_x);
+		end_tile_y ++;
+		for(tmp = start_tile_y; tmp != end_tile_y; tmp ++, tile_coll += scroll_tiles_w) {
+			if(scroll_collisions[*tile_coll] == 1u) {
+				if(x > 0) {
+					sprite->x = (start_tile_x << 3) - sprite->coll_w;
+				} else {
+					sprite->x = (start_tile_x + 1) << 3;
 				}
+
+				ret = *tile_coll;
+				POP_BANK;
+				goto done_x;
 			}
 		}
-		else if(y < 0) {
-			tmp = sprite->y;
-			start_y = tmp + (INT16)y;
-			if(((INT8)tmp & (INT8)0xF8) != ((INT8)start_y & (INT8)0xF8)) {
-				start_x = (sprite->x);
-				if(((start_y & 0xF000) | (start_x & 0xF000)) == 0u) {
-					n_its = ((start_x + sprite->coll_w - 1u) >> 3) - (start_x >> 3) + 1u;
-					PUSH_BANK(scroll_bank);
-					tile_coll = GetScrollTilePtr(start_x >> 3, start_y >> 3);
-					for(i = 0u; i != n_its; ++i, tile_coll += 1u) {
-						if(scroll_collisions[*tile_coll] == 1u) {
-							y = (INT16)y + (8u - (start_y & (UINT16)7u));
-							ret = *tile_coll;
-							break;
-						}
-					}
-					POP_BANK;
-				}
-			}
-		}
+		POP_BANK;
 	}
-	sprite->y += (INT16)y;
 
+inc_x:
+	sprite->x += x;
+done_x:
+	
+	if(y) {
+		if(y > 0) {
+			pivot_y = sprite->y + (UINT8)(sprite->coll_h - 1u);
+		} else {
+			pivot_y = sprite->y;
+		}
+
+		//Check tile change
+		tmp = pivot_y >> 3;
+		pivot_y += y;
+		start_tile_y = pivot_y >> 3;
+		if(tmp == start_tile_y) {
+			goto inc_y;
+		}
+
+		//Check scroll bounds
+		if((UINT16)pivot_y >= scroll_h) {
+			goto inc_y;
+		}
+
+		//start_tile_x clamped between scroll limits
+		if(sprite->x >= scroll_w){
+			if((INT16)sprite->x < 0) 
+				start_tile_x = 0;
+			else 
+				start_tile_x = scroll_tiles_w - 1;
+		}	else { 
+			start_tile_x = (sprite->x >> 3);
+		}
+
+		//end_tile_x clamped between scroll limits
+		pivot_x = sprite->x + sprite->coll_w - 1;
+		if((UINT16)pivot_x >= scroll_w) {
+			if(pivot_x < 0) 
+				end_tile_x = 0;
+			else 
+				end_tile_x = scroll_tiles_w - 1;
+		}	else {
+			end_tile_x = (pivot_x >> 3);
+		}
+
+		PUSH_BANK(scroll_bank);
+		tile_coll = scroll_map + (scroll_tiles_w * start_tile_y + start_tile_x);
+		end_tile_x ++;
+		scroll_coll_v = y < 0 ? scroll_collisions : scroll_collisions_down;
+		for(tmp = start_tile_x; tmp != end_tile_x; tmp ++, tile_coll += 1) {
+			if(scroll_coll_v[*tile_coll] == 1u) {
+				if(y > 0) {
+					sprite->y = (start_tile_y << 3) - sprite->coll_h;
+				} else {
+					sprite->y = (start_tile_y + 1) << 3;
+				}
+
+				ret = *tile_coll;
+				POP_BANK;
+				goto done_y;
+			}
+		}
+		POP_BANK;
+	}
+
+inc_y:
+	sprite->y += y;
+done_y:
+
+BGB_PROFILE_END("EndColl ");
 	return ret;
 }
 
