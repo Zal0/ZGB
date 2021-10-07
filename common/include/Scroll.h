@@ -4,6 +4,7 @@
 #include <gb/gb.h>
 #include "TilesInfo.h"
 #include "MapInfo.h"
+#include "Sprite.h"
 
 #define SPRITE_UNIQUE_ID(TILE_X, TILE_Y) ((0x00FF & TILE_X) | ((0xFF00 & (TILE_Y << 8))))
 
@@ -21,7 +22,7 @@ extern UINT8  scroll_bank;
 extern UINT8 scroll_offset_x;
 extern UINT8 scroll_offset_y;
 
-extern struct Sprite* scroll_target;
+extern Sprite* scroll_target;
 extern UINT8 clamp_enabled;
 
 extern UINT8 scroll_top_movement_limit;

@@ -5,7 +5,7 @@
 #include "MetaSpriteInfo.h"
 #include "main.h"
 
-void SetFrame(struct Sprite* sprite, UINT8 frame)
+void SetFrame(Sprite* sprite, UINT8 frame)
 {
 	PUSH_BANK(sprite->mt_sprite_bank);
 		sprite->mt_sprite = sprite->mt_sprite_info->metasprites[frame];
@@ -13,7 +13,7 @@ void SetFrame(struct Sprite* sprite, UINT8 frame)
 	sprite->anim_frame = frame; //anim_frame contains the animation frame if anim_data is assigned or the metasprite index otherwise
 }
 
-void InitSprite(struct Sprite* sprite, UINT8 sprite_type) {
+void InitSprite(Sprite* sprite, UINT8 sprite_type) {
 	const struct MetaSpriteInfo* mt_sprite_info = spriteDatas[sprite_type];
 
 	sprite->mt_sprite_info = mt_sprite_info;
@@ -21,7 +21,9 @@ void InitSprite(struct Sprite* sprite, UINT8 sprite_type) {
 
 	sprite->first_tile = spriteIdxs[sprite_type];
 #ifdef CGB
-	sprite->pal_offset = spritePalsOffset[sprite_type];
+	sprite->attr_add = (_cpu == CGB_TYPE) ? spritePalsOffset[sprite_type] : 0;
+#else
+	sprite->attr_add = 0;
 #endif
 	sprite->anim_data = 0u;
 	
@@ -38,7 +40,7 @@ void InitSprite(struct Sprite* sprite, UINT8 sprite_type) {
 	POP_BANK;
 }
 
-void SetSpriteAnim(struct Sprite* sprite, UINT8* data, UINT8 speed) {
+void SetSpriteAnim(Sprite* sprite, UINT8* data, UINT8 speed) {
 	if(sprite->anim_data != data) {
 		sprite->anim_data = data;
 		SetFrame(sprite, data[1]);
@@ -46,6 +48,36 @@ void SetSpriteAnim(struct Sprite* sprite, UINT8* data, UINT8 speed) {
 		sprite->anim_accum_ticks = 0;
 		sprite->anim_speed = speed;
 	}
+}
+
+void update_attr(uint8_t start, uint8_t count, uint8_t attr) __nonbanked __naked {
+    start; count; attr;
+__asm
+        ldhl sp, #4
+        ld a, (hl-)
+        ld d, a
+        ld a, (hl-)
+        or a
+        ret z
+
+        ld e, a
+        ld a, (hl)
+        add a
+        add a
+        add #3
+        ld l, a
+        ld a, (___render_shadow_OAM)
+        ld h, a
+        ld bc, #4
+1$:
+        ld a, d
+        add (hl)
+        ld (hl), a
+        add hl, bc
+        dec e
+        jr nz, 1$ 
+        ret
+__endasm;
 }
 
 #define SCREENWIDTH_PLUS_32 192 //160 + 32
@@ -94,14 +126,11 @@ void DrawSprite() {
 			}
 		POP_BANK;
 
-#ifdef CGB
-		if (_cpu == CGB_TYPE && THIS->pal_offset) {
-			for(i = tmp; i != next_oam_idx; i += 1)
-			{
-				oam[(i << 2) + 3] += THIS->pal_offset;
-			}
+
+		if (THIS->attr_add) {
+			update_attr(tmp, next_oam_idx - tmp, THIS->attr_add);
 		}
-#endif
+
 	} else {
 		if((screen_x + THIS->lim_x + 16) > ((THIS->lim_x << 1) + 16 + SCREENWIDTH) ||
 				(screen_y + THIS->lim_y + 16) > ((THIS->lim_y << 1) + 16 + SCREENHEIGHT)
@@ -112,108 +141,146 @@ void DrawSprite() {
 }
 
 unsigned char* tile_coll;
-UINT8 TranslateSprite(struct Sprite* sprite, INT8 x, INT8 y) {
-	UINT16 start_x, start_y, n_its,tmp;
-	UINT8 i;
+UINT8 TranslateSprite(Sprite* sprite, INT8 x, INT8 y) {
 	UINT8 ret = 0;
-
-	if(scroll_map) {
+	INT16 pivot_x, pivot_y;
+	UINT8 start_tile_x, end_tile_x;
+	UINT8 start_tile_y, end_tile_y;
+	UINT8* scroll_coll_v;
+	UINT8 tmp;
+	if(x) {
 		if(x > 0) {
-			tmp = (sprite->x + sprite->coll_w - 1);
-			start_x = tmp + x;
-			if(((INT8)tmp & (INT8)0xF8) != ((INT8)start_x & (INT8)0xF8)) {
-				start_y = (sprite->y);
-				if(((start_y & 0xF000) | (start_x & 0xF000)) == 0u) {
-					n_its = ((start_y + sprite->coll_h - 1u) >> 3) - (start_y >> 3) + 1u;
-					PUSH_BANK(scroll_bank);
-					tile_coll = GetScrollTilePtr(start_x >> 3, start_y >> 3);
-			
-					for(i = 0u; i != n_its; ++i, tile_coll += scroll_tiles_w) {
-						if(scroll_collisions[*tile_coll] == 1u) {
-							x -= (start_x & (UINT16)7u) + 1;
-							ret = *tile_coll;
-							break;
-						}
-					}
-					POP_BANK;
-				}
-			}
+			pivot_x = sprite->x + (UINT8)(sprite->coll_w - 1u);
+		} else {
+			pivot_x = sprite->x;
 		}
-		else if(x < 0) {
-			tmp = sprite->x;
-			start_x = tmp + (INT16)x;
-			if(((INT8)tmp & (INT8)0xF8) != ((INT8)start_x & (INT8)0xF8)) {
-				start_y = (sprite->y);
-				if(((start_y & 0xF000) | (start_x & 0xF000)) == 0u) {
-					n_its = ((start_y + sprite->coll_h - 1u) >> 3) - (start_y >> 3) + 1u;
-					PUSH_BANK(scroll_bank);
-					tile_coll = GetScrollTilePtr(start_x >> 3, start_y >> 3);
-			
-					for(i = 0u; i != n_its; ++i, tile_coll += scroll_tiles_w) {
-						if(scroll_collisions[*tile_coll] == 1u) {
-							x = (INT16)x + (8u - (start_x & (UINT16)7u));
-							ret = *tile_coll;
-							break;
-						}
-					}
-					POP_BANK;
-				}
-			}
+		
+		//Check tile change
+		tmp = pivot_x >> 3;
+		pivot_x += x;
+		start_tile_x = pivot_x >> 3;
+		if(tmp == start_tile_x) {
+			goto inc_x;
 		}
-		sprite->x += (INT16)x;
+		
+		//Check scroll bounds
+		if((UINT16)pivot_x >= scroll_w) { //This checks pivot_x < 0 || pivot_x >= scroll_W
+			goto inc_x;
+		}
 
-		if(y > 0) {
-			tmp = sprite->y + sprite->coll_h - 1;
-			start_y = tmp + y;
-			if(((INT8)tmp & (INT8)0xF8) != ((INT8)start_y & (INT8)0xF8)) {
-				start_x = (sprite->x);
-				if(((start_y & 0xF000) | (start_x & 0xF000)) == 0u) {
-					n_its = ((start_x + sprite->coll_w - 1u) >> 3) - (start_x >> 3) + 1u;
-					PUSH_BANK(scroll_bank);
-					tile_coll = GetScrollTilePtr(start_x >> 3, start_y >> 3);
-			
-					for(i = 0u; i != n_its; ++i, tile_coll += 1u) {
-						if(scroll_collisions[*tile_coll] == 1u || 
-							(scroll_collisions_down[*tile_coll] == 1u && //Tile that only checks collisions when going down
-							 scroll_collisions_down[*(tile_coll - scroll_tiles_w)] == 0) &&  //The one above is not collidable (so we can crate a big block putting some of there together)
-							 (((start_y - y) >> 3) != (start_y >> 3)) //The is entering the collidable tile in this moment
-						) {
-							y -= (start_y & (UINT16)7u) + 1;
-							ret = *tile_coll;
-							break;
-						}
-					}
-					POP_BANK;
+		//start_tile_y clamped between scroll limits
+		if(sprite->y >= scroll_h) { //This checks sprite->y < 0 || sprite->y >= scroll_h
+			if((INT16)sprite->y < 0) 
+				start_tile_y = 0;
+			else 
+				start_tile_y = scroll_tiles_h - 1;
+		} else {
+			start_tile_y = sprite->y >> 3;
+		}
+
+		//end_tile_y clamped between scroll limits
+		pivot_y = sprite->y + sprite->coll_h - 1;
+		if((UINT16)pivot_y >= scroll_h) { //This checks pivot_y < 0 || pivot_y >= scroll_h
+			if(pivot_y < 0) 
+				end_tile_y = 0;
+			else  
+				end_tile_y = scroll_tiles_h - 1;
+		}	else {
+			end_tile_y = pivot_y >> 3;
+		}
+
+		PUSH_BANK(scroll_bank);
+		tile_coll = scroll_map + (scroll_tiles_w * start_tile_y + start_tile_x);
+		end_tile_y ++;
+		for(tmp = start_tile_y; tmp != end_tile_y; tmp ++, tile_coll += scroll_tiles_w) {
+			if(scroll_collisions[*tile_coll] == 1u) {
+				if(x > 0) {
+					sprite->x = (start_tile_x << 3) - sprite->coll_w;
+				} else {
+					sprite->x = (start_tile_x + 1) << 3;
 				}
+
+				ret = *tile_coll;
+				POP_BANK;
+				goto done_x;
 			}
 		}
-		else if(y < 0) {
-			tmp = sprite->y;
-			start_y = tmp + (INT16)y;
-			if(((INT8)tmp & (INT8)0xF8) != ((INT8)start_y & (INT8)0xF8)) {
-				start_x = (sprite->x);
-				if(((start_y & 0xF000) | (start_x & 0xF000)) == 0u) {
-					n_its = ((start_x + sprite->coll_w - 1u) >> 3) - (start_x >> 3) + 1u;
-					PUSH_BANK(scroll_bank);
-					tile_coll = GetScrollTilePtr(start_x >> 3, start_y >> 3);
-					for(i = 0u; i != n_its; ++i, tile_coll += 1u) {
-						if(scroll_collisions[*tile_coll] == 1u) {
-							y = (INT16)y + (8u - (start_y & (UINT16)7u));
-							ret = *tile_coll;
-							break;
-						}
-					}
-					POP_BANK;
-				}
-			}
-		}
+		POP_BANK;
 	}
-	sprite->y += (INT16)y;
+
+inc_x:
+	sprite->x += x;
+done_x:
+	
+	if(y) {
+		if(y > 0) {
+			pivot_y = sprite->y + (UINT8)(sprite->coll_h - 1u);
+		} else {
+			pivot_y = sprite->y;
+		}
+
+		//Check tile change
+		tmp = pivot_y >> 3;
+		pivot_y += y;
+		start_tile_y = pivot_y >> 3;
+		if(tmp == start_tile_y) {
+			goto inc_y;
+		}
+
+		//Check scroll bounds
+		if((UINT16)pivot_y >= scroll_h) {
+			goto inc_y;
+		}
+
+		//start_tile_x clamped between scroll limits
+		if(sprite->x >= scroll_w){
+			if((INT16)sprite->x < 0) 
+				start_tile_x = 0;
+			else 
+				start_tile_x = scroll_tiles_w - 1;
+		}	else { 
+			start_tile_x = (sprite->x >> 3);
+		}
+
+		//end_tile_x clamped between scroll limits
+		pivot_x = sprite->x + sprite->coll_w - 1;
+		if((UINT16)pivot_x >= scroll_w) {
+			if(pivot_x < 0) 
+				end_tile_x = 0;
+			else 
+				end_tile_x = scroll_tiles_w - 1;
+		}	else {
+			end_tile_x = (pivot_x >> 3);
+		}
+
+		PUSH_BANK(scroll_bank);
+		tile_coll = scroll_map + (scroll_tiles_w * start_tile_y + start_tile_x);
+		end_tile_x ++;
+		scroll_coll_v = y < 0 ? scroll_collisions : scroll_collisions_down;
+		for(tmp = start_tile_x; tmp != end_tile_x; tmp ++, tile_coll += 1) {
+			if(scroll_coll_v[*tile_coll] == 1u) {
+				if(y > 0) {
+					sprite->y = (start_tile_y << 3) - sprite->coll_h;
+				} else {
+					sprite->y = (start_tile_y + 1) << 3;
+				}
+
+				ret = *tile_coll;
+				POP_BANK;
+				goto done_y;
+			}
+		}
+		POP_BANK;
+	}
+
+inc_y:
+	sprite->y += y;
+done_y:
 
 	return ret;
 }
 
-UINT8 CheckCollision(struct Sprite* sprite1, struct Sprite* sprite2) {
+UINT8 CheckCollision(Sprite* sprite1, Sprite* sprite2) {
 	INT16 diff16; 
 	INT8 diff;
 	

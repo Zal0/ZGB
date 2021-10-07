@@ -11,7 +11,7 @@
 #include "BankManager.h"
 #include "Fade.h"
 #include "Palette.h"
-#include "gb\cgb.h"
+#include <gb/cgb.h>
 
 extern UINT8 next_state;
 
@@ -59,7 +59,7 @@ extern UWORD ZGB_Fading_BPal[32];
 extern UWORD ZGB_Fading_SPal[32];
 #ifdef CGB	
 void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *rgb_data, UINT8 bank) {
-	if(first_palette + nb_palettes > 7)
+	if(first_palette + nb_palettes > 8)
 		return; //Adding more palettes than supported
 
 	UWORD* pal_ptr = (t == BG_PALETTE) ? ZGB_Fading_BPal : ZGB_Fading_SPal;
@@ -78,6 +78,7 @@ extern UINT8 last_bg_pal_loaded;
 UINT16 default_palette[] = {RGB(31, 31, 31), RGB(20, 20, 20), RGB(10, 10, 10), RGB(0, 0, 0)};
 void main() {
 #ifdef CGB
+	UINT8 i;
 	cpu_fast();
 #endif
 	INIT_MUSIC;
@@ -101,7 +102,41 @@ void main() {
 
 	set_interrupts(VBL_IFLAG | TIM_IFLAG);
 
+	LCDC_REG |= LCDCF_OBJDEFAULT | LCDCF_OBJON | LCDCF_BGON;
+
 	while(1) {
+		DISPLAY_OFF
+
+		StopMusic;
+
+		SpriteManagerReset();
+		state_running = 1;
+		current_state = next_state;
+		scroll_target = 0;
+		last_bg_pal_loaded = 0;
+		
+#ifdef CGB
+		if (_cpu == CGB_TYPE) {
+			for(i = 0; i < 8; ++ i)
+			{
+				SetPalette(BG_PALETTE, i, 1, default_palette, 1);
+				SetPalette(SPRITES_PALETTE, i, 1, default_palette, 1);
+			}
+		} else 
+#endif
+		BGP_REG = OBP0_REG = OBP1_REG = PAL_DEF(0, 1, 2, 3);
+
+		PUSH_BANK(stateBanks[current_state]);
+			(startFuncs[current_state])();
+		POP_BANK;
+		old_scroll_x = scroll_x;
+		old_scroll_y = scroll_y;
+
+		if(state_running) {
+			DISPLAY_ON;
+			FadeOut();
+		}
+
 		while (state_running) {
 			if(!vbl_count)
 				wait_vbl_done();
@@ -117,34 +152,6 @@ void main() {
 		}
 
 		FadeIn();
-		DISPLAY_OFF
-
-		StopMusic;
-
-		SpriteManagerReset();
-		state_running = 1;
-		current_state = next_state;
-		scroll_target = 0;
-		last_bg_pal_loaded = 0;
-		
-#ifdef CGB
-		if (_cpu == CGB_TYPE) {
-			SetPalette(BG_PALETTE, 0, 1, default_palette, 1);
-			SetPalette(SPRITES_PALETTE, 0, 1, default_palette, 1);
-		} else 
-#endif
-		BGP_REG = OBP0_REG = OBP1_REG = PAL_DEF(0, 1, 2, 3);
-
-		PUSH_BANK(stateBanks[current_state]);
-			(startFuncs[current_state])();
-		POP_BANK;
-		old_scroll_x = scroll_x;
-		old_scroll_y = scroll_y;
-
-		if(state_running) {
-			DISPLAY_ON;
-			FadeOut();
-		}
 	}
 }
 

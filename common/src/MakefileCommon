@@ -6,6 +6,10 @@ PATH := $(ZGB_PATH_UNIX)/../env/make-3.81-bin/bin;$(ZGB_PATH_UNIX)/../env/gbdk/b
 BUILD_TYPE = Release
 
 #--- Default player will be huge tracker HUGETRACKER/GBT_PLAYER
+ifeq ($(DEFAULT_SPRITES_SIZE), )
+	DEFAULT_SPRITES_SIZE = SPRITES_8x16
+endif
+
 ifeq ($(MUSIC_PLAYER), )
 	MUSIC_PLAYER = HUGETRACKER
 endif
@@ -33,7 +37,7 @@ ROMVIEW = $(ZGB_PATH_UNIX)/../env/romview/romview
 SRC2SYM = $(ZGB_PATH_UNIX)/../env/src2sym.pl
 
 CFLAGS += -Wa-n -mgbz80 --no-std-crt0 --fsigned-char --use-stdout -Dnonbanked= -I$(GBDK_HOME)/include -D__PORT_gbz80 -D__TARGET_gb -I$(GBDK_HOME)/include/asm $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include
-CFLAGS += -DFILE_NAME=$(basename $(<F))
+CFLAGS += -DFILE_NAME=$(basename $(<F)) -MMD
 
 #since I am placing my OAM mirror at the end of the ram (0xDF00-0xDFFF) I need to move the stack to 0xDEFF
 LNAMES=-g _shadow_OAM=0xC000 -g .STACK=0xDEFF -g .refresh_OAM=0xFF80 -b _DATA=0xc0a0 -b _CODE=0x0200
@@ -56,6 +60,14 @@ ifeq ($(MUSIC_PLAYER), HUGETRACKER)
 	CFLAGS += -DMUSIC_DRIVER_HUGE
 else
 	CFLAGS += -DMUSIC_DRIVER_GBT
+endif
+
+ifeq ($(DEFAULT_SPRITES_SIZE), SPRITES_8x16)
+	CFLAGS += -DLCDCF_OBJDEFAULT=LCDCF_OBJ16
+	CFLAGSPNG2ASSET += -spr8x16
+else
+	CFLAGS += -DLCDCF_OBJDEFAULT=LCDCF_OBJ8
+	CFLAGSPNG2ASSET += -spr8x8
 endif
 
 # Release/Debug flags
@@ -93,22 +105,11 @@ RELS = $(OBJS:%.o=%.rel)
 .SECONDARY: $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.c) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.c) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.c) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.c) $(PNGS:%.png=$(OBJDIR_RES)/%.png.c) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.c) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.c)
 
 #dependencies -------------------------------------------------------------------------------------------
+# option -MMD will generate .d files that can be included here for dependency checking (we can skip this on clean)
 ifneq ($(MAKECMDGOALS),clean)
 -include $(CLASSES:%.c=$(OBJDIR)/%.d) 
 -include $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.d)
 endif
-
-$(OBJDIR_ZGB)/%.d: $(ZGB_PATH_UNIX)/src/%.c
-	@set -e; mkdir -p $(OBJDIR_ZGB); rm -f $@; \
-	$(SDCC) -MM $(CFLAGS) $< > $@.$$$$; \
- 	sed 's,\($*\)\.rel[ :]*,$(OBJDIR_ZGB)/$*.o $@ : ,g' < $@.$$$$ > $@; \
-	rm -f $@.$$$$
-
-$(OBJDIR)/%.d: %.c $(OBJDIR_RES) $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.c) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.c)
-	@set -e; mkdir -p $(OBJDIR);rm -f $@; \
-	$(SDCC) -MM $(CFLAGS) $< > $@.$$$$; \
- 	sed 's,\($*\)\.rel[ :]*,$(OBJDIR)/$*.o $@ : ,g' < $@.$$$$ > $@; \
-	rm -f $@.$$$$
 #---------------------------------------------------------------------------------------------------------
 
 #folders---------------------------------------------
@@ -137,11 +138,11 @@ $(OBJDIR_RES)/sprites:
 .SECONDEXPANSION:
 $(OBJDIR_RES)/sprites/%.gbr.c: ../res/sprites/%.gbr $$(wildcard ../res/sprites/%.gbr.meta)
 	@$(GBR2PNG) $< $(OBJDIR_RES)/sprites
-	@$(PNG2ASSET) $(@D)/$(<F).png `cat <$(@D)/$(<F).png.meta` -keep_palette_order -use_structs -c $@
+	@$(PNG2ASSET) $(@D)/$(<F).png `cat <$(@D)/$(<F).png.meta` -keep_palette_order -use_structs $(CFLAGSPNG2ASSET) -c $@
 
 .SECONDEXPANSION:
 $(OBJDIR_RES)/sprites/%.png.c: ../res/sprites/%.png $$(wildcard ../res/sprites/%.png.meta)
-	@$(PNG2ASSET) $< `cat <$<.meta`-use_structs -b 255 -c $@
+	@$(PNG2ASSET) $< `cat <$<.meta`-use_structs -b 255 -use_structs $(CFLAGSPNG2ASSET) -c $@
 
 $(OBJDIR_RES)/%.gbm.c: ../res/%.gbm
 	@$(GBM2C) $< $(OBJDIR_RES)
@@ -198,7 +199,7 @@ $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR_ZGB)/zgb.lib $(OBJDIR) $(OBJDIR
 	@$(MAKEBIN) -Z $(BINFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION)
 	@$(ROMVIEW) $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) 255
 	@mv $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
-	@mv $(OBJDIR)/$(PROJECT_NAME).cdb $(BINDIR)/$(PROJECT_NAME).cdb
+	@[ ! -f $(OBJDIR)/$(PROJECT_NAME).cdb ] || mv $(OBJDIR)/$(PROJECT_NAME).cdb $(BINDIR)/$(PROJECT_NAME).cdb
 #	@perl $(SRC2SYM) $(OBJDIR)/$(PROJECT_NAME).noi > $(BINDIR)/$(PROJECT_NAME).sym
 	@rm -f *.adb
 
