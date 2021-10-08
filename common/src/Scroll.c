@@ -136,7 +136,7 @@ void SpawnSprite(UINT8 type, UINT8 x, UINT8 y)
 {
 	UINT16 id = 0u;
 	UINT8 i;
-	struct Sprite* s = 0;
+	Sprite* s = 0;
 	UINT16 sprite_y;
 
 	if(type != 255u) {
