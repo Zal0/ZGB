@@ -57,80 +57,6 @@ UINT8 last_bg_pal_loaded = 0;
 
 extern UINT8 vbl_count;
 UINT8 current_vbl_count;
-void SetTile(UINT16 r, UINT8 t) {
-	r; t;
-	//while((STAT_REG & 0x2) != 0);
-	//*(__REG)(r) = t;
-__asm
-;bc = r, hl = t
-	ldhl	sp,#2
-	ld	c,(hl)
-	inc	hl
-	ld	b,(hl)
-	ldhl	sp,#4
-
-;while 0xff41 & 02 != 0 (cannot write)
-1$:
-	ld	a,(#_STAT_REG)
-	and	a, #0x02
-	jr	NZ,1$
-
-;Write tile
-	ld	a,(hl)
-	ld	(bc),a
-	ret
-__endasm;
-}
-
-void UPDATE_TILE(UINT8 x, UINT8 y, UINT8* t, UINT8* c) {
-	UINT8 replacement = *t;
-	UINT8 i;
-	Sprite* s = 0;
-	UINT8 type = 255u;
-	UINT16 id = 0u;
-	UINT16 sprite_y;
-	c;
-
-	/*if(x < 0 || y < 0 || U_LESS_THAN(scroll_tiles_w - 1, x) || U_LESS_THAN(scroll_tiles_h - 1, y)) {
-		replacement = 0;
-	} else {
-		type = GetTileReplacement(t, &replacement);
-		if(type != 255u) {
-			id = SPRITE_UNIQUE_ID(x, y);
-			for(i = 0u; i != sprite_manager_updatables[0]; ++i) {
-				s = sprite_manager_sprites[sprite_manager_updatables[i + 1]];
-				if((s->type == type) && (s->unique_id == id)) {
-					break;
-				}
-			}
-
-			if(i == sprite_manager_updatables[0]) {
-				PUSH_BANK(spriteDataBanks[type]);
-					sprite_y = ((y + 1) << 3) - spriteDatas[type]->height;
-				POP_BANK;
-				s = SpriteManagerAdd(type, x << 3, sprite_y);
-			}
-		}
-	}*/
-
-	id = 0x9800 + (0x1F & (x + scroll_offset_x)) + ((0x1F & (y + scroll_offset_y)) << 5);
-	SetTile(id, replacement);
-	
-	//set_vram_byte(id, replacement);
-	//set_bkg_tile_xy(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), replacement);
-
-	#ifdef CGB
-		if (_cpu == CGB_TYPE) {
-			VBK_REG = 1;
-			if(!scroll_cmap || (0x10 & *c)) { //I am using bit 4 (unused) to select the default palette (the one stored on the tile)
-				i = scroll_tile_info[replacement];
-				c = &i;
-			}
-			set_bkg_tiles(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), 1, 1, c);
-			VBK_REG = 0;
-		}
-	#endif
-}
 
 void SpawnSprite(UINT8 type, UINT8 x, UINT8 y)
 {
@@ -295,41 +221,11 @@ void InitScrollWithTiles(UINT8 map_bank, const struct MapInfo* map, UINT8 tiles_
 		}
 	}
 
-	//Change bank now, after copying the collision array (it can be in a different bank)
-	//PUSH_BANK(map_bank);
 	y = scroll_y >> 3;
 	for(i = 0u; i != (SCREEN_TILE_REFRES_H) && y != scroll_h; ++i, y ++) {
 		ScrollUpdateRow((scroll_x >> 3) - SCREEN_PAD_LEFT,  y - SCREEN_PAD_TOP);
 	}
-	//POP_BANK;
 }
-
-/*void ScrollUpdateRowR() {
-	UINT8 i = 0u;
-	
-	for(i = 0u; i != 5 && pending_w_i != 0; ++i, -- pending_w_i)  {
-		#ifdef CGB
-		UPDATE_TILE(pending_w_x ++, pending_w_y, pending_w_map ++, pending_w_cmap++);
-		#else
-		UPDATE_TILE(pending_w_x ++, pending_w_y, pending_w_map ++,0);
-		#endif
-	}
-}
-
-void ScrollUpdateRowWithDelay(INT16 x, INT16 y) {
-	while(pending_w_i) {
-		ScrollUpdateRowR();
-	}
-
-	pending_w_x = x;
-	pending_w_y = y;
-	pending_w_i = SCREEN_TILE_REFRES_W;
-	pending_w_map = scroll_map + scroll_tiles_w * y + x;
-
-	#ifdef CGB
-	pending_w_cmap = scroll_cmap + scroll_tiles_w * y + x;
-	#endif
-}*/
 
 UINT8* tile_replacement_tile_ptr;
 UINT8* tile_replacement_ptr;
@@ -337,30 +233,18 @@ UINT8  tile_replacement_enemy_type = 255;
 
 unsigned char buff[SCREEN_TILE_REFRES_W];
 
-void ScrollUpdateRow(UINT8 x, UINT8 y) {
+void ScrollUpdateRowR(UINT8 x, UINT8 y, UINT8 width) {
 	UINT8 i = 0u;
 	UINT8 lim;
-	UINT8 enemy_type;
-
-	#ifdef CGB
-	unsigned char* cmap = scroll_cmap + scroll_tiles_w * y + x;
-	#endif
 	
 	PUSH_BANK(scroll_bank);
-	/*for(i = 0u; i != SCREEN_TILE_REFRES_W; ++i) {
-		#ifdef CGB
-		UPDATE_TILE(x + i, y, map ++, cmap ++);
-		#else
-		UPDATE_TILE(x + i, y, map ++, 0);
-		#endif
-	}*/
 	
 	if(y >= scroll_tiles_h) {
-		memset(buff, 0, SCREEN_TILE_REFRES_W);
+		memset(buff, 0, width);
 	} else {
-		tile_replacement_tile_ptr = scroll_map + scroll_tiles_w * y + x; 
+		tile_replacement_tile_ptr = pending_w_map; 
 		tile_replacement_ptr = buff;
-		for(i = 0u; i != SCREEN_TILE_REFRES_W; ++i) {
+		for(i = 0u; i != width; ++i) {
 			if((UINT8)(x + i) == 0)
 				tile_replacement_tile_ptr = scroll_map + scroll_tiles_w * y; 
 
@@ -379,9 +263,9 @@ void ScrollUpdateRow(UINT8 x, UINT8 y) {
 		}
 	}
 
-	x = 0x1f & x;
-	y = 0x1f & y;
-	lim = x + SCREEN_TILE_REFRES_W - 1;
+	x = 0x1f & (x + scroll_offset_x);
+	y = 0x1f & (y + scroll_offset_y);
+	lim = x + width - 1;
 	if(0xE0 & lim) //lim > 31
 	{
 		set_bkg_tiles(x, y, 32 - x, 1, buff);
@@ -389,67 +273,46 @@ void ScrollUpdateRow(UINT8 x, UINT8 y) {
 	}
 	else
 	{
-		set_bkg_tiles(x, y, SCREEN_TILE_REFRES_W, 1, buff);
+		set_bkg_tiles(x, y, width, 1, buff);
 	}
 	POP_BANK;
 }
 
-/*void ScrollUpdateColumnR() {
-	UINT8 i = 0u;
-
-	for(i = 0u; i != 5 && pending_h_i != 0; ++i, pending_h_i --) {
-		#ifdef CGB
-		UPDATE_TILE(pending_h_x, pending_h_y ++, pending_h_map, pending_h_cmap);
-		pending_h_map += scroll_tiles_w;
-		pending_h_cmap += scroll_tiles_w;
-		#else
-		UPDATE_TILE(pending_h_x, pending_h_y ++, pending_h_map, 0);
-		pending_h_map += scroll_tiles_w;
-		#endif
-	}
-}
-
-void ScrollUpdateColumnWithDelay(INT16 x, INT16 y) {
-	while(pending_h_i) {
-		ScrollUpdateColumnR();
+void ScrollUpdateRowWithDelay(INT16 x, INT16 y) {
+	if(pending_w_i) {
+		ScrollUpdateRowR(pending_w_x, pending_w_y, pending_w_i);
 	}
 
-	pending_h_x = x;
-	pending_h_y = y;
-	pending_h_i = SCREEN_TILE_REFRES_H;
-	pending_h_map = scroll_map + scroll_tiles_w * y + x;
+	pending_w_x = x;
+	pending_w_y = y;
+	pending_w_i = SCREEN_TILE_REFRES_W;
+	pending_w_map = scroll_map + scroll_tiles_w * y + x;
 
 	#ifdef CGB
-	pending_h_cmap = scroll_cmap + scroll_tiles_w * y + x;
+	pending_w_cmap = scroll_cmap + scroll_tiles_w * y + x;
 	#endif
-}*/
+}
 
-void ScrollUpdateColumn(UINT8 x, UINT8 y) {
+void ScrollUpdateRow(UINT8 x, UINT8 y) {
+	pending_w_map = scroll_map + scroll_tiles_w * y + x;
+	ScrollUpdateRowR(x, y, SCREEN_TILE_REFRES_W);
+}
+
+void ScrollUpdateColumnR(UINT8 x, UINT8 y, UINT8 height) {
 	UINT8 i = 0u;
 	#ifdef CGB
 	unsigned char* cmap = &scroll_cmap[scroll_tiles_w * y + x];
 	#endif
 	UINT8 lim;
-	UINT8 enemy_type;
 	
 	PUSH_BANK(scroll_bank);
-	/*for(i = 0u; i != SCREEN_TILE_REFRES_H; ++i) {
-		#ifdef CGB
-		UPDATE_TILE(x, y + i, map, cmap);
-		map += scroll_tiles_w;
-		cmap += scroll_tiles_w;
-		#else
-		UPDATE_TILE(x, y + i, map, 0);
-		map += scroll_tiles_w;
-		#endif
-	}*/
 
 	if(x >= scroll_tiles_w) {
-		memset(buff, 0, SCREEN_TILE_REFRES_H);
+		memset(buff, 0, height);
 	} else {
-		tile_replacement_tile_ptr = scroll_map + scroll_tiles_w * y + x;
+		tile_replacement_tile_ptr = pending_h_map;
 		tile_replacement_ptr = buff;
-		for(i = 0u; i != SCREEN_TILE_REFRES_H; ++i) {
+		for(i = 0u; i != height; ++i) {
 			if((UINT8)(y + i) == 0)
 				tile_replacement_tile_ptr = scroll_map + x;
 
@@ -468,9 +331,9 @@ void ScrollUpdateColumn(UINT8 x, UINT8 y) {
 		}
 	}
 
-	x = 0x1f & x;
-	y = 0x1f & y;
-	lim = y + SCREEN_TILE_REFRES_H - 1;
+	x = 0x1f & (x + scroll_offset_x);
+	y = 0x1f & (y + scroll_offset_y);
+	lim = y + height - 1;
 	if(0xE0 & lim) // lim > 31
 	{
 		set_bkg_tiles(x, y, 1, 32 - y, buff);
@@ -478,9 +341,29 @@ void ScrollUpdateColumn(UINT8 x, UINT8 y) {
 	}
 	else
 	{
-		set_bkg_tiles(x, y, 1, SCREEN_TILE_REFRES_H, buff);
+		set_bkg_tiles(x, y, 1, height, buff);
 	}
 	POP_BANK;
+}
+
+void ScrollUpdateColumnWithDelay(INT16 x, INT16 y) {
+	if(pending_h_i) {
+		ScrollUpdateColumnR(pending_h_x, pending_h_y, pending_h_i);
+	}
+
+	pending_h_x = x;
+	pending_h_y = y;
+	pending_h_i = SCREEN_TILE_REFRES_H;
+	pending_h_map = scroll_map + scroll_tiles_w * y + x;
+
+	#ifdef CGB
+	pending_h_cmap = scroll_cmap + scroll_tiles_w * y + x;
+	#endif
+}
+
+void ScrollUpdateColumn(UINT8 x, UINT8 y) {
+	pending_h_map = scroll_map + scroll_tiles_w * y + x;
+	ScrollUpdateColumnR(x, y, SCREEN_TILE_REFRES_H);
 }
 
 void RefreshScroll() {
@@ -499,6 +382,7 @@ void RefreshScroll() {
 
 void MoveScroll(INT16 x, INT16 y) {
 	INT16 current_column, new_column, current_row, new_row;
+	UINT8 n_tiles;
 	
 	PUSH_BANK(scroll_bank);
 
@@ -514,26 +398,34 @@ void MoveScroll(INT16 x, INT16 y) {
 
 	if(current_column != new_column) {
 		if(new_column > current_column) {
-			ScrollUpdateColumn(new_column - SCREEN_PAD_LEFT + SCREEN_TILE_REFRES_W - 1, new_row - SCREEN_PAD_TOP);
+			ScrollUpdateColumnWithDelay(new_column - SCREEN_PAD_LEFT + SCREEN_TILE_REFRES_W - 1, new_row - SCREEN_PAD_TOP);
 		} else {
-			ScrollUpdateColumn(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP);
+			ScrollUpdateColumnWithDelay(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP);
 		}
 	}
 	
 	if(current_row != new_row) {
 		if(new_row > current_row) {
-			ScrollUpdateRow(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP + SCREEN_TILE_REFRES_H - 1);
+			ScrollUpdateRowWithDelay(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP + SCREEN_TILE_REFRES_H - 1);
 		} else {
-			ScrollUpdateRow(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP);
+			ScrollUpdateRowWithDelay(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP);
 		}
 	}
 
-	/*if(pending_w_i) {
-		ScrollUpdateRowR();
+	if(pending_w_i) {
+		n_tiles = pending_w_i < 5 ? pending_w_i : 5;
+		ScrollUpdateRowR(pending_w_x, pending_w_y, n_tiles);
+		pending_w_i -= n_tiles;
+		pending_w_x += n_tiles;
+		pending_w_map = tile_replacement_tile_ptr;
 	}
 	if(pending_h_i) {
-		ScrollUpdateColumnR();
-	}*/
+		n_tiles = pending_h_i < 5 ? pending_h_i : 5;
+		ScrollUpdateColumnR(pending_h_x, pending_h_y, n_tiles);
+		pending_h_i -= n_tiles;
+		pending_h_y += n_tiles;
+		pending_h_map = tile_replacement_tile_ptr;
+	}
 	POP_BANK;
 }
 
