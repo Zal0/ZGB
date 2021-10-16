@@ -25,24 +25,12 @@ void SetState(UINT8 state) {
 }
 
 UINT8 vbl_count = 0;
-INT16 old_scroll_x = 0, old_scroll_y = 0;
 UINT8 music_mute_frames = 0;
 void vbl_update() {
 	vbl_count ++;
 	
-	//Instead of assigning scroll_y to SCX_REG I do a small interpolation that smooths the scroll transition giving the
-	//Illusion of a better frame rate
-	if(old_scroll_x < scroll_x)
-		old_scroll_x += (scroll_x - old_scroll_x + 1) >> 1;
-	else if(old_scroll_x > scroll_x)
-		old_scroll_x -= (old_scroll_x - scroll_x + 1) >> 1;
-	SCX_REG = old_scroll_x + (scroll_offset_x << 3);
-
-	if(old_scroll_y < scroll_y)
-		old_scroll_y += (scroll_y - old_scroll_y + 1) >> 1;
-	else if(old_scroll_y > scroll_y)
-		old_scroll_y -= (old_scroll_y - scroll_y + 1) >> 1;
-	SCY_REG = old_scroll_y + (scroll_offset_y << 3);
+	SCX_REG = scroll_x_vblank + (scroll_offset_x << 3);
+	SCY_REG = scroll_y_vblank + (scroll_offset_y << 3);
 
 	if(music_mute_frames != 0) {
 		music_mute_frames --;
@@ -129,8 +117,8 @@ void main() {
 		PUSH_BANK(stateBanks[current_state]);
 			(startFuncs[current_state])();
 		POP_BANK;
-		old_scroll_x = scroll_x;
-		old_scroll_y = scroll_y;
+		scroll_x_vblank = scroll_x;
+		scroll_y_vblank = scroll_y;
 
 		if(state_running) {
 			DISPLAY_ON;

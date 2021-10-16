@@ -2,6 +2,7 @@
 #include "BankManager.h"
 #include "main.h"
 #include <string.h>
+#include "Scroll.h"
 
 //Ram addresses: c000 - dfff
 //c000 is where GBDK OAM is allocated
@@ -39,6 +40,9 @@ void SwapOAMs() {
 	}
 	__render_shadow_OAM = ((UWORD)oam) >> 8;
 	next_oam_idx = 0;
+
+	scroll_x_vblank = scroll_x;
+	scroll_y_vblank = scroll_y;
 }
 
 void ClearOAMs() {
