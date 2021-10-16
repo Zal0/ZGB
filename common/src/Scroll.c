@@ -90,7 +90,7 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	UINT16 sprite_y;
 	c;
 
-	if(x < 0 || y < 0 || U_LESS_THAN(scroll_tiles_w - 1, x) || U_LESS_THAN(scroll_tiles_h - 1, y)) {
+	if((UINT16)x >= scroll_tiles_w || (UINT16)y >= scroll_tiles_h) { //This also checks x < 0 || y < 0
 		replacement = 0;
 	} else {
 		type = GetTileReplacement(t, &replacement);
@@ -189,19 +189,19 @@ void InitWindow(UINT8 x, UINT8 y, UINT8 map_bank, struct MapInfo* map) {
 
 INT8 scroll_h_border = 0;
 UINT8 clamp_enabled = 1;
-void ClampScrollLimits(UINT16* x, UINT16* y) {
+void ClampScrollLimits() {
 	if(clamp_enabled) {
-		if(U_LESS_THAN(*x, 0u)) {
-			*x = 0u;		
+		if(U_LESS_THAN(scroll_x, 0u)) {
+			scroll_x = 0u;		
 		}
-		if(*x > (scroll_w - SCREENWIDTH)) {
-			*x = (scroll_w - SCREENWIDTH);
+		if(scroll_x > (scroll_w - SCREENWIDTH)) {
+			scroll_x = (scroll_w - SCREENWIDTH);
 		}
-		if(U_LESS_THAN(*y, 0u)) {
-			*y = 0u;		
+		if(U_LESS_THAN(scroll_y, 0u)) {
+			scroll_y = 0u;		
 		}
-		if(*y > (scroll_h - SCREENHEIGHT + scroll_h_border)) {
-			*y = (scroll_h - SCREENHEIGHT + scroll_h_border);
+		if(scroll_y > (scroll_h - SCREENHEIGHT + scroll_h_border)) {
+			scroll_y = (scroll_h - SCREENHEIGHT + scroll_h_border);
 		}
 	}
 }
@@ -220,7 +220,7 @@ void ScrollSetMap(UINT8 map_bank, const struct MapInfo* map) {
 	if(scroll_target) {
 		scroll_x = scroll_target->x - (SCREENWIDTH >> 1);
 		scroll_y = scroll_target->y - scroll_bottom_movement_limit; //Move the camera to its bottom limit
-		ClampScrollLimits(&scroll_x, &scroll_y);
+		ClampScrollLimits();
 	}
 	pending_h_i = 0;
 	pending_w_i = 0;
@@ -388,12 +388,16 @@ void MoveScroll(INT16 x, INT16 y) {
 	INT16 current_column, new_column, current_row, new_row;
 	
 	PUSH_BANK(scroll_bank);
-	ClampScrollLimits(&x, &y);
 
 	current_column = scroll_x >> 3;
-	new_column     = x >> 3;
 	current_row    = scroll_y >> 3;
-	new_row        = y >> 3;
+
+	scroll_x = x;
+	scroll_y = y;
+	ClampScrollLimits();
+
+	new_column     = scroll_x >> 3;
+	new_row        = scroll_y >> 3;
 
 	if(current_column != new_column) {
 		if(new_column > current_column) {
@@ -410,9 +414,6 @@ void MoveScroll(INT16 x, INT16 y) {
 			ScrollUpdateRowWithDelay(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP);
 		}
 	}
-
-	scroll_x = x;
-	scroll_y = y;
 
 	if(pending_w_i) {
 		ScrollUpdateRowR();
