@@ -34,8 +34,6 @@ UINT16 scroll_h;
 UINT16 scroll_tiles_w;
 UINT16 scroll_tiles_h;
 Sprite* scroll_target = 0;
-INT16 scroll_target_offset_x = 0;
-INT16 scroll_target_offset_y = 0;
 UINT8 scroll_collisions[256];
 UINT8 scroll_collisions_down[256];
 UINT8 scroll_tile_info[256];
