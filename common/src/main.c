@@ -62,6 +62,31 @@ void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *
 }
 #endif
 
+void LCD_isr() NONBANKED {
+    if (LYC_REG == 0) {
+      if (WY_REG == 0) {
+				HIDE_SPRITES;
+			} else {
+				SHOW_SPRITES;
+				LYC_REG = WY_REG - 1;
+			}
+    } else {
+      HIDE_SPRITES;
+      LYC_REG = 0;
+    }
+}
+
+void SetWindowY(UINT8 y) {
+		WY_REG = y;
+    LYC_REG = y - 1;
+    if (y < 144u) {
+			SHOW_WIN; 
+		} else { 
+			HIDE_WIN; 
+			LYC_REG = 160u; 
+		} 
+}
+
 extern UINT8 last_bg_pal_loaded;
 UINT16 default_palette[] = {RGB(31, 31, 31), RGB(20, 20, 20), RGB(10, 10, 10), RGB(0, 0, 0)};
 void main() {
@@ -84,11 +109,14 @@ void main() {
 #endif
 		TAC_REG = 0x04U;
 
+		STAT_REG |= 0x40; 
+
 		add_VBL(vbl_update);
 		add_TIM(MusicCallback);
+		add_LCD(LCD_isr);
 	}
 
-	set_interrupts(VBL_IFLAG | TIM_IFLAG);
+	set_interrupts(VBL_IFLAG | TIM_IFLAG | LCD_IFLAG);
 
 	LCDC_REG |= LCDCF_OBJDEFAULT | LCDCF_OBJON | LCDCF_BGON;
 
