@@ -138,11 +138,11 @@ $(OBJDIR_RES)/sprites:
 .SECONDEXPANSION:
 $(OBJDIR_RES)/sprites/%.gbr.c: ../res/sprites/%.gbr $$(wildcard ../res/sprites/%.gbr.meta)
 	@$(GBR2PNG) $< $(OBJDIR_RES)/sprites
-	@$(PNG2ASSET) $(@D)/$(<F).png `cat <$(@D)/$(<F).png.meta` -keep_palette_order -use_structs $(CFLAGSPNG2ASSET) -c $@
+	@$(PNG2ASSET) $(@D)/$(<F).png $(CFLAGSPNG2ASSET) `cat <$(@D)/$(<F).png.meta` -keep_palette_order -use_structs -c $@
 
 .SECONDEXPANSION:
 $(OBJDIR_RES)/sprites/%.png.c: ../res/sprites/%.png $$(wildcard ../res/sprites/%.png.meta)
-	@$(PNG2ASSET) $< `cat <$<.meta`-use_structs -b 255 -use_structs $(CFLAGSPNG2ASSET) -c $@
+	@$(PNG2ASSET) $< $(CFLAGSPNG2ASSET) `cat <$<.meta` -b 255 -use_structs -c $@
 
 $(OBJDIR_RES)/%.gbm.c: ../res/%.gbm
 	@$(GBM2C) $< $(OBJDIR_RES)
