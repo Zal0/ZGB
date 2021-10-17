@@ -62,6 +62,7 @@
   <ItemGroup>
     <None Include="src\Makefile" />
     <None Include="src\MakefileCommon" />
+    <None Include="src\timer_isr_wrapper.s" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A820F4AF-3BAD-4781-86FB-C055E213A91D}</ProjectGuid>

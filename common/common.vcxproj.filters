@@ -131,5 +131,8 @@
   <ItemGroup>
     <None Include="src\Makefile" />
     <None Include="src\MakefileCommon" />
+    <None Include="src\timer_isr_wrapper.s">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

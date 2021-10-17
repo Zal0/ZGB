@@ -87,6 +87,13 @@ void SetWindowY(UINT8 y) {
 	} 
 }
 
+//add dependency to timer_ISR so that it's not stripped from build
+static void ___dummy() __naked {
+__asm
+.globl .timer_ISR
+__endasm;
+}
+
 extern UINT8 last_bg_pal_loaded;
 UINT16 default_palette[] = {RGB(31, 31, 31), RGB(20, 20, 20), RGB(10, 10, 10), RGB(0, 0, 0)};
 void main() {
@@ -109,10 +116,9 @@ void main() {
 #endif
 		TAC_REG = 0x04U;
 
-		STAT_REG |= 0x40; 
-
 		add_VBL(vbl_update);
-		add_TIM(MusicCallback);
+
+		STAT_REG |= 0x40; 
 		add_LCD(LCD_isr);
 	}
 
