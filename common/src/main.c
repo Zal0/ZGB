@@ -115,7 +115,10 @@ void main() {
 		TMA_REG = 0xBCU;
 #endif
 		TAC_REG = 0x04U;
-
+		//Instead of calling add_TIM timer_isr_wrapper is used because it can be interrupted. This disables timer interrupts but fixes a random
+		//bug hiding sprites under the window (some frames the call is delayed and you can see sprites flickering under the window)
+		//add_TIM(MusicUpdate); 
+		                          
 		add_VBL(vbl_update);
 
 		STAT_REG |= 0x40; 
