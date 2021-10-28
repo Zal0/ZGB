@@ -411,6 +411,33 @@ Just make sure that:
 ---
 </details>
 
+<details>
+  <summary><strong>Super Game Boy Borders</strong></summary>
+
+Follow the next steps to create Super Game Boy borders for your game
+- create the folder res/borders
+- Add a png with these limitations:
+   - size must be 256x224
+   - there must be a 160x144 transparent rectangle in the center of it
+   - maximum number of different tiles is 156
+   - each 8x8 tile has a limit of 16 colors
+   - there can only be 4 different palettes of 16 colors
+   - here is a [template](https://raw.githubusercontent.com/gbdk-2020/gbdk-2020/develop/gbdk-lib/examples/gb/sgb_border/gb_border.png) you can use
+- In your code (do this before loading any other bg map)
+```C
+#include "SGB.h"
+
+IMPORT_MAP(<border_filename>);
+
+void START() {
+  LOAD_SGB_BORDER(<border_filename>);
+  ...
+}
+```
+
+---
+</details>
+
 
 ## License
 
