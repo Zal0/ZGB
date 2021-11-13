@@ -72,6 +72,6 @@ void set_sgb_border(unsigned char * tiledata, size_t tiledata_size,
 
 void LoadSGBBorder(UINT8 map_bank, struct MapInfo* map) {
 	PUSH_BANK(map_bank);
-	set_sgb_border(map->tiles->data, map->tiles->num_frames << 5, map->data, 1792, map->tiles->pals, map->tiles->num_pals << 2);
+	set_sgb_border(map->tiles->data, map->tiles->num_frames << 5, map->data, 1792, map->tiles->pals, map->tiles->num_pals << 5);
 	POP_BANK;
 }
