@@ -55,6 +55,11 @@ ifneq (,$(findstring Color,$(BUILD_TYPE)))
 	EXTENSION = gbc
 endif
 
+# SGB flags
+ifneq ($(wildcard ../res/borders), )
+	BINFLAGS +=-ys
+endif
+
 # gbt-player/Hugetracker flags
 ifeq ($(MUSIC_PLAYER), HUGETRACKER)
 	CFLAGS += -DMUSIC_DRIVER_HUGE
@@ -90,19 +95,20 @@ GBMS        = $(foreach dir,../res,$(notdir $(wildcard $(dir)/*.gbm)))
 PNGS        = $(foreach dir,../res,$(notdir $(wildcard $(dir)/*.png)))
 SPRITES     = $(foreach dir,../res/sprites,$(notdir $(wildcard $(dir)/*.gbr)))
 SPRITES_PNG = $(foreach dir,../res/sprites,$(notdir $(wildcard $(dir)/*.png)))
+SGB_BORDERS = $(foreach dir,../res/borders,$(notdir $(wildcard $(dir)/*.png)))
 ifeq ($(MUSIC_PLAYER), GBT_PLAYER)
 	MUSICS_MOD = $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.mod)))
 else
 	MUSICS_UGE = $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.uge)))
 endif
-OBJS = $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.o) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.o) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.o) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.o) $(PNGS:%.png=$(OBJDIR_RES)/%.png.o) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.o) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.o) $(ASMS:%.s=$(OBJDIR)/%.o) $(CLASSES:%.c=$(OBJDIR)/%.o)
+OBJS = $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.o) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.o) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.o) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.o) $(SGB_BORDERS:%.png=$(OBJDIR_RES)/borders/%.png.o) $(PNGS:%.png=$(OBJDIR_RES)/%.png.o) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.o) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.o) $(ASMS:%.s=$(OBJDIR)/%.o) $(CLASSES:%.c=$(OBJDIR)/%.o)
 OBJS_ZGB = $(ASMS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.o) $(OBJ_DIR_ZGB)
 OBJS_ZGB_LIB = $(subst $(subst ,, ),\n,$(ASMS_ZGB:%.s=%.o) $(CLASSES_ZGB:%.c=%.o))
 
 RELS = $(OBJS:%.o=%.rel)
 
 #prevent gbr2c and gbm2c intermediate files from being deleted
-.SECONDARY: $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.c) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.c) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.c) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.c) $(PNGS:%.png=$(OBJDIR_RES)/%.png.c) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.c) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.c)
+.SECONDARY: $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.c) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.c) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.c) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.c) $(SGB_BORDERS:%.png=$(OBJDIR_RES)/borders/%.png.c) $(PNGS:%.png=$(OBJDIR_RES)/%.png.c) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.c) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.c)
 
 #dependencies -------------------------------------------------------------------------------------------
 # option -MMD will generate .d files that can be included here for dependency checking (we can skip this on clean)
@@ -129,6 +135,10 @@ $(OBJDIR_RES)/sprites:
 	@echo Creating folder $(OBJDIR_RES)/sprites
 	@mkdir $(OBJDIR_RES)/sprites
 
+$(OBJDIR_RES)/borders:
+	@echo Creating folder $(OBJDIR_RES)/borders
+	@mkdir $(OBJDIR_RES)/borders
+
 #resources---------------------------------------------
 #a few notes of this rule (for future me)
 #- SECONDEXPANSION is required to create an optional prerrequisite (meta doesn't exist the first time the sprite is created)
@@ -138,11 +148,11 @@ $(OBJDIR_RES)/sprites:
 .SECONDEXPANSION:
 $(OBJDIR_RES)/sprites/%.gbr.c: ../res/sprites/%.gbr $$(wildcard ../res/sprites/%.gbr.meta)
 	@$(GBR2PNG) $< $(OBJDIR_RES)/sprites
-	@$(PNG2ASSET) $(@D)/$(<F).png `cat <$(@D)/$(<F).png.meta` -keep_palette_order -use_structs $(CFLAGSPNG2ASSET) -c $@
+	@$(PNG2ASSET) $(@D)/$(<F).png $(CFLAGSPNG2ASSET) `cat <$(@D)/$(<F).png.meta` -keep_palette_order -use_structs -c $@
 
 .SECONDEXPANSION:
 $(OBJDIR_RES)/sprites/%.png.c: ../res/sprites/%.png $$(wildcard ../res/sprites/%.png.meta)
-	@$(PNG2ASSET) $< `cat <$<.meta`-use_structs -b 255 -use_structs $(CFLAGSPNG2ASSET) -c $@
+	@$(PNG2ASSET) $< $(CFLAGSPNG2ASSET) `cat <$<.meta` -b 255 -use_structs -c $@
 
 $(OBJDIR_RES)/%.gbm.c: ../res/%.gbm
 	@$(GBM2C) $< $(OBJDIR_RES)
@@ -150,8 +160,11 @@ $(OBJDIR_RES)/%.gbm.c: ../res/%.gbm
 $(OBJDIR_RES)/%.gbr.c: ../res/%.gbr
 	@$(GBR2C) $< $(OBJDIR_RES)
 
+$(OBJDIR_RES)/borders/%.png.c: ../res/borders/%.png $(OBJDIR_RES)/borders
+	@$(PNG2ASSET) $< -b 255 -map -bpp 4 -max_palettes 4 -use_map_attributes -use_structs -pack_mode sgb -c $@
+
 $(OBJDIR_RES)/%.png.c: ../res/%.png $$(wildcard ../res/%.png.meta)
-	@$(PNG2ASSET) $< -b 255 -map -noflip -use_structs $(if $(wildcard $<.meta),`cat <$<.meta`) -c $@ 	
+	@$(PNG2ASSET) $< -b 255 -map -noflip -use_structs $(if $(wildcard $<.meta),`cat <$<.meta`) -c $@
 
 $(OBJDIR_RES)/%.mod.c: ../res/music/%.mod
 	@$(MOD2GBT) $< $(basename $(basename $(notdir $<)))_mod 255 > /dev/null
@@ -171,7 +184,7 @@ $(OBJDIR_ZGB):
 
 $(OBJDIR)/zgb/%.o: $(ZGB_PATH_UNIX)/src/%.s
 	@echo compiling $<
-	@$(SDASGB) -plosgffn -I"libc" -I$(GBDK_HOME)/lib/small/asxxxx -c -o $@ $<
+	@$(SDASGB) -plosgffn -I"libc" -I$(GBDK_HOME)/lib/small/asxxxx/gb -c -o $@ $<
 
 $(OBJDIR)/zgb/%.o: $(ZGB_PATH_UNIX)/src/%.c
 	@echo compiling $<
@@ -191,15 +204,14 @@ $(OBJDIR)/%.o: %.c
 	@echo compiling $<
 	@$(SDCC) $(CFLAGS) -c -o $@ $<	
 
-$(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR_ZGB)/zgb.lib $(OBJDIR) $(OBJDIR_RES) $(OBJDIR_RES)/sprites $(BINDIR) $(OBJS)
+$(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR) $(OBJDIR_ZGB)/zgb.lib $(OBJDIR_RES) $(OBJDIR_RES)/sprites $(BINDIR) $(OBJS)
 	@echo Linking
 	@$(BANKPACK) -ext=.rel -min=1 -yt1 $(OBJS) $(OBJS_ZGB)
-	@$(SDLDGB) $(LFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(GBDK_HOME)/lib/small/asxxxx/gb/crt0.o $(RELS) $(ZGB_PATH_UNIX)/lib/hUGEDriver.obj.o
-	@$(IHXCHECK) $(OBJDIR)/$(PROJECT_NAME).ihx -e
-	@$(MAKEBIN) -Z $(BINFLAGS) $(OBJDIR)/$(PROJECT_NAME).ihx $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION)
-	@$(ROMVIEW) $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) 255
-	@mv $(OBJDIR)/$(PROJECT_NAME).$(EXTENSION) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
-	@[ ! -f $(OBJDIR)/$(PROJECT_NAME).cdb ] || mv $(OBJDIR)/$(PROJECT_NAME).cdb $(BINDIR)/$(PROJECT_NAME).cdb
+	@$(SDLDGB) $(LFLAGS) $(OBJDIR)/rom.ihx $(GBDK_HOME)/lib/small/asxxxx/gb/crt0.o $(RELS) $(ZGB_PATH_UNIX)/lib/hUGEDriver.obj.o
+	@$(IHXCHECK) $(OBJDIR)/rom.ihx -e
+	@$(MAKEBIN) -Z $(BINFLAGS) $(OBJDIR)/rom.ihx $(OBJDIR)/rom.$(EXTENSION)
+	@$(ROMVIEW) $(OBJDIR)/rom.$(EXTENSION) 255
+	@cp $(OBJDIR)/rom.$(EXTENSION) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
 #	@perl $(SRC2SYM) $(OBJDIR)/$(PROJECT_NAME).noi > $(BINDIR)/$(PROJECT_NAME).sym
 	@rm -f *.adb
 

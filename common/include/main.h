@@ -29,6 +29,8 @@ extern UINT8 current_state;
 void SetState(UINT8 state);
 extern UINT8 delta_time;
 
+void SetWindowY(UINT8 y);
+
 #ifdef CGB
 typedef enum {
 	BG_PALETTE,
