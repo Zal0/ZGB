@@ -161,7 +161,7 @@ $(OBJDIR_RES)/%.gbr.c: ../res/%.gbr
 	@$(GBR2C) $< $(OBJDIR_RES)
 
 $(OBJDIR_RES)/borders/%.png.c: ../res/borders/%.png $(OBJDIR_RES)/borders
-	$(PNG2ASSET) $< -b 255 -map -bpp 4 -max_palettes 4 -use_map_attributes -use_structs -pack_mode sgb -c $@
+	@$(PNG2ASSET) $< -b 255 -map -bpp 4 -max_palettes 4 -use_map_attributes -use_structs -pack_mode sgb -c $@
 
 $(OBJDIR_RES)/%.png.c: ../res/%.png $$(wildcard ../res/%.png.meta)
 	@$(PNG2ASSET) $< -b 255 -map -noflip -use_structs $(if $(wildcard $<.meta),`cat <$<.meta`) -c $@
