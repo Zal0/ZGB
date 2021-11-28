@@ -48,6 +48,19 @@ void SpriteManagerReset() {
 	sprite_manager_removal_check = 0;
 }
 
+// memcmp while it is being added into GBDK
+int memcmp(const char *s1, const char *s2, int n) {
+	UINT8 i;
+	char* c1 = (char*)s1;
+	char* c2 = (char*)s2;
+	for(i = 0; i != n; ++i, ++c1, ++c2) {
+		if(*c1 != *c2){
+			return (*c1 > *c2) ? 1 : -1;
+		}
+	}
+	return 0;
+}
+
 extern UWORD ZGB_Fading_SPal[32];
 void SpriteManagerLoad(UINT8 sprite_type) {
 #ifdef CGB
@@ -66,7 +79,7 @@ void SpriteManagerLoad(UINT8 sprite_type) {
 #ifdef CGB
 	for(i = 0; i != last_sprite_pal_loaded; ++ i)
 	{
-		if(strncmp(&ZGB_Fading_SPal[i << 2], data->palettes, n_pals << 3) == 0)
+		if(memcmp(&ZGB_Fading_SPal[i << 2], data->palettes, n_pals << 3) == 0)
 			break;
 	}
 
