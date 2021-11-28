@@ -81,6 +81,9 @@ DECLARE_MUSIC(<map_filename_without_extension>)
 
 ![gif](/doc%20files/readme/ZGB-loop.png)
 
+---
+</details>
+
 <details>
   <summary><strong>States</strong></summary>
 
@@ -113,6 +116,7 @@ STATE_DEF_END
 Now, whenever you want to enter this new state you just need to call **SetState**(< YourNewState >)
 </details>
 
+---
 </details>
 
 <details>
@@ -185,8 +189,6 @@ void DESTROY() {
 _SPRITE_DMG(<YourNewSprite>, <image>)\
 SPRITE_DEF_END
 ```
-</details>
-
 </details>
 
 ---
