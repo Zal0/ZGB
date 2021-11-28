@@ -10,6 +10,7 @@ It uses [GBDK 2020](https://github.com/Zal0/gbdk-2020) but expands it to give yo
 - Installing ZGB
   - Download the latest [release](https://github.com/Zal0/ZGB/releases)
   - Run install.bat (this will create a new environment var ZGB_PATH pointing to %ZGB%/common)
+> NOTE: ensure ZGB path doesn't contain any spaces (more info [here](https://github.com/Zal0/ZGB/issues/31))
 - Creating a new project
   - Download the [ZGB-template](https://github.com/Zal0/ZGB-template/archive/master.zip) and build it running build.bat
   - Follow the tutorial on the [wiki](https://github.com/Zal0/ZGB/wiki) to understand the basic concepts of the engine
@@ -152,10 +153,11 @@ GBTD has a few limitations:
 
 Luckily you can overcome these limitations by using your preferred pixel art software and then export your data as a spritesheet
 
-It is important that you create a .meta and at least indicate the sprite dimensions (or it will be exported as a single sprite)
+As with gbr sprites a .meta file can be created to pass arguments to png2asset. Contrary to gbr sprites this .meta file won't be created automatically so it is important that you create a it and at least indicate the sprite dimensions (or it will be exported as a single sprite)
 ```
 -sw 32 -sh 16 
 ```
+Check the png2asset params [here](https://gbdk-2020.github.io/gbdk-2020/docs/api/docs_toolchain_settings.html#png2mtspr-settings)
 </details>
 
 <details>
