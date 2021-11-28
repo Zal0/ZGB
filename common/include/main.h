@@ -31,6 +31,8 @@ extern UINT8 delta_time;
 
 void SetWindowY(UINT8 y);
 
+void LCD_isr() NONBANKED;
+
 #ifdef CGB
 typedef enum {
 	BG_PALETTE,
