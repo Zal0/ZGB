@@ -32,6 +32,7 @@
     <ClInclude Include="include\OAMManager.h" />
     <ClInclude Include="include\Palette.h" />
     <ClInclude Include="include\Scroll.h" />
+    <ClInclude Include="include\SGB.h" />
     <ClInclude Include="include\Sound.h" />
     <ClInclude Include="include\Sprite.h" />
     <ClInclude Include="include\SpriteManager.h" />
@@ -51,6 +52,7 @@
     <ClCompile Include="src\Music.c" />
     <ClCompile Include="src\OAMManager.c" />
     <ClCompile Include="src\Scroll.c" />
+    <ClCompile Include="src\SGB.c" />
     <ClCompile Include="src\Sound.c" />
     <ClCompile Include="src\Sprite.c" />
     <ClCompile Include="src\SpriteManager.c" />
@@ -62,6 +64,7 @@
   <ItemGroup>
     <None Include="src\Makefile" />
     <None Include="src\MakefileCommon" />
+    <None Include="src\timer_isr_wrapper.s" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A820F4AF-3BAD-4781-86FB-C055E213A91D}</ProjectGuid>

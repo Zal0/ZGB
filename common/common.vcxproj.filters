@@ -77,6 +77,9 @@
     <ClInclude Include="include\Banks\SetAutoBank.h">
       <Filter>Header Files\Banks</Filter>
     </ClInclude>
+    <ClInclude Include="include\SGB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Sprite.c">
@@ -127,9 +130,15 @@
     <ClCompile Include="src\OAMManager.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\SGB.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Makefile" />
     <None Include="src\MakefileCommon" />
+    <None Include="src\timer_isr_wrapper.s">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

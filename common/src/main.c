@@ -25,24 +25,12 @@ void SetState(UINT8 state) {
 }
 
 UINT8 vbl_count = 0;
-INT16 old_scroll_x = 0, old_scroll_y = 0;
 UINT8 music_mute_frames = 0;
 void vbl_update() {
 	vbl_count ++;
 	
-	//Instead of assigning scroll_y to SCX_REG I do a small interpolation that smooths the scroll transition giving the
-	//Illusion of a better frame rate
-	if(old_scroll_x < scroll_x)
-		old_scroll_x += (scroll_x - old_scroll_x + 1) >> 1;
-	else if(old_scroll_x > scroll_x)
-		old_scroll_x -= (old_scroll_x - scroll_x + 1) >> 1;
-	SCX_REG = old_scroll_x + (scroll_offset_x << 3);
-
-	if(old_scroll_y < scroll_y)
-		old_scroll_y += (scroll_y - old_scroll_y + 1) >> 1;
-	else if(old_scroll_y > scroll_y)
-		old_scroll_y -= (old_scroll_y - scroll_y + 1) >> 1;
-	SCY_REG = old_scroll_y + (scroll_offset_y << 3);
+	SCX_REG = scroll_x_vblank + (scroll_offset_x << 3);
+	SCY_REG = scroll_y_vblank + (scroll_offset_y << 3);
 
 	if(music_mute_frames != 0) {
 		music_mute_frames --;
@@ -74,6 +62,38 @@ void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *
 }
 #endif
 
+void LCD_isr() NONBANKED {
+	if (LYC_REG == 0) {
+		if (WY_REG == 0) {
+			HIDE_SPRITES;
+		} else {
+			SHOW_SPRITES;
+			LYC_REG = WY_REG - 1;
+		}
+	} else {
+		HIDE_SPRITES;
+		LYC_REG = 0;
+	}
+}
+
+void SetWindowY(UINT8 y) {
+	WY_REG = y;
+	LYC_REG = y - 1;
+	if (y < 144u) {
+		SHOW_WIN; 
+	} else { 
+		HIDE_WIN; 
+		LYC_REG = 160u; 
+	} 
+}
+
+//add dependency to timer_ISR so that it's not stripped from build
+static void ___dummy() __naked {
+__asm
+.globl .timer_ISR
+__endasm;
+}
+
 extern UINT8 last_bg_pal_loaded;
 UINT16 default_palette[] = {RGB(31, 31, 31), RGB(20, 20, 20), RGB(10, 10, 10), RGB(0, 0, 0)};
 void main() {
@@ -95,14 +115,20 @@ void main() {
 		TMA_REG = 0xBCU;
 #endif
 		TAC_REG = 0x04U;
-
+		//Instead of calling add_TIM timer_isr_wrapper is used because it can be interrupted. This disables timer interrupts but fixes a random
+		//bug hiding sprites under the window (some frames the call is delayed and you can see sprites flickering under the window)
+		//add_TIM(MusicUpdate); 
+		                          
 		add_VBL(vbl_update);
-		add_TIM(MusicCallback);
+
+		STAT_REG |= 0x40; 
+		add_LCD(LCD_isr);
 	}
 
-	set_interrupts(VBL_IFLAG | TIM_IFLAG);
+	set_interrupts(VBL_IFLAG | TIM_IFLAG | LCD_IFLAG);
 
 	LCDC_REG |= LCDCF_OBJDEFAULT | LCDCF_OBJON | LCDCF_BGON;
+	WY_REG = 145;
 
 	while(1) {
 		DISPLAY_OFF
@@ -129,8 +155,8 @@ void main() {
 		PUSH_BANK(stateBanks[current_state]);
 			(startFuncs[current_state])();
 		POP_BANK;
-		old_scroll_x = scroll_x;
-		old_scroll_y = scroll_y;
+		scroll_x_vblank = scroll_x;
+		scroll_y_vblank = scroll_y;
 
 		if(state_running) {
 			DISPLAY_ON;

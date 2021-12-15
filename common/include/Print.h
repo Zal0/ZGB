@@ -31,7 +31,7 @@ void Printf(const char* txt, ...);
 	print_x = 0;\
 	print_y = 0;\
 	WX_REG = 7;\
-	WY_REG = (144 - (NLINES << 3));\
+	SetWindowY(144 - (NLINES << 3));\
 	scroll_h_border = NLINES << 3;\
 	SHOW_WIN;
 

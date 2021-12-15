@@ -10,6 +10,7 @@ It uses [GBDK 2020](https://github.com/Zal0/gbdk-2020) but expands it to give yo
 - Installing ZGB
   - Download the latest [release](https://github.com/Zal0/ZGB/releases)
   - Run install.bat (this will create a new environment var ZGB_PATH pointing to %ZGB%/common)
+> NOTE: ensure ZGB path doesn't contain any spaces (more info [here](https://github.com/Zal0/ZGB/issues/31))
 - Creating a new project
   - Download the [ZGB-template](https://github.com/Zal0/ZGB-template/archive/master.zip) and build it running build.bat
   - Follow the tutorial on the [wiki](https://github.com/Zal0/ZGB/wiki) to understand the basic concepts of the engine
@@ -80,6 +81,9 @@ DECLARE_MUSIC(<map_filename_without_extension>)
 
 ![gif](/doc%20files/readme/ZGB-loop.png)
 
+---
+</details>
+
 <details>
   <summary><strong>States</strong></summary>
 
@@ -112,6 +116,7 @@ STATE_DEF_END
 Now, whenever you want to enter this new state you just need to call **SetState**(< YourNewState >)
 </details>
 
+---
 </details>
 
 <details>
@@ -152,10 +157,11 @@ GBTD has a few limitations:
 
 Luckily you can overcome these limitations by using your preferred pixel art software and then export your data as a spritesheet
 
-It is important that you create a .meta and at least indicate the sprite dimensions (or it will be exported as a single sprite)
+As with gbr sprites a .meta file can be created to pass arguments to png2asset. Contrary to gbr sprites this .meta file won't be created automatically so it is important that you create a it and at least indicate the sprite dimensions (or it will be exported as a single sprite)
 ```
 -sw 32 -sh 16 
 ```
+Check the png2asset params [here](https://gbdk-2020.github.io/gbdk-2020/docs/api/docs_toolchain_settings.html#png2mtspr-settings)
 </details>
 
 <details>
@@ -183,8 +189,6 @@ void DESTROY() {
 _SPRITE_DMG(<YourNewSprite>, <image>)\
 SPRITE_DEF_END
 ```
-</details>
-
 </details>
 
 ---
@@ -411,6 +415,48 @@ Just make sure that:
 ---
 </details>
 
+<details>
+  <summary><strong>Super Game Boy Borders</strong></summary>
+
+Follow the next steps to create Super Game Boy borders for your game
+- create the folder res/borders
+- Add a png with these limitations:
+   - size must be 256x224
+   - there must be a 160x144 transparent rectangle in the center of it
+   - maximum number of different tiles is 156
+   - each 8x8 tile has a limit of 16 colors
+   - there can only be 4 different palettes of 16 colors
+   - here is a [template](https://raw.githubusercontent.com/gbdk-2020/gbdk-2020/develop/gbdk-lib/examples/gb/sgb_border/gb_border.png) you can use
+- In your code (do this before loading any other bg map)
+```C
+#include "SGB.h"
+
+IMPORT_MAP(<border_filename>);
+
+void START() {
+  LOAD_SGB_BORDER(<border_filename>);
+  ...
+}
+```
+
+---
+</details>
+
+<details>
+  <summary><strong>VS Code debugging using Emulicious</strong></summary>
+
+The [ZGB-template](https://github.com/Zal0/ZGB-template) is properly configured for C Debugging under [Emulicious](https://emulicious.net/) in [Visual Studio Code](https://code.visualstudio.com/). If you started your current project with an old version of the template you just need to copy the .vscode folder into the root of your project.
+
+- [Download](https://code.visualstudio.com/Download) Visual Studio Code
+- Open the workspace located in the .vscode folder within ZGB-template
+- Install the workspace recommended extensions:
+  - [C/C++ for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools)
+  - [Emulicious Debugger](https://marketplace.visualstudio.com/items?itemName=emulicious.emulicious-debugger)
+
+Now ensure that you have either Debug or DebugColor selected as your current configuration and press F5 to start debugging. Emulicious will be launched automatically and breakpoints will be hit. Enjoy!
+
+---
+</details>
 
 ## License
 
