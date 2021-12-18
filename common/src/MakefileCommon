@@ -219,7 +219,7 @@ build_lib: $(OBJDIR) $(OBJS)
 
 build_gb: $(OBJDIR)/Makefile.uptodate $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
 
-$(OBJDIR)/Makefile.uptodate: Makefile
+$(OBJDIR)/Makefile.uptodate: $(OBJDIR) Makefile
 	@echo Makefile has been mofied, forcing a rebuild
 	@make clean
 	@touch $@
