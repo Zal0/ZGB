@@ -217,7 +217,12 @@ $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR) $(OBJDIR_ZGB)/zgb.lib $(OBJDIR
 
 build_lib: $(OBJDIR) $(OBJS)
 
-build_gb: $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
+build_gb: Makefile.uptodate $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
+
+Makefile.uptodate: Makefile
+	@echo Makefile has been mofied, forcing a rebuild
+	@make clean
+	@touch $@
 
 clean:
 	@echo Cleaning $(PROJECT_NAME)
