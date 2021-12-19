@@ -133,7 +133,10 @@ void main() {
 	while(1) {
 		DISPLAY_OFF
 
-		StopMusic;
+		if(stop_music_on_new_state)
+		{
+			StopMusic;
+		}
 
 		SpriteManagerReset();
 		state_running = 1;

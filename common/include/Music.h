@@ -4,6 +4,8 @@
 #include <gb/gb.h>
 
 extern void* last_music;
+extern UINT8 stop_music_on_new_state;
+
 void __PlayMusic(void* music, unsigned char bank, unsigned char loop);
 void MusicCallback() __nonbanked;
 

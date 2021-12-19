@@ -36,6 +36,7 @@ void MusicCallback() __nonbanked {
 #endif
 
 void* last_music = 0;
+UINT8 stop_music_on_new_state = 1;
 void __PlayMusic(void* music, unsigned char bank, unsigned char loop) {
 loop;
 	if(music != last_music) {
