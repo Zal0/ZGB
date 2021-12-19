@@ -4,7 +4,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <NMakeBuildCommandLine>cd src
-$(ZGB_PATH)\..\env\make-3.81-bin\bin\make run BUILD_TYPE=$(Configuration)</NMakeBuildCommandLine>
+$(ZGB_PATH)\..\env\make-3.81-bin\bin\make BUILD_TYPE=$(Configuration)</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>cd src
 $(ZGB_PATH)\..\env\make-3.81-bin\bin\make clean BUILD_TYPE=$(Configuration)
 $(ZGB_PATH)\..\env\make-3.81-bin\bin\make BUILD_TYPE=$(Configuration)</NMakeReBuildCommandLine>
@@ -13,6 +13,7 @@ $(ZGB_PATH)\..\env\make-3.81-bin\bin\make clean BUILD_TYPE=$(Configuration)</NMa
     <NMakeIncludeSearchPath>$(ZGB_PATH)\..\env\gbdk\include;$(ZGB_PATH)\include;.\include;.\src;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <OutDir>$(SolutionDir)bin\</OutDir>
     <NMakePreprocessorDefinitions>__PORT_gbz80;ASM_Z80_TYPES_INCLUDE;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeOutput>$(BUILD_TYPE)\rom.gb</NMakeOutput>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <BuildLog>
