@@ -4,6 +4,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <NMakePreprocessorDefinitions>CGB</NMakePreprocessorDefinitions>
+    <NMakeOutput>$(Configuration)\rom.gbc</NMakeOutput>
   </PropertyGroup>
   <ItemDefinitionGroup />
   <ItemGroup />
