@@ -80,9 +80,6 @@
     <ClInclude Include="include\SGB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\BitMask.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Sprite.c">
@@ -134,9 +131,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\SGB.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BitMask.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

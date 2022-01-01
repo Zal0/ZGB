@@ -21,7 +21,6 @@
   <ItemGroup>
     <ClInclude Include="include\BankManager.h" />
     <ClInclude Include="include\Banks\SetAutoBank.h" />
-    <ClInclude Include="include\BitMask.h" />
     <ClInclude Include="include\Fade.h" />
     <ClInclude Include="include\gbt_player.h" />
     <ClInclude Include="include\Keys.h" />
@@ -45,7 +44,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BankManager.c" />
-    <ClCompile Include="src\BitMask.c" />
     <ClCompile Include="src\Fade.c" />
     <ClCompile Include="src\Fade_b.c" />
     <ClCompile Include="src\Keys.c" />
