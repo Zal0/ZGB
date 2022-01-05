@@ -69,7 +69,7 @@ struct MapExportSettings {
 	char file_name[256];
 	BYTE file_type;
 	char section_name[39];
-	char label_name[40];
+	char label_name[128];//[40];
 	BYTE bank;
 	WORD plane_count;
 	WORD plane_order;
@@ -174,7 +174,8 @@ int main(int argc, char* argv[])
 				READ(map_export_settings.file_name);
 				READ(map_export_settings.file_type);
 				READ(map_export_settings.section_name);
-				READ(map_export_settings.label_name);
+				//READ(map_export_settings.label_name);
+				(fread((char*)&map_export_settings.label_name, 40, 1, file)) * 40; //label_name must be 40 chars
 				READ(map_export_settings.bank);
 				READ(map_export_settings.plane_count);
 				READ(map_export_settings.plane_order);

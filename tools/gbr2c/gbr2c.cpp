@@ -37,7 +37,7 @@ struct TileExport {
 	char file_name[128];
 	BYTE file_type;
 	char section_name[20];
-	char label_name[20];
+	char label_name[128];//[20]
 	BYTE bank;
 	bool tile_array;
 	BYTE format;
@@ -172,7 +172,7 @@ int main(int argc, char* argv[]) {
 				READ(tile_export.file_name);
 				READ(tile_export.file_type);
 				READ(tile_export.section_name);
-				READ(tile_export.label_name);
+				object_length -= (fread((char*)&tile_export.label_name, 20, 1, file)) * 20; //label_name must be 20 chars
 				READ(tile_export.bank);
 				READ(tile_export.tile_array);
 				READ(tile_export.format);
