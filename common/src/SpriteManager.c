@@ -66,6 +66,9 @@ void SpriteManagerLoad(UINT8 sprite_type) {
 #ifdef CGB
 	UINT8 i;
 #endif
+	if(spriteIdxs[sprite_type] != 128) //Already loaded
+		return;
+
 	PUSH_BANK(spriteDataBanks[sprite_type])
 	
 	const struct MetaSpriteInfo* data = spriteDatas[sprite_type];
@@ -107,11 +110,8 @@ Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y) {
 	UINT8 sprite_idx;
 	UINT16 spriteIdxTmp; //Yes, another bug in the compiler forced me to change the type here to UINT16 instead of UINT8
 
-	if(spriteIdxs[sprite_type] == 128)
-	{
-		SpriteManagerLoad(sprite_type);
-	}
-
+	SpriteManagerLoad(sprite_type);
+	
 	sprite_idx = StackPop(sprite_manager_sprites_pool);
 	sprite = sprite_manager_sprites[sprite_idx];
 	sprite->type = sprite_type;
