@@ -22,7 +22,7 @@ UINT8 last_sprite_pal_loaded = 0;
 void SpriteManagerReset() {
 	UINT8 i;
 
-	last_sprite_loaded = 0;
+	last_sprite_loaded = 127;
 	last_sprite_pal_loaded = 0;
 
 	//Call Destroy on all sprites still on the list
@@ -41,7 +41,7 @@ void SpriteManagerReset() {
 	}
 	ClearOAMs();
 
-	memset(spriteIdxs, 255, N_SPRITE_TYPES);
+	memset(spriteIdxs, 128, N_SPRITE_TYPES);
 
 	//Clear the list of updatable sprites
 	sprite_manager_updatables[0] = 0;
@@ -72,9 +72,15 @@ void SpriteManagerLoad(UINT8 sprite_type) {
 	UINT8 n_tiles = data->num_tiles;
 	UINT8 n_pals = data->num_palettes;
 
+	last_sprite_loaded -= n_tiles;
 	spriteIdxs[sprite_type] = last_sprite_loaded;
-	set_sprite_data(last_sprite_loaded, n_tiles, data->data);
-	last_sprite_loaded += n_tiles;
+	UINT8 end = last_sprite_loaded + n_tiles;
+	if((end - 1u) >= last_sprite_loaded) {
+		set_sprite_data(last_sprite_loaded, n_tiles, data->data);
+	} else {
+		set_sprite_data(last_sprite_loaded, n_tiles - end, data->data);
+		set_sprite_data(0, end, data->data + ((n_tiles - end) << 4));
+	}
 
 #ifdef CGB
 	for(i = 0; i != last_sprite_pal_loaded; ++ i)
@@ -101,7 +107,7 @@ Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y) {
 	UINT8 sprite_idx;
 	UINT16 spriteIdxTmp; //Yes, another bug in the compiler forced me to change the type here to UINT16 instead of UINT8
 
-	if(spriteIdxs[sprite_type] == 255)
+	if(spriteIdxs[sprite_type] == 128)
 	{
 		SpriteManagerLoad(sprite_type);
 	}
