@@ -3,7 +3,8 @@
 
 #include <gb/gb.h> 
 
-#define INIT_FONT(FONT, TARGET) ScrollSetTiles((UINT8)255u - (UINT8)45u, BANK(FONT), &FONT); font_idx = (UINT8)255u - (UINT8)45u; print_target = TARGET
+extern UINT8 last_tile_loaded;
+#define INIT_FONT(FONT, TARGET) font_idx = last_tile_loaded; print_target = TARGET; ScrollSetTiles(last_tile_loaded, BANK(FONT), &FONT);
 
 extern UINT8 print_x, print_y, font_idx, print_target;
 extern INT8 scroll_h_border;

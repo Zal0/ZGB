@@ -52,6 +52,7 @@ unsigned char* pending_w_cmap = 0;
 INT16 pending_w_x, pending_w_y;
 UINT8 pending_w_i;
 
+UINT8 last_tile_loaded = 0;
 UINT8 last_bg_pal_loaded = 0;
 
 extern UINT8 vbl_count;
@@ -159,7 +160,8 @@ void ScrollSetTiles(UINT8 first_tile, UINT8 tiles_bank, const struct TilesInfo* 
 	palette_entries = tiles->color_data;
 
 	set_bkg_data(first_tile, n_tiles, tiles->data);
-	for(i = first_tile; i < first_tile + n_tiles; ++i) {
+	last_tile_loaded = first_tile + n_tiles;
+	for(i = first_tile; i != last_tile_loaded; ++i) {
 		scroll_tile_info[i] = palette_entries ? palette_entries[i] : 0;
 	}
 
