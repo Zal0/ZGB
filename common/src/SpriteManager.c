@@ -16,7 +16,7 @@ DECLARE_VECTOR(sprite_manager_updatables, N_SPRITE_MANAGER_SPRITES);
 
 UINT8 sprite_manager_removal_check;
 
-UINT8 last_sprite_loaded = 0;
+INT16 last_sprite_loaded = 0;
 UINT8 last_sprite_pal_loaded = 0;
 
 void SpriteManagerReset() {
@@ -66,7 +66,7 @@ void SpriteManagerLoad(UINT8 sprite_type) {
 #ifdef CGB
 	UINT8 i;
 #endif
-	if(spriteIdxs[sprite_type] != 128) //Already loaded
+	if(spriteIdxs[sprite_type] != 128 || last_sprite_loaded < -127) //Already loaded or no room for this sprite
 		return;
 
 	PUSH_BANK(spriteDataBanks[sprite_type])
@@ -78,7 +78,7 @@ void SpriteManagerLoad(UINT8 sprite_type) {
 	last_sprite_loaded -= n_tiles;
 	spriteIdxs[sprite_type] = last_sprite_loaded;
 	UINT8 end = last_sprite_loaded + n_tiles;
-	if((end - 1u) >= last_sprite_loaded) {
+	if((end - 1u) >= (UINT8)last_sprite_loaded) {
 		set_sprite_data(last_sprite_loaded, n_tiles, data->data);
 	} else {
 		set_sprite_data(last_sprite_loaded, n_tiles - end, data->data);
