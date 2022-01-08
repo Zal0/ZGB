@@ -22,7 +22,7 @@ UINT8 last_sprite_pal_loaded = 0;
 void SpriteManagerReset() {
 	UINT8 i;
 
-	last_sprite_loaded = 127;
+	last_sprite_loaded = 128;
 	last_sprite_pal_loaded = 0;
 
 	//Call Destroy on all sprites still on the list
