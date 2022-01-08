@@ -55,6 +55,8 @@ UINT8 pending_w_i;
 UINT8 last_tile_loaded = 0;
 UINT8 last_bg_pal_loaded = 0;
 
+UINT8 window_tiles_offset;
+
 extern UINT8 vbl_count;
 UINT8 current_vbl_count;
 void SetTile(UINT16 r, UINT8 t) {
@@ -174,9 +176,20 @@ void ScrollSetTiles(UINT8 first_tile, UINT8 tiles_bank, const struct TilesInfo* 
 	POP_BANK;
 }
 
-void InitWindow(UINT8 x, UINT8 y, UINT8 map_bank, struct MapInfo* map) {
+void InitWindow(UINT8 x, UINT8 y, UINT8 map_bank, struct MapInfo* map, UINT8 load_tiles) {
 	PUSH_BANK(map_bank);
-	set_win_tiles(x, y, map->width, map->height, map->data);
+
+	window_tiles_offset = last_tile_loaded;
+	if(load_tiles)
+		ScrollSetTiles(last_tile_loaded, map->tiles_bank, map->tiles);
+
+	UINT8* data = map->data;
+	for(UINT8 j = y; j < map->height; ++j) {
+		for(UINT8 i = x; i < map->width; ++i) {
+			set_win_tile_xy(i, j, (*data) + window_tiles_offset);
+			++ data;
+		}
+	}
 	
 	#ifdef CGB
 	if(map->attributes) {
@@ -444,8 +457,8 @@ UINT8 GetScrollTile(UINT16 x, UINT16 y) {
 void GetMapSize(UINT8 map_bank, const struct MapInfo* map, UINT8* tiles_w, UINT8* tiles_h)
 {
 	PUSH_BANK(map_bank);
-		*tiles_w = map->width;
-		*tiles_h = map->height;
+		if(tiles_w) *tiles_w = map->width;
+		if(tiles_h) *tiles_h = map->height;
 	POP_BANK;
 }
 

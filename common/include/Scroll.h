@@ -8,6 +8,13 @@
 
 #define SPRITE_UNIQUE_ID(TILE_X, TILE_Y) ((0x00FF & TILE_X) | ((0xFF00 & (TILE_Y << 8))))
 
+#define INIT_HUD(MAP)\
+	GetMapSize(BANK(MAP), &MAP, 0, &scroll_h_border);\
+	WX_REG = 7;\
+	WY_REG = 144 - (scroll_h_border << 3);\
+	InitWindow(0, 0, BANK(MAP), &MAP, 1);\
+	SHOW_WIN;
+
 extern unsigned char* scroll_map;
 extern INT16 scroll_x;
 extern INT16 scroll_y;
@@ -30,6 +37,8 @@ extern UINT8 clamp_enabled;
 extern UINT8 scroll_top_movement_limit;
 extern UINT8 scroll_bottom_movement_limit;
 
+extern UINT8 window_tiles_offset;
+
 //void InitScrollTilesLEGACY(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 tile_bank);
 //void ScrollSetMapLEGACY(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, unsigned char* color_map);
 //void InitScrollLEGACY(UINT16 map_w, UINT16 map_h, unsigned char* map, const UINT8* coll_list, const UINT8* coll_list_down, UINT8 bank, unsigned char* color_map);
@@ -40,7 +49,7 @@ void ScrollSetMap(UINT8 map_bank, const struct MapInfo* map);
 void InitScroll(UINT8 map_bank, const struct MapInfo* map, const UINT8* coll_list, const UINT8* coll_list_down);
 void InitScrollWithTiles(UINT8 map_bank, const struct MapInfo* map, UINT8 tile_info_bank, const struct TilesInfo* tiles_info, const UINT8* coll_list, const UINT8* coll_list_down);
 
-void InitWindow(UINT8 x, UINT8 y, UINT8 map_bank, struct MapInfo* map);
+void InitWindow(UINT8 x, UINT8 y, UINT8 map_bank, struct MapInfo* map, UINT8 load_tiles);
 void ScrollUpdateRow(INT16 x, INT16 y);
 void ScrollUpdateColumn(INT16 x, INT16 y);
 void MoveScroll(INT16 x, INT16 y);
