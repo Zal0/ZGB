@@ -10,8 +10,9 @@
 
 #define INIT_HUD(MAP)\
 	GetMapSize(BANK(MAP), &MAP, 0, &scroll_h_border);\
+	scroll_h_border = scroll_h_border << 3;\
 	WX_REG = 7;\
-	WY_REG = 144 - (scroll_h_border << 3);\
+	WY_REG = 144 - scroll_h_border;\
 	InitWindow(0, 0, BANK(MAP), &MAP, 1);\
 	SHOW_WIN;
 
