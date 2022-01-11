@@ -212,7 +212,7 @@ $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR) $(OBJDIR_ZGB)/zgb.lib $(OBJDIR
 	@$(MAKEBIN) -Z $(BINFLAGS) $(OBJDIR)/rom.ihx $(OBJDIR)/rom.$(EXTENSION)
 	@$(ROMVIEW) $(OBJDIR)/rom.$(EXTENSION) 255
 	@cp $(OBJDIR)/rom.$(EXTENSION) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
-#	@perl $(SRC2SYM) $(OBJDIR)/$(PROJECT_NAME).noi > $(BINDIR)/$(PROJECT_NAME).sym
+#	@perl $(SRC2SYM) $(OBJDIR)/rom.noi > $(BINDIR)/$(PROJECT_NAME).sym
 	@rm -f *.adb
 
 build_lib: $(OBJDIR) $(OBJS)
