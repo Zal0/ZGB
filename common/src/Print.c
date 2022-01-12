@@ -89,7 +89,7 @@ void Printf(const char* txt, ...){
 						case 's':
 							Printf(va_arg(list, char*));
 							txt += 2;
-							break;
+							continue;
 					}
 					break;
 			}
