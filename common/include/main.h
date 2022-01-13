@@ -45,5 +45,6 @@ void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *
 
 #define IMPORT_MAP(MAP) extern struct MapInfo MAP; extern const void __bank_##MAP
 #define IMPORT_TILES(TILES) extern struct TilesInfo TILES; extern const void __bank_##TILES
+#define IMPORT_FONT(FONT) IMPORT_TILES(FONT)
 
 #endif
