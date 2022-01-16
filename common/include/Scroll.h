@@ -48,10 +48,6 @@ extern UINT8 scroll_bottom_movement_limit;
 
 extern UINT16 hud_map_offset;
 
-//void InitScrollTilesLEGACY(UINT8 first_tile, UINT8 n_tiles, UINT8* tile_data, UINT8 tile_bank);
-//void ScrollSetMapLEGACY(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 bank, unsigned char* color_map);
-//void InitScrollLEGACY(UINT16 map_w, UINT16 map_h, unsigned char* map, const UINT8* coll_list, const UINT8* coll_list_down, UINT8 bank, unsigned char* color_map);
-
 #define InitScrollTiles(FIRST_TILE, TILE_DATA) 
 UINT16 ScrollSetTiles(UINT8 first_tile, UINT8 tile_data_bank, const struct TilesInfo* tile_data);
 void ScrollSetMap(UINT8 map_bank, const struct MapInfo* map);
