@@ -55,7 +55,11 @@ UINT8 pending_w_i;
 UINT8 last_tile_loaded = 0;
 UINT8 last_bg_pal_loaded = 0;
 
-UINT8 window_tiles_offset;
+UINT16 hud_map_offset;
+
+//Keeping track of the current tiles loaded on offset 0
+UINT8 tiles_bank_0;
+const struct TilesInfo* tiles_0;
 
 extern UINT8 vbl_count;
 UINT8 current_vbl_count;
@@ -152,10 +156,18 @@ void ScrollSetMapLEGACY(UINT16 map_w, UINT16 map_h, unsigned char* map, UINT8 ba
 	ScrollSetMap(&data);
 }*/
 
-void ScrollSetTiles(UINT8 first_tile, UINT8 tiles_bank, const struct TilesInfo* tiles) {
+UINT16 ScrollSetTiles(UINT8 first_tile, UINT8 tiles_bank, const struct TilesInfo* tiles) {
 	UINT8 i;
 	UINT8 n_tiles;
 	UINT8* palette_entries;
+
+	UINT16 offset = first_tile | (last_bg_pal_loaded << 8);
+
+	if(first_tile == 0)
+	{
+		tiles_bank_0 = tiles_bank;
+		tiles_0 = tiles;
+	}
 
 	PUSH_BANK(tiles_bank);
 	n_tiles = tiles->num_frames;
@@ -164,7 +176,7 @@ void ScrollSetTiles(UINT8 first_tile, UINT8 tiles_bank, const struct TilesInfo* 
 	set_bkg_data(first_tile, n_tiles, tiles->data);
 	last_tile_loaded = first_tile + n_tiles;
 	for(i = first_tile; i != last_tile_loaded; ++i) {
-		scroll_tile_info[i] = palette_entries ? palette_entries[i] : 0;
+		scroll_tile_info[i] = palette_entries ? palette_entries[i - first_tile] : 0;
 	}
 
 #ifdef CGB
@@ -174,32 +186,69 @@ void ScrollSetTiles(UINT8 first_tile, UINT8 tiles_bank, const struct TilesInfo* 
 #endif
 
 	POP_BANK;
+
+	return offset;
 }
 
-void InitWindow(UINT8 x, UINT8 y, UINT8 map_bank, struct MapInfo* map, UINT8 load_tiles) {
+void UpdateMapTile(UINT8 bg_or_win, UINT8 x, UINT8 y, UINT16 map_offset, UINT8 data, UINT8* attr)
+{
+attr;
+	UINT8* offsetts = &map_offset;
+	data += offsetts[0];
+	if(bg_or_win == 0)
+		set_bkg_tile_xy(x, y, data);
+	else
+		set_win_tile_xy(x, y, data);
+
+#ifdef CGB
+	VBK_REG = 1;
+
+	//right now 0x10 means the colore should be picked from scroll_tile_info, but we need to keep the rest of the attribute (UPDATE_TILE has a bug with this!!)
+	UINT8 c;
+	if(attr) {
+		c = *attr;
+		if(0x10 & c){
+			c = (c & 0xF8) | scroll_tile_info[data];
+		}
+	} else {
+		c = scroll_tile_info[data];
+	}
+	c += offsetts[1];
+
+	if(bg_or_win == 0)
+		set_bkg_tile_xy(x, y, c);
+	else
+		set_win_tile_xy(x, y, c);
+	VBK_REG = 0;
+#endif
+}
+
+UINT16 LoadMap(UINT8 bg_or_win, UINT8 x, UINT8 y, UINT8 map_bank, struct MapInfo* map) {
 	PUSH_BANK(map_bank);
 
-	window_tiles_offset = last_tile_loaded;
+	//Load Tiles
+	UINT8 load_tiles = tiles_bank_0 != map->tiles_bank || tiles_0 != map->tiles; //If the tile set is the same as the one used for the scroll or the bg (which is stored in tiles_bank_0 and tiles0) then do not load the tiles again
+	UINT16 map_offset = 0;
 	if(load_tiles)
-		ScrollSetTiles(last_tile_loaded, map->tiles_bank, map->tiles);
+		map_offset = ScrollSetTiles(last_tile_loaded, map->tiles_bank, map->tiles);
 
+	//Load map (tile by tile because it there are not attributes when need to pick them from scroll_tile_info)
 	UINT8* data = map->data;
-	for(UINT8 j = y; j < map->height; ++j) {
-		for(UINT8 i = x; i < map->width; ++i) {
-			set_win_tile_xy(i, j, (*data) + window_tiles_offset);
+	UINT8* attrs = map->attributes;
+	for(UINT8 j = 0; j < map->height; ++j) {
+		for(UINT8 i = 0; i < map->width; ++i) {
+			UpdateMapTile(bg_or_win, x + i, y + j, map_offset, *data, attrs);
+			
 			++ data;
+			if(attrs)
+				++ attrs;
 		}
 	}
-	
-	#ifdef CGB
-	if(map->attributes) {
-		VBK_REG = 1;
-			set_win_tiles(x, y, map->width, map->height, map->attributes);
-		VBK_REG = 0;
-	}
-	#endif
 
 	POP_BANK;
+	
+	//Return the offset so the user can pass it as parameter to UpdateMapTile
+	return map_offset;
 }
 
 INT8 scroll_h_border = 0;

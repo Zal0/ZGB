@@ -4,11 +4,12 @@
 #include <gb/gb.h> 
 
 extern UINT8 last_tile_loaded;
-#define INIT_FONT(FONT, TARGET) font_idx = last_tile_loaded; print_target = TARGET; ScrollSetTiles(last_tile_loaded, BANK(FONT), &FONT);
-#define INIT_FONT_NUMBERS(FONT, TARGET) font_idx = last_tile_loaded - 27; print_target = TARGET; ScrollSetTiles(last_tile_loaded, BANK(FONT), &FONT);
+#define INIT_FONT(FONT, TARGET) print_target = TARGET; font_offset = ScrollSetTiles(last_tile_loaded, BANK(FONT), &FONT)
+#define INIT_FONT_NUMBERS(FONT, TARGET) INIT_FONT(FONT, TARGET); ((UINT8*)(&font_offset))[0] -= 27
 
-extern UINT8 print_x, print_y, font_idx, print_target;
+extern UINT8 print_x, print_y, print_target;
 extern INT8 scroll_h_border;
+extern UINT16 font_offset;
 
 typedef enum {
 	PRINT_BKG,
@@ -28,7 +29,7 @@ void Printf(const char* txt, ...);
 #define DPRINT_POS
 #define DPRINT
 #else
-#define INIT_CONSOLE(FONT, FONT_BANK, NLINES) \
+#define INIT_CONSOLE(FONT, NLINES) \
 	INIT_FONT(FONT, PRINT_WIN); \
 	print_x = 0;\
 	print_y = 0;\

@@ -6,8 +6,8 @@
 
 UINT8 print_x = 0;
 UINT8 print_y = 0;
-UINT8 font_idx = 128;
 UINT8 print_target = PRINT_BKG;
+UINT16 font_offset = 0;
 
 void UIntToString(UINT16 n, unsigned char* str) {
 	UINT16 tmp = n;
@@ -47,30 +47,30 @@ void IntToString(INT16 n, unsigned char* str) {
 
 void Printf(const char* txt, ...){
 	UINT8 idx = 0;
-	unsigned char c;
+	unsigned char c = 0;
 	unsigned char tmp[10];
 	va_list list;
 
 	va_start(list, txt); 
 	while(*txt) {
 		if(*txt == ' ') {
-			c = font_idx;
+			c = 0;
 		} else if(*txt >= 'A' && *txt <= 'Z'){
-			c = font_idx +  1 + *txt - 'A';
+			c = 1 + *txt - 'A';
 		} else if(*txt >= 'a' && *txt <= 'z') {
-			c = font_idx +  1 + *txt - 'a';
+			c = 1 + *txt - 'a';
 		} else if(*txt >= '0' && *txt <= '9') {
-			c = font_idx + 27 + *txt - '0';
+			c = 27 + *txt - '0';
 		} else {
 			switch(*txt) {
-				case  '!': c= font_idx + 37; break;
-				case '\'': c= font_idx + 38; break;
-				case  '(': c= font_idx + 39; break;
-				case  ')': c= font_idx + 40; break;
-				case  '-': c= font_idx + 41; break;
-				case  '.': c= font_idx + 42; break;
-				case  ':': c= font_idx + 43; break;
-				case  '?': c= font_idx + 44; break;
+				case  '!': c= 37; break;
+				case '\'': c= 38; break;
+				case  '(': c= 39; break;
+				case  ')': c= 40; break;
+				case  '-': c= 41; break;
+				case  '.': c= 42; break;
+				case  ':': c= 43; break;
+				case  '?': c= 44; break;
 				case  '%':
 					switch(*(txt + 1)) {
 						case 'd':
@@ -95,9 +95,9 @@ void Printf(const char* txt, ...){
 			}
 		}
 		if(print_target == PRINT_BKG)
-			set_bkg_tiles(0x1F & (print_x + scroll_offset_x), 0x1F & (print_y + scroll_offset_y), 1, 1, &c);
+			UpdateMapTile(print_target, 0x1F & (print_x + scroll_offset_x), 0x1F & (print_y + scroll_offset_y), font_offset, c, 0);
 		else
-			set_win_tiles(print_x, print_y, 1, 1, &c);
+			UpdateMapTile(print_target, print_x, print_y, font_offset, c, 0);
 
 		print_x ++;
 		txt ++;
