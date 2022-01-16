@@ -175,7 +175,7 @@ int main(int argc, char* argv[])
 				READ(map_export_settings.file_type);
 				READ(map_export_settings.section_name);
 				//READ(map_export_settings.label_name);
-				(fread((char*)&map_export_settings.label_name, 40, 1, file)) * 40; //label_name must be 40 chars
+				(fread((char*)&map_export_settings.label_name, 40, 1, file)); //label_name must be 40 chars
 				READ(map_export_settings.bank);
 				READ(map_export_settings.plane_count);
 				READ(map_export_settings.plane_order);
