@@ -5,6 +5,8 @@ typedef unsigned short WORD;
 typedef unsigned int LONG;
 typedef unsigned char BYTE;
 
+namespace GbrParser
+{
 enum ObjectTypes {
 	OBJECT_TYPE_PRODUCER = 0x1,
 	OBJECT_TYPE_TILE_DATA = 0x2,
@@ -92,6 +94,8 @@ struct GBRInfo {
 
 void ExtractFileName(const char* path, char* file_name, bool include_bank);
 bool LoadGBR(const char* path, GBRInfo* info);
+
+};
 
 #define BIT(V, B) (1 & (V >> B))
 #define BYTE(B0, B1, B2, B3, B4, B5, B6, B7) ((B0 << 7) | (B1 << 6) | (B2 << 5) | (B3 << 4) | (B4 << 3) | (B5 << 2) | (B6 << 1) | B7)

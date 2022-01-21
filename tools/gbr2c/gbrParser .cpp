@@ -6,6 +6,9 @@
 #define JUST_READ(var) fread((char*)&var, sizeof(var), 1, file)
 #define READ(var) object_length -= (fread((char*)&var, sizeof(var), 1, file)) * sizeof(var)
 
+namespace GbrParser
+{
+
 int GetBank(char* str) {
 	char* bank_info = strstr(str, ".b");
 	if(bank_info) {
@@ -202,3 +205,5 @@ bool LoadGBR(const char* path, GBRInfo* info) {
 
 	return true;
 }
+
+};

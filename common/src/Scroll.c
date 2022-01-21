@@ -126,11 +126,10 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	#ifdef CGB
 		if (_cpu == CGB_TYPE) {
 			VBK_REG = 1;
-			if(!scroll_cmap || (0x10 & *c)) { //I am using bit 4 (unused) to select the default palette (the one stored on the tile)
-				i = scroll_tile_info[replacement];
-				c = &i;
+			if(!scroll_cmap) {
+				c = &scroll_tile_info[replacement];
 			}
-			set_bkg_tiles(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), 1, 1, c);
+			set_bkg_tile_xy(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), *c);
 			VBK_REG = 0;
 		}
 	#endif
@@ -183,16 +182,7 @@ attr;
 #ifdef CGB
 	VBK_REG = 1;
 
-	//right now 0x10 means the colore should be picked from scroll_tile_info, but we need to keep the rest of the attribute (UPDATE_TILE has a bug with this!!)
-	UINT8 c;
-	if(attr) {
-		c = *attr;
-		if(0x10 & c){
-			c = (c & 0xF8) | scroll_tile_info[data];
-		}
-	} else {
-		c = scroll_tile_info[data];
-	}
+	UINT8 c = attr ? *attr : scroll_tile_info[data];
 	c += offsetts[1];
 
 	if(bg_or_win == 0)

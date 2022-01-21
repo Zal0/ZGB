@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include "gbrParser.h"
 
 typedef unsigned short WORD;
 typedef unsigned int LONG;
@@ -10,7 +11,7 @@ typedef unsigned char BYTE;
 
 #define READ(var) fread((char*)&var, sizeof(var), 1, file)
 
-enum ObjectTypes {
+enum GBMObjectTypes {
 	OBJECT_TYPE_PRODUCER = 0x1,
 	OBJECT_TYPE_MAP = 0x2,
 	OBJECT_TYPE_MAP_TILE_DATA = 0x3,
@@ -108,6 +109,25 @@ void ExtractFileName(char* path, char* file_name, bool include_bank) {
 	}
 }
 
+void GetGBRPath(char* gbm_path, char* tile_file, char* gbr_path)
+{
+	char tile_file_name[256];
+	ExtractFileName(tile_file, tile_file_name, false);
+
+	char* slash_pos = strrchr(gbm_path, '/');
+	if(slash_pos == 0)
+		slash_pos = strrchr(gbm_path, '\\');
+	if(slash_pos != 0)
+		slash_pos ++;
+	else
+		slash_pos = gbm_path;
+
+	char path[256];
+	strncpy(path, gbm_path, slash_pos - gbm_path);
+	path[slash_pos - gbm_path] = '\0';
+	sprintf(gbr_path, "%s%s.gbr", path, tile_file_name);
+}
+
 int main(int argc, char* argv[])
 {
 	if(argc != 3) {
@@ -117,7 +137,7 @@ int main(int argc, char* argv[])
 
 	FILE* file = fopen(argv[1], "rb");
 	if(!file) {
-		printf("Error reading file");
+		printf("Error reading file %s", argv[1]);
 		return 1;
 	}
 
@@ -195,6 +215,16 @@ int main(int argc, char* argv[])
 	}
 	fclose(file);
 
+	GbrParser::GBRInfo gbrInfo;
+	if(export_attributes) {
+		char gbr_path[256];
+		GetGBRPath(argv[1], map.tile_file, gbr_path);
+		if(!GbrParser::LoadGBR(gbr_path, &gbrInfo)) {
+			printf("Error reading gbr file %s", map.tile_file);
+			return 1;
+		}
+	}
+
 	//Extract bank
 	/*int bank = GetBank(argv[1]);
 	if(bank == 0) //for backwards compatibility, extract the bank from tile_export.name
@@ -268,10 +298,10 @@ int main(int argc, char* argv[])
 				fprintf(file, "\n\t");
 
 			MapTileData data = map_tiles_data[i];
-			//Bit 4 is not used, so I am gonna use it to indicate using default palette
-			bool use_default = data.gbc_palette == 0;
-			bool vram_bank = map_tiles_data[i].tile_number > 255;
-			fprintf(file, "0x%02x", (use_default ? 0 : data.gbc_palette - 1) | (vram_bank << 3) | (use_default << 4) | (data.h_flip << 5) | (data.v_flip << 6));
+			bool vram_bank = data.tile_number > 255;
+			//gbc_palette 0 is used by GBMB to indicate Default palette (the one stores in the tile)
+			unsigned char pal_idx = (data.gbc_palette == 0 ? gbrInfo.palette_order[gbrInfo.tile_pal.color_set[data.tile_number]] : data.gbc_palette - 1);
+			fprintf(file, "0x%02x", pal_idx | (vram_bank << 3) | (data.h_flip << 5) | (data.v_flip << 6));
 		}
 		fprintf(file, "\n};\n");
 	}

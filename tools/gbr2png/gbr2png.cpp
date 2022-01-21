@@ -2,6 +2,8 @@
 #include "gbrParser.h"
 #include "lodepng/lodepng.h"
 
+using namespace GbrParser;
+
 void ExtractFileName(char* path, char* file_name, bool include_bank) {
 	char* slash_pos = strrchr(path, '/');
 	if(slash_pos == 0)

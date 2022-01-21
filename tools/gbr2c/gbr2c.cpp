@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "gbrParser.h"
+using namespace GbrParser;
 
 int main(int argc, char* argv[]) {
 	if(argc != 3) {
