@@ -135,12 +135,14 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	#endif
 }
 
+int memcmp(const char *s1, const char *s2, int n);
+extern UWORD ZGB_Fading_BPal[32];
 UINT16 ScrollSetTiles(UINT8 first_tile, UINT8 tiles_bank, const struct TilesInfo* tiles) {
 	UINT8 i;
 	UINT8 n_tiles;
 	UINT8* palette_entries;
 
-	UINT16 offset = first_tile | (last_bg_pal_loaded << 8);
+	UINT16 offset = first_tile;
 
 	if(first_tile == 0)
 	{
@@ -160,8 +162,18 @@ UINT16 ScrollSetTiles(UINT8 first_tile, UINT8 tiles_bank, const struct TilesInfo
 
 #ifdef CGB
 	//Load palettes
-	SetPalette(BG_PALETTE, last_bg_pal_loaded, tiles->num_pals, tiles->pals, tiles_bank);
-	last_bg_pal_loaded += tiles->num_pals;
+	for(i = 0; i != last_bg_pal_loaded; ++ i)
+	{
+		if(memcmp(&ZGB_Fading_BPal[i << 2], tiles->pals, tiles->num_pals << 3) == 0)
+			break;
+	}
+
+	offset |= (i << 8);
+	if(i == last_bg_pal_loaded)
+	{
+		SetPalette(BG_PALETTE, last_bg_pal_loaded, tiles->num_pals, tiles->pals, tiles_bank);
+		last_bg_pal_loaded += tiles->num_pals;
+	}
 #endif
 
 	POP_BANK;
