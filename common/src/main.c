@@ -95,6 +95,7 @@ __endasm;
 }
 
 extern UINT8 last_bg_pal_loaded;
+extern UINT8 last_tile_loaded;
 UINT16 default_palette[] = {RGB(31, 31, 31), RGB(20, 20, 20), RGB(10, 10, 10), RGB(0, 0, 0)};
 void main() {
 #ifdef CGB
@@ -143,6 +144,7 @@ void main() {
 		current_state = next_state;
 		scroll_target = 0;
 		last_bg_pal_loaded = 0;
+		last_tile_loaded = 0;
 		
 #ifdef CGB
 		if (_cpu == CGB_TYPE) {
