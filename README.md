@@ -423,7 +423,7 @@ Follow the next steps to create Super Game Boy borders for your game
 - Add a png with these limitations:
    - size must be 256x224
    - there must be a 160x144 transparent rectangle in the center of it
-   - maximum number of different tiles is 156
+   - maximum number of different tiles is 256
    - each 8x8 tile has a limit of 16 colors
    - there can only be 4 different palettes of 16 colors
    - here is a [template](https://raw.githubusercontent.com/gbdk-2020/gbdk-2020/develop/gbdk-lib/examples/gb/sgb_border/gb_border.png) you can use
