@@ -18,7 +18,7 @@ typedef enum {
 
 void Printf(const char* txt, ...);
 #define PRINT_POS(X, Y) print_x = X; print_y  = Y
-#define PRINT(X, Y, TXT) PRINT_POS(X,Y); Printf(TXT)
+#define PRINT(X, Y, ...) PRINT_POS(X,Y); Printf(__VA_ARGS__)
 
 #ifdef NDEBUG 
 #define INIT_CONSOLE
