@@ -16,9 +16,6 @@ typedef enum {
 	PRINT_WIN
 } PRINT_TARGET;
 
-void UIntToString(UINT16 n, unsigned char* str);
-void IntToString (INT16  n, unsigned char* str);
-
 void Printf(const char* txt, ...);
 #define PRINT_POS(X, Y) print_x = X; print_y  = Y
 #define PRINT(X, Y, TXT) PRINT_POS(X,Y); Printf(TXT)

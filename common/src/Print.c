@@ -3,47 +3,12 @@
 #include "Scroll.h"
 
 #include <stdarg.h>
+#include <stdlib.h>
 
 UINT8 print_x = 0;
 UINT8 print_y = 0;
 UINT8 print_target = PRINT_BKG;
 UINT16 font_offset = 0;
-
-void UIntToString(UINT16 n, unsigned char* str) {
-	UINT16 tmp = n;
-	UINT8 size = 0;
-
-	if(n == 0) {
-		str[0] ='0';
-		str[1] = '\0';
-	} else {
-		while(tmp) {
-			tmp /= 10;
-			size ++;
-		}
-		str[size] = '\0';
-		size --;
-
-		while(n) {
-			str[size] = (n % 10) + '0';
-			n /= 10;
-			size --;
-		}
-	}
-}
-
-void IntToString(INT16 n, unsigned char* str) {
-	int tmp = n;
-	UINT8 size = 0;
-
-	if(n < 0){
-		n = 0xFFFF - n + 1; //I tried -n but it doesn't work
-		str[0] = '-';
-		str ++;
-	}
-
-	UIntToString(n, str);
-}
 
 void Printf(const char* txt, ...){
 	UINT8 idx = 0;
@@ -75,13 +40,13 @@ void Printf(const char* txt, ...){
 					switch(*(txt + 1)) {
 						case 'd':
 						case 'i':
-							IntToString(va_arg(list, INT16), tmp);
+							itoa(va_arg(list, INT16), tmp, 10);
 							Printf(tmp);
 							txt += 2;
 							continue;
 
 						case 'u':
-							UIntToString(va_arg(list, UINT16), tmp);
+							uitoa(va_arg(list, INT16), tmp, 10);
 							Printf(tmp);
 							txt += 2;
 							continue;
