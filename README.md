@@ -423,7 +423,7 @@ Follow the next steps to create Super Game Boy borders for your game
 - Add a png with these limitations:
    - size must be 256x224
    - there must be a 160x144 transparent rectangle in the center of it
-   - maximum number of different tiles is 156
+   - maximum number of different tiles is 256
    - each 8x8 tile has a limit of 16 colors
    - there can only be 4 different palettes of 16 colors
    - here is a [template](https://raw.githubusercontent.com/gbdk-2020/gbdk-2020/develop/gbdk-lib/examples/gb/sgb_border/gb_border.png) you can use
@@ -442,6 +442,21 @@ void START() {
 ---
 </details>
 
+<details>
+  <summary><strong>VS Code debugging using Emulicious</strong></summary>
+
+The [ZGB-template](https://github.com/Zal0/ZGB-template) is properly configured for C Debugging under [Emulicious](https://emulicious.net/) in [Visual Studio Code](https://code.visualstudio.com/). If you started your current project with an old version of the template you just need to copy the .vscode folder into the root of your project.
+
+- [Download](https://code.visualstudio.com/Download) Visual Studio Code
+- Open the workspace located in the .vscode folder within ZGB-template
+- Install the workspace recommended extensions:
+  - [C/C++ for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools)
+  - [Emulicious Debugger](https://marketplace.visualstudio.com/items?itemName=emulicious.emulicious-debugger)
+
+Now ensure that you have either Debug or DebugColor selected as your current configuration and press F5 to start debugging. Emulicious will be launched automatically and breakpoints will be hit. Enjoy!
+
+---
+</details>
 
 ## License
 
