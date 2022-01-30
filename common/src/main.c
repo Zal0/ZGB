@@ -13,6 +13,10 @@
 #include "Palette.h"
 #include <gb/cgb.h>
 
+#ifdef USE_SAVEGAME
+	#include "savegame.h"
+#endif
+
 extern UINT8 next_state;
 
 UINT8 delta_time;
@@ -102,6 +106,11 @@ void main() {
 	for (UINT8 i = 4; i != 0; i--) {
 		wait_vbl_done();
 	}
+
+#ifdef USE_SAVEGAME
+	CheckSRAMIntegrity((UINT8*)&savegame, sizeof(Savegame));
+#endif
+
 #ifdef CGB
 	UINT8 i;
 	cpu_fast();

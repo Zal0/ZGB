@@ -36,6 +36,7 @@
     <ClInclude Include="include\Sound.h" />
     <ClInclude Include="include\Sprite.h" />
     <ClInclude Include="include\SpriteManager.h" />
+    <ClInclude Include="include\SRAM.h" />
     <ClInclude Include="include\Stack.h" />
     <ClInclude Include="include\TilesInfo.h" />
     <ClInclude Include="include\Vector.h" />
@@ -56,6 +57,7 @@
     <ClCompile Include="src\Sound.c" />
     <ClCompile Include="src\Sprite.c" />
     <ClCompile Include="src\SpriteManager.c" />
+    <ClCompile Include="src\SRAM.c" />
     <ClCompile Include="src\Stack.c" />
     <ClCompile Include="src\Vector.c" />
     <ClCompile Include="src\Print.c" />

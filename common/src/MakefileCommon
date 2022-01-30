@@ -43,9 +43,20 @@ CFLAGS += -DFILE_NAME=$(basename $(<F)) -MMD
 LNAMES=-g _shadow_OAM=0xC000 -g .STACK=0xDEFF -g .refresh_OAM=0xFF80 -b _DATA=0xc0a0 -b _CODE=0x0200
 LFLAGS=-n -m -j -w -i -k $(GBDK_HOME)/lib/small/asxxxx/gbz80/ -l gbz80.lib -k $(GBDK_HOME)/lib/small/asxxxx/gb/ -l gb.lib -k $(OBJDIR_ZGB)/ -l zgb.lib $(LNAMES)
 
-ifneq ($(strip $(N_BANKS)),)
-	BINFLAGS += -yt 1 -yo $(N_BANKS)
+ifeq ($(strip $(N_BANKS)),)
+	NBANKS = A
 endif
+BINFLAGS += -yo $(N_BANKS)
+
+ifeq ($(wildcard savegame.c), )
+	#No savegame, mbc1
+	BINFLAGS += -yt 1
+else
+	#Savegame
+	BINFLAGS += -yt 3 -ya 1
+	CFLAGS += -DUSE_SAVEGAME
+endif
+
 
 # DMG/Color flags
 EXTENSION = gb
@@ -57,7 +68,7 @@ endif
 
 # SGB flags
 ifneq ($(wildcard ../res/borders), )
-	BINFLAGS +=-ys
+	BINFLAGS +=-ys 
 endif
 
 # gbt-player/Hugetracker flags
@@ -204,12 +215,16 @@ $(OBJDIR)/%.o: %.c
 	@echo compiling $<
 	@$(SDCC) $(CFLAGS) -c -o $@ $<	
 
+$(OBJDIR)/savegame.o: savegame.c
+	@echo compiling savegame on ram bank 0
+	$(SDCC) $(CFLAGS) -ba0 -c -o $@ $<	
+
 $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR) $(OBJDIR_ZGB)/zgb.lib $(OBJDIR_RES) $(OBJDIR_RES)/sprites $(BINDIR) $(OBJS)
 	@echo Linking
 	@$(BANKPACK) -ext=.rel -min=1 -yt1 $(OBJS) $(OBJS_ZGB)
 	@$(SDLDGB) $(LFLAGS) $(OBJDIR)/rom.ihx $(GBDK_HOME)/lib/small/asxxxx/gb/crt0.o $(RELS) $(ZGB_PATH_UNIX)/lib/hUGEDriver.obj.o
 	@$(IHXCHECK) $(OBJDIR)/rom.ihx -e
-	@$(MAKEBIN) -Z $(BINFLAGS) $(OBJDIR)/rom.ihx $(OBJDIR)/rom.$(EXTENSION)
+	$(MAKEBIN) -Z $(BINFLAGS) $(OBJDIR)/rom.ihx $(OBJDIR)/rom.$(EXTENSION)
 	@$(ROMVIEW) $(OBJDIR)/rom.$(EXTENSION) 255
 	@cp $(OBJDIR)/rom.$(EXTENSION) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
 #	@perl $(SRC2SYM) $(OBJDIR)/rom.noi > $(BINDIR)/$(PROJECT_NAME).sym
