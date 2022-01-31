@@ -443,6 +443,51 @@ void START() {
 </details>
 
 <details>
+  <summary><strong>Savegame support</strong></summary>
+
+In order to have savegames in your game you must include a couple of files named savegame.h and savegame.c with the next content
+
+```C
+//savegame.h
+#ifndef SAVEGAME_H
+#define SAVEGAME_H
+
+#include <gb/gb.h>
+#include "SRAM.h"
+
+typedef struct {
+	SAVEGAME_HEADER;
+
+  //Whatever content you want to store in external ram
+
+} Savegame;
+
+extern Savegame savegame;
+
+#endif
+```
+
+```C
+//savegame.c
+#include "savegame.h"
+Savegame savegame;
+```
+
+Having a file named savegame.c in your project will automatically compile it using MBC1+RAM+BATTERY (otherwise it will use MBC1)
+
+Then before accesing any content you must enable/disable sram access
+
+```C
+ENABLE_RAM;
+  //Acess savegame content to read/write
+DISABLE_RAM;
+```
+
+---
+</details>
+
+
+<details>
   <summary><strong>VS Code debugging using Emulicious</strong></summary>
 
 The [ZGB-template](https://github.com/Zal0/ZGB-template) is properly configured for C Debugging under [Emulicious](https://emulicious.net/) in [Visual Studio Code](https://code.visualstudio.com/). If you started your current project with an old version of the template you just need to copy the .vscode folder into the root of your project.
