@@ -91,13 +91,6 @@ void SetWindowY(UINT8 y) {
 	} 
 }
 
-//add dependency to timer_ISR so that it's not stripped from build
-static void ___dummy() __naked {
-__asm
-.globl .timer_ISR
-__endasm;
-}
-
 extern UINT8 last_bg_pal_loaded;
 extern UINT8 last_tile_loaded;
 UINT16 default_palette[] = {RGB(31, 31, 31), RGB(20, 20, 20), RGB(10, 10, 10), RGB(0, 0, 0)};
@@ -129,9 +122,9 @@ void main() {
 		TMA_REG = 0xBCU;
 #endif
 		TAC_REG = 0x04U;
-		//Instead of calling add_TIM timer_isr_wrapper is used because it can be interrupted. This disables timer interrupts but fixes a random
+		//Instead of calling add_TIM add_low_priority_TIM is used because it can be interrupted. This fixes a random
 		//bug hiding sprites under the window (some frames the call is delayed and you can see sprites flickering under the window)
-		//add_TIM(MusicUpdate); 
+		add_low_priority_TIM(MusicCallback); 
 		                          
 		add_VBL(vbl_update);
 
