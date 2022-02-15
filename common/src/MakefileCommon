@@ -41,7 +41,7 @@ CFLAGS += -DFILE_NAME=$(basename $(<F)) -MMD
 
 #since I am placing my OAM mirror at the end of the ram (0xDF00-0xDFFF) I need to move the stack to 0xDEFF
 LNAMES=-g _shadow_OAM=0xC000 -g .STACK=0xDEFF -g .refresh_OAM=0xFF80 -b _DATA=0xc0a0 -b _CODE=0x0200
-LFLAGS=-n -m -j -w -i -k $(GBDK_HOME)/lib/small/asxxxx/gbz80/ -l gbz80.lib -k $(GBDK_HOME)/lib/small/asxxxx/gb/ -l gb.lib -k $(OBJDIR_ZGB)/ -l zgb.lib $(LNAMES)
+LFLAGS=-n -m -j -w -i -k $(GBDK_HOME)/lib/small/asxxxx/gbz80/ -l gbz80.lib -k $(GBDK_HOME)/lib/small/asxxxx/gb/ -l gb.lib -k $(OBJDIR_ZGB)/ -l zgb.lib -k $(ZGB_PATH_UNIX)/lib/ -l hUGEDriver.lib -l gbt_player.lib $(LNAMES)
 
 ifneq ($(strip $(N_BANKS)),)
 	BINFLAGS += -yt 1 -yo $(N_BANKS)
@@ -207,7 +207,7 @@ $(OBJDIR)/%.o: %.c
 $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR) $(OBJDIR_ZGB)/zgb.lib $(OBJDIR_RES) $(OBJDIR_RES)/sprites $(BINDIR) $(OBJS)
 	@echo Linking
 	@$(BANKPACK) -ext=.rel -min=1 -yt1 $(OBJS) $(OBJS_ZGB)
-	@$(SDLDGB) $(LFLAGS) $(OBJDIR)/rom.ihx $(GBDK_HOME)/lib/small/asxxxx/gb/crt0.o $(RELS) $(ZGB_PATH_UNIX)/lib/hUGEDriver.obj.o
+	@$(SDLDGB) $(LFLAGS) $(OBJDIR)/rom.ihx $(GBDK_HOME)/lib/small/asxxxx/gb/crt0.o $(RELS)
 	@$(IHXCHECK) $(OBJDIR)/rom.ihx -e
 	@$(MAKEBIN) -Z $(BINFLAGS) $(OBJDIR)/rom.ihx $(OBJDIR)/rom.$(EXTENSION)
 	@$(ROMVIEW) $(OBJDIR)/rom.$(EXTENSION) 255
