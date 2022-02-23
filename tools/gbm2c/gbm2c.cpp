@@ -3,6 +3,12 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+#ifdef _WIN32
+#define FILE_SLASH '\\'
+#else
+#define FILE_SLASH '/'
+#endif
+
 typedef unsigned short WORD;
 typedef unsigned int LONG;
 typedef unsigned int INTEGER;
@@ -214,7 +220,7 @@ int main(int argc, char* argv[])
 	char export_file_name[256]; //For both .h and .c
 	char export_file[512];
 	ExtractFileName(map_export_settings.file_name, export_file_name, false); //For backwards compatibility the header will be taken from the export filename (and not argv[1])
-	sprintf(export_file, "%s/%s.h", argv[2], export_file_name);
+	sprintf(export_file, "%s\\%s.h", argv[2], export_file_name);
 	file = fopen(export_file, "w");
 	if(!file) {
 		printf("Error writing file");
@@ -276,8 +282,15 @@ int main(int argc, char* argv[])
 	}
 
 	char tile_file[256];
+
 	int tile_file_size = strchr(map.tile_file, '.') - map.tile_file;
-	strncpy(tile_file, map.tile_file, tile_file_size);
+	char* tile_file_start = map.tile_file;
+	char* last_slash = strrchr(map.tile_file, FILE_SLASH);
+	if (last_slash != nullptr) {
+		tile_file_size -= ((last_slash - map.tile_file) + 1);
+		tile_file_start = last_slash + 1;
+	}
+	strncpy(tile_file, tile_file_start, tile_file_size);
 	tile_file[tile_file_size] = '\0';
 	fprintf(file, "#include \"TilesInfo.h\"\n");
 	fprintf(file, "extern const void __bank_%s;\n", tile_file);
