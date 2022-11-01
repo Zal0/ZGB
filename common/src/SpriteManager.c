@@ -161,7 +161,7 @@ void SpriteManagerFlushRemove() {
 	sprite_manager_removal_check = 0;
 }
 
-void SetBank(UINT8 bank)
+void SetBank(UINT8 bank) OLDCALL
 {
 bank;
 __asm

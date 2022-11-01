@@ -63,7 +63,7 @@ const struct TilesInfo* tiles_0;
 
 extern UINT8 vbl_count;
 UINT8 current_vbl_count;
-void SetTile(UINT16 r, UINT8 t) {
+void SetTile(UINT16 r, UINT8 t) OLDCALL{
 	r; t;
 	//while((STAT_REG & 0x2) != 0);
 	//*(__REG)(r) = t;
@@ -135,7 +135,6 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	#endif
 }
 
-int memcmp(const char *s1, const char *s2, int n);
 extern UWORD ZGB_Fading_BPal[32];
 UINT16 ScrollSetTiles(UINT8 first_tile, UINT8 tiles_bank, const struct TilesInfo* tiles) {
 	UINT8 i;

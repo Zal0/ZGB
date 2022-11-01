@@ -1,7 +1,7 @@
 XL3
 H 2 areas 9 global symbols
 M hUGEDriver_obj
-O -mgbz80
+O -msm83
 A _CODE size 799 flags 0 addr 0
 S hUGE_init Def00003A
 S hUGE_mute_channel Def000020

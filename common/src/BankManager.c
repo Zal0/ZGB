@@ -4,7 +4,7 @@ DECLARE_STACK(bank_stack, N_PUSH_BANKS);
 
 void empty(void) __nonbanked {}
 
-void PushBank(UINT8 b) {
+void PushBank(UINT8 b) OLDCALL{
 b;
 __asm
 	//bank_stack ++;
@@ -25,7 +25,7 @@ __asm
 __endasm;
 }
 
-void PopBank() {
+void PopBank() OLDCALL{
 __asm
 //_current_bank = *(bank_stack);
 	ld   hl, #_bank_stack

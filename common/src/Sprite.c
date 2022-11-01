@@ -40,7 +40,7 @@ void InitSprite(Sprite* sprite, UINT8 sprite_type) {
 	POP_BANK;
 }
 
-void SetSpriteAnim(Sprite* sprite, UINT8* data, UINT8 speed) {
+void SetSpriteAnim(Sprite* sprite, const UINT8* data, UINT8 speed) {
 	if(sprite->anim_data != data) {
 		sprite->anim_data = data;
 		SetFrame(sprite, data[1]);
@@ -50,7 +50,7 @@ void SetSpriteAnim(Sprite* sprite, UINT8* data, UINT8 speed) {
 	}
 }
 
-void update_attr(uint8_t start, uint8_t count, uint8_t attr) __nonbanked __naked {
+void update_attr(uint8_t start, uint8_t count, uint8_t attr) __nonbanked __naked OLDCALL {
     start; count; attr;
 __asm
         ldhl sp, #4
