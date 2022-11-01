@@ -12,7 +12,7 @@ $(ZGB_PATH)\..\env\make-3.81-bin\bin\make BUILD_TYPE=$(Configuration)</NMakeReBu
 $(ZGB_PATH)\..\env\make-3.81-bin\bin\make clean BUILD_TYPE=$(Configuration)</NMakeCleanCommandLine>
     <NMakeIncludeSearchPath>$(ZGB_PATH)\..\env\gbdk\include;$(ZGB_PATH)\include;.\include;.\src;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <OutDir>$(SolutionDir)bin\</OutDir>
-    <NMakePreprocessorDefinitions>__PORT_gbz80;ASM_Z80_TYPES_INCLUDE;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions>__PORT_sm83;ASM_Z80_TYPES_INCLUDE;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeOutput>$(Configuration)\rom.gb</NMakeOutput>
   </PropertyGroup>
   <ItemDefinitionGroup>
