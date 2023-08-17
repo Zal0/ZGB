@@ -89,7 +89,7 @@ __endasm;
 }
 
 void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
-	UINT8 replacement = *t;
+	UINT8 replacement;
 	UINT8 i;
 	Sprite* s = 0;
 	UINT8 type = 255u;
@@ -100,6 +100,7 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	if((UINT16)x >= scroll_tiles_w || (UINT16)y >= scroll_tiles_h) { //This also checks x < 0 || y < 0
 		replacement = 0;
 	} else {
+		replacement = *t;
 		type = GetTileReplacement(t, &replacement);
 		if(type != 255u) {
 			id = SPRITE_UNIQUE_ID(x, y);
