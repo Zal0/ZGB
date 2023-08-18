@@ -1,7 +1,7 @@
 #include "Music.h"
 
 #ifdef MUSIC_DRIVER_HUGE
-BYTE hUGE_paused = TRUE;
+BYTE hUGE_paused = 1;
 const hUGESong_t * hUGE_current_track;
 UBYTE hUGE_current_track_bank;
 
