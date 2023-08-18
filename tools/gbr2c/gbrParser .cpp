@@ -9,6 +9,15 @@
 namespace GbrParser
 {
 
+void Replace(char* path, char character, char replacement)
+{
+	for(; *path != '\0'; ++ path)
+	{
+		if(*path == ' ')
+			*path = '_';
+	}
+}
+
 int GetBank(char* str) {
 	char* bank_info = strstr(str, ".b");
 	if(bank_info) {
@@ -154,6 +163,7 @@ bool LoadGBR(const char* path, GBRInfo* info) {
 	if(strcmp(tile_export.label_name, "TileLabel") == 0 || strcmp(tile_export.label_name, "") == 0) { //Default value
 		ExtractFileName(path, tile_export.label_name, false); //Set path instead
 	}
+	Replace(tile_export.label_name, ' ', '_'); //Ensure the label_name doesn't contain any spaces
 
 	//Check tiles to export
 	if(tile_export.from == 0 && tile_export.up_to == 0) {

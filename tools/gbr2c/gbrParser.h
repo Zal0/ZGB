@@ -92,6 +92,7 @@ struct GBRInfo {
 	int num_palettes = 0;
 };
 
+void Replace(char* path, char character, char replacement);
 void ExtractFileName(const char* path, char* file_name, bool include_bank);
 bool LoadGBR(const char* path, GBRInfo* info);
 

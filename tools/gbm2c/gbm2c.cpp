@@ -83,36 +83,10 @@ struct MapExportSettings {
 	WORD tile_offset;
 };
 
-int GetBank(char* str) {
-	char* bank_info = strstr(str, ".b");
-	if(bank_info) {
-		return atoi(bank_info + 2);
-	}
-	return 0;
-}
-
-void ExtractFileName(char* path, char* file_name, bool include_bank) {
-	char* slash_pos = strrchr(path, '/');
-	if(slash_pos == 0)
-		slash_pos = strrchr(path, '\\');
-	if(slash_pos != 0)
-		slash_pos ++;
-	else
-		slash_pos = path;
-
-	char* dot_pos = include_bank ? strrchr(slash_pos, '.') : strchr(slash_pos, '.');
-	if(dot_pos == 0) {
- 		strcpy(file_name, slash_pos);
-	} else {
-		strncpy(file_name, slash_pos, dot_pos - slash_pos);
-		file_name[dot_pos - slash_pos] = '\0';
-	}
-}
-
 void GetGBRPath(char* gbm_path, char* tile_file, char* gbr_path)
 {
 	char tile_file_name[256];
-	ExtractFileName(tile_file, tile_file_name, false);
+	GbrParser::ExtractFileName(tile_file, tile_file_name, false);
 
 	char* slash_pos = strrchr(gbm_path, '/');
 	if(slash_pos == 0)
@@ -235,16 +209,17 @@ int main(int argc, char* argv[])
 
 	//Adjust export file name and label name
 	if(strcmp(map_export_settings.file_name, "") == 0) { //Default value
-		ExtractFileName(argv[1], map_export_settings.file_name, false);  //Set argv[1] instead
+		GbrParser::ExtractFileName(argv[1], map_export_settings.file_name, false);  //Set argv[1] instead
 	}
 
 	if(strcmp(map_export_settings.label_name, "") == 0) { //Default value
-		ExtractFileName(argv[1], map_export_settings.label_name, false);  //Set argv[1] instead
+		GbrParser::ExtractFileName(argv[1], map_export_settings.label_name, false);  //Set argv[1] instead
 	}
+	GbrParser::Replace(map_export_settings.label_name, ' ', '_'); //Ensure the label_name doesn't contain any spaces
 
 	char export_file_name[256]; //For both .h and .c
 	char export_file[512];
-	ExtractFileName(map_export_settings.file_name, export_file_name, false); //For backwards compatibility the header will be taken from the export filename (and not argv[1])
+	GbrParser::ExtractFileName(map_export_settings.file_name, export_file_name, false); //For backwards compatibility the header will be taken from the export filename (and not argv[1])
 	sprintf(export_file, "%s/%s.h", argv[2], export_file_name);
 	file = fopen(export_file, "w");
 	if(!file) {
@@ -266,7 +241,7 @@ int main(int argc, char* argv[])
 
 	fclose(file);
 
-	ExtractFileName(argv[1], export_file_name, true);
+	GbrParser::ExtractFileName(argv[1], export_file_name, true);
 	sprintf(export_file, "%s/%s.gbm.c", argv[2], export_file_name);
 	file = fopen(export_file, "w");
 	if(!file) {
@@ -307,9 +282,7 @@ int main(int argc, char* argv[])
 	}
 
 	char tile_file[256];
-	int tile_file_size = strchr(map.tile_file, '.') - map.tile_file;
-	strncpy(tile_file, map.tile_file, tile_file_size);
-	tile_file[tile_file_size] = '\0';
+	GbrParser::ExtractFileName(map.tile_file, tile_file, false);
 	fprintf(file, "#include \"TilesInfo.h\"\n");
 	fprintf(file, "extern const void __bank_%s;\n", tile_file);
 	fprintf(file, "extern const struct TilesInfo %s;\n", tile_file);
