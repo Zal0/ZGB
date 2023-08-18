@@ -15,7 +15,7 @@ void MusicCallback() __nonbanked;
 	extern BYTE hUGE_paused;
 	void hUGE_mute(UBYTE mute);
 
-	#define INIT_MUSIC hUGE_init(0)
+	#define INIT_MUSIC
 	#define DECLARE_MUSIC(SONG) extern const void __bank_ ## SONG ## _uge; extern const hUGESong_t SONG ## _uge
 	#define PlayMusic(SONG, LOOP) __PlayMusic(&SONG ## _uge, (uint8_t)&__bank_ ## SONG ## _uge, 0)
 	#define StopMusic hUGE_paused = 1; hUGE_mute(HT_CH_MUTE); last_music = 0
