@@ -192,16 +192,18 @@ attr;
 		set_win_tile_xy(x, y, data);
 
 #ifdef CGB
-	VBK_REG = 1;
+	if (_cpu == CGB_TYPE) {
+		VBK_REG = 1;
 
-	UINT8 c = attr ? *attr : scroll_tile_info[data];
-	c += offsetts[1];
+		UINT8 c = attr ? *attr : scroll_tile_info[data];
+		c += offsetts[1];
 
-	if(bg_or_win == 0)
-		set_bkg_tile_xy(x, y, c);
-	else
-		set_win_tile_xy(x, y, c);
-	VBK_REG = 0;
+		if (bg_or_win == 0)
+			set_bkg_tile_xy(x, y, c);
+		else
+			set_win_tile_xy(x, y, c);
+		VBK_REG = 0;
+	}
 #endif
 }
 
