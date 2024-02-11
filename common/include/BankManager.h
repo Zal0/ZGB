@@ -13,6 +13,6 @@ void PopBank() OLDCALL;
 
 #define PUSH_BANK(N) PushBank(N);
 #define POP_BANK PopBank();
-#define REFRESH_BANK SWITCH_ROM_MBC1(_current_bank)
+#define REFRESH_BANK SWITCH_ROM(StackPeek(bank_stack))
 
 #endif
