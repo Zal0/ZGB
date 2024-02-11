@@ -6,13 +6,13 @@ const hUGESong_t * hUGE_current_track;
 UBYTE hUGE_current_track_bank;
 
 void MusicCallback() __nonbanked {
-    if (hUGE_paused) 
+    if (hUGE_paused)
 			return;
 
     UBYTE __save = _current_bank;
-    SWITCH_ROM_MBC1(hUGE_current_track_bank);
+    SWITCH_ROM(hUGE_current_track_bank);
     hUGE_dosound();
-    SWITCH_ROM_MBC1(__save);
+    SWITCH_ROM(__save);
 }
 
 void hUGE_mute(UBYTE mute) {
@@ -29,8 +29,10 @@ void hUGE_mute(UBYTE mute) {
 void MusicCallback() __nonbanked {
 	if(last_music)
 	{
+		UBYTE __save = _current_bank;
+		SWITCH_ROM(hUGE_current_track_bank);
 		gbt_update();
-		REFRESH_BANK;
+	    SWITCH_ROM(__save);
 	}
 }
 #endif
@@ -41,23 +43,23 @@ void __PlayMusic(void* music, unsigned char bank, unsigned char loop) {
 loop;
 	if(music != last_music) {
 		last_music = music;
+		UBYTE __save = _current_bank;
+		SWITCH_ROM(hUGE_current_track_bank);
 #ifdef MUSIC_DRIVER_GBT
 		gbt_play(music, bank, 7);
 		gbt_loop(loop);
-		REFRESH_BANK;
 #endif
 #ifdef MUSIC_DRIVER_HUGE
+		hUGE_paused = 1;
+
 		NR52_REG = 0x80;
 		NR51_REG = 0xFF;
 		NR50_REG = 0x77;
 
-		hUGE_paused = 1;
-    hUGE_current_track = music; hUGE_current_track_bank = bank;
-    UBYTE __save = _current_bank;
-    SWITCH_ROM_MBC1(hUGE_current_track_bank);
-    hUGE_init(hUGE_current_track);
-    SWITCH_ROM_MBC1(__save);
+		hUGE_current_track = music; hUGE_current_track_bank = bank;
+		hUGE_init(hUGE_current_track);
 		hUGE_paused = 0;
 #endif
+	    SWITCH_ROM(__save);
 	}
 }
