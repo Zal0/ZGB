@@ -37,7 +37,7 @@ void SpriteManagerReset() {
 	StackClear(sprite_manager_sprites_pool);
 	for(i = 0; i != N_SPRITE_MANAGER_SPRITES; ++i) {
 		sprite_manager_sprites[i] = (Sprite*)&sprite_manager_sprites_mem[sizeof(Sprite) * (UINT16)i];
-		StackPush(sprite_manager_sprites_pool, i);		
+		StackPush(sprite_manager_sprites_pool, i);
 	}
 	ClearOAMs();
 
@@ -57,7 +57,7 @@ void SpriteManagerLoad(UINT8 sprite_type) {
 		return;
 
 	PUSH_BANK(spriteDataBanks[sprite_type])
-	
+
 	const struct MetaSpriteInfo* data = spriteDatas[sprite_type];
 	UINT8 n_tiles = data->num_tiles;
 	UINT8 n_pals = data->num_palettes;
@@ -98,7 +98,7 @@ Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y) {
 	UINT16 spriteIdxTmp; //Yes, another bug in the compiler forced me to change the type here to UINT16 instead of UINT8
 
 	SpriteManagerLoad(sprite_type);
-	
+
 	sprite_idx = StackPop(sprite_manager_sprites_pool);
 	sprite = sprite_manager_sprites[sprite_idx];
 	sprite->type = sprite_type;
@@ -152,7 +152,7 @@ void SpriteManagerFlushRemove() {
 		if(THIS->marked_for_removal) {
 			StackPush(sprite_manager_sprites_pool, sprite_manager_updatables[THIS_IDX + 1u]);
 			VectorRemovePos(sprite_manager_updatables, THIS_IDX);
-				
+
 			PUSH_BANK(spriteBanks[THIS->type]);
 				spriteDestroyFuncs[THIS->type]();
 			POP_BANK;
@@ -161,29 +161,17 @@ void SpriteManagerFlushRemove() {
 	sprite_manager_removal_check = 0;
 }
 
-void SetBank(UINT8 bank) OLDCALL
-{
-bank;
-__asm
-	ldhl	sp,	#2
-	ld	a, (hl)
-//*bank_stack = bank;
-	ld  (#__current_bank), a
-//SWITCH_ROM_MBC1(bank);
-	ld (#0x2000), a
-__endasm;
-}
-
 extern UINT8* oam;
 extern UINT8* oam0;
 extern UINT8* oam1;
 UINT8 THIS_IDX = 0;
 Sprite* THIS = 0;
 void SpriteManagerUpdate() {
+	UBYTE __save = _current_bank;
 	SPRITEMANAGER_ITERATE(THIS_IDX, THIS) {
 		if(!THIS->marked_for_removal) {
 			//No need to call push and pop here, just change the current bank
-			SetBank(spriteBanks[THIS->type]);
+			SWITCH_ROM(spriteBanks[THIS->type]);
 
 			spriteUpdateFuncs[THIS->type]();
 
@@ -199,4 +187,5 @@ void SpriteManagerUpdate() {
 	if(sprite_manager_removal_check) {
 		SpriteManagerFlushRemove();
 	}
+	SWITCH_ROM(__save);
 }
