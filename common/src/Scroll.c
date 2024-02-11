@@ -63,30 +63,6 @@ const struct TilesInfo* tiles_0;
 
 extern UINT8 vbl_count;
 UINT8 current_vbl_count;
-void SetTile(UINT16 r, UINT8 t) OLDCALL{
-	r; t;
-	//while((STAT_REG & 0x2) != 0);
-	//*(__REG)(r) = t;
-__asm
-;bc = r, hl = t
-	ldhl	sp,#2
-	ld	c,(hl)
-	inc	hl
-	ld	b,(hl)
-	ldhl	sp,#4
-
-;while 0xff41 & 02 != 0 (cannot write)
-1$:
-	ld	a,(#_STAT_REG)
-	and	a, #0x02
-	jr	NZ,1$
-
-;Write tile
-	ld	a,(hl)
-	ld	(bc),a
-	ret
-__endasm;
-}
 
 void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	UINT8 replacement;
@@ -121,8 +97,7 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	}
 
 	id = 0x9800 + (0x1F & (x + scroll_offset_x)) + ((0x1F & (y + scroll_offset_y)) << 5);
-	SetTile(id, replacement);
-	
+	set_vram_byte((uint8_t *)id, replacement);
 
 	#ifdef CGB
 		if (_cpu == CGB_TYPE) {
@@ -130,7 +105,7 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 			if(!scroll_cmap) {
 				c = &scroll_tile_info[replacement];
 			}
-			set_bkg_tile_xy(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), *c);
+			set_vram_byte((uint8_t *)id, *c);
 			VBK_REG = 0;
 		}
 	#endif
@@ -222,7 +197,7 @@ UINT16 LoadMap(UINT8 bg_or_win, UINT8 x, UINT8 y, UINT8 map_bank, struct MapInfo
 	for(UINT8 j = 0; j < map->height; ++j) {
 		for(UINT8 i = 0; i < map->width; ++i) {
 			UpdateMapTile(bg_or_win, x + i, y + j, map_offset, *data, attrs);
-			
+
 			++ data;
 			if(attrs)
 				++ attrs;
@@ -230,7 +205,7 @@ UINT16 LoadMap(UINT8 bg_or_win, UINT8 x, UINT8 y, UINT8 map_bank, struct MapInfo
 	}
 
 	POP_BANK;
-	
+
 	//Return the offset so the user can pass it as parameter to UpdateMapTile
 	return map_offset;
 }
@@ -240,13 +215,13 @@ UINT8 clamp_enabled = 1;
 void ClampScrollLimits() {
 	if(clamp_enabled) {
 		if(U_LESS_THAN(scroll_x, 0u)) {
-			scroll_x = 0u;		
+			scroll_x = 0u;
 		}
 		if(scroll_x > (scroll_w - SCREENWIDTH)) {
 			scroll_x = (scroll_w - SCREENWIDTH);
 		}
 		if(U_LESS_THAN(scroll_y, 0u)) {
-			scroll_y = 0u;		
+			scroll_y = 0u;
 		}
 		if(scroll_y > (scroll_h - SCREENHEIGHT + scroll_h_border)) {
 			scroll_y = (scroll_h - SCREENHEIGHT + scroll_h_border);
@@ -284,7 +259,7 @@ void InitScroll(UINT8 map_bank, const struct MapInfo* map, const UINT8* coll_lis
 		tiles_bank = map->tiles_bank;
 		tiles = map->tiles;
 	POP_BANK;
-	
+
 	InitScrollWithTiles(map_bank, map, tiles_bank, tiles, coll_list, coll_list_down);
 }
 
@@ -323,7 +298,7 @@ void InitScrollWithTiles(UINT8 map_bank, const struct MapInfo* map, UINT8 tiles_
 
 void ScrollUpdateRowR() {
 	UINT8 i = 0u;
-	
+
 	for(i = 0u; i != 5 && pending_w_i != 0; ++i, -- pending_w_i)  {
 		#ifdef CGB
 		UPDATE_TILE(pending_w_x ++, pending_w_y, pending_w_map ++, pending_w_cmap++);
@@ -403,7 +378,7 @@ void ScrollUpdateColumn(INT16 x, INT16 y) {
 	#ifdef CGB
 	unsigned char* cmap = &scroll_cmap[scroll_tiles_w * y + x];
 	#endif
-	
+
 	PUSH_BANK(scroll_bank);
 	for(i = 0u; i != SCREEN_TILE_REFRES_H; ++i) {
 		#ifdef CGB
@@ -434,7 +409,7 @@ void RefreshScroll() {
 
 void MoveScroll(INT16 x, INT16 y) {
 	INT16 current_column, new_column, current_row, new_row;
-	
+
 	PUSH_BANK(scroll_bank);
 
 	current_column = scroll_x >> 3;
@@ -454,7 +429,7 @@ void MoveScroll(INT16 x, INT16 y) {
 			ScrollUpdateColumnWithDelay(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP);
 		}
 	}
-	
+
 	if(current_row != new_row) {
 		if(new_row > current_row) {
 			ScrollUpdateRowWithDelay(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP + SCREEN_TILE_REFRES_H - 1);
