@@ -7,7 +7,7 @@ extern void* last_music;
 extern UINT8 stop_music_on_new_state;
 
 void __PlayMusic(void* music, unsigned char bank, unsigned char loop);
-void MusicCallback() __nonbanked;
+void MusicCallback() NONBANKED;
 
 #ifdef MUSIC_DRIVER_HUGE
 	#include "hUGEDriver.h"
