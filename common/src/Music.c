@@ -30,7 +30,6 @@ void MusicCallback() NONBANKED {
 	if(last_music)
 	{
 		UBYTE __save = _current_bank;
-		SWITCH_ROM(hUGE_current_track_bank);
 		gbt_update();
 		SWITCH_ROM(__save);
 	}
@@ -44,7 +43,6 @@ loop;
 	if(music != last_music) {
 		last_music = music;
 		UBYTE __save = _current_bank;
-		SWITCH_ROM(hUGE_current_track_bank);
 #ifdef MUSIC_DRIVER_GBT
 		gbt_play(music, bank, 7);
 		gbt_loop(loop);
@@ -57,6 +55,7 @@ loop;
 		NR50_REG = 0x77;
 
 		hUGE_current_track = music; hUGE_current_track_bank = bank;
+		SWITCH_ROM(hUGE_current_track_bank);
 		hUGE_init(hUGE_current_track);
 		hUGE_paused = 0;
 #endif
