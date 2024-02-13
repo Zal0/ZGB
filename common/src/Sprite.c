@@ -91,9 +91,6 @@ void DrawSprite() {
 	UINT16 screen_x;
 	UINT16 screen_y;
 	UINT8 tmp;
-#ifdef CGB
-	UINT8 i;
-#endif
 
 	if(THIS->anim_data) {	
 		THIS->anim_accum_ticks += THIS->anim_speed << delta_time;
