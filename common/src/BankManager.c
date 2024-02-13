@@ -7,5 +7,5 @@ void PushBank(UINT8 b) NONBANKED {
 }
 
 void PopBank() NONBANKED {
-	SWITCH_ROM(StackPop(bank_stack));
+	SWITCH_ROM(StackPopPrev(bank_stack));
 }
