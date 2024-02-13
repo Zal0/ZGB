@@ -42,7 +42,7 @@ void InitSprite(Sprite* sprite, UINT8 sprite_type) {
 
 void SetSpriteAnim(Sprite* sprite, const UINT8* data, UINT8 speed) {
 	if(sprite->anim_data != data) {
-		sprite->anim_data = data;
+		sprite->anim_data = (UINT8* )data;
 		SetFrame(sprite, data[1]);
 		sprite->anim_frame = 0;
 		sprite->anim_accum_ticks = 0;
