@@ -1,8 +1,7 @@
 #include "SGB.h"
 
-#include <gb/gb.h>
+#include <gbdk/platform.h>
 #include <stdint.h>
-#include <gb/sgb.h>
 #include <string.h>
 #include "BankManager.h"
 

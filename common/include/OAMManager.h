@@ -1,6 +1,6 @@
 #ifndef OAMMANAGER_H
 #define OAMMANAGER_H
-#include <gb/gb.h> 
+#include <gbdk/platform.h>
 #include "MetaSpriteInfo.h"
 
 struct OAMData {

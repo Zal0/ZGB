@@ -1,7 +1,7 @@
 #ifndef STACK_H
 #define STACK_H
 
-#include <gb/gb.h>
+#include <gbdk/platform.h>
 
 #define DECLARE_STACK(NAME, MAX_ELEMS) UINT8 NAME##STACK[MAX_ELEMS]; UINT8* NAME = NAME##STACK - 1
 #define DECLARE_STAKCK_AND_PUSH(NAME, MAX_ELEMS, ELEM) UINT8 NAME##STACK[MAX_ELEMS] = {ELEM}; UINT8* NAME = NAME##STACK

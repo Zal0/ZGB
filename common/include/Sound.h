@@ -1,7 +1,7 @@
 #ifndef SOUND_H
 #define SOUND_H
 
-#include <gb/gb.h>
+#include <gbdk/platform.h>
 
 typedef enum {
 	CHANNEL_1,

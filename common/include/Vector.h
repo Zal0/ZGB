@@ -1,7 +1,7 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#include <gb/gb.h>
+#include <gbdk/platform.h>
 
 #define DECLARE_VECTOR(NAME, NUM_ELEMS) UINT8 NAME[NUM_ELEMS + 1] = {0}
 #define PRINT_VECTOR(VECTOR) Printf("N:%u(", (UINT16) VECTOR[0]); \

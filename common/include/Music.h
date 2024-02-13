@@ -1,7 +1,7 @@
 #ifndef MUSIC_H
 #define MUSIC_H
 
-#include <gb/gb.h>
+#include <gbdk/platform.h>
 
 extern void* last_music;
 extern UINT8 stop_music_on_new_state;

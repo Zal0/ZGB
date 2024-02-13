@@ -2,7 +2,7 @@
 #define BANK_MANAGER_H
 
 #include "Stack.h"
-#include <gb/gb.h>
+#include <gbdk/platform.h>
 
 #define N_PUSH_BANKS 10
 

@@ -1,7 +1,7 @@
 #ifndef SCROLL_H
 #define SCROLL_H
 
-#include <gb/gb.h>
+#include <gbdk/platform.h>
 #include "TilesInfo.h"
 #include "MapInfo.h"
 #include "Sprite.h"

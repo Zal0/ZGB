@@ -1,7 +1,7 @@
 #ifndef ZCONSOLE_H
 #define ZCONSOLE_H
 
-#include <gb/gb.h> 
+#include <gbdk/platform.h>
 
 extern UINT8 last_tile_loaded;
 #define INIT_FONT(FONT, TARGET) print_target = TARGET; font_offset = ScrollSetTiles(last_tile_loaded, BANK(FONT), &FONT)

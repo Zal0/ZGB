@@ -1,7 +1,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include <gb/gb.h>
+#include <gbdk/platform.h>
 
 #include "Sprite.h"
 #include "TilesInfo.h"

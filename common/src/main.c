@@ -1,6 +1,6 @@
 #include "main.h"
 
-#include <gb/gb.h> 
+#include <gbdk/platform.h>
 #include <string.h>
 
 #include "OAMManager.h"
@@ -11,7 +11,6 @@
 #include "BankManager.h"
 #include "Fade.h"
 #include "Palette.h"
-#include <gb/cgb.h>
 
 #ifdef USE_SAVEGAME
 	#include "savegame.h"

@@ -9,7 +9,7 @@
 #ifndef _GBT_PLAYER_
 #define _GBT_PLAYER_
 
-#include <gb/gb.h>
+#include <gbdk/platform.h>
 
 // Plays the song pointed by data (pointer array to patterns) in given bank at
 // given initial speed.
