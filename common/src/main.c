@@ -1,7 +1,6 @@
-#include "main.h"
-
-#include <gbdk/platform.h>
 #include <string.h>
+
+#include "main.h"
 
 #include "OAMManager.h"
 #include "Scroll.h"

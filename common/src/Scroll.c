@@ -1,10 +1,11 @@
+#include <string.h>
+
 #include "Scroll.h"
 #include "Sprite.h"
 #include "SpriteManager.h"
 #include "BankManager.h"
 #include "Math.h"
 #include "main.h"
-#include <string.h>
 
 
 #define SCREEN_TILES_W       20 // 160 >> 3 = 20

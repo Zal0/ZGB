@@ -1,7 +1,7 @@
 #ifndef BANK_MANAGER_H
 #define BANK_MANAGER_H
 
-#include <gbdk/platfoorm.h>
+#include <gbdk/platform.h>
 
 #include "Stack.h"
 

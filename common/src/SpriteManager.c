@@ -1,9 +1,10 @@
-#include "SpriteManager.h"
+#include <string.h>
 
+#include "main.h"
+
+#include "SpriteManager.h"
 #include "Scroll.h"
 #include "BankManager.h"
-#include <string.h>
-#include "main.h"
 #include "ZGBMain.h"
 
 //Pool

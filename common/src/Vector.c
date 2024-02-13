@@ -1,6 +1,6 @@
-#include "Vector.h"
-
 #include <string.h>
+
+#include "Vector.h"
 
 void VectorAdd(UINT8* v, UINT8 elem) {
 	v[++ v[0]] = elem;

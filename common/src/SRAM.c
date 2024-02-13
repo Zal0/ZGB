@@ -1,7 +1,8 @@
 #pragma bank 1
 
-#include "SRAM.h"
 #include <string.h>
+
+#include "SRAM.h"
 
 #define MAGIC "ZGB-SAVE"
 #define MAGIC_LENGTH 9

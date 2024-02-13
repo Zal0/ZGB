@@ -1,9 +1,9 @@
+#include <stdarg.h>
+#include <stdlib.h>
+
 #include "Print.h"
 #include "BankManager.h"
 #include "Scroll.h"
-
-#include <stdarg.h>
-#include <stdlib.h>
 
 UINT8 print_x = 0;
 UINT8 print_y = 0;

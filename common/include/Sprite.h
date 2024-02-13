@@ -1,7 +1,7 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
-#include <gbdk/platfoorm.h>
+#include <gbdk/platform.h>
 
 #include "OAMManager.h"
 #include "MetaSpriteInfo.h"

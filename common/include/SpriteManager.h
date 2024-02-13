@@ -1,7 +1,7 @@
 #ifndef SPRITE_MANAGER_H
 #define SPRITE_MANAGER_H
 
-#include <gbdk/platfoorm.h>
+#include <gbdk/platform.h>
 
 #include "Vector.h"
 #include "Stack.h"

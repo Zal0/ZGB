@@ -1,7 +1,9 @@
+#include <string.h>
+
+#include "main.h"
+
 #include "OAMManager.h"
 #include "BankManager.h"
-#include "main.h"
-#include <string.h>
 #include "Scroll.h"
 
 //Ram addresses: c000 - dfff

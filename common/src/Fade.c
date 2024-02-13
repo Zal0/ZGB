@@ -1,7 +1,6 @@
 #pragma bank 1
-#include "Fade.h"
 
-#include <gbdk/platform.h>
+#include "Fade.h"
 #include "Palette.h"
 #include "Math.h"
 

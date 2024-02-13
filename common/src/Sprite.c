@@ -1,9 +1,10 @@
+#include "main.h"
+
 #include "Sprite.h"
 #include "Scroll.h"
 #include "BankManager.h"
 #include "SpriteManager.h"
 #include "MetaSpriteInfo.h"
-#include "main.h"
 
 void SetFrame(Sprite* sprite, UINT8 frame)
 {

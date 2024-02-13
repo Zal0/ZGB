@@ -1,4 +1,5 @@
 #pragma bank 1
+
 #include "ZGBMain.h"
 
 #define _STATE(STATE_ID) DECLARE_STATE(STATE_ID); extern const void __bank_##STATE_ID;

@@ -1,6 +1,6 @@
-#include "Sound.h"
-
 #include <stdarg.h>
+
+#include "Sound.h"
 #include "Music.h"
 
 typedef volatile UINT8 * REG_PTR;
