@@ -1,7 +1,7 @@
 #ifndef MATH_H
 #define MATH_H
 
-#include "asm/types.h"
+#include <gbdk/platform.h>
 
 INT16 DespRight(INT16 a, INT16 b);
 

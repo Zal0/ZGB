@@ -1,7 +1,7 @@
 #ifndef KEYS_H
 #define KEYS_H
 
-#include "asm/types.h"
+#include <gbdk/platform.h>
 
 extern UBYTE previous_keys;
 extern UBYTE keys;
