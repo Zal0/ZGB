@@ -3,8 +3,6 @@
 
 #include <gbdk/platform.h>
 
-INT16 DespRight(INT16 a, INT16 b);
-
 #define U_LESS_THAN(A, B) ((A) - (B) & 0x8000u)
 
 #define DISTANCE(A, B) (U_LESS_THAN(A, B) ? (B - A) : (A - B))
@@ -16,5 +14,9 @@ INT16 DespRight(INT16 a, INT16 b);
 #define SET_BIT_MASK(N, MASK) N |= MASK
 #define UNSET_BIT_MASK(N, MASK) N &= ~MASK
 #define GET_BIT_MASK(N, MASK) (N & MASK)
+
+inline INT16 DespRight(INT16 a, UINT8 b) {
+	return a >> b;
+}
 
 #endif
