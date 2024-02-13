@@ -33,7 +33,9 @@ void FadeDMG(UINT8 fadeout) {
 			c = &colors[j << 2];
 			*pals[j] = PAL_DEF(FadeInOp(c[0], p), FadeInOp(c[1], p), FadeInOp(c[2], p), FadeInOp(c[3], p));
 		}
-		delay(50);
+		wait_vbl_done();
+		wait_vbl_done();
+		wait_vbl_done();
 	}
 }
 
@@ -61,7 +63,7 @@ void FadeStepColor(UINT8 i) {
 		set_bkg_palette(pal, 1, palette);
 		set_sprite_palette(pal, 1, palette_s);
 	}
-	delay(20);
+	wait_vbl_done();
 }
 
 void FadeInCOLOR() {
