@@ -16,7 +16,6 @@
 
 #define StackPush(STACK, ELEM) (*(++STACK) = ELEM)
 #define StackPop(STACK) (*(STACK--))
-#define StackPopPrev(STACK) (*(--STACK))
 #define StackClear(NAME) NAME = NAME##STACK - 1
 
 

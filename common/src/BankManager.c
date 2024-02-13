@@ -3,9 +3,11 @@
 DECLARE_STACK(bank_stack, N_PUSH_BANKS);
 
 void PushBank(UINT8 b) NONBANKED {
-	SWITCH_ROM(StackPush(bank_stack, b));
+	StackPush(bank_stack, CURRENT_BANK);
+	SWITCH_ROM(b);
 }
 
 void PopBank() NONBANKED {
-	SWITCH_ROM(StackPopPrev(bank_stack));
+	UINT8 b = StackPop(bank_stack); 
+	SWITCH_ROM(b);
 }

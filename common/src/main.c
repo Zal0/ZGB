@@ -110,7 +110,6 @@ void main() {
 #endif
 	INIT_MUSIC;
 
-	PUSH_BANK(1);
 	InitStates();
 	InitSprites();
 	POP_BANK;
