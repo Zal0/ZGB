@@ -2,6 +2,7 @@
 #define SCROLL_H
 
 #include <gbdk/platform.h>
+
 #include "TilesInfo.h"
 #include "MapInfo.h"
 #include "Sprite.h"

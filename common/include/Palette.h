@@ -1,6 +1,8 @@
 #ifndef PALETTE_H
 #define PALETTE_H
 
+#include <gbdk/platform.h>
+
 //For DMG
 #define PAL_DEF(C3, C2, C1, C0) (UINT8)((C0 << 4 << 2) | (C1 << 4) | (C2 << 2) | C3)
 

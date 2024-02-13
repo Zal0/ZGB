@@ -1,8 +1,9 @@
 #ifndef BANK_MANAGER_H
 #define BANK_MANAGER_H
 
+#include <gbdk/platfoorm.h>
+
 #include "Stack.h"
-#include <gbdk/platform.h>
 
 #define N_PUSH_BANKS 10
 

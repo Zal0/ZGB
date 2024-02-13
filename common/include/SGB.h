@@ -2,6 +2,7 @@
 #define SGB_H
 
 #include <gbdk/platform.h>
+
 #include "MapInfo.h"
 
 #define LOAD_SGB_BORDER(MAP) LoadSGBBorder(BANK(MAP), &MAP)
