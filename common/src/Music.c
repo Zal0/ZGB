@@ -9,7 +9,7 @@ void MusicCallback() NONBANKED {
 	if (hUGE_paused)
 			return;
 
-	UBYTE __save = _current_bank;
+	UBYTE __save = CURRENT_BANK;
 	SWITCH_ROM(hUGE_current_track_bank);
 	hUGE_dosound();
 	SWITCH_ROM(__save);
@@ -29,7 +29,7 @@ void hUGE_mute(UBYTE mute) {
 void MusicCallback() NONBANKED {
 	if(last_music)
 	{
-		UBYTE __save = _current_bank;
+		UBYTE __save = CURRENT_BANK;
 		gbt_update();
 		SWITCH_ROM(__save);
 	}
@@ -42,7 +42,7 @@ void __PlayMusic(void* music, unsigned char bank, unsigned char loop) {
 loop;
 	if(music != last_music) {
 		last_music = music;
-		UBYTE __save = _current_bank;
+		UBYTE __save = CURRENT_BANK;
 #ifdef MUSIC_DRIVER_GBT
 		gbt_play(music, bank, 7);
 		gbt_loop(loop);

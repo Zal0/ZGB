@@ -83,7 +83,7 @@ void SpriteManagerLoad(UINT8 sprite_type) {
 	spritePalsOffset[sprite_type] = i;
 	if(i == last_sprite_pal_loaded)
 	{
-		SetPalette(SPRITES_PALETTE, last_sprite_pal_loaded, n_pals, data->palettes, _current_bank);
+		SetPalette(SPRITES_PALETTE, last_sprite_pal_loaded, n_pals, data->palettes, CURRENT_BANK);
 		last_sprite_pal_loaded += n_pals;
 	}
 #endif
@@ -167,7 +167,7 @@ extern UINT8* oam1;
 UINT8 THIS_IDX = 0;
 Sprite* THIS = 0;
 void SpriteManagerUpdate() {
-	UBYTE __save = _current_bank;
+	UBYTE __save = CURRENT_BANK;
 	SPRITEMANAGER_ITERATE(THIS_IDX, THIS) {
 		if(!THIS->marked_for_removal) {
 			//No need to call push and pop here, just change the current bank
