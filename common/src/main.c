@@ -54,14 +54,15 @@ void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *
 		return; //Adding more palettes than supported
 
 	UWORD* pal_ptr = (t == BG_PALETTE) ? ZGB_Fading_BPal : ZGB_Fading_SPal;
-	PUSH_BANK(bank);
+	UINT8 __save = CURRENT_BANK;
+	SWITCH_ROM(bank);
 	if(t == BG_PALETTE) {
 		set_bkg_palette(first_palette, nb_palettes, rgb_data);
 	} else {
 		set_sprite_palette(first_palette, nb_palettes, rgb_data);
 	}
 	memcpy(&pal_ptr[first_palette << 2], rgb_data, nb_palettes << 3);
-	POP_BANK;
+	SWITCH_ROM(__save);
 }
 #endif
 
@@ -94,6 +95,8 @@ extern UINT8 last_bg_pal_loaded;
 extern UINT8 last_tile_loaded;
 UINT16 default_palette[] = {RGB(31, 31, 31), RGB(20, 20, 20), RGB(10, 10, 10), RGB(0, 0, 0)};
 void main() {
+	static UINT8 __save; 
+
 	// this delay is required for PAL SNES SGB border commands to work
 	for (UINT8 i = 4; i != 0; i--) {
 		wait_vbl_done();
@@ -107,11 +110,12 @@ void main() {
 	UINT8 i;
 	cpu_fast();
 #endif
+	__save = CURRENT_BANK;
 	INIT_MUSIC;
 
 	InitStates();
 	InitSprites();
-	POP_BANK;
+	SWITCH_ROM(__save);
 	
 	CRITICAL {
 #ifdef CGB
@@ -161,9 +165,10 @@ void main() {
 #endif
 		BGP_REG = OBP0_REG = OBP1_REG = PAL_DEF(0, 1, 2, 3);
 
-		PUSH_BANK(stateBanks[current_state]);
+                __save = CURRENT_BANK;
+		SWITCH_ROM(stateBanks[current_state]);
 			(startFuncs[current_state])();
-		POP_BANK;
+		SWITCH_ROM(__save);
 		scroll_x_vblank = scroll_x;
 		scroll_y_vblank = scroll_y;
 
@@ -181,9 +186,10 @@ void main() {
 			UPDATE_KEYS();
 			
 			SpriteManagerUpdate();
-			PUSH_BANK(stateBanks[current_state]);
+                        __save = CURRENT_BANK;
+			SWITCH_ROM(stateBanks[current_state]);
 				updateFuncs[current_state]();
-			POP_BANK;
+			SWITCH_ROM(__save);
 		}
 
 		FadeIn();

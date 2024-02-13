@@ -28,9 +28,10 @@ void SpriteManagerReset() {
 	//Call Destroy on all sprites still on the list
 	for(i = 0u; i != sprite_manager_updatables[0]; ++ i) {
 		THIS = sprite_manager_sprites[sprite_manager_updatables[i + 1]];
-		PUSH_BANK(spriteBanks[THIS->type]);
+		UINT8 __save = CURRENT_BANK;
+		SWITCH_ROM(spriteBanks[THIS->type]);
 				spriteDestroyFuncs[THIS->type]();
-		POP_BANK;
+		SWITCH_ROM(__save);
 	}
 
 	//place all sprites on the pool
@@ -56,7 +57,8 @@ void SpriteManagerLoad(UINT8 sprite_type) {
 	if(spriteIdxs[sprite_type] != 128 || last_sprite_loaded < -127) //Already loaded or no room for this sprite
 		return;
 
-	PUSH_BANK(spriteDataBanks[sprite_type])
+	UINT8 __save = CURRENT_BANK;
+	SWITCH_ROM(spriteDataBanks[sprite_type]);
 
 	const struct MetaSpriteInfo* data = spriteDatas[sprite_type];
 	UINT8 n_tiles = data->num_tiles;
@@ -88,7 +90,7 @@ void SpriteManagerLoad(UINT8 sprite_type) {
 	}
 #endif
 
-	POP_BANK
+	SWITCH_ROM(__save);
 }
 
 Sprite* cachedSprite; //This has to be declared outside because of an LCC bug (easy to see with the Princess' Axe)
@@ -119,9 +121,10 @@ Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y) {
 	spriteIdxTmp = THIS_IDX;
 	THIS = sprite;
 	THIS_IDX = sprite_manager_updatables[0] - 1;
-	PUSH_BANK(spriteBanks[sprite->type]);
+	UINT8 __save = CURRENT_BANK;
+	SWITCH_ROM(spriteBanks[sprite->type]);
 		spriteStartFuncs[sprite->type]();
-	POP_BANK;
+	SWITCH_ROM(__save);
 	//And now they must be restored
 	THIS = cachedSprite;
 	THIS_IDX = spriteIdxTmp;
@@ -153,9 +156,10 @@ void SpriteManagerFlushRemove() {
 			StackPush(sprite_manager_sprites_pool, sprite_manager_updatables[THIS_IDX + 1u]);
 			VectorRemovePos(sprite_manager_updatables, THIS_IDX);
 
-			PUSH_BANK(spriteBanks[THIS->type]);
+			UINT8 __save = CURRENT_BANK;
+			SWITCH_ROM(spriteBanks[THIS->type]);
 				spriteDestroyFuncs[THIS->type]();
-			POP_BANK;
+			SWITCH_ROM(__save);
 		}
 	}
 	sprite_manager_removal_check = 0;

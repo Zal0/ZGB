@@ -88,9 +88,10 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 			}
 
 			if(i == sprite_manager_updatables[0]) {
-				PUSH_BANK(spriteDataBanks[type]);
+				UINT8 __save = CURRENT_BANK;
+				SWITCH_ROM(spriteDataBanks[type]);
 					sprite_y = ((y + 1) << 3) - spriteDatas[type]->height;
-				POP_BANK;
+				SWITCH_ROM(__save);
 				s = SpriteManagerAdd(type, x << 3, sprite_y);
 			}
 		}
@@ -125,7 +126,8 @@ UINT16 ScrollSetTiles(UINT8 first_tile, UINT8 tiles_bank, const struct TilesInfo
 		tiles_0 = tiles;
 	}
 
-	PUSH_BANK(tiles_bank);
+	UINT8 __save = CURRENT_BANK;
+	SWITCH_ROM(tiles_bank);
 	n_tiles = tiles->num_frames;
 	palette_entries = tiles->color_data;
 
@@ -151,7 +153,7 @@ UINT16 ScrollSetTiles(UINT8 first_tile, UINT8 tiles_bank, const struct TilesInfo
 	}
 #endif
 
-	POP_BANK;
+	SWITCH_ROM(__save);
 
 	return offset;
 }
@@ -183,7 +185,8 @@ attr;
 }
 
 UINT16 LoadMap(UINT8 bg_or_win, UINT8 x, UINT8 y, UINT8 map_bank, struct MapInfo* map) {
-	PUSH_BANK(map_bank);
+	UINT8 __save = CURRENT_BANK;
+	SWITCH_ROM(map_bank);
 
 	//Load Tiles
 	UINT8 load_tiles = tiles_bank_0 != map->tiles_bank || tiles_0 != map->tiles; //If the tile set is the same as the one used for the scroll or the bg (which is stored in tiles_bank_0 and tiles0) then do not load the tiles again
@@ -204,7 +207,7 @@ UINT16 LoadMap(UINT8 bg_or_win, UINT8 x, UINT8 y, UINT8 map_bank, struct MapInfo
 		}
 	}
 
-	POP_BANK;
+	SWITCH_ROM(__save);
 
 	//Return the offset so the user can pass it as parameter to UpdateMapTile
 	return map_offset;
@@ -230,7 +233,8 @@ void ClampScrollLimits() {
 }
 
 void ScrollSetMap(UINT8 map_bank, const struct MapInfo* map) {
-	PUSH_BANK(map_bank);
+	UINT8 __save = CURRENT_BANK;
+	SWITCH_ROM(map_bank);
 	scroll_tiles_w = map->width;
 	scroll_tiles_h = map->height;
 	scroll_map = map->data;
@@ -247,7 +251,7 @@ void ScrollSetMap(UINT8 map_bank, const struct MapInfo* map) {
 	}
 	pending_h_i = 0;
 	pending_w_i = 0;
-	POP_BANK;
+	SWITCH_ROM(__save);
 }
 
 void InitScroll(UINT8 map_bank, const struct MapInfo* map, const UINT8* coll_list, const UINT8* coll_list_down) {
@@ -255,10 +259,11 @@ void InitScroll(UINT8 map_bank, const struct MapInfo* map, const UINT8* coll_lis
 	struct TilesInfo* tiles;
 
 	//Init Tiles
-	PUSH_BANK(map_bank)
+	UINT8 __save = CURRENT_BANK;
+	SWITCH_ROM(map_bank);
 		tiles_bank = map->tiles_bank;
 		tiles = map->tiles;
-	POP_BANK;
+	SWITCH_ROM(__save);
 
 	InitScrollWithTiles(map_bank, map, tiles_bank, tiles, coll_list, coll_list_down);
 }
@@ -288,12 +293,13 @@ void InitScrollWithTiles(UINT8 map_bank, const struct MapInfo* map, UINT8 tiles_
 	}
 
 	//Change bank now, after copying the collision array (it can be in a different bank)
-	PUSH_BANK(map_bank);
+	UINT8 __save = CURRENT_BANK;
+	SWITCH_ROM(map_bank);
 	y = scroll_y >> 3;
 	for(i = 0u; i != (SCREEN_TILE_REFRES_H) && y != scroll_h; ++i, y ++) {
 		ScrollUpdateRow((scroll_x >> 3) - SCREEN_PAD_LEFT,  y - SCREEN_PAD_TOP);
 	}
-	POP_BANK;
+	SWITCH_ROM(__save);
 }
 
 void ScrollUpdateRowR() {
@@ -331,7 +337,8 @@ void ScrollUpdateRow(INT16 x, INT16 y) {
 	unsigned char* cmap = scroll_cmap + scroll_tiles_w * y + x;
 	#endif
 
-	PUSH_BANK(scroll_bank);
+	UINT8 __save = CURRENT_BANK;
+	SWITCH_ROM(scroll_bank);
 	for(i = 0u; i != SCREEN_TILE_REFRES_W; ++i) {
 		#ifdef CGB
 		UPDATE_TILE(x + i, y, map ++, cmap ++);
@@ -339,7 +346,7 @@ void ScrollUpdateRow(INT16 x, INT16 y) {
 		UPDATE_TILE(x + i, y, map ++, 0);
 		#endif
 	}
-	POP_BANK;
+	SWITCH_ROM(__save);
 }
 
 void ScrollUpdateColumnR() {
@@ -379,7 +386,8 @@ void ScrollUpdateColumn(INT16 x, INT16 y) {
 	unsigned char* cmap = &scroll_cmap[scroll_tiles_w * y + x];
 	#endif
 
-	PUSH_BANK(scroll_bank);
+	UINT8 __save = CURRENT_BANK;
+	SWITCH_ROM(scroll_bank);
 	for(i = 0u; i != SCREEN_TILE_REFRES_H; ++i) {
 		#ifdef CGB
 		UPDATE_TILE(x, y + i, map, cmap);
@@ -390,7 +398,7 @@ void ScrollUpdateColumn(INT16 x, INT16 y) {
 		map += scroll_tiles_w;
 		#endif
 	}
-	POP_BANK;
+	SWITCH_ROM(__save);
 }
 
 void RefreshScroll() {
@@ -410,7 +418,8 @@ void RefreshScroll() {
 void MoveScroll(INT16 x, INT16 y) {
 	INT16 current_column, new_column, current_row, new_row;
 
-	PUSH_BANK(scroll_bank);
+	UINT8 __save = CURRENT_BANK;
+	SWITCH_ROM(scroll_bank);
 
 	current_column = scroll_x >> 3;
 	current_row    = scroll_y >> 3;
@@ -444,7 +453,7 @@ void MoveScroll(INT16 x, INT16 y) {
 	if(pending_h_i) {
 		ScrollUpdateColumnR();
 	}
-	POP_BANK;
+	SWITCH_ROM(__save);
 }
 
 UINT8* GetScrollTilePtr(UINT16 x, UINT16 y) {
@@ -456,18 +465,20 @@ UINT8* GetScrollTilePtr(UINT16 x, UINT16 y) {
 
 UINT8 GetScrollTile(UINT16 x, UINT16 y) {
 	UINT8 ret;
-	PUSH_BANK(scroll_bank);
+	UINT8 __save = CURRENT_BANK;
+	SWITCH_ROM(scroll_bank);
 		ret = *GetScrollTilePtr(x, y);
-	POP_BANK;
+	SWITCH_ROM(__save);
 	return ret;
 }
 
 void GetMapSize(UINT8 map_bank, const struct MapInfo* map, UINT8* tiles_w, UINT8* tiles_h)
 {
-	PUSH_BANK(map_bank);
+	UINT8 __save = CURRENT_BANK;
+	SWITCH_ROM(map_bank);
 		if(tiles_w) *tiles_w = map->width;
 		if(tiles_h) *tiles_h = map->height;
-	POP_BANK;
+	SWITCH_ROM(__save);
 }
 
 UINT8 ScrollFindTile(UINT8 map_bank, const struct MapInfo* map, UINT8 tile,
@@ -477,7 +488,8 @@ UINT8 ScrollFindTile(UINT8 map_bank, const struct MapInfo* map, UINT8 tile,
 	UINT16 yt = 0;
 	UINT8 found = 1;
 
-	PUSH_BANK(map_bank);
+	UINT8 __save = CURRENT_BANK;
+	SWITCH_ROM(map_bank);
 	for(xt = start_x; xt != start_x + w; ++ xt) {
 		for(yt = start_y; yt != start_y + h; ++ yt) {
 			if(map->data[map->width * yt + xt] == (UINT16)tile) { //That cast over there is mandatory and gave me a lot of headaches
@@ -488,7 +500,7 @@ UINT8 ScrollFindTile(UINT8 map_bank, const struct MapInfo* map, UINT8 tile,
 	found = 0;
 
 done:
-	POP_BANK;
+	SWITCH_ROM(__save);
 	*x = xt;
 	*y = yt;
 

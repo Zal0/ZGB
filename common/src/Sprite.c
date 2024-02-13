@@ -7,9 +7,10 @@
 
 void SetFrame(Sprite* sprite, UINT8 frame)
 {
-	PUSH_BANK(sprite->mt_sprite_bank);
+	UINT8 __save = CURRENT_BANK;
+	SWITCH_ROM(sprite->mt_sprite_bank);
 		sprite->mt_sprite = sprite->mt_sprite_info->metasprites[frame];
-	POP_BANK;
+	SWITCH_ROM(__save);
 	sprite->anim_frame = frame; //anim_frame contains the animation frame if anim_data is assigned or the metasprite index otherwise
 }
 
@@ -34,10 +35,11 @@ void InitSprite(Sprite* sprite, UINT8 sprite_type) {
 	sprite->x = 0;
 	sprite->y = 0;
 
-	PUSH_BANK(spriteDataBanks[sprite_type]);
+	UINT8 __save = CURRENT_BANK;
+	SWITCH_ROM(spriteDataBanks[sprite_type]);
 		sprite->coll_w = mt_sprite_info->width;
 		sprite->coll_h = mt_sprite_info->height;
-	POP_BANK;
+	SWITCH_ROM(__save);
 }
 
 void SetSpriteAnim(Sprite* sprite, const UINT8* data, UINT8 speed) {
@@ -102,9 +104,10 @@ void DrawSprite() {
 			}
 
 			tmp = THIS->anim_data[(UINT8)1u + THIS->anim_frame]; //Do this before changing banks, anim_data is stored on current bank
-			PUSH_BANK(THIS->mt_sprite_bank);
+			UINT8 __save = CURRENT_BANK;
+			SWITCH_ROM(THIS->mt_sprite_bank);
 				THIS->mt_sprite = THIS->mt_sprite_info->metasprites[tmp];
-			POP_BANK;
+			SWITCH_ROM(__save);
 			THIS->anim_accum_ticks -= 100u;
 		}
 	}
@@ -116,7 +119,8 @@ void DrawSprite() {
 		screen_x += 8u;
 		screen_y += 16u;
 		tmp = next_oam_idx;
-		PUSH_BANK(THIS->mt_sprite_bank);
+		UINT8 __save = CURRENT_BANK;
+		SWITCH_ROM(THIS->mt_sprite_bank);
 			switch(THIS->mirror)
 			{
 				case NO_MIRROR: next_oam_idx += move_metasprite       (THIS->mt_sprite, THIS->first_tile, next_oam_idx, screen_x,                screen_y               ); break;
@@ -124,7 +128,7 @@ void DrawSprite() {
 				case V_MIRROR:  next_oam_idx += move_metasprite_vflip (THIS->mt_sprite, THIS->first_tile, next_oam_idx, screen_x + THIS->coll_w, screen_y               ); break;
 				case HV_MIRROR: next_oam_idx += move_metasprite_hvflip(THIS->mt_sprite, THIS->first_tile, next_oam_idx, screen_x + THIS->coll_w, screen_y + THIS->coll_h); break;
 			}
-		POP_BANK;
+		SWITCH_ROM(__save);
 
 
 		if (THIS->attr_add) {
@@ -189,7 +193,8 @@ UINT8 TranslateSprite(Sprite* sprite, INT8 x, INT8 y) {
 			end_tile_y = pivot_y >> 3;
 		}
 
-		PUSH_BANK(scroll_bank);
+		UINT8 __save = CURRENT_BANK;
+		SWITCH_ROM(scroll_bank);
 		tile_coll = scroll_map + (scroll_tiles_w * start_tile_y + start_tile_x);
 		end_tile_y ++;
 		for(tmp = start_tile_y; tmp != end_tile_y; tmp ++, tile_coll += scroll_tiles_w) {
@@ -201,11 +206,11 @@ UINT8 TranslateSprite(Sprite* sprite, INT8 x, INT8 y) {
 				}
 
 				ret = *tile_coll;
-				POP_BANK;
+				SWITCH_ROM(__save);
 				goto done_x;
 			}
 		}
-		POP_BANK;
+		SWITCH_ROM(__save);
 	}
 
 inc_x:
@@ -253,7 +258,8 @@ done_x:
 			end_tile_x = (pivot_x >> 3);
 		}
 
-		PUSH_BANK(scroll_bank);
+		UINT8 __save = CURRENT_BANK;
+		SWITCH_ROM(scroll_bank);
 		tile_coll = scroll_map + (scroll_tiles_w * start_tile_y + start_tile_x);
 		end_tile_x ++;
 		scroll_coll_v = y < 0 ? scroll_collisions : scroll_collisions_down;
@@ -266,11 +272,11 @@ done_x:
 				}
 
 				ret = *tile_coll;
-				POP_BANK;
+				SWITCH_ROM(__save);
 				goto done_y;
 			}
 		}
-		POP_BANK;
+		SWITCH_ROM(__save);
 	}
 
 inc_y:
