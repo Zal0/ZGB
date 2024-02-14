@@ -38,7 +38,7 @@ void FadeDMG(UINT8 fadeout) {
 	}
 }
 
-void FadeInDMG() {
+void FadeInDMG(void) {
 	FadeDMG(0);
 }
 
@@ -65,14 +65,14 @@ void FadeStepColor(UINT8 i) {
 	wait_vbl_done();
 }
 
-void FadeInCOLOR() {
+void FadeInCOLOR(void) {
 	UINT8 i;
 	for(i = 0; i != 6; i ++) {
 		FadeStepColor(i);	
 	}
 }
 
-void FadeIn() BANKED {
+void FadeIn(void) BANKED {
 #ifdef CGB
 	if (_cpu == CGB_TYPE) {
 		FadeInCOLOR();
@@ -81,18 +81,18 @@ void FadeIn() BANKED {
 		FadeInDMG();
 }
 
-void FadeOutDMG() {
+void FadeOutDMG(void) {
 	FadeDMG(1);
 }
 
-void FadeOutColor() {
+void FadeOutColor(void) {
 	UINT8 i;
 	for(i = 5; i != 0xFF; -- i) {
 		FadeStepColor(i);	
 	}
 }
 
-void FadeOut() BANKED {
+void FadeOut(void) BANKED {
 #ifdef CGB
 	if (_cpu == CGB_TYPE) {
 		FadeOutColor();

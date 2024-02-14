@@ -64,7 +64,7 @@ typedef struct {
 void SetFrame(Sprite* sprite, UINT8 frame);
 void InitSprite(Sprite* sprite, UINT8 sprite_type);
 void SetSpriteAnim(Sprite* sprite, const UINT8* data, UINT8 speed);
-void DrawSprite();
+void DrawSprite(void);
 
 UINT8 TranslateSprite(Sprite* sprite, INT8 x, INT8 y);
 

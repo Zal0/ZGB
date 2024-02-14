@@ -20,7 +20,7 @@ UINT8* oam0 = (UINT8*)0xC000;
 UINT8* oam1 = (UINT8*)OAM_MIRROR_ADDRESS;
 UINT8* oam_end = (UINT8*)0xC000;
 extern UBYTE __render_shadow_OAM;
-void SwapOAMs() {
+void SwapOAMs(void) {
 	//Clean the previous oam struct
 	oam += (next_oam_idx << 2);
 	UINT8* tmp = oam;
@@ -47,7 +47,7 @@ void SwapOAMs() {
 	scroll_y_vblank = scroll_y;
 }
 
-void ClearOAMs() {
+void ClearOAMs(void) {
 	oam0 = (UINT8*)0xC000;
 	oam1 = (UINT8*)OAM_MIRROR_ADDRESS;
 	memset(oam0, 0, sizeof(oam_mirror));

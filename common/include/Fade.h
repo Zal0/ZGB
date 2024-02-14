@@ -4,7 +4,7 @@
 #include <gbdk/platform.h>
 
 extern UINT8 fade_bank;
-void FadeIn() BANKED;
-void FadeOut() BANKED;
+void FadeIn(void) BANKED;
+void FadeOut(void) BANKED;
 
 #endif

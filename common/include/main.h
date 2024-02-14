@@ -6,15 +6,15 @@
 #include "Sprite.h"
 #include "TilesInfo.h"
 
-typedef void (*Void_Func_Void)();
+typedef void (*Void_Func_Void)(void);
 typedef void (*Void_Func_SpritePtr)(Sprite*);
 
-#define DECLARE_STATE(STATE_IDX)   extern UINT8 bank_##STATE_IDX;  void Start_##STATE_IDX(); void Update_##STATE_IDX()
+#define DECLARE_STATE(STATE_IDX)   extern UINT8 bank_##STATE_IDX;  void Start_##STATE_IDX(void); void Update_##STATE_IDX(void)
 extern UINT8 stateBanks[];
 extern Void_Func_Void startFuncs[];
 extern Void_Func_Void updateFuncs[];
 
-#define DECLARE_SPRITE(SPRITE_IDX) extern UINT8 bank_##SPRITE_IDX; void Start_##SPRITE_IDX(); void Update_##SPRITE_IDX(); void Destroy_##SPRITE_IDX()
+#define DECLARE_SPRITE(SPRITE_IDX) extern UINT8 bank_##SPRITE_IDX; void Start_##SPRITE_IDX(void); void Update_##SPRITE_IDX(void); void Destroy_##SPRITE_IDX(void)
 extern UINT8 spriteBanks[];
 extern Void_Func_Void spriteStartFuncs[];
 extern Void_Func_Void spriteUpdateFuncs[];
@@ -31,7 +31,7 @@ extern UINT8 delta_time;
 
 void SetWindowY(UINT8 y);
 
-void LCD_isr() NONBANKED;
+void LCD_isr(void) NONBANKED;
 
 #ifdef CGB
 typedef enum {

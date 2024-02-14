@@ -216,7 +216,7 @@ UINT16 LoadMap(UINT8 bg_or_win, UINT8 x, UINT8 y, UINT8 map_bank, struct MapInfo
 
 INT8 scroll_h_border = 0;
 UINT8 clamp_enabled = 1;
-void ClampScrollLimits() {
+void ClampScrollLimits(void) {
 	if(clamp_enabled) {
 		if(U_LESS_THAN(scroll_x, 0u)) {
 			scroll_x = 0u;
@@ -303,7 +303,7 @@ void InitScrollWithTiles(UINT8 map_bank, const struct MapInfo* map, UINT8 tiles_
 	SWITCH_ROM(__save);
 }
 
-void ScrollUpdateRowR() {
+void ScrollUpdateRowR(void) {
 	UINT8 i = 0u;
 
 	for(i = 0u; i != 5 && pending_w_i != 0; ++i, -- pending_w_i)  {
@@ -350,7 +350,7 @@ void ScrollUpdateRow(INT16 x, INT16 y) {
 	SWITCH_ROM(__save);
 }
 
-void ScrollUpdateColumnR() {
+void ScrollUpdateColumnR(void) {
 	UINT8 i = 0u;
 
 	for(i = 0u; i != 5 && pending_h_i != 0; ++i, pending_h_i --) {
@@ -402,7 +402,7 @@ void ScrollUpdateColumn(INT16 x, INT16 y) {
 	SWITCH_ROM(__save);
 }
 
-void RefreshScroll() {
+void RefreshScroll(void) {
 	UINT16 ny = scroll_y;
 
 	if(scroll_target) {

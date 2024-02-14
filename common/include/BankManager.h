@@ -10,7 +10,7 @@
 extern UINT8* bank_stack;
 
 void PushBank(UINT8 b);
-void PopBank();
+void PopBank(void);
 
 #define PUSH_BANK(N) PushBank(N);
 #define POP_BANK PopBank();

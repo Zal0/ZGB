@@ -28,7 +28,7 @@ void SetState(UINT8 state) {
 
 UINT8 vbl_count = 0;
 UINT8 music_mute_frames = 0;
-void vbl_update() {
+void vbl_update(void) {
 	vbl_count ++;
 	
 	SCX_REG = scroll_x_vblank + (scroll_offset_x << 3);
@@ -42,8 +42,8 @@ void vbl_update() {
 	}
 }
 
-void InitStates();
-void InitSprites();
+void InitStates(void);
+void InitSprites(void);
 
 extern UWORD ZGB_Fading_BPal[32];
 extern UWORD ZGB_Fading_SPal[32];
@@ -65,7 +65,7 @@ void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *
 }
 #endif
 
-void LCD_isr() NONBANKED {
+void LCD_isr(void) NONBANKED {
 	if (LYC_REG == 0) {
 		if (WY_REG == 0) {
 			HIDE_SPRITES;
@@ -93,7 +93,7 @@ void SetWindowY(UINT8 y) {
 extern UINT8 last_bg_pal_loaded;
 extern UINT8 last_tile_loaded;
 UINT16 default_palette[] = {RGB(31, 31, 31), RGB(20, 20, 20), RGB(10, 10, 10), RGB(0, 0, 0)};
-void main() {
+void main(void) {
 	static UINT8 __save; 
 
 	// this delay is required for PAL SNES SGB border commands to work

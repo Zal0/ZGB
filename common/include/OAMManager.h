@@ -15,13 +15,12 @@ struct OAMData {
 #define OAMS  ((UINT8*)((UINT16)oam & 0xFF00))
 #define OAM(A) ((struct OAMData*)(oams + (A << 2)))
 
-void SwapOAMs();
-void ClearOAMs();
+void SwapOAMs(void);
+void ClearOAMs(void);
 
 extern UINT8 next_oam_sprite_x;
 extern UINT8 next_oam_sprite_y;
 extern UINT8 next_oam_sprite_idx;
 extern UINT8 next_oam_sprite_flags;
-void FlushOAMSprite();
 
 #endif

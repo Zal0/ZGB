@@ -5,7 +5,7 @@ BYTE hUGE_paused = 1;
 const hUGESong_t * hUGE_current_track;
 UBYTE hUGE_current_track_bank;
 
-void MusicCallback() NONBANKED {
+void MusicCallback(void) NONBANKED {
 	if (hUGE_paused)
 			return;
 
@@ -26,7 +26,7 @@ void hUGE_mute(UBYTE mute) {
 #ifdef MUSIC_DRIVER_GBT
 #include "BankManager.h"
 
-void MusicCallback() NONBANKED {
+void MusicCallback(void) NONBANKED {
 	if(last_music)
 	{
 		UBYTE __save = CURRENT_BANK;

@@ -88,7 +88,7 @@ __endasm;
 extern UINT8 delta_time;
 extern UINT8 next_oam_idx;
 extern UINT8* oam;
-void DrawSprite() {
+void DrawSprite(void) {
 	UINT16 screen_x;
 	UINT16 screen_y;
 	UINT8 tmp;

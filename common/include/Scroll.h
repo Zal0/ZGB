@@ -61,8 +61,8 @@ void UpdateMapTile(UINT8 bg_or_win, UINT8 x, UINT8 y, UINT16 map_offset, UINT8 d
 void ScrollUpdateRow(INT16 x, INT16 y);
 void ScrollUpdateColumn(INT16 x, INT16 y);
 void MoveScroll(INT16 x, INT16 y);
-void RefreshScroll();
-void FinishPendingScrollUpdates();
+void RefreshScroll(void);
+void FinishPendingScrollUpdates(void);
 
 void GetMapSize(UINT8 map_bank, const struct MapInfo* map, UINT8* tiles_w, UINT8* tiles_h);
 UINT8* GetScrollTilePtr(UINT16 x, UINT16 y);
