@@ -16,9 +16,12 @@ ifeq ($(MUSIC_PLAYER), )
 	MUSIC_PLAYER = HUGETRACKER
 endif
 
+ifndef PORT
 PORT = sm83
+endif
+ifndef PLAT
 PLAT = gb
-
+endif
 ifneq ($(strip $(PORT)),)
 ifneq ($(strip $(PLAT)),)
 TARGET = -m$(PORT):$(PLAT)
@@ -232,10 +235,11 @@ $(OBJDIR)/savegame.o: savegame.c
 
 $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR) $(OBJDIR_ZGB)/zgb.lib $(OBJDIR_RES) $(OBJDIR_RES)/sprites $(BINDIR) $(OBJS)
 	@echo Linking
-	$(LCC) $(BINFLAGS) -Wl-k$(OBJDIR_ZGB)/ -Wl-lzgb.lib -o $(OBJDIR)/rom.$(EXTENSION) $(OBJS)
+	@$(LCC) $(BINFLAGS) -Wl-k$(OBJDIR_ZGB)/ -Wl-lzgb.lib -o $(OBJDIR)/rom.$(EXTENSION) $(OBJS)
 	@cp $(OBJDIR)/rom.$(EXTENSION) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
 	@cp $(OBJDIR)/rom.sym $(BINDIR)/$(PROJECT_NAME).sym
 	@rm -f *.adb
+	@echo Done!
 
 build_lib: $(OBJDIR) $(OBJS)
 
