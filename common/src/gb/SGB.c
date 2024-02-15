@@ -22,6 +22,8 @@ void set_sgb_border(unsigned char * tiledata, size_t tiledata_size,
 
         SGB_TRANSFER((SGB_MASK_EN << 3) | 1, SGB_SCR_FREEZE); 
 
+        uint8_t __save_BGP = BGP_REG, __save_OBP0 = OBP0_REG, __save_OBP1 = OBP1_REG;
+
         BGP_REG = OBP0_REG = OBP1_REG = 0xE4U;
         SCX_REG = SCY_REG = 0U;
 
@@ -63,7 +65,9 @@ void set_sgb_border(unsigned char * tiledata, size_t tiledata_size,
 
         // clear SCREEN
         fill_bkg_rect(0, 0, 20, 18, 0);
-        
+
+        BGP_REG = __save_BGP, OBP0_REG = __save_OBP0, OBP1_REG = __save_OBP1;
+
         SGB_TRANSFER((SGB_MASK_EN << 3) | 1, SGB_SCR_UNFREEZE); 
     }
 }
