@@ -68,9 +68,9 @@ UINT8 current_vbl_count;
 void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	UINT8 replacement;
 	UINT8 i;
-	Sprite* s = 0;
-	UINT8 type = 255u;
-	UINT16 id = 0u;
+	Sprite* s;
+	UINT8 type;
+	UINT16 id;
 	UINT16 sprite_y;
 	c;
 
@@ -98,18 +98,18 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 		}
 	}
 
-	id = 0x9800 + (0x1F & (x + scroll_offset_x)) + ((0x1F & (y + scroll_offset_y)) << 5);
-	set_vram_byte((uint8_t *)id, replacement);
-
 	#ifdef CGB
+		UINT8* addr = set_bkg_tile_xy(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), replacement);
 		if (_cpu == CGB_TYPE) {
 			VBK_REG = 1;
 			if(!scroll_cmap) {
 				c = &scroll_tile_info[replacement];
 			}
-			set_vram_byte((uint8_t *)id, *c);
+			set_vram_byte(addr, *c);
 			VBK_REG = 0;
 		}
+	#else
+		set_bkg_tile_xy(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), replacement);
 	#endif
 }
 
