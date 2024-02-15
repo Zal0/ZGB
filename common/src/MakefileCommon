@@ -193,9 +193,7 @@ $(OBJDIR)/zgb/%.o: $(ZGB_PATH_UNIX)/src/%.c
 $(OBJDIR_ZGB)/zgb.lib: $(OBJDIR_ZGB) $(OBJS_ZGB) 
 	@echo creating zgb.lib    
 	@rm -f $(OBJDIR_ZGB)/zgb.lib
-	for file in $(OBJS_ZGB) ; do \
-		$(SDAR) -ru $(OBJDIR_ZGB)/zgb.lib $${file} ; \
-	done
+	@$(SDAR) -q $@ $(OBJS_ZGB)
 
 #Project files------------------------------------
 $(OBJDIR)/%.o: %.s
