@@ -24,6 +24,7 @@ BINDIR = ../bin
 LCC = $(GBDK_HOME_UNIX)/bin/lcc
 SDAR = $(GBDK_HOME_UNIX)/bin/sdar
 PNG2ASSET = $(GBDK_HOME_UNIX)/bin/png2asset
+BGB = $(ZGB_PATH_UNIX)/../env/bgb/bgb
 
 GBR2C = $(ZGB_PATH_UNIX)/../tools/gbr2c/gbr2c
 GBR2PNG = $(ZGB_PATH_UNIX)/../tools/gbr2png/gbr2png
