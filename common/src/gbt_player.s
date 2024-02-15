@@ -778,16 +778,16 @@ refresh_channel1_regs$:
 channel1_refresh_registers:
 
 	xor	a,a
-	ld	(#.NR10),a
+	ldh	(#.NR10),a
 	ld	a,(gbt_instr+0)
-	ld	(#.NR11),a
+	ldh	(#.NR11),a
 	ld	a,(gbt_vol+0)
-	ld	(#.NR12),a
+	ldh	(#.NR12),a
 	ld	a,(gbt_freq+0*2+0)
-	ld	(#.NR13),a
+	ldh	(#.NR13),a
 	ld	a,(gbt_freq+0*2+1)
 	or	a,#0x80 ; start
-	ld	(#.NR14),a
+	ldh	(#.NR14),a
 
 	ret
 
@@ -807,9 +807,9 @@ channel1_update_effects: ; returns 1 in a if it is needed to update sound regist
 	ld	(gbt_cut_note_tick+0),a ; disable cut note
 
 	xor	a,a ; vol = 0
-	ld	(#.NR12),a
+	ldh	(#.NR12),a
 	ld	a,#0x80 ; start
-	ld	(#.NR14),a
+	ldh	(#.NR14),a
 
 ch1_dont_cut$:
 
@@ -1113,14 +1113,14 @@ refresh_channel2_regs$:
 channel2_refresh_registers:
 
 	ld	a,(gbt_instr+1)
-	ld	(#.NR21),a
+	ldh	(#.NR21),a
 	ld	a,(gbt_vol+1)
-	ld	(#.NR22),a
+	ldh	(#.NR22),a
 	ld	a,(gbt_freq+1*2+0)
-	ld	(#.NR23),a
+	ldh	(#.NR23),a
 	ld	a,(gbt_freq+1*2+1)
 	or	a,#0x80 ; start
-	ld	(#.NR24),a
+	ldh	(#.NR24),a
 
 	ret
 
@@ -1140,9 +1140,9 @@ channel2_update_effects: ; returns 1 in a if it is needed to update sound regs
 	ld	(gbt_cut_note_tick+1),a ; disable cut note
 
 	xor	a,a ; vol = 0
-	ld	(#.NR22),a
+	ldh	(#.NR22),a
 	ld	a,#0x80 ; start
-	ld	(#.NR24),a
+	ldh	(#.NR24),a
 
 ch2_dont_cut$:
 
@@ -1434,7 +1434,7 @@ refresh_channel3_regs$:
 channel3_refresh_registers:
 
 	xor	a,a
-	ld	(#.NR30),a ; disable
+	ldh	(#.NR30),a ; disable
 
 	ld	a,(gbt_channel3_loaded_instrument)
 	ld	b,a
@@ -1443,17 +1443,17 @@ channel3_refresh_registers:
 	call	nz,gbt_channel3_load_instrument ; a = instrument
 
 	ld	a,#0x80
-	ld	(#.NR30),a ; enable
+	ldh	(#.NR30),a ; enable
 
 	xor	a,a
-	ld	(#.NR31),a
+	ldh	(#.NR31),a
 	ld	a,(gbt_vol+2)
-	ld	(#.NR32),a
+	ldh	(#.NR32),a
 	ld	a,(gbt_freq+2*2+0)
-	ld	(#.NR33),a
+	ldh	(#.NR33),a
 	ld	a,(gbt_freq+2*2+1)
 	or	a,#0x80 ; start
-	ld	(#.NR34),a
+	ldh	(#.NR34),a
 
 	ret
 
@@ -1496,12 +1496,12 @@ channel3_update_effects: ; returns 1 in a if it is needed to update sound regs
 	ld	(gbt_cut_note_tick+2),a ; disable cut note
 
 	ld	a,#0x80
-	ld	(#.NR30),a ; enable
+	ldh	(#.NR30),a ; enable
 
 	xor	a,a ; vol = 0
-	ld	(#.NR32),a
+	ldh	(#.NR32),a
 	ld	a,#0x80 ; start
-	ld	(#.NR34),a
+	ldh	(#.NR34),a
 
 ch3_dont_cut$:
 
@@ -1779,13 +1779,13 @@ refresh_channel4_regs$:
 channel4_refresh_registers:
 
 	xor	a,a
-	ld	(#.NR41),a
+	ldh	(#.NR41),a
 	ld	a,(gbt_vol+3)
-	ld	(#.NR42),a
+	ldh	(#.NR42),a
 	ld	a,(gbt_instr+3)
-	ld	(#.NR43),a
+	ldh	(#.NR43),a
 	ld	a,#0x80 ; start
-	ld	(#.NR44),a
+	ldh	(#.NR44),a
 
 	ret
 
@@ -1805,9 +1805,9 @@ channel4_update_effects: ; returns 1 in a if it is needed to update sound regs
 	ld	(gbt_cut_note_tick+3),a ; disable cut note
 
 	xor	a,a ; vol = 0
-	ld	(#.NR42),a
+	ldh	(#.NR42),a
 	ld	a,#0x80 ; start
-	ld	(#.NR44),a
+	ldh	(#.NR44),a
 
 ch4_dont_cut$:
 
@@ -1925,7 +1925,7 @@ gbt_update_bank1::
 	or	a,(hl)
 	inc hl
 	or	a,(hl)
-	ld	(#.NR51),a ; handle panning...
+	ldh	(#.NR51),a ; handle panning...
 
 	ret
 
