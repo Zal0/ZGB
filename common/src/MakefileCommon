@@ -16,6 +16,15 @@ ifeq ($(MUSIC_PLAYER), )
 	MUSIC_PLAYER = HUGETRACKER
 endif
 
+PORT = sm83
+PLAT = gb
+
+ifneq ($(strip $(PORT)),)
+ifneq ($(strip $(PLAT)),)
+TARGET = -m$(PORT):$(PLAT)
+endif
+endif
+
 OBJDIR = ../$(BUILD_TYPE)
 OBJDIR_RES = ../$(BUILD_TYPE)/res
 OBJDIR_ZGB = ../$(BUILD_TYPE)/zgb
@@ -32,12 +41,12 @@ GBM2C = $(ZGB_PATH_UNIX)/../tools/gbm2c/gbm2c
 MOD2GBT = $(ZGB_PATH_UNIX)/../env/mod2gbt
 UGE2SOURCE = $(ZGB_PATH_UNIX)/../env/uge2source
 
-CFLAGS += -msm83:gb -Wf-MMD $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include -DFILE_NAME=$(basename $(<F))
+CFLAGS += $(TARGET) -Wf-MMD $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include -DFILE_NAME=$(basename $(<F))
 
 ifeq ($(strip $(N_BANKS)),)
 	NBANKS = A
 endif
-BINFLAGS += -Wl-j -Wm-yS -autobank -Wl-yo$(N_BANKS) -Wb-ext=.rel -Wl-g.STACK=0xDF00 -Wb-reserve=1:1000
+BINFLAGS += $(TARGET) -Wl-j -Wm-yS -autobank -Wl-yo$(N_BANKS) -Wb-ext=.rel -Wl-g.STACK=0xDF00 -Wb-reserve=1:1000
 
 ifeq ($(wildcard savegame.c), )
 	#No savegame
@@ -90,6 +99,9 @@ current_dir = $(shell pwd)
 
 ASMS_ZGB    = $(foreach dir,$(ZGB_PATH_UNIX)/src,$(notdir $(wildcard $(dir)/*.s)))
 CLASSES_ZGB = $(foreach dir,$(ZGB_PATH_UNIX)/src,$(notdir $(wildcard $(dir)/*.c)))
+OBJECTS_ZGB = $(foreach dir,$(ZGB_PATH_UNIX)/lib/$(PLAT),$(wildcard $(dir)/*.o))
+PLAT_AS_ZGB = $(foreach dir,$(ZGB_PATH_UNIX)/src/$(PLAT),$(notdir $(wildcard $(dir)/*.s)))
+PLAT_C_ZGB  = $(foreach dir,$(ZGB_PATH_UNIX)/src/$(PLAT),$(notdir $(wildcard $(dir)/*.c)))
 ASMS        = $(foreach dir,.,$(notdir $(wildcard $(dir)/*.s))) 
 CLASSES     = $(foreach dir,.,$(notdir $(wildcard $(dir)/*.c))) 
 GBRS        = $(foreach dir,../res,$(notdir $(wildcard $(dir)/*.gbr)))
@@ -104,7 +116,7 @@ else
 	MUSICS_UGE = $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.uge)))
 endif
 OBJS = $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.o) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.o) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.o) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.o) $(SGB_BORDERS:%.png=$(OBJDIR_RES)/borders/%.png.o) $(PNGS:%.png=$(OBJDIR_RES)/%.png.o) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.o) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.o) $(ASMS:%.s=$(OBJDIR)/%.o) $(CLASSES:%.c=$(OBJDIR)/%.o)
-OBJS_ZGB = $(ASMS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.o) $(OBJ_DIR_ZGB) $(ZGB_PATH_UNIX)/lib/hUGEDriver.obj.o
+OBJS_ZGB = $(ASMS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.o) $(PLAT_AS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(PLAT_C_ZGB:%.c=$(OBJDIR_ZGB)/%.o) $(OBJECTS_ZGB) $(OBJ_DIR_ZGB)
 
 RELS = $(OBJS:%.o=%.rel)
 
@@ -116,6 +128,7 @@ RELS = $(OBJS:%.o=%.rel)
 ifneq ($(MAKECMDGOALS),clean)
 -include $(CLASSES:%.c=$(OBJDIR)/%.d) 
 -include $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.d)
+-include $(PLAT_C_ZGB:%.c=$(OBJDIR_ZGB)/%.d)
 endif
 #---------------------------------------------------------------------------------------------------------
 
@@ -183,11 +196,19 @@ $(OBJDIR_ZGB):
 	@echo Creating folder $(OBJDIR_ZGB)
 	@mkdir $(OBJDIR_ZGB)
 
-$(OBJDIR)/zgb/%.o: $(ZGB_PATH_UNIX)/src/%.s
+$(OBJDIR_ZGB)/%.o: $(ZGB_PATH_UNIX)/src/%.s
 	@echo compiling $<
 	@$(LCC) $(CFLAGS) -c -o $@ $<
 
-$(OBJDIR)/zgb/%.o: $(ZGB_PATH_UNIX)/src/%.c
+$(OBJDIR_ZGB)/%.o: $(ZGB_PATH_UNIX)/src/%.c
+	@echo compiling $<
+	@$(LCC) $(CFLAGS) -c -o $@ $<
+
+$(OBJDIR_ZGB)/%.o: $(ZGB_PATH_UNIX)/src/$(PLAT)/%.s
+	@echo compiling $<
+	@$(LCC) $(CFLAGS) -c -o $@ $<
+
+$(OBJDIR_ZGB)/%.o: $(ZGB_PATH_UNIX)/src/$(PLAT)/%.c
 	@echo compiling $<
 	@$(LCC) $(CFLAGS) -c -o $@ $<
 
