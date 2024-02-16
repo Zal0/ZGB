@@ -3,8 +3,10 @@
 
 #include <gbdk/platform.h>
 
-#define OAMS   (oam)
+#define OAMS   ((OAM_item_t*)(oam))
 #define OAM(A) ((OAM_item_t*)(oam + (A)))
+
+extern UINT8* oam;
 
 void SwapOAMs(void);
 void ClearOAMs(void);
