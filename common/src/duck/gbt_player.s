@@ -790,6 +790,7 @@ channel1_refresh_registers:
 	ld	a,(gbt_instr+0)
 	ldh	(#.NR11),a
 	ld	a,(gbt_vol+0)
+	swap	a
 	ldh	(#.NR12),a
 	ld	a,(gbt_freq+0*2+0)
 	ldh	(#.NR13),a
@@ -1123,6 +1124,7 @@ channel2_refresh_registers:
 	ld	a,(gbt_instr+1)
 	ldh	(#.NR21),a
 	ld	a,(gbt_vol+1)
+	swap	a
 	ldh	(#.NR22),a
 	ld	a,(gbt_freq+1*2+0)
 	ldh	(#.NR23),a
@@ -1456,6 +1458,9 @@ channel3_refresh_registers:
 	xor	a,a
 	ldh	(#.NR31),a
 	ld	a,(gbt_vol+2)
+	cpl
+	add	#0x20
+	and	#0x60
 	ldh	(#.NR32),a
 	ld	a,(gbt_freq+2*2+0)
 	ldh	(#.NR33),a
@@ -1789,8 +1794,10 @@ channel4_refresh_registers:
 	xor	a,a
 	ldh	(#.NR41),a
 	ld	a,(gbt_vol+3)
+	swap	a
 	ldh	(#.NR42),a
 	ld	a,(gbt_instr+3)
+	swap	a
 	ldh	(#.NR43),a
 	ld	a,#0x80 ; start
 	ldh	(#.NR44),a
