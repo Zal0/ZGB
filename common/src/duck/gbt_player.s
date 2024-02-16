@@ -160,10 +160,7 @@ dont_loop$:
 ;-------------------------------------------------------------------------------
 
 _gbt_play::
-
-	push	bc
-
-	lda	hl,4(sp)
+	lda	hl,2(sp)
 	ld	e,(hl)
 	inc	hl
 	ld	d,(hl)
@@ -280,7 +277,6 @@ _gbt_play::
 	ld	a,#0x01
 	ld	(gbt_playing),a
 
-	pop	bc
 	ret
 
 ;-------------------------------------------------------------------------------
@@ -328,22 +324,6 @@ _gbt_enable_channels::
 ;-------------------------------------------------------------------------------
 
 _gbt_update::
-
-	push	bc
-
-	; gbt_update has some "ret z" and things like that
-	; We call it from here to make it easier to mantain both
-	; RGBDS and GBDK versions.
-	call	gbt_update
-
-	pop	bc
-
-	ret
-
-;-------------------------------------------------------------------------------
-
-gbt_update:
-
 	ld	a,(gbt_playing)
 	or	a,a
 	ret	z ; If not playing, return
