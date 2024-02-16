@@ -82,11 +82,10 @@ __asm
 __endasm;
 }
 
-#define SCREENWIDTH_PLUS_32 192 //160 + 32
-#define SCREENHEIGHT_PLUS_32 176 //144 + 32
+#define SCREENWIDTH_PLUS_32  (DEVICE_SCREEN_PX_WIDTH + 32)
+#define SCREENHEIGHT_PLUS_32 (DEVICE_SCREEN_PX_HEIGHT + 32)
 extern UINT8 delta_time;
 extern UINT8 next_oam_idx;
-extern UINT8* oam;
 void DrawSprite(void) {
 	UINT16 screen_x;
 	UINT16 screen_y;
@@ -112,7 +111,7 @@ void DrawSprite(void) {
 	screen_x = THIS->x - scroll_x;
 	screen_y = THIS->y - scroll_y;
 	//It might sound stupid adding 32 in both sides but remember the values are unsigned! (and maybe truncated after substracting scroll_)
-	if((screen_x + 32u < SCREENWIDTH_PLUS_32) && (screen_y + 32 < SCREENHEIGHT_PLUS_32)) {
+	if(((screen_x + 32u) < SCREENWIDTH_PLUS_32) && ((screen_y + 32) < SCREENHEIGHT_PLUS_32)) {
 		screen_x += 8u;
 		screen_y += 16u;
 		tmp = next_oam_idx;
