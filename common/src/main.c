@@ -33,9 +33,8 @@ void vbl_update(void) {
 	SCX_REG = scroll_x_vblank + (scroll_offset_x << 3);
 	SCY_REG = scroll_y_vblank + (scroll_offset_y << 3);
 
-	if(music_mute_frames != 0) {
-		music_mute_frames --;
-		if(music_mute_frames == 0) {
+	if (music_mute_frames != 0) {
+		if (--music_mute_frames == 0) {
 			UNMUTE_ALL_CHANNELS;
 		}
 	}
@@ -48,13 +47,13 @@ extern UWORD ZGB_Fading_BPal[32];
 extern UWORD ZGB_Fading_SPal[32];
 #ifdef CGB	
 void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *rgb_data, UINT8 bank) {
-	if(first_palette + nb_palettes > 8)
+	if ((first_palette + nb_palettes) > 8)
 		return; //Adding more palettes than supported
 
 	UWORD* pal_ptr = (t == BG_PALETTE) ? ZGB_Fading_BPal : ZGB_Fading_SPal;
 	UINT8 __save = CURRENT_BANK;
 	SWITCH_ROM(bank);
-	if(t == BG_PALETTE) {
+	if (t == BG_PALETTE) {
 		set_bkg_palette(first_palette, nb_palettes, rgb_data);
 	} else {
 		set_sprite_palette(first_palette, nb_palettes, rgb_data);
@@ -81,7 +80,7 @@ void LCD_isr(void) NONBANKED {
 void SetWindowY(UINT8 y) {
 	WY_REG = y;
 	LYC_REG = y - 1;
-	if (y < 144u) {
+	if (y < (DEVICE_WINDOW_PX_OFFSET_Y + DEVICE_SCREEN_PX_HEIGHT)) {
 		SHOW_WIN; 
 	} else { 
 		HIDE_WIN; 
@@ -119,25 +118,25 @@ void main(void) {
 	
 	CRITICAL {
 #ifdef CGB
-		TMA_REG = _cpu == CGB_TYPE ? 120U : 0xBCU;
+		TMA_REG = (_cpu == CGB_TYPE) ? 0x78u : 0xBCu;
 #else
-		TMA_REG = 0xBCU;
+		TMA_REG = 0xBCu;
 #endif
-		TAC_REG = 0x04U;
+		TAC_REG = 0x04u;
 		//Instead of calling add_TIM add_low_priority_TIM is used because it can be interrupted. This fixes a random
 		//bug hiding sprites under the window (some frames the call is delayed and you can see sprites flickering under the window)
 		add_low_priority_TIM(MusicCallback); 
 		                          
 		add_VBL(vbl_update);
 
-		STAT_REG |= 0x40; 
+		STAT_REG |= 0x40u; 
 		add_LCD(LCD_isr);
 	}
 
 	set_interrupts(VBL_IFLAG | TIM_IFLAG | LCD_IFLAG);
 
 	LCDC_REG |= LCDCF_OBJDEFAULT | LCDCF_OBJON | LCDCF_BGON;
-	WY_REG = 145;
+	WY_REG = (UINT8)(DEVICE_WINDOW_PX_OFFSET_Y + DEVICE_SCREEN_PX_HEIGHT);
 
 	while(1) {
 		DISPLAY_OFF
