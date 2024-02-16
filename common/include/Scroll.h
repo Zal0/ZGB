@@ -10,11 +10,10 @@
 #define SPRITE_UNIQUE_ID(TILE_X, TILE_Y) ((0x00FF & TILE_X) | ((0xFF00 & (TILE_Y << 8))))
 
 #define INIT_HUD(MAP)\
-	GetMapSize(BANK(MAP), &MAP, 0, &scroll_h_border);\
-	scroll_h_border = scroll_h_border << 3;\
-	WX_REG = 7;\
-	WY_REG = 144 - scroll_h_border;\
-	hud_map_offset = LoadMap(1, 0, 0, BANK(MAP), &MAP);\
+	GetMapSize(BANK(MAP), &MAP, 0, &scroll_h_border); \
+	scroll_h_border = scroll_h_border << 3; \
+	WX_REG = DEVICE_WINDOW_PX_OFFSET_X, WY_REG = (DEVICE_WINDOW_PX_OFFSET_Y + DEVICE_SCREEN_PX_HEIGHT) - scroll_h_border; \
+	hud_map_offset = LoadMap(1, 0, 0, BANK(MAP), &MAP); \
 	SHOW_WIN;
 
 #define INIT_BKG(MAP) LoadMap(0, 0, 0, BANK(MAP), &MAP)
