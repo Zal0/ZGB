@@ -11,7 +11,7 @@ UINT8 * const FX_CH1[]    = { &NR10_REG,   &NR11_REG,   &NR12_REG,   &NR13_REG, 
 const UINT8 FX_ATTR_CH1[] = { NORMAL,      NORMAL,      NIBBLE_SWAP, NORMAL,      NORMAL    };
 
 UINT8 * const FX_CH2[]    = {              &NR21_REG,   &NR22_REG,   &NR23_REG,   &NR24_REG,   NULL };
-const UINT8 FX_ATTR_CH2[] = {              NORMAL,      NIBBLE_SWAP, NIBBLE_SWAP, NORMAL    };
+const UINT8 FX_ATTR_CH2[] = {              NORMAL,      NIBBLE_SWAP, NORMAL, 	  NORMAL    };
 
 UINT8 * const FX_CH3[]    = { &NR30_REG,   &NR31_REG,   &NR32_REG,   &NR33_REG,   &NR34_REG,   NULL };
 const UINT8 FX_ATTR_CH3[] = { NORMAL,      NORMAL,      VOLUME_FIX,  NORMAL,      NORMAL    };
