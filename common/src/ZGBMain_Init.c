@@ -10,9 +10,9 @@ UINT8 stateBanks[N_STATES];
 Void_Func_Void startFuncs[N_STATES];
 Void_Func_Void updateFuncs[N_STATES];
 
-#define _STATE(STATE_ID)                    \
-	startFuncs[STATE_ID] = Start_##STATE_ID;  \
-	updateFuncs[STATE_ID] = Update_##STATE_ID;\
+#define _STATE(STATE_ID) \
+	startFuncs[STATE_ID] = Start_##STATE_ID; \
+	updateFuncs[STATE_ID] = Update_##STATE_ID; \
 	stateBanks[STATE_ID] = BANK(STATE_ID);
 void InitStates(void) {
 	STATES
