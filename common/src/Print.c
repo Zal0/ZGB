@@ -2,7 +2,6 @@
 #include <stdlib.h>
 
 #include "Print.h"
-#include "BankManager.h"
 #include "Scroll.h"
 
 UINT8 print_x = 0;

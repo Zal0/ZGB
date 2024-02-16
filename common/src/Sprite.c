@@ -2,7 +2,6 @@
 
 #include "Sprite.h"
 #include "Scroll.h"
-#include "BankManager.h"
 #include "SpriteManager.h"
 #include "MetaSpriteInfo.h"
 

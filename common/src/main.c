@@ -7,7 +7,6 @@
 #include "Keys.h"
 #include "Music.h"
 #include "SpriteManager.h"
-#include "BankManager.h"
 #include "Fade.h"
 #include "Palette.h"
 

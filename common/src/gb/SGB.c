@@ -2,7 +2,6 @@
 #include <string.h>
 
 #include "SGB.h"
-#include "BankManager.h"
 
 
 #define SGB_CHR_BLOCK0 0

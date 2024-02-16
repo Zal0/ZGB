@@ -4,7 +4,6 @@
 
 #include "SpriteManager.h"
 #include "Scroll.h"
-#include "BankManager.h"
 #include "ZGBMain.h"
 
 //Pool

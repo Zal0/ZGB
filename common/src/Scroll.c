@@ -3,7 +3,6 @@
 #include "Scroll.h"
 #include "Sprite.h"
 #include "SpriteManager.h"
-#include "BankManager.h"
 #include "Math.h"
 #include "main.h"
 

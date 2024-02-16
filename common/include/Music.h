@@ -30,7 +30,6 @@ void MusicCallback(void) NONBANKED;
 
 #ifdef MUSIC_DRIVER_GBT
 	#include "gbt_player.h"
-	#include "BankManager.h"
 
 	#define INIT_MUSIC gbt_stop()
 	#define DECLARE_MUSIC(SONG) extern const void __bank_ ## SONG ## _mod_Data; extern const unsigned char * SONG ## _mod_Data[]
