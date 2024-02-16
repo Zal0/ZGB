@@ -109,6 +109,8 @@ void main(void) {
 	UINT8 i;
 	cpu_fast();
 #endif
+	InitOAMs();
+
 	__save = CURRENT_BANK;
 	INIT_MUSIC;
 
