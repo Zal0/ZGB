@@ -60,9 +60,9 @@ void Printf(const char* txt, ...){
 			}
 		}
 		if(print_target == PRINT_BKG)
-			UpdateMapTile(print_target, 0x1F & (print_x + scroll_offset_x), 0x1F & (print_y + scroll_offset_y), font_offset, c, 0);
+			UpdateMapTile(print_target, 0x1F & (print_x + scroll_offset_x), 0x1F & (print_y + scroll_offset_y), font_offset, c, NULL);
 		else
-			UpdateMapTile(print_target, print_x, print_y, font_offset, c, 0);
+			UpdateMapTile(print_target, print_x, print_y, font_offset, c, NULL);
 
 		print_x ++;
 		txt ++;
