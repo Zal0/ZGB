@@ -5,7 +5,9 @@ GBDK_HOME_UNIX := $(subst ',,$(subst \,/,'$(GBDK_HOME)'))
 
 
 #--- Default build will be release. Can be overiden passing BUILD_TYPE = debug as a parameter
-BUILD_TYPE = Release
+ifndef BUILD_TYPE
+	BUILD_TYPE = Release
+endif
 
 #--- Default player will be huge tracker HUGETRACKER/GBT_PLAYER
 ifeq ($(DEFAULT_SPRITES_SIZE), )
@@ -17,15 +19,15 @@ ifeq ($(MUSIC_PLAYER), )
 endif
 
 ifndef PORT
-PORT = sm83
+	PORT = sm83
 endif
 ifndef PLAT
-PLAT = gb
+	PLAT = gb
 endif
 ifneq ($(strip $(PORT)),)
-ifneq ($(strip $(PLAT)),)
-TARGET = -m$(PORT):$(PLAT)
-endif
+	ifneq ($(strip $(PLAT)),)
+		TARGET = -m$(PORT):$(PLAT)
+	endif
 endif
 
 OBJDIR = ../$(BUILD_TYPE)
@@ -95,7 +97,7 @@ ifneq (,$(findstring Debug,$(BUILD_TYPE)))
 	LFLAGS += -y
 	PROJECT_NAME := $(PROJECT_NAME)_Debug
 else
-	CFLAGS += -DNDEBUG
+	CFLAGS += -Wf'--max-allocs-per-node 50000' -DNDEBUG
 endif
 
 current_dir = $(shell pwd)
