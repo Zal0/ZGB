@@ -166,9 +166,6 @@ void SpriteManagerFlushRemove(void) {
 	sprite_manager_removal_check = 0;
 }
 
-extern UINT8* oam;
-extern UINT8* oam0;
-extern UINT8* oam1;
 UINT8 THIS_IDX = 0;
 Sprite* THIS = 0;
 void SpriteManagerUpdate(void) {
