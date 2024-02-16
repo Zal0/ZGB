@@ -1,6 +1,10 @@
 #include "Music.h"
 
 #ifdef MUSIC_DRIVER_HUGE
+#undef MUSIC_DRIVER_GBT
+#endif
+
+#ifdef MUSIC_DRIVER_HUGE
 BYTE hUGE_paused = 1;
 const hUGESong_t * hUGE_current_track;
 UBYTE hUGE_current_track_bank;
@@ -24,8 +28,6 @@ void hUGE_mute(UBYTE mute) {
 #endif
 
 #ifdef MUSIC_DRIVER_GBT
-#include "BankManager.h"
-
 void MusicCallback(void) NONBANKED {
 	if(last_music)
 	{

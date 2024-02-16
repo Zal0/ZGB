@@ -10,6 +10,10 @@ void __PlayMusic(void* music, unsigned char bank, unsigned char loop);
 void MusicCallback(void) NONBANKED;
 
 #ifdef MUSIC_DRIVER_HUGE
+#undef MUSIC_DRIVER_GBT
+#endif
+
+#ifdef MUSIC_DRIVER_HUGE
 	#include "hUGEDriver.h"
 
 	extern BYTE hUGE_paused;
