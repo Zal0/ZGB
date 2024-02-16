@@ -4,8 +4,8 @@
 #include <gbdk/platform.h>
 
 extern UINT8 last_tile_loaded;
-#define INIT_FONT(FONT, TARGET) print_target = TARGET; font_offset = ScrollSetTiles(last_tile_loaded, BANK(FONT), &FONT)
-#define INIT_FONT_NUMBERS(FONT, TARGET) INIT_FONT(FONT, TARGET); ((UINT8*)(&font_offset))[0] -= 27
+#define INIT_FONT(FONT, TARGET) print_target=(TARGET),font_offset=ScrollSetTiles(last_tile_loaded, BANK(FONT), &FONT)
+#define INIT_FONT_NUMBERS(FONT, TARGET) INIT_FONT(FONT, TARGET),(((UINT8*)(&font_offset))[0]-=27)
 
 extern UINT8 print_x, print_y, print_target;
 extern INT8 scroll_h_border;
@@ -17,8 +17,8 @@ typedef enum {
 } PRINT_TARGET;
 
 void Printf(const char* txt, ...);
-#define PRINT_POS(X, Y) print_x = X; print_y  = Y
-#define PRINT(X, Y, ...) PRINT_POS(X,Y); Printf(__VA_ARGS__)
+#define PRINT_POS(X, Y) print_x=(X),print_y=(Y)
+#define PRINT(X, Y, ...) PRINT_POS((X),(Y)),Printf(__VA_ARGS__)
 
 #ifdef NDEBUG 
 #define INIT_CONSOLE
@@ -28,11 +28,10 @@ void Printf(const char* txt, ...);
 #else
 #define INIT_CONSOLE(FONT, NLINES) \
 	INIT_FONT(FONT, PRINT_WIN); \
-	print_x = 0;\
-	print_y = 0;\
-	WX_REG = 7;\
-	SetWindowY(144 - (NLINES << 3));\
-	scroll_h_border = NLINES << 3;\
+	print_x = print_y = 0; \
+	WX_REG = DEVICE_WINDOW_PX_OFFSET_X; \
+	SetWindowY((DEVICE_WINDOW_PX_OFFSET_Y + DEVICE_SCREEN_PX_HEIGHT) - ((NLINES) << 3)); \
+	scroll_h_border = (NLINES) << 3; \
 	SHOW_WIN;
 
 #define DPrintf Printf
