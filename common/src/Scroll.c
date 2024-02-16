@@ -162,24 +162,11 @@ UINT16 ScrollSetTiles(UINT8 first_tile, UINT8 tiles_bank, const struct TilesInfo
 void UpdateMapTile(UINT8 bg_or_win, UINT8 x, UINT8 y, UINT16 map_offset, UINT8 data, UINT8* attr)
 {
 attr;
-	UINT8* offsetts = &map_offset;
-	data += offsetts[0];
-	if(bg_or_win == 0)
-		set_bkg_tile_xy(x, y, data);
-	else
-		set_win_tile_xy(x, y, data);
-
+	UINT8* addr = (bg_or_win == 0) ? set_bkg_tile_xy(x, y, (UINT8)map_offset + data) : set_win_tile_xy(x, y, (UINT8)map_offset + data);
 #ifdef CGB
 	if (_cpu == CGB_TYPE) {
 		VBK_REG = 1;
-
-		UINT8 c = attr ? *attr : scroll_tile_info[data];
-		c += offsetts[1];
-
-		if (bg_or_win == 0)
-			set_bkg_tile_xy(x, y, c);
-		else
-			set_win_tile_xy(x, y, c);
+		set_vram_byte(addr, ((UINT8)(map_offset >> 8)) + ((attr) ? *attr : scroll_tile_info[data]));
 		VBK_REG = 0;
 	}
 #endif
@@ -190,7 +177,7 @@ UINT16 LoadMap(UINT8 bg_or_win, UINT8 x, UINT8 y, UINT8 map_bank, struct MapInfo
 	SWITCH_ROM(map_bank);
 
 	//Load Tiles
-	UINT8 load_tiles = tiles_bank_0 != map->tiles_bank || tiles_0 != map->tiles; //If the tile set is the same as the one used for the scroll or the bg (which is stored in tiles_bank_0 and tiles0) then do not load the tiles again
+	UINT8 load_tiles = (tiles_bank_0 != map->tiles_bank) || (tiles_0 != map->tiles); //If the tile set is the same as the one used for the scroll or the bg (which is stored in tiles_bank_0 and tiles0) then do not load the tiles again
 	UINT16 map_offset = 0;
 	if(load_tiles)
 		map_offset = ScrollSetTiles(last_tile_loaded, map->tiles_bank, map->tiles);
