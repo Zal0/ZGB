@@ -1,4 +1,4 @@
-#include <gbdk/platform.h>
+#include "gbt_player.h"
 
 void gbt_play(void *data, UINT8 bank, UINT8 speed) OLDCALL {
 	data; bank; speed;
