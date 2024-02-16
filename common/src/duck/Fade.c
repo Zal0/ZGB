@@ -30,7 +30,7 @@ void FadeDMG(UINT8 fadeout) {
 		p = fadeout ? 3 - i : i;
 		for(j = 0; j != 3; ++j) {
 			c = &colors[j << 2];
-			*pals[j] = PAL_DEF(FadeInOp(c[0], p), FadeInOp(c[1], p), FadeInOp(c[2], p), FadeInOp(c[3], p));
+			*pals[j] = DMG_PALETTE(FadeInOp(c[0], p), FadeInOp(c[1], p), FadeInOp(c[2], p), FadeInOp(c[3], p));
 		}
 		wait_vbl_done();
 		wait_vbl_done();

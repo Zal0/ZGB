@@ -162,7 +162,7 @@ void main(void) {
 			}
 		} else 
 #endif
-		BGP_REG = OBP0_REG = OBP1_REG = PAL_DEF(0, 1, 2, 3);
+		BGP_REG = OBP0_REG = OBP1_REG = DMG_PALETTE(DMG_WHITE, DMG_LITE_GRAY, DMG_DARK_GRAY, DMG_BLACK);
 
                 __save = CURRENT_BANK;
 		SWITCH_ROM(stateBanks[current_state]);
