@@ -25,9 +25,6 @@ const UINT8 FX_ATTR_CH5[] = { NORMAL,      NORMAL,      NORMAL    };
 UINT8 * const * const FX_ADDRESS[] = { FX_CH1,      FX_CH2,      FX_CH3,      FX_CH4,      FX_CH5      };
 UINT8 * const FX_ATTRIBUTES[]      = { FX_ATTR_CH1, FX_ATTR_CH2, FX_ATTR_CH3, FX_ATTR_CH4, FX_ATTR_CH5 };
 
-const UINT8 FX_REG_SIZES[] = { 5, 4, 5, 4, 3 };
-
-
 extern UINT8 music_mute_frames;
 
 void PlayFx(SOUND_CHANNEL channel, UINT8 mute_frames, ...) {
