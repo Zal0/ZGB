@@ -73,7 +73,7 @@ endif
 
 # SGB flags
 ifneq ($(wildcard ../res/borders), )
-	BINFLAGS +=-ys 
+	BINFLAGS +=-Wm-ys 
 endif
 
 # gbt-player/Hugetracker flags
