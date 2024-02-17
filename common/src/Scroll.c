@@ -65,11 +65,8 @@ extern UINT8 vbl_count;
 UINT8 current_vbl_count;
 
 void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
-	UINT8 replacement;
-	UINT8 i;
-	Sprite* s;
-	UINT8 type;
-	UINT16 sprite_y;
+	static UINT8 replacement;
+	static UINT8 type;
 	c;
 
 	if(((UINT16)x >= scroll_tiles_w) || ((UINT16)y >= scroll_tiles_h)) { //This also checks x < 0 || y < 0
@@ -78,19 +75,19 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 		replacement = *t;
 		type = GetTileReplacement(t, &replacement);
 		if(type != 255u) {
-			for(i = sprite_manager_updatables[0]; i != 0u; --i) {
-				s = sprite_manager_sprites[sprite_manager_updatables[i]];
-				if((s->type == type) && (s->unique_id == SPRITE_UNIQUE_ID(x, y))) {
+			static UINT8 i;
+			for (i = sprite_manager_updatables[0]; (i != 0); i--) {
+				Sprite* s = sprite_manager_sprites[sprite_manager_updatables[i]];
+				if ((s->type == type) && (s->unique_id == SPRITE_UNIQUE_ID(x, y))) {
 					break;
 				}
 			}
-
-			if(i == 0) {
+			if (i == 0) {
 				UINT8 __save = CURRENT_BANK;
 				SWITCH_ROM(spriteDataBanks[type]);
-					sprite_y = ((y + 1) << 3) - spriteDatas[type]->height;
+				UINT16 sprite_y = ((y + 1) << 3) - spriteDatas[type]->height;
 				SWITCH_ROM(__save);
-				s = SpriteManagerAdd(type, x << 3, sprite_y);
+				SpriteManagerAdd(type, x << 3, sprite_y);
 			}
 		}
 	}
