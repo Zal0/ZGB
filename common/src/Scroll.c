@@ -69,25 +69,23 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	UINT8 i;
 	Sprite* s;
 	UINT8 type;
-	UINT16 id;
 	UINT16 sprite_y;
 	c;
 
-	if((UINT16)x >= scroll_tiles_w || (UINT16)y >= scroll_tiles_h) { //This also checks x < 0 || y < 0
+	if(((UINT16)x >= scroll_tiles_w) || ((UINT16)y >= scroll_tiles_h)) { //This also checks x < 0 || y < 0
 		replacement = 0;
 	} else {
 		replacement = *t;
 		type = GetTileReplacement(t, &replacement);
 		if(type != 255u) {
-			id = SPRITE_UNIQUE_ID(x, y);
-			for(i = 0u; i != sprite_manager_updatables[0]; ++i) {
-				s = sprite_manager_sprites[sprite_manager_updatables[i + 1]];
-				if((s->type == type) && (s->unique_id == id)) {
+			for(i = sprite_manager_updatables[0]; i != 0u; --i) {
+				s = sprite_manager_sprites[sprite_manager_updatables[i]];
+				if((s->type == type) && (s->unique_id == SPRITE_UNIQUE_ID(x, y))) {
 					break;
 				}
 			}
 
-			if(i == sprite_manager_updatables[0]) {
+			if(i == 0) {
 				UINT8 __save = CURRENT_BANK;
 				SWITCH_ROM(spriteDataBanks[type]);
 					sprite_y = ((y + 1) << 3) - spriteDatas[type]->height;
@@ -97,8 +95,8 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 		}
 	}
 
+	UINT8* addr = set_bkg_tile_xy(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), replacement);
 	#ifdef CGB
-		UINT8* addr = set_bkg_tile_xy(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), replacement);
 		if (_cpu == CGB_TYPE) {
 			VBK_REG = 1;
 			if(!scroll_cmap) {
@@ -107,8 +105,6 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 			set_vram_byte(addr, *c);
 			VBK_REG = 0;
 		}
-	#else
-		set_bkg_tile_xy(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), replacement);
 	#endif
 }
 
@@ -188,9 +184,9 @@ UINT16 LoadMap(UINT8 bg_or_win, UINT8 x, UINT8 y, UINT8 map_bank, struct MapInfo
 		for(UINT8 i = 0; i < map->width; ++i) {
 			UpdateMapTile(bg_or_win, x + i, y + j, map_offset, *data, attrs);
 
-			++ data;
+			++data;
 			if(attrs)
-				++ attrs;
+				++attrs;
 		}
 	}
 
