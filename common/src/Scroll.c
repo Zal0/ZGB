@@ -75,10 +75,12 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 		replacement = *t;
 		type = GetTileReplacement(t, &replacement);
 		if(type != 255u) {
+			static UINT16 id;
 			static UINT8 i;
+			id = SPRITE_UNIQUE_ID(x, y);
 			for (i = sprite_manager_updatables[0]; (i != 0); i--) {
 				Sprite* s = sprite_manager_sprites[sprite_manager_updatables[i]];
-				if ((s->type == type) && (s->unique_id == SPRITE_UNIQUE_ID(x, y))) {
+				if ((s->type == type) && (s->unique_id == id)) {
 					break;
 				}
 			}
@@ -434,13 +436,6 @@ void MoveScroll(INT16 x, INT16 y) {
 		ScrollUpdateColumnR();
 	}
 	SWITCH_ROM(__save);
-}
-
-UINT8* GetScrollTilePtr(UINT16 x, UINT16 y) {
-	//Ensure you have selected scroll_bank before calling this function
-	//And it is returning a pointer so don't swap banks after you get the value
-
-	return scroll_map + (scroll_tiles_w * y + x); //TODO: fix this mult!!
 }
 
 UINT8 GetScrollTile(UINT16 x, UINT16 y) {

@@ -64,7 +64,13 @@ void RefreshScroll(void);
 void FinishPendingScrollUpdates(void);
 
 void GetMapSize(UINT8 map_bank, const struct MapInfo* map, UINT8* tiles_w, UINT8* tiles_h);
-UINT8* GetScrollTilePtr(UINT16 x, UINT16 y);
+
+inline UINT8* GetScrollTilePtr(UINT16 x, UINT16 y) {
+	//Ensure you have selected scroll_bank before calling this function
+	//And it is returning a pointer so don't swap banks after you get the value
+	return scroll_map + (scroll_tiles_w * y + x);
+}
+
 UINT8 GetScrollTile(UINT16 x, UINT16 y);
 UINT8 ScrollFindTile(UINT8 map_bank, const struct MapInfo* map, UINT8 tile,
 	UINT8 start_x, UINT8 start_y, UINT8 w, UINT8 h,
