@@ -5,6 +5,8 @@
 
 #include "Stack.h"
 
+// this functionality is OBSOLETE
+
 #define N_PUSH_BANKS 10
 
 extern UINT8* bank_stack;

@@ -1,5 +1,7 @@
 #include "BankManager.h"
 
+// this functionality is OBSOLETE
+
 DECLARE_STACK(bank_stack, N_PUSH_BANKS);
 
 void PushBank(UINT8 b) NONBANKED {
