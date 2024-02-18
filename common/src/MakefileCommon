@@ -64,17 +64,27 @@ else
 endif
 
 
-# DMG/Color flags
-EXTENSION = gb
-ifneq (,$(findstring Color,$(BUILD_TYPE)))
-	BINFLAGS += -Wm-yc
-	CFLAGS += -DCGB
-	EXTENSION = gbc
-endif
+ifeq ($(strip $(PLAT)),duck)
+	# MegaDuck / Coguar Boy
+	EXTENSION = duck
+else
+	# DMG/Color flags
+	EXTENSION = gb
+	ifneq (,$(findstring Color,$(BUILD_TYPE)))
+		BINFLAGS += -Wm-yc
+		CFLAGS += -DCGB
+		EXTENSION = gbc
+	endif
 
-# SGB flags
-ifneq ($(wildcard ../res/borders), )
-	BINFLAGS +=-Wm-ys 
+	# SGB flags
+	ifneq ($(wildcard ../res/borders), )
+		BINFLAGS +=-Wm-ys 
+	endif
+
+	# Analogue pocket
+	ifeq ($(strip $(PLAT)),ap)
+		EXTENSION = pocket
+	endif
 endif
 
 # gbt-player/Hugetracker flags
@@ -224,7 +234,9 @@ $(OBJDIR_ZGB)/zgb.lib: $(OBJDIR_ZGB) $(OBJS_ZGB)
 # the use of SDAR utility is disabled because of the problems with the windows version
 #	@$(SDAR) -q $@ $(OBJS_ZGB)
 # fall back to the old style library which is just the object file list
-	@cp $(OBJECTS_ZGB) $(OBJDIR_ZGB)/
+	@if [ -n "$(OBJECTS_ZGB)" ] ; then \
+		cp $(OBJECTS_ZGB) $(OBJDIR_ZGB)/ ; \
+	fi
 	@echo -e "$(subst $(subst ,, ),\n,$(notdir $(OBJS_ZGB)))" >> $@
 
 
