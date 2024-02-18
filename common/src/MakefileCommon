@@ -93,8 +93,8 @@ endif
 
 # Release/Debug flags
 ifneq (,$(findstring Debug,$(BUILD_TYPE)))
-	CFLAGS += --debug
-	LFLAGS += -y
+	CFLAGS += -debug
+	BINFLAGS += -debug
 	PROJECT_NAME := $(PROJECT_NAME)_Debug
 else
 	CFLAGS += -Wf'--max-allocs-per-node 50000' -DNDEBUG
@@ -245,7 +245,6 @@ $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR) $(OBJDIR_ZGB)/zgb.lib $(OBJDIR
 	@$(LCC) $(BINFLAGS) -Wl-k$(OBJDIR_ZGB)/ -Wl-lzgb.lib -o $(OBJDIR)/rom.$(EXTENSION) $(OBJS)
 	@cp $(OBJDIR)/rom.$(EXTENSION) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
 	@cp $(OBJDIR)/rom.sym $(BINDIR)/$(PROJECT_NAME).sym
-	@rm -f *.adb
 	@echo Done!
 
 build_lib: $(OBJDIR) $(OBJS)
