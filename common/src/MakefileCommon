@@ -1,8 +1,9 @@
 ZGB_PATH_UNIX := $(subst ',,$(subst \,/,'$(ZGB_PATH)'))
+ifndef GBDK_HOME
+	GBDK_HOME := $(ZGB_PATH_UNIX)/../env/gbdk
+	PATH := $(ZGB_PATH_UNIX)/../env/make-3.81-bin/bin;$(ZGB_PATH_UNIX)/../env/gbdk/bin;$(ZGB_PATH_UNIX)/../env/msys/bin;$(PATH)
+endif
 GBDK_HOME_UNIX := $(subst ',,$(subst \,/,'$(GBDK_HOME)'))
-# GBDK_HOME := $(ZGB_PATH_UNIX)/../env/gbdk
-# PATH := $(ZGB_PATH_UNIX)/../env/make-3.81-bin/bin;$(ZGB_PATH_UNIX)/../env/gbdk/bin;$(ZGB_PATH_UNIX)/../env/msys/bin;$(PATH)
-
 
 #--- Default build will be release. Can be overiden passing BUILD_TYPE = debug as a parameter
 ifndef BUILD_TYPE
