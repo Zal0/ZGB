@@ -121,44 +121,6 @@ gbt_get_pattern_ptr:: ; a = pattern number
 
 ;-------------------------------------------------------------------------------
 
-gbt_get_pattern_ptr_banked:: ; a = pattern number
-
-	; loads a pointer to pattern a into gbt_current_step_data_ptr
-
-	ld	c,a
-	ld	b,#0
-
-	ld	a,(gbt_bank)
-	ldh	(__current_bank),a
-	ld	(rROMB0),a ; MBC1, MBC3, MBC5 - Set bank
-
-	ld	hl,#gbt_song
-	ld	a,(hl+)
-	ld	l,(hl)
-	ld	h,a
-
-	; hl = pointer to list of pointers
-	; de = pattern number
-
-	add	hl,bc
-	add	hl,bc
-
-	; hl = pointer to pattern a pointer
-
-	ld	a,(hl+)
-	ld	b,(hl)
-	or	a,b
-	jr	nz,dont_loop$
-	ld	(gbt_current_pattern), a ; a = 0
-dont_loop$:
-	ld	a,#0x01
-	ldh	(__current_bank),a
-	ld	(rROMB0),a ; MBC1, MBC3, MBC5 - Set bank
-
-	ret
-
-;-------------------------------------------------------------------------------
-
 _gbt_play::
 	lda	hl,2(sp)
 	ld	e,(hl)
@@ -1345,6 +1307,7 @@ ch3_just_set_volume$:
 
 	; Set volume
 
+	and	a,#0x0F
 	swap	a
 	ld	(gbt_vol+2),a
 
@@ -1883,8 +1846,18 @@ gbt_ch1234_jump_position:
 
 	; Check to see if jump puts us past end of song
 	ld	a,(hl)
-	call	gbt_get_pattern_ptr_banked
-	ld	a,#1 ; tell gbt_player.s to do this next cycle
+	call	gbt_get_pattern_ptr
+	ld	hl,#gbt_current_step_data_ptr
+	ld	a,(hl+)
+	ld	b,a
+	ld	a,(hl)
+	or	a,b
+	jr	nz,dont_loop$
+	xor	a,a
+	ld	(gbt_current_pattern), a
+dont_loop$:
+
+	ld	a,#1
 	ld	(gbt_update_pattern_pointers),a
 	xor	a,a ;ret 0
 	ret
