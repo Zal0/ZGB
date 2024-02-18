@@ -149,7 +149,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="gbr2c.cpp" />
-    <ClCompile Include="gbrParser .cpp" />
+    <ClCompile Include="gbrParser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gbrParser.h" />

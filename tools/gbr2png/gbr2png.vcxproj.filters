@@ -24,7 +24,7 @@
     <ClCompile Include="lodepng\lodepng.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\gbr2c\gbrParser .cpp">
+    <ClCompile Include="..\gbr2c\gbrParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -150,7 +150,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\gbr2c\gbrParser .cpp" />
+    <ClCompile Include="..\gbr2c\gbrParser.cpp" />
     <ClCompile Include="gbm2c.cpp" />
   </ItemGroup>
   <ItemGroup>

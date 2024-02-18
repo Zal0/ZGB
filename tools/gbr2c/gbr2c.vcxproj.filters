@@ -18,7 +18,7 @@
     <ClCompile Include="gbr2c.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gbrParser .cpp">
+    <ClCompile Include="gbrParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
