@@ -36,6 +36,7 @@ void SwapOAMs(void) {
 void ClearOAMs(void) {
 	__render_shadow_OAM = (UINT8)((UINT16)shadow_OAM >> 8);
 	hide_sprites_range(0, MAX_HARDWARE_SPRITES);
+	_shadow_OAM_base = __render_shadow_OAM; // emulate SwapOAMs()
 	__render_shadow_OAM = (UINT8)((UINT16)mirror_OAM >> 8); 
 	hide_sprites_range(0, MAX_HARDWARE_SPRITES);
 	next_oam_idx = 0;
