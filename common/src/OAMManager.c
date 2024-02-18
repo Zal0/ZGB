@@ -4,11 +4,13 @@
 #include "OAMManager.h"
 #include "Scroll.h"
 
-//Ram addresses: c000 - dfff
-//c000 is where GBDK OAM is allocated
-//c000 + 160 = c0a0 but we cannot user c0a0, we need c100
-//c100 crashes (__at not working??) so I am gonna use df00-dfff (last 255 ram bytes)
-//This address overlaps with the stack eventually so I am also moving the stack to 0xDEFF (see the makefile)
+// address of the mirror_OAM is set in the MakefileCommon, you must set .STACK, _mirror_OAM addresses 
+// and the base address for the _DATA segment if necessary; shadow OAMs must be on the 256-byte boundary
+// the default configuration is: 
+//     _shadow_OAM @ 0xc000 (gbdk-2020 default)
+//     _mirror_OAM @ 0xdf00
+//     .STACK      @ 0xdf00
+//     _DATA       @ 0xc0a0 (gbdk-2020 default)
 
 extern OAM_item_t mirror_OAM[40];
 
