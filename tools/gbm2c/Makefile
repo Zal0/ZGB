@@ -5,7 +5,7 @@ SOURCES	:= gbm2c.cpp ../gbr2c/gbrParser.cpp
 OBJS	:= $(SOURCES:%.cpp=%.o)
 
 CC	:= g++
-CFLAGS	:= -I../gbr2c
+CFLAGS	:= -static -I../gbr2c
 
 all:	$(NAME)
 
