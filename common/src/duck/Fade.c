@@ -11,9 +11,10 @@ UINT8 FadeInOp(UINT16 c, UINT16 i) {
 	return U_LESS_THAN(c, i) ? 0: (c - i);
 }
 
+UINT8* const pals[] = {&BGP_REG, &OBP0_REG, &OBP1_REG};
+
 void FadeDMG(UINT8 fadeout) {
 	UINT8 colors[12];
-	UINT8* const pals[] = {&BGP_REG, &OBP0_REG, &OBP1_REG};
 	UINT8 i, j; 
 	UINT8* c = colors;
 	UINT8 p;
