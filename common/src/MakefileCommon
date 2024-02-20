@@ -39,7 +39,8 @@ BINDIR = ../bin
 LCC = $(GBDK_HOME_UNIX)/bin/lcc
 SDAR = $(GBDK_HOME_UNIX)/bin/sdar
 PNG2ASSET = $(GBDK_HOME_UNIX)/bin/png2asset
-BGB = $(ZGB_PATH_UNIX)/../env/bgb/bgb
+
+EMULATOR = $(ZGB_PATH_UNIX)/../env/emulicious/emulicious
 
 GBR2C = $(ZGB_PATH_UNIX)/../tools/gbr2c/gbr2c
 GBR2PNG = $(ZGB_PATH_UNIX)/../tools/gbr2png/gbr2png
@@ -260,6 +261,9 @@ $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR) $(OBJDIR_ZGB)/zgb.lib $(OBJDIR
 	@$(LCC) $(BINFLAGS) -Wl-k$(OBJDIR_ZGB)/ -Wl-lzgb.lib -o $(OBJDIR)/rom.$(EXTENSION) $(OBJS)
 	@cp $(OBJDIR)/rom.$(EXTENSION) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
 	@cp $(OBJDIR)/rom.sym $(BINDIR)/$(PROJECT_NAME).sym
+	@if test -f "$(OBJDIR)/rom.cdb" ; then \
+		cp $(OBJDIR)/rom.cdb $(BINDIR)/$(PROJECT_NAME).cdb ; \
+	fi
 	@echo Done!
 
 build_lib: $(OBJDIR) $(OBJS)
@@ -282,5 +286,5 @@ clean:
 run: all
 	@if test -f $(BINDIR)/$(PROJECT_NAME).$(EXTENSION); then \
 		echo Running $(BINDIR)/$(PROJECT_NAME).$(EXTENSION); \
-		$(BGB) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION); \
+		$(EMULATOR) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION); \
 	fi
