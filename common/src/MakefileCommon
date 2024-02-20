@@ -54,20 +54,22 @@ ifeq ($(strip $(N_BANKS)),)
 endif
 BINFLAGS += $(TARGET) -Wl-j -Wm-yS -autobank -Wl-yo$(N_BANKS) -Wb-ext=.rel -Wl-g.STACK=0xDF00 -Wl-g_mirror_OAM=0xDF00 -Wl-g_font_recode_table=0xDFA0 -Wb-reserve=1:1000
 
-ifeq ($(wildcard savegame.c), )
-	#No savegame
-	BINFLAGS += -Wl-yt0x19
-else
-	#Savegame
-	BINFLAGS += -Wl-yt0x1B -Wl-ya1
-	CFLAGS += -DUSE_SAVEGAME
-endif
-
 
 ifeq ($(strip $(PLAT)),duck)
 	# MegaDuck / Coguar Boy
 	EXTENSION = duck
+	# No savegame
+	BINFLAGS += -Wl-yt0x19
 else
+	ifeq ($(wildcard savegame.c), )
+		# No savegame
+		BINFLAGS += -Wl-yt0x19
+	else
+		# Savegame
+		BINFLAGS += -Wl-yt0x1B -Wl-ya1
+		CFLAGS += -DUSE_SAVEGAME
+	endif
+
 	# DMG/Color flags
 	EXTENSION = gb
 	ifneq (,$(findstring Color,$(BUILD_TYPE)))
