@@ -14,6 +14,13 @@
 	#include "savegame.h"
 #endif
 
+// reference font_recode_table so that allow passing -Wl-g_font_recode_table=ADDR when not using Print()
+void __force_use_font(void) NAKED {
+	__asm
+		.globl _font_recode_table
+	__endasm;
+}
+
 extern UINT8 next_state;
 
 UINT8 delta_time;
