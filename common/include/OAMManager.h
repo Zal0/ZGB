@@ -3,8 +3,16 @@
 
 #include <gbdk/platform.h>
 
-#define OAMS   ((OAM_item_t*)(oam))
-#define OAM(A) ((OAM_item_t*)(oam + (A)))
+#if defined(NINTENDO)
+	#define OAM_ENTRY_SIZE sizeof(OAM_item_t)
+    #define OAM_OFFSET_SIZE OAM_ENTRY_SIZE
+#elif defined(SEGA)
+	#define OAM_ENTRY_SIZE 3
+    #define OAM_OFFSET_SIZE 1
+#endif
+
+#define OAMS   (oam)
+#define OAM(A) (oam + ((A) * OAM_OFFSET_SIZE))
 
 extern UINT8* oam;
 

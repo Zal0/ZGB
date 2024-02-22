@@ -29,9 +29,14 @@ UINT8 vbl_count = 0;
 UINT8 music_mute_frames = 0;
 void vbl_update(void) {
 	vbl_count ++;
-	
-	SCX_REG = scroll_x_vblank + (scroll_offset_x << 3);
-	SCY_REG = scroll_y_vblank + (scroll_offset_y << 3);
+
+#if defined(SEGA)
+	if (_shadow_OAM_OFF == 0) {
+#endif
+		move_bkg(scroll_x_vblank + (scroll_offset_x << 3), scroll_y_vblank + (scroll_offset_y << 3));
+#if defined(SEGA)
+	}
+#endif
 
 	if (music_mute_frames != 0) {
 		if (--music_mute_frames == 0) {
@@ -45,7 +50,12 @@ void InitSprites(void);
 
 extern UWORD ZGB_Fading_BPal[32];
 extern UWORD ZGB_Fading_SPal[32];
-#ifdef CGB	
+
+#if defined(NINTENDO)
+
+#ifdef CGB
+UINT16 default_palette[] = {RGB(31, 31, 31), RGB(20, 20, 20), RGB(10, 10, 10), RGB(0, 0, 0)};
+
 void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *rgb_data, UINT8 bank) {
 	if ((first_palette + nb_palettes) > 8)
 		return; //Adding more palettes than supported
@@ -76,23 +86,25 @@ void LCD_isr(void) NONBANKED {
 		LYC_REG = 0;
 	}
 }
+#endif
 
 void SetWindowY(UINT8 y) {
+#if defined(NINTENDO)
 	WY_REG = y;
 	LYC_REG = y - 1;
 	if (y < (DEVICE_WINDOW_PX_OFFSET_Y + DEVICE_SCREEN_PX_HEIGHT)) {
-		SHOW_WIN; 
-	} else { 
-		HIDE_WIN; 
-		LYC_REG = 160u; 
-	} 
+		SHOW_WIN;
+	} else {
+		HIDE_WIN;
+		LYC_REG = 160u;
+	}
+#endif
 }
 
 extern UINT8 last_bg_pal_loaded;
 extern UINT8 last_tile_loaded;
-UINT16 default_palette[] = {RGB(31, 31, 31), RGB(20, 20, 20), RGB(10, 10, 10), RGB(0, 0, 0)};
 void main(void) {
-	static UINT8 __save; 
+	static UINT8 __save;
 
 	// this delay is required for PAL SNES SGB border commands to work
 	for (UINT8 i = 4; i != 0; i--) {
@@ -103,9 +115,10 @@ void main(void) {
 	CheckSRAMIntegrity((UINT8*)&savegame, sizeof(Savegame));
 #endif
 
-#ifdef CGB
-	UINT8 i;
-	cpu_fast();
+#if defined(NINTENDO)
+	#ifdef CGB
+		cpu_fast();
+	#endif
 #endif
 	InitOAMs();
 
@@ -115,28 +128,36 @@ void main(void) {
 	InitStates();
 	InitSprites();
 	SWITCH_ROM(__save);
-	
+
 	CRITICAL {
-#ifdef CGB
+#if defined(NINTENDO)
+	#ifdef CGB
 		TMA_REG = (_cpu == CGB_TYPE) ? 0x78u : 0xBCu;
-#else
+	#else
 		TMA_REG = 0xBCu;
-#endif
+	#endif
 		TAC_REG = 0x04u;
 		//Instead of calling add_TIM add_low_priority_TIM is used because it can be interrupted. This fixes a random
 		//bug hiding sprites under the window (some frames the call is delayed and you can see sprites flickering under the window)
-		add_low_priority_TIM(MusicCallback); 
-		                          
+		add_low_priority_TIM(MusicCallback);
+
 		add_VBL(vbl_update);
 
-		STAT_REG |= 0x40u; 
+		STAT_REG |= 0x40u;
 		add_LCD(LCD_isr);
+#elif defined(SEGA)
+		add_VBL(vbl_update);
+		add_VBL(MusicCallback);
+#endif
 	}
 
+#if defined(NINTENDO)
 	set_interrupts(VBL_IFLAG | TIM_IFLAG | LCD_IFLAG);
-
 	LCDC_REG |= LCDCF_OBJDEFAULT | LCDCF_OBJON | LCDCF_BGON;
 	WY_REG = (UINT8)(DEVICE_WINDOW_PX_OFFSET_Y + DEVICE_SCREEN_PX_HEIGHT);
+#elif defined(SEGA)
+	set_interrupts(VBL_IFLAG);
+#endif
 
 	while(1) {
 		DISPLAY_OFF
@@ -152,24 +173,26 @@ void main(void) {
 		scroll_target = 0;
 		last_bg_pal_loaded = 0;
 		last_tile_loaded = 0;
-		
-#ifdef CGB
+
+#if defined(NINTENDO)
+	#ifdef CGB
 		if (_cpu == CGB_TYPE) {
-			for(i = 0; i < 8; ++ i)
+			for(UINT8 i = 0; i < 8; ++ i)
 			{
 				SetPalette(BG_PALETTE, i, 1, default_palette, 1);
 				SetPalette(SPRITES_PALETTE, i, 1, default_palette, 1);
 			}
-		} else 
-#endif
+		} else
+	#endif
 		BGP_REG = OBP0_REG = OBP1_REG = DMG_PALETTE(DMG_WHITE, DMG_LITE_GRAY, DMG_DARK_GRAY, DMG_BLACK);
+#endif
 
-                __save = CURRENT_BANK;
+		__save = CURRENT_BANK;
 		SWITCH_ROM(stateBanks[current_state]);
-			(startFuncs[current_state])();
+		(startFuncs[current_state])();
 		SWITCH_ROM(__save);
-		scroll_x_vblank = scroll_x;
-		scroll_y_vblank = scroll_y;
+
+		scroll_x_vblank = scroll_x, scroll_y_vblank = scroll_y;
 
 		if(state_running) {
 			DISPLAY_ON;
@@ -183,11 +206,12 @@ void main(void) {
 			vbl_count = 0;
 
 			UPDATE_KEYS();
-			
+
 			SpriteManagerUpdate();
-                        __save = CURRENT_BANK;
+
+			__save = CURRENT_BANK;
 			SWITCH_ROM(stateBanks[current_state]);
-				updateFuncs[current_state]();
+			updateFuncs[current_state]();
 			SWITCH_ROM(__save);
 		}
 

@@ -31,17 +31,21 @@ extern UINT8 delta_time;
 
 void SetWindowY(UINT8 y);
 
-void LCD_isr(void) NONBANKED;
-
-#ifdef CGB
-typedef enum {
-	BG_PALETTE,
-	SPRITES_PALETTE
-} PALETTE_TYPE;
-void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *rgb_data, UINT8 bank);
+#if defined(NINTENDO)
+	void LCD_isr(void) NONBANKED;
+	#ifdef CGB
+		typedef enum {
+			BG_PALETTE,
+			SPRITES_PALETTE
+		} PALETTE_TYPE;
+		void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *rgb_data, UINT8 bank);
+	#else
+		#define SetPalette(PALETTE_TYPE, first_palette, nb_palettes, rgb_data, bank);
+	#endif
 #else
-#define SetPalette(PALETTE_TYPE, first_palette, nb_palettes, rgb_data, bank);
+	#define SetPalette(PALETTE_TYPE, first_palette, nb_palettes, rgb_data, bank);
 #endif
+
 
 #define IMPORT_MAP(MAP) extern struct MapInfo MAP; extern const void __bank_##MAP
 #define IMPORT_TILES(TILES) extern struct TilesInfo TILES; extern const void __bank_##TILES
