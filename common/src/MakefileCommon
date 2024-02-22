@@ -243,7 +243,9 @@ $(OBJDIR_ZGB)/zgb.lib: $(OBJDIR_ZGB) $(OBJS_ZGB)
 	@echo creating zgb.lib    
 	@rm -f $(OBJDIR_ZGB)/zgb.lib
 # the use of SDAR utility is disabled because of the problems with the windows version
-	@$(SDAR) -q $@ $(OBJS_ZGB)
+	@for file in $(OBJS_ZGB) ; do \
+		$(SDAR) -ru $@ $${file} ; \
+	done
 # fall back to the old style library which is just the object file list
 #	@if [ -n "$(OBJECTS_ZGB)" ] ; then \
 #		cp $(OBJECTS_ZGB) $(OBJDIR_ZGB)/ ; \
