@@ -52,8 +52,8 @@ MOD2GBT = $(ZGB_PATH_UNIX)/../tools/mod2gbt/mod2gbt
 UGE2SOURCE = $(ZGB_PATH_UNIX)/../env/uge2source
 
 ADDR_gb = -Wl-g.STACK=0xDF00 -Wl-g_mirror_OAM=0xDF00 -Wl-g_font_recode_table=0xDFA0
-ADDR_duck = $(ADDRESS_gb)
-ADDR_ap = $(ADDRESS_gb)
+ADDR_duck = $(ADDR_gb)
+ADDR_ap = $(ADDR_gb)
 ADDR_gg = -Wl-g.STACK=0xDEA0 -Wl-g_mirror_OAM=0xDF00 -Wl-g_font_recode_table=0xDEA0
 
 CFLAGS += $(TARGET) -Wf-MMD $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include -DFILE_NAME=$(basename $(<F))
@@ -243,12 +243,12 @@ $(OBJDIR_ZGB)/zgb.lib: $(OBJDIR_ZGB) $(OBJS_ZGB)
 	@echo creating zgb.lib    
 	@rm -f $(OBJDIR_ZGB)/zgb.lib
 # the use of SDAR utility is disabled because of the problems with the windows version
-#	@$(SDAR) -q $@ $(OBJS_ZGB)
+	@$(SDAR) -q $@ $(OBJS_ZGB)
 # fall back to the old style library which is just the object file list
-	@if [ -n "$(OBJECTS_ZGB)" ] ; then \
-		cp $(OBJECTS_ZGB) $(OBJDIR_ZGB)/ ; \
-	fi
-	@echo -e "$(subst $(subst ,, ),\n,$(notdir $(OBJS_ZGB)))" >> $@
+#	@if [ -n "$(OBJECTS_ZGB)" ] ; then \
+#		cp $(OBJECTS_ZGB) $(OBJDIR_ZGB)/ ; \
+#	fi
+#	@echo -e "$(subst $(subst ,, ),\n,$(notdir $(OBJS_ZGB)))" >> $@
 
 
 #Project files------------------------------------
