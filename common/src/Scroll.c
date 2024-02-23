@@ -94,17 +94,29 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 		}
 	}
 
-	UINT8* addr = set_bkg_tile_xy(0x1F & (x + scroll_offset_x), 0x1F & (y + scroll_offset_y), replacement);
+#if defined(NINTENDO)
+	UINT8* addr = set_bkg_tile_xy(0x1f & (DEVICE_SCREEN_X_OFFSET + x + scroll_offset_x), 
+                                      0x1f & (DEVICE_SCREEN_Y_OFFSET + y + scroll_offset_y), 
+                                      replacement);
 	#ifdef CGB
 		if (_cpu == CGB_TYPE) {
 			VBK_REG = 1;
-			if(!scroll_cmap) {
+			if (!scroll_cmap) {
 				c = &scroll_tile_info[replacement];
 			}
 			set_vram_byte(addr, *c);
 			VBK_REG = 0;
 		}
 	#endif
+#elif defined(SEGA)
+	UINT8* addr = set_bkg_tile_xy(0x1f & (DEVICE_SCREEN_X_OFFSET + x + scroll_offset_x), 
+                                      (DEVICE_SCREEN_Y_OFFSET + y + scroll_offset_y) % DEVICE_SCREEN_BUFFER_HEIGHT, 
+                                      replacement);
+	if (!scroll_cmap) {
+		c = &scroll_tile_info[replacement];
+	}
+	set_vram_byte(addr + 1, *c);
+#endif
 }
 
 extern UWORD ZGB_Fading_BPal[32];
@@ -156,12 +168,19 @@ UINT16 ScrollSetTiles(UINT8 first_tile, UINT8 tiles_bank, const struct TilesInfo
 void UpdateMapTile(UINT8 bg_or_win, UINT8 x, UINT8 y, UINT16 map_offset, UINT8 data, UINT8* attr)
 {
 attr;
-	UINT8* addr = (bg_or_win == 0) ? set_bkg_tile_xy(x, y, (UINT8)map_offset + data) : set_win_tile_xy(x, y, (UINT8)map_offset + data);
+#if defined(NINTENDO)
+	UINT8* addr = (bg_or_win == 0) ? set_bkg_tile_xy(DEVICE_SCREEN_X_OFFSET + x, DEVICE_SCREEN_Y_OFFSET + y, (UINT8)map_offset + data) : set_win_tile_xy(DEVICE_SCREEN_X_OFFSET + x, DEVICE_SCREEN_Y_OFFSET + y, (UINT8)map_offset + data);
 #ifdef CGB
 	if (_cpu == CGB_TYPE) {
 		VBK_REG = 1;
 		set_vram_byte(addr, ((UINT8)(map_offset >> 8)) + ((attr) ? *attr : scroll_tile_info[data]));
 		VBK_REG = 0;
+	}
+#endif
+#elif defined(SEGA)
+	if (bg_or_win == 0) {
+		UINT8* addr = set_bkg_tile_xy(DEVICE_SCREEN_X_OFFSET + x, DEVICE_SCREEN_Y_OFFSET + y, (UINT8)map_offset + data);
+		set_vram_byte(addr + 1, ((UINT8)(map_offset >> 8)) + ((attr) ? *attr : scroll_tile_info[data]));
 	}
 #endif
 }

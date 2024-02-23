@@ -52,6 +52,7 @@ void SetSpriteAnim(Sprite* sprite, const UINT8* data, UINT8 speed) {
 	}
 }
 
+#if defined(NINTENDO)
 void update_attr(uint8_t start, uint8_t count, uint8_t attr) NONBANKED NAKED OLDCALL {
     start; count; attr;
 __asm
@@ -81,6 +82,12 @@ __asm
         ret
 __endasm;
 }
+#elif defined(SEGA)
+void update_attr(uint8_t start, uint8_t count, uint8_t attr) {
+	start; count; attr;
+}
+#endif
+
 
 #define SCREENWIDTH_PLUS_32  (DEVICE_SCREEN_PX_WIDTH + 32)
 #define SCREENHEIGHT_PLUS_32 (DEVICE_SCREEN_PX_HEIGHT + 32)
@@ -119,10 +126,10 @@ void DrawSprite(void) {
 		SWITCH_ROM(THIS->mt_sprite_bank);
 			switch(THIS->mirror)
 			{
-				case NO_MIRROR: next_oam_idx += move_metasprite       (THIS->mt_sprite, THIS->first_tile, next_oam_idx, screen_x,                screen_y               ); break;
-				case H_MIRROR:  next_oam_idx += move_metasprite_hflip (THIS->mt_sprite, THIS->first_tile, next_oam_idx, screen_x,                screen_y + THIS->coll_h); break;
-				case V_MIRROR:  next_oam_idx += move_metasprite_vflip (THIS->mt_sprite, THIS->first_tile, next_oam_idx, screen_x + THIS->coll_w, screen_y               ); break;
-				case HV_MIRROR: next_oam_idx += move_metasprite_hvflip(THIS->mt_sprite, THIS->first_tile, next_oam_idx, screen_x + THIS->coll_w, screen_y + THIS->coll_h); break;
+				case NO_MIRROR: next_oam_idx += move_metasprite_ex    (THIS->mt_sprite, THIS->first_tile, 0, next_oam_idx, screen_x,                screen_y               ); break;
+				case H_MIRROR:  next_oam_idx += move_metasprite_flipx (THIS->mt_sprite, THIS->first_tile, 0, next_oam_idx, screen_x,                screen_y + THIS->coll_h); break;
+				case V_MIRROR:  next_oam_idx += move_metasprite_flipy (THIS->mt_sprite, THIS->first_tile, 0, next_oam_idx, screen_x + THIS->coll_w, screen_y               ); break;
+				case HV_MIRROR: next_oam_idx += move_metasprite_flipxy(THIS->mt_sprite, THIS->first_tile, 0, next_oam_idx, screen_x + THIS->coll_w, screen_y + THIS->coll_h); break;
 			}
 		SWITCH_ROM(__save);
 
