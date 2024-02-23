@@ -19,22 +19,31 @@ ifeq ($(MUSIC_PLAYER), )
 	MUSIC_PLAYER = HUGETRACKER
 endif
 
-ifndef PORT
-	PORT = sm83
-endif
-ifndef PLAT
-	PLAT = gb
-endif
-ifneq ($(strip $(PORT)),)
-	ifneq ($(strip $(PLAT)),)
-		TARGET = -m$(PORT):$(PLAT)
-	endif
-endif
 
-OBJDIR = ../$(BUILD_TYPE)
-OBJDIR_RES = ../$(BUILD_TYPE)/res
-OBJDIR_ZGB = ../$(BUILD_TYPE)/zgb
-BINDIR = ../bin
+# TODO: Check if there are any more platform specific flags that can be centralized here
+# Configure platform specific LCC flags here:
+LCCFLAGS_gb      = #-Wm-ys -Wl-yt0x1B -autobank # Set an MBC for banking (1B-ROM+MBC5+RAM+BATT)
+LCCFLAGS_pocket  = #-Wm-ys -Wl-yt0x1B -autobank # Usually the same as required for .gb
+LCCFLAGS_duck    = -Wl-yt0x19 #-Wm-ys -Wl-yt0x1B -autobank # Usually the same as required for .gb
+LCCFLAGS_gbc     = -Wm-yc -DCGB #-Wm-ys -Wl-yt0x1B -Wm-yc -autobank # Same as .gb with: -Wm-yc (gb & gbc) or Wm-yC (gbc exclusive)
+LCCFLAGS_sms     = #-autobank
+LCCFLAGS_gg      = #-autobank
+LCCFLAGS_nes     = 
+
+LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Flags
+
+# Optional verbose output for lcc, linker and bankpack
+# LCCFLAGS += -v -Wl-p -Wb-v
+
+# Append current platform extension type to output and intermediate directories
+OBJDIR = ../$(BUILD_TYPE)/$(EXT)
+OBJDIR_RES = $(OBJDIR)/res
+OBJDIR_ZGB = $(OBJDIR)/zgb
+BINDIR = ../bin/$(EXT)
+
+# See bottom of Makefile for directory auto-creation
+MKDIRS = $(BINDIR) $(OBJDIR) $(OBJDIR_RES) $(OBJDIR_RES)/sprites $(OBJDIR_RES)/borders $(OBJDIR_ZGB)
+
 
 LCC = $(GBDK_HOME_UNIX)/bin/lcc
 SDAR = $(GBDK_HOME_UNIX)/bin/sdar
@@ -64,12 +73,8 @@ endif
 BINFLAGS += $(TARGET) -Wl-j -Wm-yS -autobank -Wl-yo$(N_BANKS) -Wb-ext=.rel -Wb-reserve=1:1000 $(ADDR_$(PLAT))
 
 
-ifeq ($(strip $(PLAT)),duck)
-	# MegaDuck / Coguar Boy
-	EXTENSION = duck
-	# No savegame
-	BINFLAGS += -Wl-yt0x19
-else
+# Moved a bunch of these to LCCFLAGS_* = ...
+ifneq ($(strip $(PLAT)),duck)
 	ifeq ($(wildcard savegame.c), )
 		# No savegame
 		BINFLAGS += -Wl-yt0x19
@@ -79,22 +84,16 @@ else
 		CFLAGS += -DUSE_SAVEGAME
 	endif
 
-	# DMG/Color flags
-	EXTENSION = gb
+	# TODO: consider changing this to a build target "gbc" and get rid of ReleaseColor?
 	ifneq (,$(findstring Color,$(BUILD_TYPE)))
 		BINFLAGS += -Wm-yc
 		CFLAGS += -DCGB
-		EXTENSION = gbc
+		EXT = gbc
 	endif
 
 	# SGB flags
 	ifneq ($(wildcard ../res/borders), )
 		BINFLAGS +=-Wm-ys 
-	endif
-
-	# Analogue pocket
-	ifeq ($(strip $(PLAT)),ap)
-		EXTENSION = pocket
 	endif
 endif
 
@@ -147,6 +146,9 @@ OBJS_ZGB = $(ASMS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.o
 
 RELS = $(OBJS:%.o=%.rel)
 
+# TODO: re-enable and fix Makefile.uptodate on a per-target basis
+BINS = $(BINDIR)/$(PROJECT_NAME).$(EXT) #$(OBJDIR)/Makefile.uptodate
+
 #prevent gbr2c and gbm2c intermediate files from being deleted
 .SECONDARY: $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.c) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.c) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.c) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.c) $(SGB_BORDERS:%.png=$(OBJDIR_RES)/borders/%.png.c) $(PNGS:%.png=$(OBJDIR_RES)/%.png.c) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.c) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.c)
 
@@ -159,26 +161,6 @@ ifneq ($(MAKECMDGOALS),clean)
 endif
 #---------------------------------------------------------------------------------------------------------
 
-#folders---------------------------------------------
-$(BINDIR):
-	@echo Creating folder $(BINDIR)
-	@mkdir $(BINDIR)
-	
-$(OBJDIR):
-	@echo Creating folder $(OBJDIR)
-	@mkdir $(OBJDIR)
-
-$(OBJDIR_RES):
-	@echo Creating folder $(OBJDIR_RES)
-	@mkdir $(OBJDIR_RES)
-
-$(OBJDIR_RES)/sprites:
-	@echo Creating folder $(OBJDIR_RES)/sprites
-	@mkdir $(OBJDIR_RES)/sprites
-
-$(OBJDIR_RES)/borders:
-	@echo Creating folder $(OBJDIR_RES)/borders
-	@mkdir $(OBJDIR_RES)/borders
 
 #resources---------------------------------------------
 #a few notes of this rule (for future me)
@@ -216,28 +198,25 @@ $(OBJDIR_RES)/%.uge.c: ../res/music/%.uge
 
 $(OBJDIR_RES)/%.o: $(OBJDIR_RES)/%.c
 	@echo compiling resource $<
-	@$(LCC) $(CFLAGS) -c -o $@ $<
+	@$(LCC) $(LCCFLAGS) $(CFLAGS) -c -o $@ $<
 	
 #ZGB---------------------------------------------	
-$(OBJDIR_ZGB):
-	@echo Creating folder $(OBJDIR_ZGB)
-	@mkdir $(OBJDIR_ZGB)
 
 $(OBJDIR_ZGB)/%.o: $(ZGB_PATH_UNIX)/src/%.s
 	@echo compiling $<
-	@$(LCC) $(CFLAGS) -c -o $@ $<
+	@$(LCC) $(LCCFLAGS) $(CFLAGS) -c -o $@ $<
 
 $(OBJDIR_ZGB)/%.o: $(ZGB_PATH_UNIX)/src/%.c
 	@echo compiling $<
-	@$(LCC) $(CFLAGS) -c -o $@ $<
+	@$(LCC) $(LCCFLAGS) $(CFLAGS) -c -o $@ $<
 
 $(OBJDIR_ZGB)/%.o: $(ZGB_PATH_UNIX)/src/$(PLAT)/%.s
 	@echo compiling $<
-	@$(LCC) $(CFLAGS) -c -o $@ $<
+	@$(LCC) $(LCCFLAGS) $(CFLAGS) -c -o $@ $<
 
 $(OBJDIR_ZGB)/%.o: $(ZGB_PATH_UNIX)/src/$(PLAT)/%.c
 	@echo compiling $<
-	@$(LCC) $(CFLAGS) -c -o $@ $<
+	@$(LCC) $(LCCFLAGS) $(CFLAGS) -c -o $@ $<
 
 $(OBJDIR_ZGB)/zgb.lib: $(OBJDIR_ZGB) $(OBJS_ZGB) 
 	@echo creating zgb.lib    
@@ -256,20 +235,20 @@ $(OBJDIR_ZGB)/zgb.lib: $(OBJDIR_ZGB) $(OBJS_ZGB)
 #Project files------------------------------------
 $(OBJDIR)/%.o: %.s
 	@echo compiling $<
-	@$(LCC) $(CFLAGS) -c -o $@ $<
+	@$(LCC) $(LCCFLAGS) $(CFLAGS) -c -o $@ $<
 
 $(OBJDIR)/%.o: %.c
 	@echo compiling $<
-	@$(LCC) $(CFLAGS) -c -o $@ $<	
+	@$(LCC) $(LCCFLAGS) $(CFLAGS) -c -o $@ $<	
 
 $(OBJDIR)/savegame.o: savegame.c
 	@echo compiling savegame on SRAM bank 0
-	@$(LCC) $(CFLAGS) -Wf-ba0 -c -o $@ $<
+	@$(LCC) $(LCCFLAGS) $(CFLAGS) -Wf-ba0 -c -o $@ $<
 
-$(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR) $(OBJDIR_ZGB)/zgb.lib $(OBJDIR_RES) $(OBJDIR_RES)/sprites $(BINDIR) $(OBJS)
+$(BINDIR)/$(PROJECT_NAME).$(EXT): $(OBJDIR) $(OBJDIR_ZGB)/zgb.lib $(OBJDIR_RES) $(OBJDIR_RES)/sprites $(BINDIR) $(OBJS)
 	@echo Linking
-	@$(LCC) $(BINFLAGS) -Wl-k$(OBJDIR_ZGB)/ -Wl-lzgb.lib -o $(OBJDIR)/rom.$(EXTENSION) $(OBJS)
-	@cp $(OBJDIR)/rom.$(EXTENSION) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
+	@$(LCC) $(LCCFLAGS) $(BINFLAGS) -Wl-k$(OBJDIR_ZGB)/ -Wl-lzgb.lib -o $(OBJDIR)/rom.$(EXT) $(OBJS)
+	@cp $(OBJDIR)/rom.$(EXT) $(BINDIR)/$(PROJECT_NAME).$(EXT)
 	@cp $(OBJDIR)/rom.sym $(BINDIR)/$(PROJECT_NAME).sym
 	@if test -f "$(OBJDIR)/rom.cdb" ; then \
 		cp $(OBJDIR)/rom.cdb $(BINDIR)/$(PROJECT_NAME).cdb ; \
@@ -278,23 +257,33 @@ $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR) $(OBJDIR_ZGB)/zgb.lib $(OBJDIR
 
 build_lib: $(OBJDIR) $(OBJS)
 
-build_gb: $(OBJDIR)/Makefile.uptodate $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
 
-$(OBJDIR)/Makefile.uptodate: Makefile
-	@echo Makefile has been mofied, forcing a rebuild
-	@make clean BUILD_TYPE=$(BUILD_TYPE)
-	@mkdir -p $(OBJDIR)
-	@touch $@
+# TODO: re-enable and fix Makefile.uptodate on a per-target basis (may need to alter dir creation some)
+# $(OBJDIR)/Makefile.uptodate: Makefile
+# 	@echo Makefile has been modified, forcing a rebuild
+# 	@make clean BUILD_TYPE=$(BUILD_TYPE)
+# 	@mkdir -p $(OBJDIR)
+# 	@touch $@
 
 clean:
 	@echo Cleaning $(PROJECT_NAME)
-	@rm -rf $(BINDIR)
-	@rm -rf $(OBJDIR_ZGB)
-	@rm -rf $(OBJDIR_RES)
-	@rm -rf $(OBJDIR)
+	@for target in $(TARGETS); do \
+		$(MAKE) $$target-clean; \
+	done
 
 run: all
-	@if test -f $(BINDIR)/$(PROJECT_NAME).$(EXTENSION); then \
-		echo Running $(BINDIR)/$(PROJECT_NAME).$(EXTENSION); \
-		$(EMULATOR) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION); \
+	@if test -f $(BINDIR)/$(PROJECT_NAME).$(EXT); then \
+		echo Running $(BINDIR)/$(PROJECT_NAME).$(EXT); \
+		$(EMULATOR) $(BINDIR)/$(PROJECT_NAME).$(EXT); \
 	fi
+
+# Include available build targets
+# include Makefile.targets
+include $(ZGB_PATH)/src/Makefile.targets
+
+
+# create necessary directories after Makefile is parsed but before build
+# info prevents the command from being pasted into the makefile
+ifneq ($(strip $(EXT)),)           # Only make the directories if EXT has been set by a target
+$(info $(shell mkdir -p $(MKDIRS)))
+endif
