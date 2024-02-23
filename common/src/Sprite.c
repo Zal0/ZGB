@@ -127,8 +127,8 @@ void DrawSprite(void) {
 			switch(THIS->mirror)
 			{
 				case NO_MIRROR: next_oam_idx += move_metasprite_ex    (THIS->mt_sprite, THIS->first_tile, 0, next_oam_idx, screen_x,                screen_y               ); break;
-				case H_MIRROR:  next_oam_idx += move_metasprite_flipx (THIS->mt_sprite, THIS->first_tile, 0, next_oam_idx, screen_x,                screen_y + THIS->coll_h); break;
-				case V_MIRROR:  next_oam_idx += move_metasprite_flipy (THIS->mt_sprite, THIS->first_tile, 0, next_oam_idx, screen_x + THIS->coll_w, screen_y               ); break;
+				case H_MIRROR:  next_oam_idx += move_metasprite_flipy (THIS->mt_sprite, THIS->first_tile, 0, next_oam_idx, screen_x,                screen_y + THIS->coll_h); break;
+				case V_MIRROR:  next_oam_idx += move_metasprite_flipx (THIS->mt_sprite, THIS->first_tile, 0, next_oam_idx, screen_x + THIS->coll_w, screen_y               ); break;
 				case HV_MIRROR: next_oam_idx += move_metasprite_flipxy(THIS->mt_sprite, THIS->first_tile, 0, next_oam_idx, screen_x + THIS->coll_w, screen_y + THIS->coll_h); break;
 			}
 		SWITCH_ROM(__save);
