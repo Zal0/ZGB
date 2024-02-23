@@ -150,7 +150,7 @@ void main(void) {
 
 		add_VBL(vbl_update);
 
-		STAT_REG |= 0x40u;
+		STAT_REG |= STATF_LYC;
 		add_LCD(LCD_isr);
 #elif defined(SEGA)
 		add_VBL(vbl_update);
