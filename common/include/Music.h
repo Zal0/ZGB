@@ -9,6 +9,14 @@ extern UINT8 stop_music_on_new_state;
 void __PlayMusic(void* music, unsigned char bank, unsigned char loop);
 void MusicCallback(void) NONBANKED;
 
+inline void INIT_SOUND(void) {
+#if defined(NINTENDO)
+	NR52_REG = 0x80;
+	NR51_REG = 0xFF;
+	NR50_REG = 0x77;
+#endif
+}
+
 #ifdef MUSIC_DRIVER_HUGE
 #undef MUSIC_DRIVER_GBT
 #endif
