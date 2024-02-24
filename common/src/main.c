@@ -96,6 +96,7 @@ void LCD_isr(void) NONBANKED {
 #endif
 
 void SetWindowY(UINT8 y) {
+	y;
 #if defined(NINTENDO)
 	WY_REG = y;
 	LYC_REG = y - 1;
@@ -158,9 +159,10 @@ void main(void) {
 #endif
 	}
 
+	DEFAULT_SPRITES_SIZE;
 #if defined(NINTENDO)
 	set_interrupts(VBL_IFLAG | TIM_IFLAG | LCD_IFLAG);
-	LCDC_REG |= LCDCF_OBJDEFAULT | LCDCF_OBJON | LCDCF_BGON;
+	LCDC_REG |= LCDCF_OBJON | LCDCF_BGON;
 	WY_REG = (UINT8)(DEVICE_WINDOW_PX_OFFSET_Y + DEVICE_SCREEN_PX_HEIGHT);
 #elif defined(SEGA)
 	set_interrupts(VBL_IFLAG);
