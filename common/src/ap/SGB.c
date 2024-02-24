@@ -33,7 +33,7 @@ void set_sgb_border(unsigned char * tiledata, size_t tiledata_size,
 
 		// prepare tilemap for SGB_BORDER_CHR_TRN (should display all 256 tiles)
 		for (UINT8 y = 0, tile = 0; y != 14; y++) {
-			UINT8 * ptr = set_bkg_tile_xy(DEVICE_SCREEN_X_OFFSET, DEVICE_SCREEN_Y_OFFSET + y, tile++);
+			UINT8 * ptr = set_bkg_tile_xy(0, y, tile++);
 			for (UINT8 x = 0; x != (DEVICE_SCREEN_WIDTH - 1); x++)
 				set_vram_byte(++ptr, tile++);
 			
@@ -61,7 +61,7 @@ void set_sgb_border(unsigned char * tiledata, size_t tiledata_size,
 		// clear SCREEN
 		memset(map_buf, 0, sizeof(map_buf));
 		set_bkg_data(0, 1, map_buf);
-		fill_bkg_rect(DEVICE_SCREEN_X_OFFSET, DEVICE_SCREEN_Y_OFFSET, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, 0);
+		fill_bkg_rect(0, 0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, 0);
 
 		BGP_REG = __save_BGP;
 
