@@ -107,11 +107,10 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 		}
 	#endif
 #elif defined(SEGA)
-	UINT8* addr = set_bkg_tile_xy(0x1f & (x + scroll_offset_x), (y + scroll_offset_y) % DEVICE_SCREEN_BUFFER_HEIGHT, replacement);
 	if (!scroll_cmap) {
 		c = &scroll_tile_info[replacement];
 	}
-	set_vram_byte(addr + 1, *c);
+	set_attributed_tile_xy(0x1f & (x + scroll_offset_x), (y + scroll_offset_y) % DEVICE_SCREEN_BUFFER_HEIGHT, (UINT16)(*c << 8) | replacement);
 #endif
 }
 
@@ -175,8 +174,8 @@ attr;
 #endif
 #elif defined(SEGA)
 	if (bg_or_win == 0) {
-		UINT8* addr = set_bkg_tile_xy(x, y, (UINT8)map_offset + data);
-		set_vram_byte(addr + 1, ((UINT8)(map_offset >> 8)) + ((attr) ? *attr : scroll_tile_info[data]));
+		UINT8 c = ((UINT8)(map_offset >> 8)) + ((attr) ? *attr : scroll_tile_info[data]);
+		set_attributed_tile_xy(x, y, (UINT16)(c << 8) | ((UINT8)map_offset + data));
 	}
 #endif
 }
