@@ -119,8 +119,8 @@ void DrawSprite(void) {
 	screen_y = THIS->y - scroll_y;
 	//It might sound stupid adding 32 in both sides but remember the values are unsigned! (and maybe truncated after substracting scroll_)
 	if(((screen_x + 32u) < SCREENWIDTH_PLUS_32) && ((screen_y + 32) < SCREENHEIGHT_PLUS_32)) {
-		screen_x += 8u;
-		screen_y += 16u;
+		screen_x += DEVICE_SPRITE_PX_OFFSET_X;
+		screen_y += DEVICE_SPRITE_PX_OFFSET_Y;
 		tmp = next_oam_idx;
 		UINT8 __save = CURRENT_BANK;
 		SWITCH_ROM(THIS->mt_sprite_bank);
