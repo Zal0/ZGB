@@ -64,6 +64,13 @@ ADDR_gb = -Wl-g.STACK=0xDF00 -Wl-g_mirror_OAM=0xDF00 -Wl-g_font_recode_table=0xD
 ADDR_duck = $(ADDR_gb)
 ADDR_ap = $(ADDR_gb)
 ADDR_gg = -Wl-g.STACK=0xDEA0 -Wl-g_mirror_OAM=0xDF00 -Wl-g_font_recode_table=0xDEA0
+ADDR_sms = $(ADDR_gg)
+
+#png2asset cross-platform defaults
+PNG2ASSET_gg = -noflip
+PNG2ASSET_sms = $(PNG2ASSET_gg)
+
+CFLAGSPNG2ASSET += $(PNG2ASSET_$(PLAT))
 
 CFLAGS += $(TARGET) -Wf-MMD $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include -DFILE_NAME=$(basename $(<F))
 
