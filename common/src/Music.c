@@ -4,7 +4,7 @@
 #undef MUSIC_DRIVER_GBT
 #endif
 
-#ifdef MUSIC_DRIVER_HUGE
+#if defined(MUSIC_DRIVER_HUGE)
 BYTE hUGE_paused = 1;
 const hUGESong_t * hUGE_current_track;
 UBYTE hUGE_current_track_bank;
@@ -25,9 +25,7 @@ void hUGE_mute(UBYTE mute) {
 	hUGE_mute_channel(HT_CH3, mute);
 	hUGE_mute_channel(HT_CH4, mute);
 }
-#endif
-
-#ifdef MUSIC_DRIVER_GBT
+#elif defined(MUSIC_DRIVER_GBT)
 void MusicCallback(void) NONBANKED {
 	if(last_music)
 	{
@@ -36,20 +34,23 @@ void MusicCallback(void) NONBANKED {
 		SWITCH_ROM(__save);
 	}
 }
+#else 
+UINT8 mute_channels = 0;
+void MusicCallback(void) NONBANKED {
+}
 #endif
 
 void* last_music = 0;
 UINT8 stop_music_on_new_state = 1;
 void __PlayMusic(void* music, unsigned char bank, unsigned char loop) {
-loop;
+	bank; loop;
 	if(music != last_music) {
 		last_music = music;
 		UBYTE __save = CURRENT_BANK;
-#ifdef MUSIC_DRIVER_GBT
+#if defined(MUSIC_DRIVER_GBT)
 		gbt_play(music, bank, 7);
 		gbt_loop(loop);
-#endif
-#ifdef MUSIC_DRIVER_HUGE
+#elif defined(MUSIC_DRIVER_HUGE)
 		hUGE_paused = 1;
 
 		INIT_SOUND();

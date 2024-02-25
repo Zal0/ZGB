@@ -21,7 +21,7 @@ inline void INIT_SOUND(void) {
 #undef MUSIC_DRIVER_GBT
 #endif
 
-#ifdef MUSIC_DRIVER_HUGE
+#if defined(MUSIC_DRIVER_HUGE)
 	#include "hUGEDriver.h"
 
 	extern BYTE hUGE_paused;
@@ -34,9 +34,7 @@ inline void INIT_SOUND(void) {
 
 	#define MUTE_CHANNEL(CHANNEL) if(last_music) hUGE_mute_channel(CHANNEL, HT_CH_MUTE)
 	#define UNMUTE_ALL_CHANNELS hUGE_mute(HT_CH_PLAY)
-#endif
-
-#ifdef MUSIC_DRIVER_GBT
+#elif defined(MUSIC_DRIVER_GBT)
 	#include "gbt_player.h"
 
 	#define INIT_MUSIC gbt_stop()
@@ -46,6 +44,15 @@ inline void INIT_SOUND(void) {
 
 	#define MUTE_CHANNEL(CHANNEL) gbt_enable_channels(~(0xF & (1 << CHANNEL)))
 	#define UNMUTE_ALL_CHANNELS gbt_enable_channels(0xF)
+#else
+	extern UINT8 mute_channels;
+	#define INIT_MUSIC
+	#define DECLARE_MUSIC(SONG)
+	#define PlayMusic(SONG, LOOP)
+	#define StopMusic
+
+	#define MUTE_CHANNEL(CHANNEL) mute_channels |= (1 << CHANNEL)
+	#define UNMUTE_ALL_CHANNELS mute_channels = 0
 #endif
 
 #endif

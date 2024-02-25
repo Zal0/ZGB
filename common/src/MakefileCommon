@@ -10,15 +10,10 @@ ifndef BUILD_TYPE
 	BUILD_TYPE = Release
 endif
 
-#--- Default player will be huge tracker HUGETRACKER/GBT_PLAYER
+#--- Default sprite size is 8x16
 ifeq ($(DEFAULT_SPRITES_SIZE), )
 	DEFAULT_SPRITES_SIZE = SPRITES_8x16
 endif
-
-ifeq ($(MUSIC_PLAYER), )
-	MUSIC_PLAYER = HUGETRACKER
-endif
-
 
 # TODO: Check if there are any more platform specific flags that can be centralized here
 # Configure platform specific LCC flags here:
@@ -105,11 +100,14 @@ ifneq ($(strip $(PLAT)),duck)
 endif
 
 # gbt-player/Hugetracker flags
-ifeq ($(MUSIC_PLAYER), HUGETRACKER)
-	CFLAGS += -DMUSIC_DRIVER_HUGE
-else
+ifeq ($(MUSIC_PLAYER), GBT_PLAYER)
 	CFLAGS += -DMUSIC_DRIVER_GBT
+else
+	ifeq ($(MUSIC_PLAYER), HUGETRACKER)
+		CFLAGS += -DMUSIC_DRIVER_HUGE
+	endif
 endif
+
 
 CFLAGS += -DDEFAULT_SPRITES_SIZE=$(DEFAULT_SPRITES_SIZE)
 ifeq ($(DEFAULT_SPRITES_SIZE), SPRITES_8x16)
@@ -145,8 +143,11 @@ SGB_BORDERS = $(foreach dir,../res/borders,$(notdir $(wildcard $(dir)/*.png)))
 ifeq ($(MUSIC_PLAYER), GBT_PLAYER)
 	MUSICS_MOD = $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.mod)))
 else
-	MUSICS_UGE = $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.uge)))
+	ifeq ($(MUSIC_PLAYER), HUGETRACKER)
+		MUSICS_UGE = $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.uge)))
+	endif
 endif
+
 OBJS = $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.o) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.o) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.o) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.o) $(SGB_BORDERS:%.png=$(OBJDIR_RES)/borders/%.png.o) $(PNGS:%.png=$(OBJDIR_RES)/%.png.o) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.o) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.o) $(ASMS:%.s=$(OBJDIR)/%.o) $(CLASSES:%.c=$(OBJDIR)/%.o)
 OBJS_ZGB = $(ASMS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.o) $(PLAT_AS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(PLAT_C_ZGB:%.c=$(OBJDIR_ZGB)/%.o) $(OBJECTS_ZGB)
 
