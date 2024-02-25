@@ -5,6 +5,14 @@
 #include "SpriteManager.h"
 #include "Scroll.h"
 #include "ZGBMain.h"
+#include "Flip.h"
+
+#if defined(NINTENDO)
+	#define LAST_SPRITE_IDX 128
+#elif defined(SEGA)
+	#define LAST_SPRITE_IDX 255
+#endif
+
 
 //Pool
 UINT8 sprite_manager_sprites_mem[N_SPRITE_MANAGER_SPRITES * sizeof(Sprite)];
@@ -22,7 +30,11 @@ UINT8 last_sprite_pal_loaded = 0;
 void SpriteManagerReset(void) {
 	UINT8 i;
 
-	last_sprite_loaded = 128;
+#if defined(NINTENDO)
+	last_sprite_loaded = LAST_SPRITE_IDX;
+#elif defined(SEGA)
+	last_sprite_loaded = 0;
+#endif
 	last_sprite_pal_loaded = 0;
 
 	//Call Destroy on all sprites still on the list
@@ -42,7 +54,10 @@ void SpriteManagerReset(void) {
 	}
 	ClearOAMs();
 
-	memset(spriteIdxs, 128, N_SPRITE_TYPES);
+	memset(spriteIdxs, LAST_SPRITE_IDX, N_SPRITE_TYPES);
+	memset(spriteIdxsH, LAST_SPRITE_IDX, N_SPRITE_TYPES);
+	memset(spriteIdxsV, LAST_SPRITE_IDX, N_SPRITE_TYPES);
+	memset(spriteIdxsHV, LAST_SPRITE_IDX, N_SPRITE_TYPES);
 
 	//Clear the list of updatable sprites
 	sprite_manager_updatables[0] = 0;
@@ -51,11 +66,15 @@ void SpriteManagerReset(void) {
 
 extern UWORD ZGB_Fading_SPal[32];
 void SpriteManagerLoad(UINT8 sprite_type) {
-#ifdef CGB
-	UINT8 i;
-#endif
-	if(spriteIdxs[sprite_type] != 128 || last_sprite_loaded < -127) //Already loaded or no room for this sprite
+	if (spriteIdxs[sprite_type] != LAST_SPRITE_IDX) // Already loaded
 		return;
+#if defined(NINTENDO)
+	if (last_sprite_loaded < -127) // No room for this sprite
+		return;
+#elif defined(SEGA)
+	if (last_sprite_loaded > LAST_SPRITE_IDX) // No room for this sprite
+		return;
+#endif
 
 	UINT8 __save = CURRENT_BANK;
 	SWITCH_ROM(spriteDataBanks[sprite_type]);
@@ -64,8 +83,15 @@ void SpriteManagerLoad(UINT8 sprite_type) {
 	UINT8 n_tiles = data->num_tiles;
 	UINT8 n_pals = data->num_palettes;
 
+#if defined(NINTENDO)
 	last_sprite_loaded -= n_tiles;
+#endif
+#if defined(NINTENDO)
 	spriteIdxs[sprite_type] = last_sprite_loaded;
+	spriteIdxsH[sprite_type] = last_sprite_loaded;
+	spriteIdxsV[sprite_type] = last_sprite_loaded;
+	spriteIdxsHV[sprite_type] = last_sprite_loaded;
+
 	UINT8 end = last_sprite_loaded + n_tiles;
 	if((end - 1u) >= (UINT8)last_sprite_loaded) {
 		set_sprite_data(last_sprite_loaded, n_tiles, data->data);
@@ -73,18 +99,40 @@ void SpriteManagerLoad(UINT8 sprite_type) {
 		set_sprite_data(last_sprite_loaded, n_tiles - end, data->data);
 		set_sprite_data(0, end, data->data + ((n_tiles - end) << 4));
 	}
+#elif defined(SEGA)
+	spriteIdxs[sprite_type] = last_sprite_loaded;
+	spriteIdxsH[sprite_type] = last_sprite_loaded;
+	spriteIdxsV[sprite_type] = last_sprite_loaded;
+	spriteIdxsHV[sprite_type] = last_sprite_loaded;
+	set_sprite_data(last_sprite_loaded, n_tiles, data->data);
+	last_sprite_loaded += n_tiles;
+	if (spriteFlips[sprite_type] & FLIP_X) {
+		spriteIdxsV[sprite_type] = last_sprite_loaded;
+		set_sprite_data_flip(last_sprite_loaded, n_tiles, data->data, FLIP_X);
+		last_sprite_loaded += n_tiles;
+	}
+	if (spriteFlips[sprite_type] & FLIP_Y) {
+		spriteIdxsH[sprite_type] = last_sprite_loaded;
+		set_sprite_data_flip(last_sprite_loaded, n_tiles, data->data, FLIP_Y);
+		last_sprite_loaded += n_tiles;
+	}
+	if (spriteFlips[sprite_type] & FLIP_XY) {
+		spriteIdxsHV[sprite_type] = last_sprite_loaded;
+		set_sprite_data_flip(last_sprite_loaded, n_tiles, data->data, FLIP_X | FLIP_Y);
+		last_sprite_loaded += n_tiles;
+	}
+#endif
 
 #ifdef CGB
-	for(i = 0; i != last_sprite_pal_loaded; ++ i)
-	{
-		if(memcmp(&ZGB_Fading_SPal[i << 2], data->palettes, n_pals << 3) == 0)
+	UINT8 i;
+	for (i = 0; i != last_sprite_pal_loaded; ++ i) {
+		if (memcmp(&ZGB_Fading_SPal[i << 2], data->palettes, n_pals << 3) == 0)
 			break;
 	}
 
 	//Load palettes
 	spritePalsOffset[sprite_type] = i;
-	if(i == last_sprite_pal_loaded)
-	{
+	if (i == last_sprite_pal_loaded) {
 		SetPalette(SPRITES_PALETTE, last_sprite_pal_loaded, n_pals, data->palettes, CURRENT_BANK);
 		last_sprite_pal_loaded += n_pals;
 	}

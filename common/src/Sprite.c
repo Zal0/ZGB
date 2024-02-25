@@ -20,7 +20,11 @@ void InitSprite(Sprite* sprite, UINT8 sprite_type) {
 	sprite->mt_sprite_info = mt_sprite_info;
 	sprite->mt_sprite_bank = spriteDataBanks[sprite_type];
 
+	sprite->flips = spriteFlips[sprite_type];
 	sprite->first_tile = spriteIdxs[sprite_type];
+	sprite->first_tile_H = spriteIdxsH[sprite_type];
+	sprite->first_tile_V = spriteIdxsV[sprite_type];
+	sprite->first_tile_HV = spriteIdxsHV[sprite_type];
 #ifdef CGB
 	sprite->attr_add = (_cpu == CGB_TYPE) ? spritePalsOffset[sprite_type] : 0;
 #else
@@ -127,9 +131,9 @@ void DrawSprite(void) {
 			switch(THIS->mirror)
 			{
 				case NO_MIRROR: next_oam_idx += move_metasprite_ex    (THIS->mt_sprite, THIS->first_tile, 0, next_oam_idx, screen_x,                screen_y               ); break;
-				case H_MIRROR:  next_oam_idx += move_metasprite_flipy (THIS->mt_sprite, THIS->first_tile, 0, next_oam_idx, screen_x,                screen_y + THIS->coll_h); break;
-				case V_MIRROR:  next_oam_idx += move_metasprite_flipx (THIS->mt_sprite, THIS->first_tile, 0, next_oam_idx, screen_x + THIS->coll_w, screen_y               ); break;
-				case HV_MIRROR: next_oam_idx += move_metasprite_flipxy(THIS->mt_sprite, THIS->first_tile, 0, next_oam_idx, screen_x + THIS->coll_w, screen_y + THIS->coll_h); break;
+				case H_MIRROR:  next_oam_idx += move_metasprite_flipy (THIS->mt_sprite, THIS->first_tile_H, 0, next_oam_idx, screen_x,                screen_y + THIS->coll_h); break;
+				case V_MIRROR:  next_oam_idx += move_metasprite_flipx (THIS->mt_sprite, THIS->first_tile_V, 0, next_oam_idx, screen_x + THIS->coll_w, screen_y               ); break;
+				case HV_MIRROR: next_oam_idx += move_metasprite_flipxy(THIS->mt_sprite, THIS->first_tile_HV, 0, next_oam_idx, screen_x + THIS->coll_w, screen_y + THIS->coll_h); break;
 			}
 		SWITCH_ROM(__save);
 

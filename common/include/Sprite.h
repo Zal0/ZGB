@@ -21,9 +21,13 @@ typedef struct {
 	const struct MetaSpriteInfo* mt_sprite_info;
 
 	//Frame info
-	UINT8 first_tile; //tile offset, for animation indices
-	UINT8 attr_add; //metasprite attributes, used to set the DMG palette (bit 4) or the priority over Bg (bit 7) 
-	                //The engine internally sets the palette  
+	UINT8 flips;         //supported flips        
+	UINT8 first_tile;    //tile offset, for animation indices
+	UINT8 first_tile_H;  //tile H flipped offset, for animation indices
+	UINT8 first_tile_V;  //tile V flipped offset, for animation indices
+	UINT8 first_tile_HV; //tile HV flipped offset, for animation indices
+	UINT8 attr_add;      //metasprite attributes, used to set the DMG palette (bit 4) or the priority over Bg (bit 7) 
+	                     //The engine internally sets the palette  
 
 	//Anim data
 	UINT8* anim_data;
