@@ -104,7 +104,9 @@ void SpriteManagerLoad(UINT8 sprite_type) {
 	spriteIdxsH[sprite_type] = last_sprite_loaded;
 	spriteIdxsV[sprite_type] = last_sprite_loaded;
 	spriteIdxsHV[sprite_type] = last_sprite_loaded;
-	set_sprite_data(last_sprite_loaded, n_tiles, data->data);
+	if (last_sprite_loaded + n_tiles <= LAST_SPRITE_IDX) {
+		set_sprite_data(last_sprite_loaded, n_tiles, data->data);
+	}
 	last_sprite_loaded += n_tiles;
 	if (spriteFlips[sprite_type] & FLIP_X) {
 		if (last_sprite_loaded + n_tiles <= LAST_SPRITE_IDX) {
