@@ -37,11 +37,11 @@ UINT8 music_mute_frames = 0;
 void vbl_update(void) {
 	vbl_count ++;
 
-#if defined(SEGA)
+#if defined(NINTENDO)
+	move_bkg(scroll_x_vblank + (scroll_offset_x << 3), scroll_y_vblank + (scroll_offset_y << 3));
+#elif defined(SEGA)
 	if (_shadow_OAM_OFF == 0) {
-#endif
-		move_bkg(scroll_x_vblank + (scroll_offset_x << 3), scroll_y_vblank + (scroll_offset_y << 3));
-#if defined(SEGA)
+		move_bkg(scroll_x_vblank + (scroll_offset_x << 3), ((UINT16)(scroll_y_vblank + (scroll_offset_y << 3))) % (DEVICE_SCREEN_BUFFER_HEIGHT << 3));
 	}
 #endif
 

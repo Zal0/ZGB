@@ -30,8 +30,8 @@
 extern unsigned char* scroll_map;
 extern INT16 scroll_x;
 extern INT16 scroll_y;
-extern UINT8 scroll_x_vblank;
-extern UINT8 scroll_y_vblank;
+extern INT16 scroll_x_vblank;
+extern INT16 scroll_y_vblank;
 extern UINT16 scroll_w;
 extern UINT16 scroll_h;
 extern UINT16 scroll_tiles_w;
