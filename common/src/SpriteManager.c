@@ -107,18 +107,24 @@ void SpriteManagerLoad(UINT8 sprite_type) {
 	set_sprite_data(last_sprite_loaded, n_tiles, data->data);
 	last_sprite_loaded += n_tiles;
 	if (spriteFlips[sprite_type] & FLIP_X) {
-		spriteIdxsV[sprite_type] = last_sprite_loaded;
-		set_sprite_data_flip(last_sprite_loaded, n_tiles, data->data, FLIP_X);
+		if (last_sprite_loaded + n_tiles <= LAST_SPRITE_IDX) {
+			spriteIdxsV[sprite_type] = last_sprite_loaded;
+			set_sprite_data_flip(last_sprite_loaded, n_tiles, data->data, FLIP_X);
+		}
 		last_sprite_loaded += n_tiles;
 	}
 	if (spriteFlips[sprite_type] & FLIP_Y) {
-		spriteIdxsH[sprite_type] = last_sprite_loaded;
-		set_sprite_data_flip(last_sprite_loaded, n_tiles, data->data, FLIP_Y);
+		if (last_sprite_loaded + n_tiles <= LAST_SPRITE_IDX) {
+			spriteIdxsH[sprite_type] = last_sprite_loaded;
+			set_sprite_data_flip(last_sprite_loaded, n_tiles, data->data, FLIP_Y);
+		}
 		last_sprite_loaded += n_tiles;
 	}
 	if (spriteFlips[sprite_type] & FLIP_XY) {
-		spriteIdxsHV[sprite_type] = last_sprite_loaded;
-		set_sprite_data_flip(last_sprite_loaded, n_tiles, data->data, FLIP_X | FLIP_Y);
+		if (last_sprite_loaded + n_tiles <= LAST_SPRITE_IDX) {
+			spriteIdxsHV[sprite_type] = last_sprite_loaded;
+			set_sprite_data_flip(last_sprite_loaded, n_tiles, data->data, FLIP_X | FLIP_Y);
+		}
 		last_sprite_loaded += n_tiles;
 	}
 #endif
