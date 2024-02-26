@@ -159,7 +159,12 @@ void main(void) {
 #endif
 	}
 
-	DEFAULT_SPRITES_SIZE;
+#if DEFAULT_SPRITES_SIZE == 8
+	SPRITES_8x8;
+#else
+	SPRITES_8x16;
+#endif
+
 #if defined(NINTENDO)
 	set_interrupts(VBL_IFLAG | TIM_IFLAG | LCD_IFLAG);
 	LCDC_REG |= LCDCF_OBJON | LCDCF_BGON;

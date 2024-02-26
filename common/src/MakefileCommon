@@ -68,7 +68,7 @@ PNG2ASSET_sms = $(PNG2ASSET_gg)
 
 CFLAGSPNG2ASSET += $(PNG2ASSET_$(PLAT))
 
-CFLAGS += $(TARGET) -Wf-MMD $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include -DFILE_NAME=$(basename $(<F))
+CFLAGS += $(TARGET) -Wf-MMD $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include -DFILE_NAME=$(basename $(<F)) -DDEFAULT_COLOR_DEPTH=2
 
 ifeq ($(strip $(N_BANKS)),)
 	NBANKS = A
@@ -110,11 +110,12 @@ else
 endif
 
 
-CFLAGS += -DDEFAULT_SPRITES_SIZE=$(DEFAULT_SPRITES_SIZE)
 ifeq ($(DEFAULT_SPRITES_SIZE), SPRITES_8x16)
 	CFLAGSPNG2ASSET += -spr8x16
+	CFLAGS += -DDEFAULT_SPRITES_SIZE=16
 else
 	CFLAGSPNG2ASSET += -spr8x8
+	CFLAGS += -DDEFAULT_SPRITES_SIZE=8
 endif
 
 # Release/Debug flags
