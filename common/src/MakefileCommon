@@ -62,6 +62,7 @@ ADDR_gg = -Wl-g.STACK=0xDEA0 -Wl-g_mirror_OAM=0xDF00 -Wl-g_font_recode_table=0xD
 ADDR_sms = $(ADDR_gg)
 
 #png2asset cross-platform defaults
+#PNG2ASSET_gg = -noflip -pack_mode sms -bpp 4 # experimental native tiles
 PNG2ASSET_gg = -noflip
 PNG2ASSET_sms = $(PNG2ASSET_gg)
 
@@ -191,7 +192,7 @@ $(OBJDIR_RES)/sprites/%.png.c: ../res/sprites/%.png $$(wildcard ../res/sprites/%
 
 .SECONDEXPANSION:
 $(OBJDIR_RES)/sprites/%.png.c: ../res/sprites/$(PLAT)/%.png $$(wildcard ../res/sprites/$(PLAT)/%.png.meta)
-	$(PNG2ASSET) $< $(CFLAGSPNG2ASSET) `cat <$<.meta` -b 255 -use_structs -c $@
+	@$(PNG2ASSET) $< $(CFLAGSPNG2ASSET) `cat <$<.meta` -b 255 -use_structs -c $@
 
 $(OBJDIR_RES)/%.gbm.c: ../res/%.gbm
 	@$(GBM2C) $< $(OBJDIR_RES)
