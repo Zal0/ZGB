@@ -8,7 +8,7 @@ static UINT8 flipped_data[NUM_BYTES_PER_TILE];
 // Table for fast reversing of bits in a byte - used for flipping in X
 extern const UINT8 flip_recode_table[];
 
-static const UINT8 * copy_row(const UINT8* src, UINT8* dest) NAKED {
+static const UINT8 * copy_row(const UINT8* src, UINT8* dest) NAKED PRESERVES_REGS(a, iyh, iyl) {
 	dest; src;
 	__asm
 		ldi
@@ -22,7 +22,7 @@ static const UINT8 * copy_row(const UINT8* src, UINT8* dest) NAKED {
 	__endasm;
 }
 
-static const UINT8 * copy_row_flip(const UINT8* src, UINT8* dest) NAKED {
+static const UINT8 * copy_row_flip(const UINT8* src, UINT8* dest) NAKED NAKED PRESERVES_REGS(iyh, iyl) {
 	dest; src;
 	__asm
 		ld b, #>_flip_recode_table
@@ -51,13 +51,11 @@ static const UINT8 * copy_row_flip(const UINT8* src, UINT8* dest) NAKED {
 static const UINT8 * set_flipped_tile(UINT8 tile_idx, const UINT8* data, UINT8 flip) {
 	const UINT8* src = data; 
 	UINT8* dest = (flip & FLIP_Y) ? (flipped_data + (NUM_BYTES_PER_TILE - DEFAULT_COLOR_DEPTH)) : flipped_data;
-	for (UINT8 i = DEFAULT_SPRITES_SIZE; i != 0; i--) {
-		if (flip & FLIP_X) {
-			src = copy_row_flip(src, dest);
-		} else {
-			src = copy_row(src, dest);
-		}
-		if (flip & FLIP_Y) dest -= DEFAULT_COLOR_DEPTH; else dest += DEFAULT_COLOR_DEPTH;
+	INT16  delta = (flip & FLIP_Y) ? -DEFAULT_COLOR_DEPTH : DEFAULT_COLOR_DEPTH;
+	if (flip & FLIP_X) {
+		for (UINT8 i = DEFAULT_SPRITES_SIZE; i != 0; i--, dest += delta) src = copy_row_flip(src, dest);
+	} else {
+		for (UINT8 i = DEFAULT_SPRITES_SIZE; i != 0; i--, dest += delta) src = copy_row(src, dest);
 	}
 #if DEFAULT_SPRITES_SIZE == 16
 	set_sprite_native_data(tile_idx, 2, flipped_data);
