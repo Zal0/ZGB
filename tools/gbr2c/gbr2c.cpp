@@ -66,12 +66,11 @@ int main(int argc, char* argv[]) {
 	fprintf(file, "#pragma bank %d\n", bank);
 
 	fprintf(file, "#include <gbdk/platform.h>\n");
-	fprintf(file, "\n");
 
 	if(tile_export.include_colors){
 		//Export palettes
 		fprintf(file, "\n");
-		fprintf(file, "const UINT16 %s_palettes[%d] = {\n", tile_export.label_name, num_palettes * 4);
+		fprintf(file, "const palette_color_t %s_palettes[%d] = {\n", tile_export.label_name, num_palettes * 4);
 		for(int p = 0; p < palettes.count; ++p) 
 		{
 			if(palette_order[p] != -1)
@@ -82,7 +81,7 @@ int main(int argc, char* argv[]) {
 			
 				for(int c = 0; c < 4; ++c) {
 					Color color = palettes.colors[p].colors[c];
-					fprintf(file, "RGB(%d, %d, %d)", color.r >> 3, color.g >> 3, color.b >> 3);
+					fprintf(file, "RGB8(%d, %d, %d)", color.r, color.g, color.b);
 					if(c != 3)
 						fprintf(file, ", ");
 				}
@@ -93,9 +92,12 @@ int main(int argc, char* argv[]) {
 		//Export palette per tile
 		fprintf(file, "\n");
 		fprintf(file, "const unsigned char %sCGB[] = {\n\t", tile_export.label_name);
-		for(int tile = tile_export.from; tile <= tile_export.up_to; ++ tile) {
+		for(int tile = tile_export.from, cnt = 0; tile <= tile_export.up_to; ++ tile, ++ cnt) {
 			if(tile != tile_export.from)
 				fprintf(file, ",");
+
+			if((cnt) && (cnt % 8 == 0))
+				fprintf(file, "\n\t");
 
 			fprintf(file, "0x%02x", palette_order[tile_pal.color_set[tile]]);
 		}
@@ -140,15 +142,12 @@ int main(int argc, char* argv[]) {
 	fprintf(file, "\n#include \"TilesInfo.h\"\n");
 	fprintf(file, "const void __at(%d) __bank_%s;\n", bank, tile_export.label_name);
 	fprintf(file, "const struct TilesInfo %s = {\n", tile_export.label_name);
-	fprintf(file, "\t%d, //num_tiles\n", tile_export.up_to - tile_export.from + 1);
-	fprintf(file, "\t%s_tiles, //tiles\n", tile_export.label_name);
-	fprintf(file, "\t%d, //num_palettes\n", num_palettes);
+	fprintf(file, "\t.num_frames = %d, //num_tiles\n", tile_export.up_to - tile_export.from + 1);
+	fprintf(file, "\t.data = %s_tiles, //tiles\n", tile_export.label_name);
+	fprintf(file, "\t.num_pals = %d, //num_palettes\n", num_palettes);
 	if(tile_export.include_colors) {
-		fprintf(file, "\t%s_palettes, //palettes\n", tile_export.label_name);
-		fprintf(file, "\t%sCGB, //CGB palette\n", tile_export.label_name);
-	} else {
-		fprintf(file, "\t0, //palettes\n");
-		fprintf(file, "\t0, //CGB palette\n");
+		fprintf(file, "\t.pals = %s_palettes, //palettes\n", tile_export.label_name);
+		fprintf(file, "\t.color_data = %sCGB //CGB palette\n", tile_export.label_name);
 	}
 	fprintf(file, "};");
 	
