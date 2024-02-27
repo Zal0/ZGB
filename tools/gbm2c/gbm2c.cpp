@@ -251,7 +251,7 @@ int main(int argc, char* argv[])
 	
 	fprintf(file, "#pragma bank %d\n", bank);
 
-	fprintf(file, "#include <gb/gb.h>\n");
+	fprintf(file, "#include <gbdk/platform.h>\n");
 
 	fprintf(file, "const unsigned char %s_map[] = {", map_export_settings.label_name);
 	for(INTEGER i = 0; i < map.width * map.height; ++i) {

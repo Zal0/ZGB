@@ -65,8 +65,7 @@ int main(int argc, char* argv[]) {
 	
 	fprintf(file, "#pragma bank %d\n", bank);
 
-	fprintf(file, "#include <gb/gb.h>\n");
-	fprintf(file, "#include <gb/cgb.h>\n");
+	fprintf(file, "#include <gbdk/platform.h>\n");
 	fprintf(file, "\n");
 
 	if(tile_export.include_colors){
