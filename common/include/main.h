@@ -42,12 +42,16 @@ void SetWindowY(UINT8 y);
 			BG_PALETTE,
 			SPRITES_PALETTE
 		} PALETTE_TYPE;
-		void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *rgb_data, UINT8 bank);
+		void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, const palette_color_t *rgb_data, UINT8 bank);
 	#else
-		#define SetPalette(PALETTE_TYPE, first_palette, nb_palettes, rgb_data, bank);
+		#define SetPalette(PALETTE_TYPE, first_palette, nb_palettes, rgb_data, bank)
 	#endif
-#else
-	#define SetPalette(PALETTE_TYPE, first_palette, nb_palettes, rgb_data, bank);
+#elif defined(SEGA)
+		typedef enum {
+			BG_PALETTE,
+			SPRITES_PALETTE
+		} PALETTE_TYPE;
+		void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, const palette_color_t *rgb_data, UINT8 bank);
 #endif
 
 

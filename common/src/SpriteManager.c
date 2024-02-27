@@ -99,6 +99,20 @@ void SpriteManagerLoad(UINT8 sprite_type) {
 		set_sprite_native_data(last_sprite_loaded, n_tiles - end, data->data);
 		set_sprite_native_data(0, end, data->data + ((n_tiles - end) << 4));
 	}
+#ifdef CGB
+	UINT8 i;
+	for (i = 0; i != last_sprite_pal_loaded; ++ i) {
+		if (memcmp(&ZGB_Fading_SPal[i << 2], data->palettes, n_pals << 3) == 0)
+			break;
+	}
+
+	//Load palettes
+	spritePalsOffset[sprite_type] = i;
+	if (i == last_sprite_pal_loaded) {
+		SetPalette(SPRITES_PALETTE, last_sprite_pal_loaded, n_pals, data->palettes, CURRENT_BANK);
+		last_sprite_pal_loaded += n_pals;
+	}
+#endif
 #elif defined(SEGA)
 	spriteIdxs[sprite_type] = last_sprite_loaded;
 	spriteIdxsH[sprite_type] = last_sprite_loaded;
@@ -129,20 +143,10 @@ void SpriteManagerLoad(UINT8 sprite_type) {
 		}
 		last_sprite_loaded += n_tiles;
 	}
-#endif
 
-#ifdef CGB
-	UINT8 i;
-	for (i = 0; i != last_sprite_pal_loaded; ++ i) {
-		if (memcmp(&ZGB_Fading_SPal[i << 2], data->palettes, n_pals << 3) == 0)
-			break;
-	}
-
-	//Load palettes
-	spritePalsOffset[sprite_type] = i;
-	if (i == last_sprite_pal_loaded) {
-		SetPalette(SPRITES_PALETTE, last_sprite_pal_loaded, n_pals, data->palettes, CURRENT_BANK);
-		last_sprite_pal_loaded += n_pals;
+	if (last_sprite_pal_loaded == 0) {
+		SetPalette(SPRITES_PALETTE, 0, 1, data->palettes, CURRENT_BANK);
+		last_sprite_pal_loaded = 1;
 	}
 #endif
 

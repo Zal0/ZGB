@@ -63,7 +63,7 @@ extern UWORD ZGB_Fading_SPal[32];
 #ifdef CGB
 UINT16 default_palette[] = {RGB(31, 31, 31), RGB(20, 20, 20), RGB(10, 10, 10), RGB(0, 0, 0)};
 
-void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, UINT16 *rgb_data, UINT8 bank) {
+void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, const void *rgb_data, UINT8 bank) {
 	if ((first_palette + nb_palettes) > 8)
 		return; //Adding more palettes than supported
 
@@ -92,6 +92,22 @@ void LCD_isr(void) NONBANKED {
 		HIDE_SPRITES;
 		LYC_REG = 0;
 	}
+}
+#elif defined(SEGA)
+void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, const palette_color_t *rgb_data, UINT8 bank) {
+	if ((first_palette + nb_palettes) > 1)
+		return; //Adding more palettes than supported
+
+	UWORD* pal_ptr = (t == BG_PALETTE) ? ZGB_Fading_BPal : ZGB_Fading_SPal;
+	UINT8 __save = CURRENT_BANK;
+	SWITCH_ROM(bank);
+	if (t == BG_PALETTE) {
+//		set_bkg_palette(first_palette, nb_palettes, rgb_data);
+	} else {
+		set_sprite_palette(first_palette, nb_palettes, rgb_data);
+	}
+	memcpy(pal_ptr, rgb_data, sizeof(palette_color_t) * 16);
+	SWITCH_ROM(__save);
 }
 #endif
 
