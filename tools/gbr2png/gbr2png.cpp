@@ -37,6 +37,7 @@ int main(int argc, char* argv[]) {
 	TileExport& tile_export = gbrInfo.tile_export;
 	Palettes& palettes = gbrInfo.palettes;
 	TilePal& tile_pal = gbrInfo.tile_pal;
+	TileSettings& tile_settings = gbrInfo.tile_settings;
 	int& bank = gbrInfo.bank;
 	char* palette_order = gbrInfo.palette_order;
 	int& num_palettes = gbrInfo.num_palettes;
