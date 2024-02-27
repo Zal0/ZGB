@@ -67,6 +67,7 @@ bool LoadGBR(const char* path, GBRInfo* info) {
 	TileExport& tile_export = info->tile_export;
 	Palettes& palettes = info->palettes;
 	TilePal& tile_pal = info->tile_pal;
+	TileSettings& tile_settings = info->tile_settings;
 	int& bank = info->bank;
 	char* palette_order = info->palette_order;
 	int& num_palettes = info->num_palettes;
@@ -140,6 +141,23 @@ bool LoadGBR(const char* path, GBRInfo* info) {
 				tile_pal.sgb_color_set = new LONG[tile_pal.sgb_count];
 				object_length -= fread(tile_pal.sgb_color_set, sizeof(LONG), tile_pal.sgb_count, file) * sizeof(LONG);
  				break;
+
+			case OBJECT_TYPE_TILE_SETTINGS:
+				READ(tile_settings.tile_id);
+				READ(tile_settings.simple);
+				READ(tile_settings.flags);
+				READ(tile_settings.left_color);
+				READ(tile_settings.right_color);
+
+				READ(tile_settings.split_width);
+				READ(tile_settings.split_height);
+				READ(tile_settings.split_order);
+
+				READ(tile_settings.color_set);
+				READ(tile_settings.bookmarks);
+
+				READ(tile_settings.auto_update);
+				break; 
 		}
 		
 		if(object_length)

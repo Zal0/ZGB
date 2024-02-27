@@ -81,11 +81,29 @@ struct TilePal {
 	LONG* sgb_color_set;
 };
 
+struct TileSettings {
+	WORD tile_id;
+	bool simple;
+	BYTE flags;
+	BYTE left_color;
+	BYTE right_color;
+
+	WORD split_width;
+	WORD split_height;
+	BYTE split_order;
+
+	BYTE color_set;
+	WORD bookmarks[2];
+
+	bool auto_update;
+};
+
 struct GBRInfo {
 	TileSet tile_set;
 	TileExport tile_export;
 	Palettes palettes;
 	TilePal tile_pal;
+	TileSettings tile_settings;
 	int bank;
 
 	char palette_order[8] = {-1, -1, -1, -1, -1, -1, -1, -1};
