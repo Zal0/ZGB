@@ -139,7 +139,8 @@ UINT16 ScrollSetTiles(UINT8 first_tile, UINT8 tiles_bank, const struct TilesInfo
 		scroll_tile_info[i] = palette_entries ? palette_entries[i - first_tile] : 0;
 	}
 
-#ifdef CGB
+#if defined(NINTENDO)
+	#ifdef CGB
 	//Load palettes
 	for(i = 0; i != last_bg_pal_loaded; ++ i)
 	{
@@ -152,6 +153,12 @@ UINT16 ScrollSetTiles(UINT8 first_tile, UINT8 tiles_bank, const struct TilesInfo
 	{
 		SetPalette(BG_PALETTE, last_bg_pal_loaded, tiles->num_pals, tiles->pals, tiles_bank);
 		last_bg_pal_loaded += tiles->num_pals;
+	}
+	#endif
+#elif defined(SEGA)
+	if (last_bg_pal_loaded == 0) {
+		SetPalette(BG_PALETTE, 0, tiles->num_pals, tiles->pals, tiles_bank);
+		last_bg_pal_loaded = 1;
 	}
 #endif
 

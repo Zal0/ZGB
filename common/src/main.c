@@ -95,6 +95,8 @@ void LCD_isr(void) NONBANKED {
 }
 #elif defined(SEGA)
 void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, const palette_color_t *rgb_data, UINT8 bank) {
+	if (!nb_palettes)
+		return;
 	if ((first_palette + nb_palettes) > 1)
 		return; //Adding more palettes than supported
 
@@ -102,9 +104,9 @@ void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, const pa
 	UINT8 __save = CURRENT_BANK;
 	SWITCH_ROM(bank);
 	if (t == BG_PALETTE) {
-//		set_bkg_palette(first_palette, nb_palettes, rgb_data);
+		set_bkg_palette(first_palette, 1, rgb_data);
 	} else {
-		set_sprite_palette(first_palette, nb_palettes, rgb_data);
+		set_sprite_palette(first_palette, 1, rgb_data);
 	}
 	memcpy(pal_ptr, rgb_data, sizeof(palette_color_t) * 16);
 	SWITCH_ROM(__save);
