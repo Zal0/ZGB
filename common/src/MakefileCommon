@@ -61,14 +61,19 @@ ADDR_ap = $(ADDR_gb)
 ADDR_gg = -Wl-g.STACK=0xDEA0 -Wl-g_mirror_OAM=0xDF00 -Wl-g_font_recode_table=0xDEA0
 ADDR_sms = $(ADDR_gg)
 
+CFLAGS_gb = -DDEFAULT_COLOR_DEPTH=2
+CFLAGS_duck = $(CFLAGS_gb)
+CFLAGS_ap = $(CFLAGS_gb)
+CFLAGS_gg = -DDEFAULT_COLOR_DEPTH=4
+CFLAGS_sms = $(CFLAGS_gg)
+
 #png2asset cross-platform defaults
-#PNG2ASSET_gg = -noflip -pack_mode sms -bpp 4 # experimental native tiles
-PNG2ASSET_gg = -noflip
+PNG2ASSET_gg = -noflip -pack_mode sms -bpp 4
 PNG2ASSET_sms = $(PNG2ASSET_gg)
 
 CFLAGSPNG2ASSET += $(PNG2ASSET_$(PLAT))
 
-CFLAGS += $(TARGET) -Wf-MMD $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include -DFILE_NAME=$(basename $(<F)) -DDEFAULT_COLOR_DEPTH=2
+CFLAGS += $(TARGET) -Wf-MMD $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include -DFILE_NAME=$(basename $(<F)) $(CFLAGS_$(PLAT))
 
 ifeq ($(strip $(N_BANKS)),)
 	NBANKS = A

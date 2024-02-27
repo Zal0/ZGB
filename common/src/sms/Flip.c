@@ -60,9 +60,9 @@ static const UINT8 * set_flipped_tile(UINT8 tile_idx, const UINT8* data, UINT8 f
 		if (flip & FLIP_Y) dest -= DEFAULT_COLOR_DEPTH; else dest += DEFAULT_COLOR_DEPTH;
 	}
 #if DEFAULT_SPRITES_SIZE == 16
-	set_sprite_data(tile_idx, 2, flipped_data);
+	set_sprite_native_data(tile_idx, 2, flipped_data);
 #else
-	set_sprite_data(tile_idx, 1, flipped_data);
+	set_sprite_native_data(tile_idx, 1, flipped_data);
 #endif
 	return src;
 }
@@ -80,6 +80,6 @@ void set_sprite_data_flip(UINT8 first_tile, UINT8 nb_tiles, UINT8 *data, UINT8 f
 		}
 #endif
 	} else {
-		set_sprite_data(first_tile, nb_tiles, data);
+		set_sprite_native_data(first_tile, nb_tiles, data);
 	}
 }

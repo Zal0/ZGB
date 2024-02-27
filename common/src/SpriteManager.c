@@ -94,10 +94,10 @@ void SpriteManagerLoad(UINT8 sprite_type) {
 
 	UINT8 end = last_sprite_loaded + n_tiles;
 	if((end - 1u) >= (UINT8)last_sprite_loaded) {
-		set_sprite_data(last_sprite_loaded, n_tiles, data->data);
+		set_sprite_native_data(last_sprite_loaded, n_tiles, data->data);
 	} else {
-		set_sprite_data(last_sprite_loaded, n_tiles - end, data->data);
-		set_sprite_data(0, end, data->data + ((n_tiles - end) << 4));
+		set_sprite_native_data(last_sprite_loaded, n_tiles - end, data->data);
+		set_sprite_native_data(0, end, data->data + ((n_tiles - end) << 4));
 	}
 #elif defined(SEGA)
 	spriteIdxs[sprite_type] = last_sprite_loaded;
@@ -105,7 +105,7 @@ void SpriteManagerLoad(UINT8 sprite_type) {
 	spriteIdxsV[sprite_type] = last_sprite_loaded;
 	spriteIdxsHV[sprite_type] = last_sprite_loaded;
 	if (last_sprite_loaded + n_tiles <= LAST_SPRITE_IDX) {
-		set_sprite_data(last_sprite_loaded, n_tiles, data->data);
+		set_sprite_native_data(last_sprite_loaded, n_tiles, data->data);
 	}
 	last_sprite_loaded += n_tiles;
 	if (spriteFlips[sprite_type] & FLIP_X) {
