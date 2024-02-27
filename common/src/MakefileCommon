@@ -67,11 +67,20 @@ CFLAGS_ap = $(CFLAGS_gb)
 CFLAGS_gg = -DDEFAULT_COLOR_DEPTH=4
 CFLAGS_sms = $(CFLAGS_gg)
 
-#png2asset cross-platform defaults
-PNG2ASSET_gg = -noflip -pack_mode sms -bpp 4
-PNG2ASSET_sms = $(PNG2ASSET_gg)
+#png2asset cross-platform flags
+PNG2ASSET_SPR_gg = -noflip -pack_mode sms -bpp 4
+PNG2ASSET_SPR_sms = $(PNG2ASSET_SPR_gg)
+FLAGSPNG2ASSET_SPR += $(PNG2ASSET_SPR_$(PLAT))
 
-CFLAGSPNG2ASSET += $(PNG2ASSET_$(PLAT))
+PNG2ASSET_BKG_gb = -noflip
+PNG2ASSET_BKG_gg = -noflip -pack_mode sms -bpp 4
+PNG2ASSET_BKG_sms = $(PNG2ASSET_SPR_gg)
+FLAGSPNG2ASSET_BKG += $(PNG2ASSET_BKG_$(PLAT))
+
+#gbr2c cross-platform flags
+FLAGSGBR2C_gg = -bpp 4
+FLAGSGBR2C_sms = $(FLAGSGBR2C_gg)
+FLAGSGBR2C += $(FLAGSGBR2C_$(PLAT)) 
 
 CFLAGS += $(TARGET) -Wf-MMD $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include -DFILE_NAME=$(basename $(<F)) $(CFLAGS_$(PLAT))
 
@@ -116,10 +125,10 @@ endif
 
 
 ifeq ($(DEFAULT_SPRITES_SIZE), SPRITES_8x16)
-	CFLAGSPNG2ASSET += -spr8x16
+	FLAGSPNG2ASSET_SPR += -spr8x16
 	CFLAGS += -DDEFAULT_SPRITES_SIZE=16
 else
-	CFLAGSPNG2ASSET += -spr8x8
+	FLAGSPNG2ASSET_SPR += -spr8x8
 	CFLAGS += -DDEFAULT_SPRITES_SIZE=8
 endif
 
@@ -190,27 +199,27 @@ endif
 .SECONDEXPANSION:
 $(OBJDIR_RES)/sprites/%.gbr.c: ../res/sprites/%.gbr $$(wildcard ../res/sprites/%.gbr.meta)
 	@$(GBR2PNG) $< $(OBJDIR_RES)/sprites
-	@$(PNG2ASSET) $(@D)/$(<F).png $(CFLAGSPNG2ASSET) `cat <$(@D)/$(<F).png.meta` -keep_palette_order -use_structs -c $@
+	@$(PNG2ASSET) $(@D)/$(<F).png $(FLAGSPNG2ASSET_SPR) `cat <$(@D)/$(<F).png.meta` -keep_palette_order -use_structs -c $@
 
 .SECONDEXPANSION:
 $(OBJDIR_RES)/sprites/%.png.c: ../res/sprites/%.png $$(wildcard ../res/sprites/%.png.meta)
-	@$(PNG2ASSET) $< $(CFLAGSPNG2ASSET) `cat <$<.meta` -b 255 -use_structs -c $@
+	@$(PNG2ASSET) $< $(FLAGSPNG2ASSET_SPR) `cat <$<.meta` -b 255 -use_structs -c $@
 
 .SECONDEXPANSION:
 $(OBJDIR_RES)/sprites/%.png.c: ../res/sprites/$(PLAT)/%.png $$(wildcard ../res/sprites/$(PLAT)/%.png.meta)
-	@$(PNG2ASSET) $< $(CFLAGSPNG2ASSET) `cat <$<.meta` -b 255 -use_structs -c $@
+	@$(PNG2ASSET) $< $(FLAGSPNG2ASSET_SPR) `cat <$<.meta` -b 255 -use_structs -c $@
 
 $(OBJDIR_RES)/%.gbm.c: ../res/%.gbm
 	@$(GBM2C) $< $(OBJDIR_RES)
 
 $(OBJDIR_RES)/%.gbr.c: ../res/%.gbr
-	@$(GBR2C) $< $(OBJDIR_RES)
+	@$(GBR2C) $< $(OBJDIR_RES) $(FLAGSGBR2C)
 
 $(OBJDIR_RES)/borders/%.png.c: ../res/borders/%.png $(OBJDIR_RES)/borders
 	@$(PNG2ASSET) $< -b 255 -map -bpp 4 -max_palettes 4 -use_map_attributes -use_structs -pack_mode sgb -c $@
 
 $(OBJDIR_RES)/%.png.c: ../res/%.png $$(wildcard ../res/%.png.meta)
-	@$(PNG2ASSET) $< -b 255 -map -noflip -use_structs $(if $(wildcard $<.meta),`cat <$<.meta`) -c $@
+	@$(PNG2ASSET) $< -b 255 -map $(FLAGSPNG2ASSET_BKG) -use_structs $(if $(wildcard $<.meta),`cat <$<.meta`) -c $@
 
 $(OBJDIR_RES)/%.mod.c: ../res/music/%.mod
 	@$(MOD2GBT) $< $(basename $(basename $(notdir $<)))_mod 255 > /dev/null

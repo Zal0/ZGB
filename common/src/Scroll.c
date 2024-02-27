@@ -133,7 +133,7 @@ UINT16 ScrollSetTiles(UINT8 first_tile, UINT8 tiles_bank, const struct TilesInfo
 	n_tiles = tiles->num_frames;
 	palette_entries = tiles->color_data;
 
-	set_bkg_data(first_tile, n_tiles, tiles->data);
+	set_bkg_native_data(first_tile, n_tiles, tiles->data);
 	last_tile_loaded = first_tile + n_tiles;
 	for(i = first_tile; i != last_tile_loaded; ++i) {
 		scroll_tile_info[i] = palette_entries ? palette_entries[i - first_tile] : 0;
