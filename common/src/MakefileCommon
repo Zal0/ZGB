@@ -68,12 +68,12 @@ CFLAGS_gg = -DDEFAULT_COLOR_DEPTH=4
 CFLAGS_sms = $(CFLAGS_gg)
 
 #png2asset cross-platform flags
-PNG2ASSET_SPR_gg = -noflip -pack_mode sms -bpp 4
+PNG2ASSET_SPR_gg = -noflip -pack_mode sms -bpp 4 -keep_palette_order
 PNG2ASSET_SPR_sms = $(PNG2ASSET_SPR_gg)
 FLAGSPNG2ASSET_SPR += $(PNG2ASSET_SPR_$(PLAT))
 
 PNG2ASSET_BKG_gb = -noflip
-PNG2ASSET_BKG_gg = -noflip -pack_mode sms -bpp 4
+PNG2ASSET_BKG_gg = -noflip -pack_mode sms -bpp 4 -keep_palette_order
 PNG2ASSET_BKG_sms = $(PNG2ASSET_SPR_gg)
 FLAGSPNG2ASSET_BKG += $(PNG2ASSET_BKG_$(PLAT))
 
@@ -230,25 +230,25 @@ $(OBJDIR_RES)/%.uge.c: ../res/music/%.uge
 
 $(OBJDIR_RES)/%.o: $(OBJDIR_RES)/%.c
 	@echo compiling resource $<
-	@$(LCC) $(LCCFLAGS) $(CFLAGS) -c -o $@ $<
+	@$(LCC) $(CFLAGS) -c -o $@ $<
 	
 #ZGB---------------------------------------------	
 
 $(OBJDIR_ZGB)/%.o: $(ZGB_PATH_UNIX)/src/%.s
 	@echo compiling $<
-	@$(LCC) $(LCCFLAGS) $(CFLAGS) -c -o $@ $<
+	@$(LCC) $(CFLAGS) -c -o $@ $<
 
 $(OBJDIR_ZGB)/%.o: $(ZGB_PATH_UNIX)/src/%.c
 	@echo compiling $<
-	@$(LCC) $(LCCFLAGS) $(CFLAGS) -c -o $@ $<
+	@$(LCC) $(CFLAGS) -c -o $@ $<
 
 $(OBJDIR_ZGB)/%.o: $(ZGB_PATH_UNIX)/src/$(PLAT)/%.s
 	@echo compiling $<
-	@$(LCC) $(LCCFLAGS) $(CFLAGS) -c -o $@ $<
+	@$(LCC) $(CFLAGS) -c -o $@ $<
 
 $(OBJDIR_ZGB)/%.o: $(ZGB_PATH_UNIX)/src/$(PLAT)/%.c
 	@echo compiling $<
-	@$(LCC) $(LCCFLAGS) $(CFLAGS) -c -o $@ $<
+	@$(LCC) $(CFLAGS) -c -o $@ $<
 
 $(OBJDIR_ZGB)/zgb.lib: $(OBJDIR_ZGB) $(OBJS_ZGB) 
 	@echo creating zgb.lib    
@@ -267,15 +267,15 @@ $(OBJDIR_ZGB)/zgb.lib: $(OBJDIR_ZGB) $(OBJS_ZGB)
 #Project files------------------------------------
 $(OBJDIR)/%.o: %.s
 	@echo compiling $<
-	@$(LCC) $(LCCFLAGS) $(CFLAGS) -c -o $@ $<
+	@$(LCC) $(CFLAGS) -c -o $@ $<
 
 $(OBJDIR)/%.o: %.c
 	@echo compiling $<
-	@$(LCC) $(LCCFLAGS) $(CFLAGS) -c -o $@ $<	
+	@$(LCC) $(CFLAGS) -c -o $@ $<	
 
 $(OBJDIR)/savegame.o: savegame.c
 	@echo compiling savegame on SRAM bank 0
-	@$(LCC) $(LCCFLAGS) $(CFLAGS) -Wf-ba0 -c -o $@ $<
+	@$(LCC) $(CFLAGS) -Wf-ba0 -c -o $@ $<
 
 $(BINDIR)/$(PROJECT_NAME).$(EXT): $(OBJDIR) $(OBJDIR_ZGB)/zgb.lib $(OBJDIR_RES) $(OBJDIR_RES)/sprites $(BINDIR) $(OBJS)
 	@echo Linking
