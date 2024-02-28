@@ -63,7 +63,7 @@ extern UWORD ZGB_Fading_SPal[32];
 #ifdef CGB
 UINT16 default_palette[] = {RGB(31, 31, 31), RGB(20, 20, 20), RGB(10, 10, 10), RGB(0, 0, 0)};
 
-void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, const void *rgb_data, UINT8 bank) {
+void SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, const palette_color_t *rgb_data, UINT8 bank) {
 	if ((first_palette + nb_palettes) > 8)
 		return; //Adding more palettes than supported
 
