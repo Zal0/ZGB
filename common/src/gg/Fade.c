@@ -27,11 +27,13 @@ void FadeStepColor(UINT8 i) {
 	set_bkg_palette(0, 1, palette);
 	set_sprite_palette(0, 1, palette_s);
 
+	DISPLAY_ON;
 	wait_vbl_done();
 }
 
 void FadeIn(void) BANKED {
 	for(UINT8 i = 0; i != 5; i ++) FadeStepColor(i);	
+	DISPLAY_OFF;
 }
 
 void FadeOut(void) BANKED {

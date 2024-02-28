@@ -191,8 +191,8 @@ void main(void) {
 	set_interrupts(VBL_IFLAG);
 #endif
 
+	DISPLAY_OFF;
 	while(1) {
-		DISPLAY_OFF;
 
 		if(stop_music_on_new_state)
 		{
@@ -226,11 +226,8 @@ void main(void) {
 
 		scroll_x_vblank = scroll_x, scroll_y_vblank = scroll_y;
 
-		if(state_running) {
-			FadeIn();
-			DISPLAY_ON;
+		if(state_running)
 			FadeOut();
-		}
 
 		while (state_running) {
 			if(!vbl_count)

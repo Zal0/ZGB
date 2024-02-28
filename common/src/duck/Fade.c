@@ -4,6 +4,9 @@
 #include "Palette.h"
 #include "Math.h"
 
+UWORD ZGB_Fading_BPal[32];
+UWORD ZGB_Fading_SPal[32];
+
 UINT8 FadeInOp(UINT16 c, UINT16 i) {
 	return U_LESS_THAN(c, i) ? 0: (c - i);
 }
@@ -36,11 +39,67 @@ void FadeDMG(UINT8 fadeout) {
 	}
 }
 
-void FadeIn(void) BANKED {
+void FadeInDMG(void) {
 	FadeDMG(0);
+	DISPLAY_OFF;
+}
+
+void FadeOutDMG(void) {
+	DISPLAY_ON;
+	FadeDMG(1);
+}
+
+UWORD UpdateColor(UINT8 i, UWORD col) {
+	return RGB(PAL_RED(col) | DespRight(0x1F, 5 - i), PAL_GREEN(col) | DespRight(0x1F, 5 - i), PAL_BLUE(col) | DespRight(0x1F, 5 - i));
+}
+
+void FadeStepColor(UINT8 i) {
+	UINT8 pal, c;
+	UWORD palette[4];
+	UWORD palette_s[4];
+	UWORD* col = ZGB_Fading_BPal;
+	UWORD* col_s = ZGB_Fading_SPal;
+
+	for(pal = 0; pal < 8; pal ++) {
+		for(c = 0; c < 4; ++c, ++col, ++col_s) {
+				palette[c] = UpdateColor(i, *col);
+				palette_s[c] = UpdateColor(i, *col_s);
+		};
+		set_bkg_palette(pal, 1, palette);
+		set_sprite_palette(pal, 1, palette_s);
+	}
+}
+
+void FadeInCOLOR(void) {
+	for(UINT8 i = 0; i != 6; i ++) {
+		FadeStepColor(i);
+	}
+	DISPLAY_OFF;
+}
+
+void FadeOutColor(void) {
+	for(UINT8 i = 5; i != 0xFF; -- i) {
+		FadeStepColor(i);	
+		DISPLAY_ON;
+		wait_vbl_done();
+	}
+}
+
+void FadeIn(void) BANKED {
+#ifdef CGB
+	if (_cpu == CGB_TYPE) {
+		FadeInCOLOR();
+	} else
+#endif
+		FadeInDMG();
 }
 
 void FadeOut(void) BANKED {
-	FadeDMG(1);
+#ifdef CGB
+	if (_cpu == CGB_TYPE) {
+		FadeOutColor();
+	} else 
+#endif
+		FadeOutDMG();
 }
 

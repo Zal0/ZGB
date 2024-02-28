@@ -41,6 +41,12 @@ void FadeDMG(UINT8 fadeout) {
 
 void FadeInDMG(void) {
 	FadeDMG(0);
+	DISPLAY_OFF;
+}
+
+void FadeOutDMG(void) {
+	DISPLAY_ON;
+	FadeDMG(1);
 }
 
 UWORD UpdateColor(UINT8 i, UWORD col) {
@@ -62,13 +68,20 @@ void FadeStepColor(UINT8 i) {
 		set_bkg_palette(pal, 1, palette);
 		set_sprite_palette(pal, 1, palette_s);
 	}
-	wait_vbl_done();
 }
 
 void FadeInCOLOR(void) {
-	UINT8 i;
-	for(i = 0; i != 6; i ++) {
+	for(UINT8 i = 0; i != 6; i ++) {
+		FadeStepColor(i);
+	}
+	DISPLAY_OFF;
+}
+
+void FadeOutColor(void) {
+	for(UINT8 i = 5; i != 0xFF; -- i) {
 		FadeStepColor(i);	
+		DISPLAY_ON;
+		wait_vbl_done();
 	}
 }
 
@@ -79,17 +92,6 @@ void FadeIn(void) BANKED {
 	} else
 #endif
 		FadeInDMG();
-}
-
-void FadeOutDMG(void) {
-	FadeDMG(1);
-}
-
-void FadeOutColor(void) {
-	UINT8 i;
-	for(i = 5; i != 0xFF; -- i) {
-		FadeStepColor(i);	
-	}
 }
 
 void FadeOut(void) BANKED {
