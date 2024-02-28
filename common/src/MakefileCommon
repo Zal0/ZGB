@@ -15,20 +15,17 @@ ifeq ($(DEFAULT_SPRITES_SIZE), )
 	DEFAULT_SPRITES_SIZE = SPRITES_8x16
 endif
 
-# TODO: Check if there are any more platform specific flags that can be centralized here
-# Configure platform specific LCC flags here:
-LCCFLAGS_gb      = #-Wm-ys -Wl-yt0x1B -autobank # Set an MBC for banking (1B-ROM+MBC5+RAM+BATT)
-LCCFLAGS_pocket  = #-Wm-ys -Wl-yt0x1B -autobank # Usually the same as required for .gb
-LCCFLAGS_duck    = -Wl-yt0x19 #-Wm-ys -Wl-yt0x1B -autobank # Usually the same as required for .gb
-LCCFLAGS_gbc     = -Wm-yc -DCGB #-Wm-ys -Wl-yt0x1B -Wm-yc -autobank # Same as .gb with: -Wm-yc (gb & gbc) or Wm-yC (gbc exclusive)
-LCCFLAGS_sms     = #-autobank
-LCCFLAGS_gg      = #-autobank
-LCCFLAGS_nes     = 
-
-LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Flags
+# Configure platform specific link and binary making flags here:
+BINFLAGS_gb      = 
+BINFLAGS_pocket  = 
+BINFLAGS_duck    = 
+BINFLAGS_gbc     = -Wm-yc -DCGB
+BINFLAGS_sms     = 
+BINFLAGS_gg      = 
+BINFLAGS_nes     = 
 
 # Optional verbose output for lcc, linker and bankpack
-# LCCFLAGS += -v -Wl-p -Wb-v
+# BINFLAGS += -v -Wl-p -Wb-v
 
 # Append current platform extension type to output and intermediate directories
 OBJDIR = ../$(BUILD_TYPE)/$(EXT)
@@ -55,15 +52,16 @@ GBM2C = $(ZGB_PATH_UNIX)/../tools/gbm2c/gbm2c
 MOD2GBT = $(ZGB_PATH_UNIX)/../tools/mod2gbt/mod2gbt
 UGE2SOURCE = $(ZGB_PATH_UNIX)/../env/uge2source
 
-ADDR_gb = -Wl-g.STACK=0xDF00 -Wl-g_mirror_OAM=0xDF00 -Wl-g_font_recode_table=0xDFA0
+ADDR_gb = -Wl-g.STACK=0xDF00 -Wl-g_mirror_OAM=0xDF00 -Wl-g_font_recode_table=0xDFA0 -Wb-reserve=1:1000
 ADDR_duck = $(ADDR_gb)
 ADDR_ap = $(ADDR_gb)
-ADDR_gg = -Wl-g.STACK=0xDEA0 -Wl-g_mirror_OAM=0xDF00 -Wl-g_font_recode_table=0xDEA0
+ADDR_gg = -Wl-g.STACK=0xDEA0 -Wl-g_mirror_OAM=0xDF00 -Wl-g_font_recode_table=0xDEA0 -Wb-reserve=1:1000
 ADDR_sms = $(ADDR_gg)
 
 CFLAGS_gb = -DDEFAULT_COLOR_DEPTH=2
+CFLAGS_gbc = $(CFLAGS_gb) -DCGB
 CFLAGS_duck = $(CFLAGS_gb)
-CFLAGS_ap = $(CFLAGS_gb)
+CFLAGS_pocket = $(CFLAGS_gb)
 CFLAGS_gg = -DDEFAULT_COLOR_DEPTH=4
 CFLAGS_sms = $(CFLAGS_gg)
 
@@ -82,15 +80,15 @@ FLAGSGBR2C_gg = -bpp 4
 FLAGSGBR2C_sms = $(FLAGSGBR2C_gg)
 FLAGSGBR2C += $(FLAGSGBR2C_$(PLAT)) 
 
-CFLAGS += $(TARGET) -Wf-MMD $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include -DFILE_NAME=$(basename $(<F)) $(CFLAGS_$(PLAT))
+CFLAGS += $(TARGET) -Wf-MMD $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include -DFILE_NAME=$(basename $(<F)) $(CFLAGS_$(EXT))
 
 ifeq ($(strip $(N_BANKS)),)
 	NBANKS = A
 endif
-BINFLAGS += $(TARGET) -Wl-j -Wm-yS -autobank -Wl-yo$(N_BANKS) -Wb-ext=.rel -Wb-reserve=1:1000 $(ADDR_$(PLAT))
+BINFLAGS += $(TARGET) -Wl-j -Wm-yS -autobank -Wl-yo$(N_BANKS) -Wb-ext=.rel $(ADDR_$(PLAT)) $(BINFLAGS_$(EXT))
 
 
-# Moved a bunch of these to LCCFLAGS_* = ...
+# tune mapper and color settings
 ifneq ($(strip $(PLAT)),duck)
 	ifeq ($(wildcard savegame.c), )
 		# No savegame
@@ -101,16 +99,9 @@ ifneq ($(strip $(PLAT)),duck)
 		CFLAGS += -DUSE_SAVEGAME
 	endif
 
-	# TODO: consider changing this to a build target "gbc" and get rid of ReleaseColor?
-	ifneq (,$(findstring Color,$(BUILD_TYPE)))
-		BINFLAGS += -Wm-yc
-		CFLAGS += -DCGB
-		EXT = gbc
-	endif
-
-	# SGB flags
+	# set SGB flags if has border and not SMS/GG
 	ifneq ($(wildcard ../res/borders), )
-		BINFLAGS +=-Wm-ys 
+		BINFLAGS += -Wm-ys 
 	endif
 endif
 
@@ -279,7 +270,7 @@ $(OBJDIR)/savegame.o: savegame.c
 
 $(BINDIR)/$(PROJECT_NAME).$(EXT): $(OBJDIR) $(OBJDIR_ZGB)/zgb.lib $(OBJDIR_RES) $(OBJDIR_RES)/sprites $(BINDIR) $(OBJS)
 	@echo Linking
-	@$(LCC) $(LCCFLAGS) $(BINFLAGS) -Wl-k$(OBJDIR_ZGB)/ -Wl-lzgb.lib -o $(OBJDIR)/rom.$(EXT) $(OBJS)
+	@$(LCC) $(BINFLAGS) -Wl-k$(OBJDIR_ZGB)/ -Wl-lzgb.lib -o $(OBJDIR)/rom.$(EXT) $(OBJS)
 	@cp $(OBJDIR)/rom.$(EXT) $(BINDIR)/$(PROJECT_NAME).$(EXT)
 	@cp $(OBJDIR)/rom.sym $(BINDIR)/$(PROJECT_NAME).sym
 	@if test -f "$(OBJDIR)/rom.cdb" ; then \
