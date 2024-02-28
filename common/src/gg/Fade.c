@@ -22,7 +22,7 @@ void FadeStepColor(UINT8 i) {
 		palette_s[c] = UpdateColor(i, *col_s);
 	};
 
-	wait_vbl_done();
+	while (VCOUNTER < 216);	// avoid dots on screen
 
 	set_bkg_palette(0, 1, palette);
 	set_sprite_palette(0, 1, palette_s);
