@@ -138,7 +138,7 @@ int main(int argc, char* argv[]) {
 	fprintf(file, "const unsigned char %s_tiles[] = {", tile_export.label_name);
 	int line_h = tile_set.info.height == 8 ? 8 : 16;
 	for(int tile = tile_export.from; tile <= tile_export.up_to; ++ tile) {
-		unsigned char pal = (tile_export.include_colors) ? palette_order[tile_pal.color_set[tile]] + 1 : 1;
+		unsigned char pal = (tile_export.include_colors) ? palette_order[tile_pal.color_set[tile]] * 4 : 0;
 		for(int y = 0; y < tile_set.info.height; y += line_h) {
 			for(int x = 0; x < tile_set.info.width; x += 8) {
 				unsigned char* data_ptr = &tile_set.data[(tile_set.info.width * tile_set.info.height) * tile +  tile_set.info.width * y + x];
@@ -154,24 +154,23 @@ int main(int argc, char* argv[]) {
 							BIT(data_ptr[4], 0), BIT(data_ptr[5], 0), BIT(data_ptr[6], 0), BIT(data_ptr[7], 0)
 						);
 					} else {
-						l = BYTE(
-							BIT(data_ptr[0] * pal, 1), BIT(data_ptr[1] * pal, 1), BIT(data_ptr[2] * pal, 1), BIT(data_ptr[3] * pal, 1), 
-							BIT(data_ptr[4] * pal, 1), BIT(data_ptr[5] * pal, 1), BIT(data_ptr[6] * pal, 1), BIT(data_ptr[7] * pal, 1)
-						);
-						h = BYTE(
-							BIT(data_ptr[0] * pal, 0), BIT(data_ptr[1] * pal, 0), BIT(data_ptr[2] * pal, 0), BIT(data_ptr[3] * pal, 0), 
-							BIT(data_ptr[4] * pal, 0), BIT(data_ptr[5] * pal, 0), BIT(data_ptr[6] * pal, 0), BIT(data_ptr[7] * pal, 0)
-						);
 						L = BYTE(
-							BIT(data_ptr[0] * pal, 3), BIT(data_ptr[1] * pal, 3), BIT(data_ptr[2] * pal, 3), BIT(data_ptr[3] * pal, 3), 
-							BIT(data_ptr[4] * pal, 3), BIT(data_ptr[5] * pal, 3), BIT(data_ptr[6] * pal, 3), BIT(data_ptr[7] * pal, 3)
-						);
-						H = BYTE(
-							BIT(data_ptr[0] * pal, 2), BIT(data_ptr[1] * pal, 2), BIT(data_ptr[2] * pal, 2), BIT(data_ptr[3] * pal, 2), 
-							BIT(data_ptr[4] * pal, 2), BIT(data_ptr[5] * pal, 2), BIT(data_ptr[6] * pal, 2), BIT(data_ptr[7] * pal, 2)
+							BIT(data_ptr[0] + pal, 3), BIT(data_ptr[1] + pal, 3), BIT(data_ptr[2] + pal, 3), BIT(data_ptr[3] + pal, 3), 
+							BIT(data_ptr[4] + pal, 3), BIT(data_ptr[5] + pal, 3), BIT(data_ptr[6] + pal, 3), BIT(data_ptr[7] + pal, 3)
+						);                                                                                                        
+						H = BYTE(                                                                                                 
+							BIT(data_ptr[0] + pal, 2), BIT(data_ptr[1] + pal, 2), BIT(data_ptr[2] + pal, 2), BIT(data_ptr[3] + pal, 2), 
+							BIT(data_ptr[4] + pal, 2), BIT(data_ptr[5] + pal, 2), BIT(data_ptr[6] + pal, 2), BIT(data_ptr[7] + pal, 2)
+						);                                                                                                        
+						l = BYTE(                                                                                                 
+							BIT(data_ptr[0] + pal, 1), BIT(data_ptr[1] + pal, 1), BIT(data_ptr[2] + pal, 1), BIT(data_ptr[3] + pal, 1), 
+							BIT(data_ptr[4] + pal, 1), BIT(data_ptr[5] + pal, 1), BIT(data_ptr[6] + pal, 1), BIT(data_ptr[7] + pal, 1)
+						);                                                                                                        
+						h = BYTE(                                                                                                 
+							BIT(data_ptr[0] + pal, 0), BIT(data_ptr[1] + pal, 0), BIT(data_ptr[2] + pal, 0), BIT(data_ptr[3] + pal, 0), 
+							BIT(data_ptr[4] + pal, 0), BIT(data_ptr[5] + pal, 0), BIT(data_ptr[6] + pal, 0), BIT(data_ptr[7] + pal, 0)
 						);
 					}
-
 					if(data_ptr != tile_set.data)
 						fprintf(file, ",");
 					if((line % 4) == 0)
@@ -198,7 +197,7 @@ int main(int argc, char* argv[]) {
 	fprintf(file, "const struct TilesInfo %s = {\n", tile_export.label_name);
 	fprintf(file, "\t.num_frames = %d, //num_tiles\n", tile_export.up_to - tile_export.from + 1);
 	fprintf(file, "\t.data = %s_tiles, //tiles\n", tile_export.label_name);
-	fprintf(file, "\t.num_pals = %d, //num_palettes\n", num_palettes);
+	fprintf(file, "\t.num_pals = %d, //num_palettes\n", (bpp==2) ? num_palettes : (num_palettes + 4 - 1) / 4);
 	if(tile_export.include_colors) {
 		fprintf(file, "\t.pals = %s_palettes, //palettes\n", tile_export.label_name);
 		fprintf(file, "\t.color_data = %sCGB //CGB palette\n", tile_export.label_name);
