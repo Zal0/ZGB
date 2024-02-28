@@ -3,7 +3,8 @@
 
 #include <gbdk/platform.h>
 
-//For DMG
+#if defined(NINTENDO)
+
 #define PAL_DEF(C3, C2, C1, C0) (UINT8)((C0 << 4 << 2) | (C1 << 4) | (C2 << 2) | C3)
 
 #ifdef CGB
@@ -21,12 +22,16 @@
 #define PALETTE_FROM_HEADER(PAL) 0
 #endif
 
-//RGB defined in cgb.h has a << 0 that kills the compiler
-#define RGB2(r, g, b) ((UINT16)(r)) | (((UINT16)(g)) <<  5) | ((((UINT16)(b)) << 8) << 2);
-
 #define PAL_RED(C)   (((C)      ) & 0x1F)
 #define PAL_GREEN(C) (((C) >>  5) & 0x1F)
 #define PAL_BLUE(C)  (((C) >> 10) & 0x1F)
 
+#elif defined(SEGA)
+
+#define PAL_RED(C)   (((C)      ) & 0x0F)
+#define PAL_GREEN(C) (((C) >>  4) & 0x0F)
+#define PAL_BLUE(C)  (((C) >>  8) & 0x0F)
+
+#endif
 
 #endif
