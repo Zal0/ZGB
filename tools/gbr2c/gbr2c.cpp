@@ -89,31 +89,37 @@ int main(int argc, char* argv[]) {
 		//Export palettes
 		fprintf(file, "\n");
 		fprintf(file, "const palette_color_t %s_palettes[] = {\n", tile_export.label_name);
-		int col_count  = 0;
-		for(int p = 0; p < palettes.count; ++p) 
-		{
-			if(palette_order[p] != -1)
+		if (bpp == 2) {
+			for(int p = 0; p < palettes.count; ++p) 
 			{
-				if(palette_order[p] != 0)
-					fprintf(file, ",\n");
-				fprintf(file, "\t");
+				if(palette_order[p] != -1)
+				{
+					if(palette_order[p] != 0)
+						fprintf(file, ",\n");
+					fprintf(file, "\t");
 			
-				for(int c = 0; c < 4; ++c) {
-					Color color = palettes.colors[p].colors[c];
-					fprintf(file, "RGB8(%d, %d, %d)", color.r, color.g, color.b);
-					if(c != 3)
-						fprintf(file, ", ");
-					++ col_count;
+					for(int c = 0; c < 4; ++c) {
+						Color color = palettes.colors[p].colors[c];
+						fprintf(file, "RGB8(%d, %d, %d)", color.r, color.g, color.b);
+						if(c != 3)
+							fprintf(file, ", ");
+					}
 				}
 			}
-		}
-		if((bpp == 4) && (col_count % 16)) {
-			fprintf(file, ",");
-			for(int pad = col_count % 16; pad < 16; ++ pad) {
-				if((pad % 4) == 0)
-					fprintf(file, "\n\t");
-				fprintf(file, "RGB8(0, 0, 0)");
-				if(pad != 15)
+		} else {
+			fprintf(file, "\t");
+			for(int p = 0; p < 4; ++p) {
+				if (p < palettes.count) {
+					for(int c = 0; c < 4; ++c) {
+						Color color = palettes.colors[p].colors[c];
+						fprintf(file, "RGB8(%d, %d, %d)", color.r, color.g, color.b);
+						if(c != 3)
+							fprintf(file, ", ");
+					}
+				} else {
+					fprintf(file, "RGB8(0, 0, 0), RGB8(0, 0, 0), RGB8(0, 0, 0), RGB8(0, 0, 0)");
+				}
+				if(p != 3)
 					fprintf(file, ", ");
 			}
 		}
@@ -138,7 +144,7 @@ int main(int argc, char* argv[]) {
 	fprintf(file, "const unsigned char %s_tiles[] = {", tile_export.label_name);
 	int line_h = tile_set.info.height == 8 ? 8 : 16;
 	for(int tile = tile_export.from; tile <= tile_export.up_to; ++ tile) {
-		unsigned char pal = (tile_export.include_colors) ? palette_order[tile_pal.color_set[tile]] * 4 : 0;
+		unsigned char pal = (tile_export.include_colors) ? tile_pal.color_set[tile] * 4 : 0;
 		for(int y = 0; y < tile_set.info.height; y += line_h) {
 			for(int x = 0; x < tile_set.info.width; x += 8) {
 				unsigned char* data_ptr = &tile_set.data[(tile_set.info.width * tile_set.info.height) * tile +  tile_set.info.width * y + x];
