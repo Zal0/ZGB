@@ -118,7 +118,7 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	if (!scroll_cmap) {
 		c = &scroll_tile_info[replacement];
 	}
-	set_attributed_tile_xy(0x1f & (SCREEN_OFFSET_X + x + scroll_offset_x), (y + scroll_offset_y) % DEVICE_SCREEN_BUFFER_HEIGHT, (UINT16)(*c << 8) | replacement);
+	set_attributed_tile_xy(SCREEN_OFFSET_X + x + scroll_offset_x, y + scroll_offset_y, (UINT16)(*c << 8) | replacement);
 #endif
 }
 
@@ -454,7 +454,7 @@ void MoveScroll(INT16 x, INT16 y) {
 		if(new_row > current_row) {
 			ScrollUpdateRowWithDelay(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP + SCREEN_TILE_REFRES_H - 1);
 		} else {
-			ScrollUpdateRowWithDelay(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP);
+			if (new_row >= SCREEN_PAD_TOP) ScrollUpdateRowWithDelay(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP);
 		}
 	}
 
