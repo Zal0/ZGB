@@ -148,7 +148,7 @@ UINT16 ScrollSetTiles(UINT8 first_tile, UINT8 tiles_bank, const struct TilesInfo
 			break;
 	}
 
-	offset |= (i << 8);
+	offset |= (UINT16)(i << 8);
 	if(i == last_bg_pal_loaded)
 	{
 		SetPalette(BG_PALETTE, last_bg_pal_loaded, tiles->num_pals, tiles->pals, tiles_bank);
@@ -175,7 +175,7 @@ attr;
 #ifdef CGB
 	if (_cpu == CGB_TYPE) {
 		VBK_REG = 1;
-		set_vram_byte(addr, ((UINT8)(map_offset >> 8)) + ((attr) ? *attr : scroll_tile_info[data]));
+		set_vram_byte(addr, (attr) ? *attr : (UINT8)(map_offset >> 8) + scroll_tile_info[(UINT8)map_offset + data]);
 		VBK_REG = 0;
 	}
 #endif
