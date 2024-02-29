@@ -6,11 +6,19 @@
 #include "Math.h"
 #include "main.h"
 
-
-#define SCREEN_TILES_W       20 // 160 >> 3 = 20
-#define SCREEN_TILES_H       18 // 144 >> 3 = 18
-#define SCREEN_PAD_LEFT   1
+#define SCREEN_TILES_H       DEVICE_SCREEN_HEIGHT
+#if defined(MASTERSYSTEM)
+#define SCREEN_TILES_W       (DEVICE_SCREEN_WIDTH - 1)
+#define SCREEN_PAD_RIGHT  1
+#define SCREEN_OFFSET_X   1
+#define SCREEN_PAD_LEFT_OFFSET 1
+#else
+#define SCREEN_TILES_W       DEVICE_SCREEN_WIDTH
 #define SCREEN_PAD_RIGHT  2
+#define SCREEN_OFFSET_X   0
+#define SCREEN_PAD_LEFT_OFFSET 0
+#endif
+#define SCREEN_PAD_LEFT   1
 #define SCREEN_PAD_TOP    1
 #define SCREEN_PAD_BOTTOM 2
 
@@ -110,7 +118,7 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	if (!scroll_cmap) {
 		c = &scroll_tile_info[replacement];
 	}
-	set_attributed_tile_xy(0x1f & (x + scroll_offset_x), (y + scroll_offset_y) % DEVICE_SCREEN_BUFFER_HEIGHT, (UINT16)(*c << 8) | replacement);
+	set_attributed_tile_xy(0x1f & (SCREEN_OFFSET_X + x + scroll_offset_x), (y + scroll_offset_y) % DEVICE_SCREEN_BUFFER_HEIGHT, (UINT16)(*c << 8) | replacement);
 #endif
 }
 
@@ -182,7 +190,7 @@ attr;
 #elif defined(SEGA)
 	if (bg_or_win == 0) {
 		UINT8 c = ((UINT8)(map_offset >> 8)) + ((attr) ? *attr : scroll_tile_info[data]);
-		set_attributed_tile_xy(x, y, (UINT16)(c << 8) | ((UINT8)map_offset + data));
+		set_attributed_tile_xy(SCREEN_OFFSET_X + x, y, (UINT16)(c << 8) | ((UINT8)map_offset + data));
 	}
 #endif
 }
@@ -342,7 +350,7 @@ void ScrollUpdateRow(INT16 x, INT16 y) {
 
 	UINT8 __save = CURRENT_BANK;
 	SWITCH_ROM(scroll_bank);
-	for(i = 0u; i != SCREEN_TILE_REFRES_W; ++i) {
+	for(i = 0u; i != (SCREEN_TILE_REFRES_W); ++i) {
 		#ifdef CGB
 		UPDATE_TILE(x + i, y, map ++, cmap ++);
 		#else
@@ -391,7 +399,7 @@ void ScrollUpdateColumn(INT16 x, INT16 y) {
 
 	UINT8 __save = CURRENT_BANK;
 	SWITCH_ROM(scroll_bank);
-	for(i = 0u; i != SCREEN_TILE_REFRES_H; ++i) {
+	for(i = 0u; i != (SCREEN_TILE_REFRES_H); ++i) {
 		#ifdef CGB
 		UPDATE_TILE(x, y + i, map, cmap);
 		map += scroll_tiles_w;
@@ -438,7 +446,7 @@ void MoveScroll(INT16 x, INT16 y) {
 		if(new_column > current_column) {
 			ScrollUpdateColumnWithDelay(new_column - SCREEN_PAD_LEFT + SCREEN_TILE_REFRES_W - 1, new_row - SCREEN_PAD_TOP);
 		} else {
-			ScrollUpdateColumnWithDelay(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP);
+			ScrollUpdateColumnWithDelay(new_column - SCREEN_PAD_LEFT + SCREEN_PAD_LEFT_OFFSET,   new_row - SCREEN_PAD_TOP);
 		}
 	}
 

@@ -189,6 +189,8 @@ void main(void) {
 	WY_REG = (UINT8)(DEVICE_WINDOW_PX_OFFSET_Y + DEVICE_SCREEN_PX_HEIGHT);
 #elif defined(SEGA)
 	set_interrupts(VBL_IFLAG);
+
+	HIDE_LEFT_COLUMN;
 #endif
 
 	DISPLAY_OFF;
