@@ -31,7 +31,7 @@ void SwapOAMs(void) {
 		__render_shadow_OAM = (UINT8)((UINT16)(oam = (UINT8*)shadow_OAM) >> 8);
 	} else {
 		__render_shadow_OAM = (UINT8)((UINT16)(oam = (UINT8*)mirror_OAM) >> 8);
-		}
+	}
 	next_oam_idx = 0;
 
 	scroll_x_vblank = scroll_x, scroll_y_vblank = scroll_y;
