@@ -4,8 +4,8 @@
 #include "Palette.h"
 #include "Math.h"
 
-UINT8 FadeInOp(UINT16 c, UINT16 i) {
-	return U_LESS_THAN(c, i) ? 0: (c - i);
+inline UINT8 FadeInOp(UINT8 c, UINT8 i) {
+	return (c < i) ? 0: (c - i);
 }
 
 UINT8* const pals[] = {&BGP_REG, &OBP0_REG, &OBP1_REG};
