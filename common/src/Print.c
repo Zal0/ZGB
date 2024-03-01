@@ -54,7 +54,7 @@ void Printf(const unsigned char* txt, ...) NONBANKED {
 		}
 		c = font_recode_table[((c < ' ') ? 0u : (c - ' '))];
 		if(print_target == PRINT_BKG)
-			UpdateMapTile(print_target, 0x1F & (print_x + scroll_offset_x), 0x1F & (print_y + scroll_offset_y), font_offset, c, NULL);
+			UpdateMapTile(print_target, print_x + scroll_offset_x, print_y + scroll_offset_y, font_offset, c, NULL);
 		else
 			UpdateMapTile(print_target, print_x, print_y, font_offset, c, NULL);
 
