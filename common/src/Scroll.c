@@ -12,14 +12,15 @@
 #define SCREEN_PAD_RIGHT  1
 #define SCREEN_OFFSET_X   1
 #define SCREEN_PAD_LEFT_OFFSET 1
+#define SCREEN_PAD_TOP    2
 #else
 #define SCREEN_TILES_W       DEVICE_SCREEN_WIDTH
 #define SCREEN_PAD_RIGHT  2
 #define SCREEN_OFFSET_X   0
 #define SCREEN_PAD_LEFT_OFFSET 0
+#define SCREEN_PAD_TOP    1
 #endif
 #define SCREEN_PAD_LEFT   1
-#define SCREEN_PAD_TOP    1
 #define SCREEN_PAD_BOTTOM 2
 
 #define SCREEN_TILE_REFRES_W (SCREEN_TILES_W + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT)
@@ -201,9 +202,7 @@ UINT16 LoadMap(UINT8 bg_or_win, UINT8 x, UINT8 y, UINT8 map_bank, struct MapInfo
 
 	//Load Tiles
 	UINT8 load_tiles = (tiles_bank_0 != map->tiles_bank) || (tiles_0 != map->tiles); //If the tile set is the same as the one used for the scroll or the bg (which is stored in tiles_bank_0 and tiles0) then do not load the tiles again
-	UINT16 map_offset = 0;
-	if(load_tiles)
-		map_offset = ScrollSetTiles(last_tile_loaded, map->tiles_bank, map->tiles);
+	UINT16 map_offset = (load_tiles) ? ScrollSetTiles(last_tile_loaded, map->tiles_bank, map->tiles) : 0;
 
 	//Load map (tile by tile because it there are not attributes when need to pick them from scroll_tile_info)
 	UINT8* data = map->data;
@@ -228,18 +227,10 @@ INT8 scroll_h_border = 0;
 UINT8 clamp_enabled = 1;
 void ClampScrollLimits(void) {
 	if(clamp_enabled) {
-		if(U_LESS_THAN(scroll_x, 0u)) {
-			scroll_x = 0u;
-		}
-		if(scroll_x > (scroll_w - SCREENWIDTH)) {
-			scroll_x = (scroll_w - SCREENWIDTH);
-		}
-		if(U_LESS_THAN(scroll_y, 0u)) {
-			scroll_y = 0u;
-		}
-		if(scroll_y > (scroll_h - SCREENHEIGHT + scroll_h_border)) {
-			scroll_y = (scroll_h - SCREENHEIGHT + scroll_h_border);
-		}
+		if(scroll_x < 0) scroll_x = 0u;
+		if(scroll_x > (scroll_w - SCREENWIDTH)) scroll_x = (scroll_w - SCREENWIDTH);
+		if(scroll_y < 0) scroll_y = 0u;
+		if(scroll_y > (scroll_h - SCREENHEIGHT + scroll_h_border)) scroll_y = (scroll_h - SCREENHEIGHT + scroll_h_border);
 	}
 }
 
@@ -307,20 +298,22 @@ void InitScrollWithTiles(UINT8 map_bank, const struct MapInfo* map, UINT8 tiles_
 	UINT8 __save = CURRENT_BANK;
 	SWITCH_ROM(map_bank);
 	y = scroll_y >> 3;
-	for(i = 0u; i != (SCREEN_TILE_REFRES_H) && y != scroll_h; ++i, y ++) {
+	for(i = 0u; i != (SCREEN_TILE_REFRES_H) && y != scroll_h; ++i, y++) {
 		ScrollUpdateRow((scroll_x >> 3) - SCREEN_PAD_LEFT,  y - SCREEN_PAD_TOP);
 	}
 	SWITCH_ROM(__save);
 }
 
 void ScrollUpdateRowR(void) {
-	UINT8 i = 0u;
-
-	for(i = 0u; i != 5 && pending_w_i != 0; ++i, -- pending_w_i)  {
+	if (pending_w_y < 0) {
+		pending_w_y = pending_w_i = 0; 
+		return; 
+	}
+	for(UINT8 i = 0u; i != 5 && pending_w_i != 0; ++i, --pending_w_i)  {
 		#ifdef CGB
-		UPDATE_TILE(pending_w_x ++, pending_w_y, pending_w_map ++, pending_w_cmap++);
+		UPDATE_TILE(pending_w_x++, pending_w_y, pending_w_map++, pending_w_cmap++);
 		#else
-		UPDATE_TILE(pending_w_x ++, pending_w_y, pending_w_map ++,0);
+		UPDATE_TILE(pending_w_x++, pending_w_y, pending_w_map++, 0);
 		#endif
 	}
 }
@@ -333,24 +326,24 @@ void ScrollUpdateRowWithDelay(INT16 x, INT16 y) {
 	pending_w_x = x;
 	pending_w_y = y;
 	pending_w_i = SCREEN_TILE_REFRES_W;
-	pending_w_map = scroll_map + scroll_tiles_w * y + x;
 
+	UINT16 delta = scroll_tiles_w * y + x;
+	pending_w_map = scroll_map + delta;
 	#ifdef CGB
-	pending_w_cmap = scroll_cmap + scroll_tiles_w * y + x;
+	pending_w_cmap = scroll_cmap + delta;
 	#endif
 }
 
 void ScrollUpdateRow(INT16 x, INT16 y) {
-	UINT8 i = 0u;
-	unsigned char* map = scroll_map + scroll_tiles_w * y + x;
-
+	UINT16 offset = scroll_tiles_w * y + x;
+	unsigned char* map = scroll_map + offset;
 	#ifdef CGB
-	unsigned char* cmap = scroll_cmap + scroll_tiles_w * y + x;
+	unsigned char* cmap = scroll_cmap + offset;
 	#endif
 
 	UINT8 __save = CURRENT_BANK;
 	SWITCH_ROM(scroll_bank);
-	for(i = 0u; i != (SCREEN_TILE_REFRES_W); ++i) {
+	for(UINT8 i = 0u; i != (SCREEN_TILE_REFRES_W); ++i) {
 		#ifdef CGB
 		UPDATE_TILE(x + i, y, map ++, cmap ++);
 		#else
@@ -361,9 +354,11 @@ void ScrollUpdateRow(INT16 x, INT16 y) {
 }
 
 void ScrollUpdateColumnR(void) {
-	UINT8 i = 0u;
-
-	for(i = 0u; i != 5 && pending_h_i != 0; ++i, pending_h_i --) {
+	if (pending_h_x < 0) {
+		pending_h_x = pending_h_i = 0;
+		return;
+	}
+	for(UINT8 i = 0u; i != 5 && pending_h_i != 0; ++i, pending_h_i --) {
 		#ifdef CGB
 		UPDATE_TILE(pending_h_x, pending_h_y ++, pending_h_map, pending_h_cmap);
 		pending_h_map += scroll_tiles_w;
@@ -383,23 +378,24 @@ void ScrollUpdateColumnWithDelay(INT16 x, INT16 y) {
 	pending_h_x = x;
 	pending_h_y = y;
 	pending_h_i = SCREEN_TILE_REFRES_H;
-	pending_h_map = scroll_map + scroll_tiles_w * y + x;
 
+	UINT16 delta = scroll_tiles_w * y + x;
+	pending_h_map = scroll_map + delta;
 	#ifdef CGB
-	pending_h_cmap = scroll_cmap + scroll_tiles_w * y + x;
+	pending_h_cmap = scroll_cmap + delta;
 	#endif
 }
 
 void ScrollUpdateColumn(INT16 x, INT16 y) {
-	UINT8 i = 0u;
-	unsigned char* map = &scroll_map[scroll_tiles_w * y + x];
+	UINT16 offset = scroll_tiles_w * y + x;
+	unsigned char* map = scroll_map + offset;
 	#ifdef CGB
-	unsigned char* cmap = &scroll_cmap[scroll_tiles_w * y + x];
+	unsigned char* cmap = scroll_cmap + offset;
 	#endif
 
 	UINT8 __save = CURRENT_BANK;
 	SWITCH_ROM(scroll_bank);
-	for(i = 0u; i != (SCREEN_TILE_REFRES_H); ++i) {
+	for(UINT8 i = 0u; i != (SCREEN_TILE_REFRES_H); ++i) {
 		#ifdef CGB
 		UPDATE_TILE(x, y + i, map, cmap);
 		map += scroll_tiles_w;
@@ -416,11 +412,8 @@ void RefreshScroll(void) {
 	UINT16 ny = scroll_y;
 
 	if(scroll_target) {
-		if(U_LESS_THAN(scroll_bottom_movement_limit, scroll_target->y - scroll_y)) {
-			ny = scroll_target->y - scroll_bottom_movement_limit;
-		} else if(U_LESS_THAN(scroll_target->y - scroll_y, scroll_top_movement_limit)) {
-			ny = scroll_target->y - scroll_top_movement_limit;
-		}
+		if(scroll_bottom_movement_limit < scroll_target->y - scroll_y) ny = scroll_target->y - scroll_bottom_movement_limit;
+		else if(scroll_target->y - scroll_y < scroll_top_movement_limit) ny = scroll_target->y - scroll_top_movement_limit;
 
 		MoveScroll(scroll_target->x - (SCREENWIDTH >> 1), ny);
 	}
@@ -454,7 +447,7 @@ void MoveScroll(INT16 x, INT16 y) {
 		if(new_row > current_row) {
 			ScrollUpdateRowWithDelay(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP + SCREEN_TILE_REFRES_H - 1);
 		} else {
-			if (new_row >= SCREEN_PAD_TOP) ScrollUpdateRowWithDelay(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP);
+			ScrollUpdateRowWithDelay(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP);
 		}
 	}
 
