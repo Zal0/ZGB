@@ -35,13 +35,11 @@ void FadeDMG(UINT8 fadeout) {
 		}
 		wait_vbl_done();
 		wait_vbl_done();
-		wait_vbl_done();
 	}
 }
 
 void FadeInDMG(void) {
 	FadeDMG(0);
-	DISPLAY_OFF;
 }
 
 void FadeOutDMG(void) {
@@ -54,35 +52,29 @@ UWORD UpdateColor(UINT8 i, UWORD col) {
 }
 
 void FadeStepColor(UINT8 i) {
-	UINT8 pal, c;
-	UWORD palette[4];
-	UWORD palette_s[4];
-	UWORD* col = ZGB_Fading_BPal;
-	UWORD* col_s = ZGB_Fading_SPal;
+	palette_color_t palette[32];
+	palette_color_t palette_s[32];
+	palette_color_t* col = ZGB_Fading_BPal;
+	palette_color_t* col_s = ZGB_Fading_SPal;
 
-	for(pal = 0; pal < 8; pal ++) {
-		for(c = 0; c < 4; ++c, ++col, ++col_s) {
-				palette[c] = UpdateColor(i, *col);
-				palette_s[c] = UpdateColor(i, *col_s);
-		};
-		set_bkg_palette(pal, 1, palette);
-		set_sprite_palette(pal, 1, palette_s);
-	}
+	for(UINT8 c = 0; c < 32; ++c, ++col, ++col_s) {
+		palette[c] = UpdateColor(i, *col);
+		palette_s[c] = UpdateColor(i, *col_s);
+	};
+
+	wait_vbl_done();
+	set_bkg_palette(0, 8, palette);
+	set_sprite_palette(0, 8, palette_s);
+	DISPLAY_ON;
+	wait_vbl_done();
 }
 
 void FadeInCOLOR(void) {
-	for(UINT8 i = 0; i != 6; i ++) {
-		FadeStepColor(i);
-	}
-	DISPLAY_OFF;
+	for(UINT8 i = 0; i != 6; i ++) FadeStepColor(i);
 }
 
 void FadeOutColor(void) {
-	for(UINT8 i = 5; i != 0xFF; -- i) {
-		FadeStepColor(i);	
-		DISPLAY_ON;
-		wait_vbl_done();
-	}
+	for(UINT8 i = 5; i != 0xFF; -- i) FadeStepColor(i);	
 }
 
 void FadeIn(void) BANKED {
@@ -92,6 +84,8 @@ void FadeIn(void) BANKED {
 	} else
 #endif
 		FadeInDMG();
+
+	DISPLAY_OFF;
 }
 
 void FadeOut(void) BANKED {
@@ -102,4 +96,3 @@ void FadeOut(void) BANKED {
 #endif
 		FadeOutDMG();
 }
-
