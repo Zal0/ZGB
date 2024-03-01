@@ -4,8 +4,8 @@
 #include "Palette.h"
 #include "Math.h"
 
-UWORD ZGB_Fading_BPal[32];
-UWORD ZGB_Fading_SPal[32];
+palette_color_t ZGB_Fading_BPal[32];
+palette_color_t ZGB_Fading_SPal[32];
 
 UINT8 FadeInOp(UINT16 c, UINT16 i) {
 	return U_LESS_THAN(c, i) ? 0: (c - i);

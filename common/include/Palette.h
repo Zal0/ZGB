@@ -28,9 +28,15 @@
 
 #elif defined(SEGA)
 
+#if defined(MASTERSYSTEM)
+#define PAL_RED(C)   (((C)      ) & 0x03)
+#define PAL_GREEN(C) (((C) >>  2) & 0x03)
+#define PAL_BLUE(C)  (((C) >>  4) & 0x03)
+#else
 #define PAL_RED(C)   (((C)      ) & 0x0F)
 #define PAL_GREEN(C) (((C) >>  4) & 0x0F)
 #define PAL_BLUE(C)  (((C) >>  8) & 0x0F)
+#endif
 
 #endif
 
