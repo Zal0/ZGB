@@ -23,6 +23,9 @@
 #define SCREEN_PAD_LEFT   1
 #define SCREEN_PAD_BOTTOM 2
 
+#define SCREEN_WIDTH (SCREEN_TILES_W << 3)
+#define SCREEN_HEIGHT (SCREEN_TILES_H << 3)
+
 #define SCREEN_TILE_REFRES_W (SCREEN_TILES_W + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT)
 #define SCREEN_TILE_REFRES_H (SCREEN_TILES_H + SCREEN_PAD_TOP  + SCREEN_PAD_BOTTOM)
 
@@ -228,9 +231,9 @@ UINT8 clamp_enabled = 1;
 void ClampScrollLimits(void) {
 	if(clamp_enabled) {
 		if(scroll_x < 0) scroll_x = 0u;
-		if(scroll_x > (scroll_w - SCREENWIDTH)) scroll_x = (scroll_w - SCREENWIDTH);
+		if(scroll_x > (scroll_w - SCREEN_WIDTH)) scroll_x = (scroll_w - SCREEN_WIDTH);
 		if(scroll_y < 0) scroll_y = 0u;
-		if(scroll_y > (scroll_h - SCREENHEIGHT + scroll_h_border)) scroll_y = (scroll_h - SCREENHEIGHT + scroll_h_border);
+		if(scroll_y > (scroll_h - SCREEN_HEIGHT + scroll_h_border)) scroll_y = (scroll_h - SCREEN_HEIGHT + scroll_h_border);
 	}
 }
 
@@ -247,7 +250,7 @@ void ScrollSetMap(UINT8 map_bank, const struct MapInfo* map) {
 	scroll_h = scroll_tiles_h << 3;
 	scroll_bank = map_bank;
 	if(scroll_target) {
-		scroll_x = scroll_target->x - (SCREENWIDTH >> 1);
+		scroll_x = scroll_target->x - (SCREEN_WIDTH >> 1);
 		scroll_y = scroll_target->y - scroll_bottom_movement_limit; //Move the camera to its bottom limit
 		ClampScrollLimits();
 	}
@@ -305,10 +308,6 @@ void InitScrollWithTiles(UINT8 map_bank, const struct MapInfo* map, UINT8 tiles_
 }
 
 void ScrollUpdateRowR(void) {
-	if (pending_w_y < 0) {
-		pending_w_y = pending_w_i = 0; 
-		return; 
-	}
 	for(UINT8 i = 0u; i != 5 && pending_w_i != 0; ++i, --pending_w_i)  {
 		#ifdef CGB
 		UPDATE_TILE(pending_w_x++, pending_w_y, pending_w_map++, pending_w_cmap++);
@@ -354,10 +353,6 @@ void ScrollUpdateRow(INT16 x, INT16 y) {
 }
 
 void ScrollUpdateColumnR(void) {
-	if (pending_h_x < 0) {
-		pending_h_x = pending_h_i = 0;
-		return;
-	}
 	for(UINT8 i = 0u; i != 5 && pending_h_i != 0; ++i, pending_h_i --) {
 		#ifdef CGB
 		UPDATE_TILE(pending_h_x, pending_h_y ++, pending_h_map, pending_h_cmap);
@@ -415,7 +410,7 @@ void RefreshScroll(void) {
 		if(scroll_bottom_movement_limit < scroll_target->y - scroll_y) ny = scroll_target->y - scroll_bottom_movement_limit;
 		else if(scroll_target->y - scroll_y < scroll_top_movement_limit) ny = scroll_target->y - scroll_top_movement_limit;
 
-		MoveScroll(scroll_target->x - (SCREENWIDTH >> 1), ny);
+		MoveScroll(scroll_target->x - (SCREEN_WIDTH >> 1), ny);
 	}
 }
 
@@ -439,7 +434,7 @@ void MoveScroll(INT16 x, INT16 y) {
 		if(new_column > current_column) {
 			ScrollUpdateColumnWithDelay(new_column - SCREEN_PAD_LEFT + SCREEN_TILE_REFRES_W - 1, new_row - SCREEN_PAD_TOP);
 		} else {
-			ScrollUpdateColumnWithDelay(new_column - SCREEN_PAD_LEFT + SCREEN_PAD_LEFT_OFFSET,   new_row - SCREEN_PAD_TOP);
+			ScrollUpdateColumnWithDelay(new_column - SCREEN_PAD_LEFT + SCREEN_PAD_LEFT_OFFSET, new_row - SCREEN_PAD_TOP);
 		}
 	}
 
@@ -447,7 +442,8 @@ void MoveScroll(INT16 x, INT16 y) {
 		if(new_row > current_row) {
 			ScrollUpdateRowWithDelay(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP + SCREEN_TILE_REFRES_H - 1);
 		} else {
-			ScrollUpdateRowWithDelay(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP);
+			if (new_row >= SCREEN_PAD_TOP) 
+				ScrollUpdateRowWithDelay(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP);
 		}
 	}
 
@@ -464,43 +460,35 @@ UINT8 GetScrollTile(UINT16 x, UINT16 y) {
 	UINT8 ret;
 	UINT8 __save = CURRENT_BANK;
 	SWITCH_ROM(scroll_bank);
-		ret = *GetScrollTilePtr(x, y);
+	ret = *GetScrollTilePtr(x, y);
 	SWITCH_ROM(__save);
 	return ret;
 }
 
-void GetMapSize(UINT8 map_bank, const struct MapInfo* map, UINT8* tiles_w, UINT8* tiles_h)
-{
+void GetMapSize(UINT8 map_bank, const struct MapInfo* map, UINT8* tiles_w, UINT8* tiles_h) {
 	UINT8 __save = CURRENT_BANK;
 	SWITCH_ROM(map_bank);
-		if(tiles_w) *tiles_w = map->width;
-		if(tiles_h) *tiles_h = map->height;
+	if(tiles_w) *tiles_w = map->width;
+	if(tiles_h) *tiles_h = map->height;
 	SWITCH_ROM(__save);
 }
 
-UINT8 ScrollFindTile(UINT8 map_bank, const struct MapInfo* map, UINT8 tile,
-	UINT8 start_x, UINT8 start_y, UINT8 w, UINT8 h,
-	UINT16* x, UINT16* y) {
-	UINT16 xt = 0;
-	UINT16 yt = 0;
-	UINT8 found = 1;
-
+UINT8 ScrollFindTile(UINT8 map_bank, const struct MapInfo* map, UINT8 tile, UINT8 start_x, UINT8 start_y, UINT8 w, UINT8 h, UINT16* x, UINT16* y) {
 	UINT8 __save = CURRENT_BANK;
 	SWITCH_ROM(map_bank);
-	for(xt = start_x; xt != start_x + w; ++ xt) {
-		for(yt = start_y; yt != start_y + h; ++ yt) {
-			if(map->data[map->width * yt + xt] == (UINT16)tile) { //That cast over there is mandatory and gave me a lot of headaches
-				goto done;
+	for(UINT16 xt = start_x; xt != start_x + w; ++ xt) {
+		for(UINT16 yt = start_y; yt != start_y + h; ++ yt) {
+			if(map->data[map->width * yt + xt] == tile) {
+				*x = xt;
+				*y = yt;
+				SWITCH_ROM(__save);
+				return 1;
 			}
 		}
 	}
-	found = 0;
-
-done:
 	SWITCH_ROM(__save);
-	*x = xt;
-	*y = yt;
 
-	return found;
+	*x = *y = 0;
+	return 0;
 }
 
