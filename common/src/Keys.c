@@ -1,4 +1,3 @@
 #include "Keys.h"
 
-UBYTE previous_keys = 0;
-UBYTE keys = 0;
+joypads_t joypads, old_joypads;

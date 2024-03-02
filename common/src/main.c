@@ -9,6 +9,7 @@
 #include "SpriteManager.h"
 #include "Fade.h"
 #include "Palette.h"
+#include "Keys.h"
 
 #ifdef USE_SAVEGAME
 	#include "savegame.h"
@@ -103,6 +104,8 @@ void main(void) {
 	#endif
 #endif
 	InitOAMs();
+
+	INIT_KEYS();
 
 	__save = CURRENT_BANK;
 	INIT_MUSIC;
