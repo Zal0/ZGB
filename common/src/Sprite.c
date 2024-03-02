@@ -5,6 +5,12 @@
 #include "SpriteManager.h"
 #include "MetaSpriteInfo.h"
 
+#if defined(MASTERSYSTEM)
+#define SCREEN_SPR_OFFSET_X   8
+#else
+#define SCREEN_SPR_OFFSET_X   0
+#endif
+
 void SetFrame(Sprite* sprite, UINT8 frame)
 {
 	UINT8 __save = CURRENT_BANK;
@@ -86,11 +92,7 @@ void DrawSprite(void) {
 	screen_y = THIS->y - scroll_y;
 	//It might sound stupid adding 32 in both sides but remember the values are unsigned! (and maybe truncated after substracting scroll_)
 	if(((screen_x + 32u) < SCREENWIDTH_PLUS_32) && ((screen_y + 32) < SCREENHEIGHT_PLUS_32)) {
-		#if defined(MASTERSYSTEM)
-		screen_x += DEVICE_SPRITE_PX_OFFSET_X + 8;
-		#else
-		screen_x += DEVICE_SPRITE_PX_OFFSET_X;
-		#endif
+		screen_x += (DEVICE_SPRITE_PX_OFFSET_X + SCREEN_SPR_OFFSET_X);
 		screen_y += DEVICE_SPRITE_PX_OFFSET_Y;
 		tmp = next_oam_idx;
 		UINT8 __save = CURRENT_BANK;
