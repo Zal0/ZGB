@@ -8,21 +8,30 @@
 #include "Palette.h"
 
 #define SCREEN_TILES_H       DEVICE_SCREEN_HEIGHT
+
 #if defined(MASTERSYSTEM)
 #define SCREEN_TILES_W       (DEVICE_SCREEN_WIDTH - 1)
-#define SCREEN_PAD_RIGHT  1
-#define SCREEN_OFFSET_X   1
-#define SCREEN_PAD_LEFT_OFFSET 1
-#define SCREEN_PAD_TOP    2
+#define SCREEN_BKG_OFFSET_X  1
+
+#define SCREEN_PAD_LEFT      0
+#define SCREEN_PAD_RIGHT     1
+#define SCREEN_PAD_TOP       0
+#define SCREEN_PAD_BOTTOM    2
+
+#define SCREEN_RESTORE_W     16
+#define SCREEN_RESTORE_H     10
 #else
 #define SCREEN_TILES_W       DEVICE_SCREEN_WIDTH
-#define SCREEN_PAD_RIGHT  2
-#define SCREEN_OFFSET_X   0
-#define SCREEN_PAD_LEFT_OFFSET 0
-#define SCREEN_PAD_TOP    1
+#define SCREEN_BKG__OFFSET_X 0
+
+#define SCREEN_PAD_LEFT      1
+#define SCREEN_PAD_RIGHT     2
+#define SCREEN_PAD_TOP       1
+#define SCREEN_PAD_BOTTOM    2
+
+#define SCREEN_RESTORE_W     5
+#define SCREEN_RESTORE_H     5
 #endif
-#define SCREEN_PAD_LEFT   1
-#define SCREEN_PAD_BOTTOM 2
 
 #define SCREEN_WIDTH (SCREEN_TILES_W << 3)
 #define SCREEN_HEIGHT (SCREEN_TILES_H << 3)
@@ -116,7 +125,7 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 		}
 	#endif
 #elif defined(SEGA)
-	set_attributed_tile_xy(SCREEN_OFFSET_X + x + scroll_offset_x, y + scroll_offset_y, (UINT16)(((scroll_cmap) ? *c : scroll_tile_info[replacement]) << 8) | replacement);
+	set_attributed_tile_xy(SCREEN_BKG_OFFSET_X + x + scroll_offset_x, y + scroll_offset_y, (UINT16)(((scroll_cmap) ? *c : scroll_tile_info[replacement]) << 8) | replacement);
 #endif
 }
 
@@ -186,7 +195,7 @@ attr;
 #elif defined(SEGA)
 	if (bg_or_win == 0) {
 		UINT8 c = ((UINT8)(map_offset >> 8)) + ((attr) ? *attr : scroll_tile_info[data]);
-		set_attributed_tile_xy(SCREEN_OFFSET_X + x, y, (UINT16)(c << 8) | ((UINT8)map_offset + data));
+		set_attributed_tile_xy(SCREEN_BKG_OFFSET_X + x, y, (UINT16)(c << 8) | ((UINT8)map_offset + data));
 	}
 #endif
 }
@@ -300,7 +309,7 @@ void InitScrollWithTiles(UINT8 map_bank, const struct MapInfo* map, UINT8 tiles_
 }
 
 void ScrollUpdateRowR(void) {
-	for(UINT8 i = 0u; i != 5 && pending_w_i != 0; ++i, --pending_w_i)  {
+	for(UINT8 i = 0u; i != SCREEN_RESTORE_W && pending_w_i != 0; ++i, --pending_w_i)  {
 		#ifdef CGB
 		UPDATE_TILE(pending_w_x++, pending_w_y, pending_w_map++, pending_w_cmap++);
 		#else
@@ -314,11 +323,9 @@ void ScrollUpdateRowWithDelay(INT16 x, INT16 y) {
 		ScrollUpdateRowR();
 	}
 
-	pending_w_x = x;
-	pending_w_y = y;
 	pending_w_i = SCREEN_TILE_REFRES_W;
 
-	UINT16 delta = scroll_tiles_w * y + x;
+	UINT16 delta = scroll_tiles_w * (pending_w_y = y) + (pending_w_x = x);
 	pending_w_map = scroll_map + delta;
 	#ifdef CGB
 	pending_w_cmap = scroll_cmap + delta;
@@ -345,7 +352,7 @@ void ScrollUpdateRow(INT16 x, INT16 y) {
 }
 
 void ScrollUpdateColumnR(void) {
-	for(UINT8 i = 0u; i != 5 && pending_h_i != 0; ++i, pending_h_i --) {
+	for(UINT8 i = 0u; i != SCREEN_RESTORE_H && pending_h_i != 0; ++i, pending_h_i --) {
 		#ifdef CGB
 		UPDATE_TILE(pending_h_x, pending_h_y ++, pending_h_map, pending_h_cmap);
 		pending_h_map += scroll_tiles_w;
@@ -362,11 +369,9 @@ void ScrollUpdateColumnWithDelay(INT16 x, INT16 y) {
 		ScrollUpdateColumnR();
 	}
 
-	pending_h_x = x;
-	pending_h_y = y;
 	pending_h_i = SCREEN_TILE_REFRES_H;
 
-	UINT16 delta = scroll_tiles_w * y + x;
+	UINT16 delta = scroll_tiles_w * (pending_h_y = y) + (pending_h_x = x);
 	pending_h_map = scroll_map + delta;
 	#ifdef CGB
 	pending_h_cmap = scroll_cmap + delta;
@@ -426,16 +431,15 @@ void MoveScroll(INT16 x, INT16 y) {
 		if(new_column > current_column) {
 			ScrollUpdateColumnWithDelay(new_column - SCREEN_PAD_LEFT + SCREEN_TILE_REFRES_W - 1, new_row - SCREEN_PAD_TOP);
 		} else {
-			ScrollUpdateColumnWithDelay(new_column - SCREEN_PAD_LEFT + SCREEN_PAD_LEFT_OFFSET, new_row - SCREEN_PAD_TOP);
+			ScrollUpdateColumnWithDelay(new_column - SCREEN_PAD_LEFT,                            new_row - SCREEN_PAD_TOP);
 		}
 	}
 
 	if(current_row != new_row) {
 		if(new_row > current_row) {
 			ScrollUpdateRowWithDelay(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP + SCREEN_TILE_REFRES_H - 1);
-		} else {
-			if (new_row >= SCREEN_PAD_TOP) 
-				ScrollUpdateRowWithDelay(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP);
+		} else if (new_row >= SCREEN_PAD_TOP) {
+			ScrollUpdateRowWithDelay(new_column - SCREEN_PAD_LEFT, new_row - SCREEN_PAD_TOP);
 		}
 	}
 
