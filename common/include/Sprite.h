@@ -5,15 +5,9 @@
 
 #include "OAMManager.h"
 #include "MetaSpriteInfo.h"
+#include "Flip.h"
 
 #define CUSTOM_DATA_SIZE 8
-
-typedef enum {
-	NO_MIRROR,
-	H_MIRROR,
-	V_MIRROR,
-	HV_MIRROR
-} MirroMode;
 
 typedef struct {
 	//Meta sprite info
@@ -21,13 +15,13 @@ typedef struct {
 	const struct MetaSpriteInfo* mt_sprite_info;
 
 	//Frame info
-	UINT8 flips;         //supported flips        
+	UINT8 flips;         //supported flips/mirror modes
 	UINT8 first_tile;    //tile offset, for animation indices
-	UINT8 first_tile_H;  //tile H flipped offset, for animation indices
-	UINT8 first_tile_V;  //tile V flipped offset, for animation indices
-	UINT8 first_tile_HV; //tile HV flipped offset, for animation indices
+	UINT8 first_tile_H;  //tile H mirrored offset, for the animation indices
+	UINT8 first_tile_V;  //tile V mirrored offset, for the animation indices
+	UINT8 first_tile_HV; //tile HV mirrored offset, for the animation indices
 	UINT8 attr_add;      //metasprite attributes, used to set the DMG palette (bit 4) or the priority over Bg (bit 7) 
-	                     //The engine internally sets the palette  
+	                     //The engine internally sets the palette
 
 	//Anim data
 	UINT8* anim_data;
