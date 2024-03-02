@@ -22,7 +22,7 @@
 #define SCREEN_RESTORE_H     10
 #else
 #define SCREEN_TILES_W       DEVICE_SCREEN_WIDTH
-#define SCREEN_BKG__OFFSET_X 0
+#define SCREEN_BKG_OFFSET_X  0
 
 #define SCREEN_PAD_LEFT      1
 #define SCREEN_PAD_RIGHT     2
