@@ -6,13 +6,13 @@
 #include "Scroll.h"
 #include "ZGBMain.h"
 #include "Flip.h"
+#include "Palette.h"
 
 #if defined(NINTENDO)
 	#define LAST_SPRITE_IDX 128
 #elif defined(SEGA)
 	#define LAST_SPRITE_IDX 255
 #endif
-
 
 //Pool
 UINT8 sprite_manager_sprites_mem[N_SPRITE_MANAGER_SPRITES * sizeof(Sprite)];
@@ -64,7 +64,6 @@ void SpriteManagerReset(void) {
 	sprite_manager_removal_check = 0;
 }
 
-extern UWORD ZGB_Fading_SPal[32];
 void SpriteManagerLoad(UINT8 sprite_type) {
 	if (spriteIdxs[sprite_type] != LAST_SPRITE_IDX) // Already loaded
 		return;
@@ -86,6 +85,7 @@ void SpriteManagerLoad(UINT8 sprite_type) {
 #if defined(NINTENDO)
 	last_sprite_loaded -= n_tiles;
 #endif
+
 #if defined(NINTENDO)
 	spriteIdxs[sprite_type] = last_sprite_loaded;
 	spriteIdxsH[sprite_type] = last_sprite_loaded;
@@ -99,27 +99,17 @@ void SpriteManagerLoad(UINT8 sprite_type) {
 		set_sprite_native_data(last_sprite_loaded, n_tiles - end, data->data);
 		set_sprite_native_data(0, end, data->data + ((n_tiles - end) << 4));
 	}
-#ifdef CGB
-	UINT8 i;
-	for (i = 0; i != last_sprite_pal_loaded; ++ i) {
-		if (memcmp(&ZGB_Fading_SPal[i << 2], data->palettes, n_pals << 3) == 0)
-			break;
-	}
-
-	//Load palettes
-	spritePalsOffset[sprite_type] = i;
-	if (i == last_sprite_pal_loaded) {
-		SetPalette(SPRITES_PALETTE, last_sprite_pal_loaded, n_pals, data->palettes, CURRENT_BANK);
-		last_sprite_pal_loaded += n_pals;
-	}
-#endif
 #elif defined(SEGA)
 	spriteIdxs[sprite_type] = last_sprite_loaded;
 	spriteIdxsH[sprite_type] = last_sprite_loaded;
 	spriteIdxsV[sprite_type] = last_sprite_loaded;
 	spriteIdxsHV[sprite_type] = last_sprite_loaded;
 	if (last_sprite_loaded + n_tiles <= LAST_SPRITE_IDX) {
+		#if DEFAULT_COLOR_DEPTH == 4
 		set_sprite_native_data(last_sprite_loaded, n_tiles, data->data);
+		#else
+		set_sprite_data(last_sprite_loaded, n_tiles, data->data);
+		#endif
 	}
 	last_sprite_loaded += n_tiles;
 	if (spriteFlips[sprite_type] & FLIP_X) {
@@ -143,11 +133,26 @@ void SpriteManagerLoad(UINT8 sprite_type) {
 		}
 		last_sprite_loaded += n_tiles;
 	}
+#endif
 
-	if (last_sprite_pal_loaded == 0) {
-		SetPalette(SPRITES_PALETTE, 0, 1, data->palettes, CURRENT_BANK);
-		last_sprite_pal_loaded = 1;
+#if defined(SEGA) || (defined(NINTENDO) && defined(CGB))
+	#if defined(CGB)
+	UINT8 i;
+	for (i = 0; i != last_sprite_pal_loaded; ++i) {
+		if (memcmp(ZGB_Fading_SPal + (i * N_PALETTE_COLORS), data->palettes, n_pals * PALETTE_SIZE) == 0)
+			break;
 	}
+
+	//Load palettes
+	spritePalsOffset[sprite_type] = i;
+	if (i == last_sprite_pal_loaded) {
+	#else
+	spritePalsOffset[sprite_type] = 0;
+	#endif
+		last_sprite_pal_loaded += SetPalette(SPRITES_PALETTE, last_sprite_pal_loaded, n_pals, data->palettes, CURRENT_BANK);
+	#if defined(CGB)
+	}
+	#endif
 #endif
 
 	SWITCH_ROM(__save);

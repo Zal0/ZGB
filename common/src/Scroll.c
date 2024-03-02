@@ -5,6 +5,7 @@
 #include "SpriteManager.h"
 #include "Math.h"
 #include "main.h"
+#include "Palette.h"
 
 #define SCREEN_TILES_H       DEVICE_SCREEN_HEIGHT
 #if defined(MASTERSYSTEM)
@@ -65,7 +66,6 @@ INT16 pending_w_x, pending_w_y;
 UINT8 pending_w_i;
 
 UINT8 last_tile_loaded = 0;
-UINT8 last_bg_pal_loaded = 0;
 
 UINT16 hud_map_offset;
 
@@ -111,22 +111,15 @@ void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	#ifdef CGB
 		if (_cpu == CGB_TYPE) {
 			VBK_REG = 1;
-			if (!scroll_cmap) {
-				c = &scroll_tile_info[replacement];
-			}
-			set_vram_byte(addr, *c);
+			set_vram_byte(addr, (scroll_cmap) ? *c : scroll_tile_info[replacement]);
 			VBK_REG = 0;
 		}
 	#endif
 #elif defined(SEGA)
-	if (!scroll_cmap) {
-		c = &scroll_tile_info[replacement];
-	}
-	set_attributed_tile_xy(SCREEN_OFFSET_X + x + scroll_offset_x, y + scroll_offset_y, (UINT16)(*c << 8) | replacement);
+	set_attributed_tile_xy(SCREEN_OFFSET_X + x + scroll_offset_x, y + scroll_offset_y, (UINT16)(((scroll_cmap) ? *c : scroll_tile_info[replacement]) << 8) | replacement);
 #endif
 }
 
-extern UWORD ZGB_Fading_BPal[32];
 UINT16 ScrollSetTiles(UINT8 first_tile, UINT8 tiles_bank, const struct TilesInfo* tiles) {
 	UINT8 i;
 	UINT8 n_tiles;
@@ -145,35 +138,34 @@ UINT16 ScrollSetTiles(UINT8 first_tile, UINT8 tiles_bank, const struct TilesInfo
 	n_tiles = tiles->num_frames;
 	palette_entries = tiles->color_data;
 
+	#if DEFAULT_COLOR_DEPTH == 4
 	set_bkg_native_data(first_tile, n_tiles, tiles->data);
+	#else
+	set_bkg_data(first_tile, n_tiles, tiles->data);
+	#endif
+
 	last_tile_loaded = first_tile + n_tiles;
 	for(i = first_tile; i != last_tile_loaded; ++i) {
 		scroll_tile_info[i] = palette_entries ? palette_entries[i - first_tile] : 0;
 	}
 
-#if defined(NINTENDO)
-	#ifdef CGB
+#if defined(SEGA) || (defined(NINTENDO) && defined(CGB))
+	#if defined(CGB)
 	//Load palettes
-	for(i = 0; i != last_bg_pal_loaded; ++ i)
-	{
-		if(memcmp(&ZGB_Fading_BPal[i << 2], tiles->pals, tiles->num_pals << 3) == 0)
+	for(i = 0; i != last_bg_pal_loaded; ++ i) {
+		if (memcmp(ZGB_Fading_BPal + (i * N_PALETTE_COLORS), tiles->pals, tiles->num_pals * PALETTE_SIZE) == 0)
 			break;
 	}
 
 	offset |= (UINT16)(i << 8);
-	if(i == last_bg_pal_loaded)
-	{
-		SetPalette(BG_PALETTE, last_bg_pal_loaded, tiles->num_pals, tiles->pals, tiles_bank);
-		last_bg_pal_loaded += tiles->num_pals;
+
+	if(i == last_bg_pal_loaded) {
+	#endif
+		last_bg_pal_loaded += SetPalette(BG_PALETTE, last_bg_pal_loaded, tiles->num_pals, tiles->pals, tiles_bank);
+	#if defined(CGB)
 	}
 	#endif
-#elif defined(SEGA)
-	if (last_bg_pal_loaded == 0) {
-		SetPalette(BG_PALETTE, 0, tiles->num_pals, tiles->pals, tiles_bank);
-		last_bg_pal_loaded = 1;
-	}
 #endif
-
 	SWITCH_ROM(__save);
 
 	return offset;

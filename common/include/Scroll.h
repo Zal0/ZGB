@@ -50,6 +50,8 @@ extern UINT8 clamp_enabled;
 extern UINT8 scroll_top_movement_limit;
 extern UINT8 scroll_bottom_movement_limit;
 
+extern UINT8 last_tile_loaded;
+
 extern UINT16 hud_map_offset;
 
 #define InitScrollTiles(FIRST_TILE, TILE_DATA) 
