@@ -163,7 +163,7 @@ void main(void) {
 		scroll_target = 0;
 		last_tile_loaded = 0;
 
-#if defined(SEGA) || defined(CGB)
+#if defined(SEGA) || (defined(NINTENDO) && defined(CGB))
 		last_bg_pal_loaded = 0;
 	#ifdef CGB
 		if (_cpu == CGB_TYPE) {
