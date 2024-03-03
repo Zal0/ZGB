@@ -14,11 +14,13 @@
 
 #define SGB_TRANSFER(A,B) map_buf[0]=(((A) << 3) | 1),map_buf[1]=(B),sgb_transfer(map_buf) 
 
+extern UINT8 _is_SGB;
+
 void set_sgb_border(unsigned char * tiledata, size_t tiledata_size,
                     unsigned char * tilemap, size_t tilemap_size,
                     unsigned char * palette, size_t palette_size) {
 
-	if (sgb_check()) {
+	if (_is_SGB) {
 		UINT8 map_buf[16];
 		memset(map_buf, 0, sizeof(map_buf));
 

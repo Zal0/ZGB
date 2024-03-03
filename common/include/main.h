@@ -28,6 +28,7 @@ extern UINT8 spriteIdxsHV[];
 extern UINT8 spriteFlips[];
 extern UINT8 spritePalsOffset[];
 
+extern UINT8 _is_SGB;
 
 extern UINT8 current_state;
 void SetState(UINT8 state);
@@ -35,7 +36,9 @@ extern UINT8 delta_time;
 
 void SetWindowY(UINT8 y);
 
+#if defined(NINTENDO)
 void LCD_isr(void) NONBANKED;
+#endif
 
 #define IMPORT_MAP(MAP) extern struct MapInfo MAP; extern const void __bank_##MAP
 #define IMPORT_TILES(TILES) extern struct TilesInfo TILES; extern const void __bank_##TILES

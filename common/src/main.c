@@ -23,6 +23,8 @@ void __force_use_font(void) NAKED {
 }
 
 extern UINT8 next_state;
+      
+UINT8 _is_SGB = 0;
 
 UINT8 delta_time;
 UINT8 current_state;
@@ -89,23 +91,23 @@ void SetWindowY(UINT8 y) {
 void main(void) {
 	static UINT8 __save;
 
+#if defined(NINTENDO)
 	// this delay is required for PAL SNES SGB border commands to work
-	for (UINT8 i = 4; i != 0; i--) {
-		wait_vbl_done();
-	}
+	for (UINT8 i = 4; i != 0; i--) wait_vbl_done();
+	// set global SGB detection variable 
+	_is_SGB = sgb_check();
+	#ifdef CGB
+		cpu_fast();
+	#endif
+#endif
 
 #ifdef USE_SAVEGAME
 	CheckSRAMIntegrity((UINT8*)&savegame, sizeof(Savegame));
 #endif
 
-#if defined(NINTENDO)
-	#ifdef CGB
-		cpu_fast();
-	#endif
-#endif
-	InitOAMs();
-
 	INIT_KEYS();
+
+	InitOAMs();
 
 	__save = CURRENT_BANK;
 	INIT_MUSIC;
