@@ -103,6 +103,8 @@ ifneq ($(strip $(PLAT)),duck)
 	ifneq ($(wildcard ../res/borders), )
 		BINFLAGS += -Wm-ys 
 	endif
+else
+	BINFLAGS += -Wl-yt0x19
 endif
 
 # gbt-player/Hugetracker flags

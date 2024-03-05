@@ -3,47 +3,43 @@
 #include "Sound.h"
 #include "Music.h"
 
-#define NORMAL      0
-#define NIBBLE_SWAP 1
-#define VOLUME_FIX  2
-
-UINT8 * const FX_CH1[]    = { &NR10_REG,   &NR11_REG,   &NR12_REG,   &NR13_REG,   &NR14_REG,   NULL };
-const UINT8 FX_ATTR_CH1[] = { NORMAL,      NORMAL,      NIBBLE_SWAP, NORMAL,      NORMAL    };
-
-UINT8 * const FX_CH2[]    = {              &NR21_REG,   &NR22_REG,   &NR23_REG,   &NR24_REG,   NULL };
-const UINT8 FX_ATTR_CH2[] = {              NORMAL,      NIBBLE_SWAP, NORMAL, 	  NORMAL    };
-
-UINT8 * const FX_CH3[]    = { &NR30_REG,   &NR31_REG,   &NR32_REG,   &NR33_REG,   &NR34_REG,   NULL };
-const UINT8 FX_ATTR_CH3[] = { NORMAL,      NORMAL,      VOLUME_FIX,  NORMAL,      NORMAL    };
-
-UINT8 * const FX_CH4[]    = {              &NR41_REG,   &NR42_REG,   &NR43_REG,   &NR44_REG,   NULL };
-const UINT8 FX_ATTR_CH4[] = { NORMAL,      NORMAL,      NIBBLE_SWAP, NIBBLE_SWAP, NORMAL    };
-
-UINT8 * const FX_CH5[]    = { &NR50_REG,   &NR51_REG,   &NR52_REG,   NULL };
-const UINT8 FX_ATTR_CH5[] = { NORMAL,      NORMAL,      NORMAL    };
-
-UINT8 * const * const FX_ADDRESS[] = { FX_CH1,      FX_CH2,      FX_CH3,      FX_CH4,      FX_CH5      };
-UINT8 * const FX_ATTRIBUTES[]      = { FX_ATTR_CH1, FX_ATTR_CH2, FX_ATTR_CH3, FX_ATTR_CH4, FX_ATTR_CH5 };
-
-extern UINT8 music_mute_frames;
+UINT8 sfx_buffer[9];
 
 void PlayFx(SOUND_CHANNEL channel, UINT8 mute_frames, ...) {
+	if (sfx_play_bank != SFX_STOP_BANK) return; // return is SFX is playing
+
+	sfx_buffer[0] = ((mute_frames & 0x0F) << 4) | 1; // one packet with delay and data
+
+	UINT8 len;
+
+	if (channel & CHANNEL_1) { 
+		sfx_buffer[1] = 0b11111000;
+		len = 5;
+	} else if (channel & CHANNEL_2) { 
+		sfx_buffer[1] = 0b11110001;
+		len = 4;
+	} else if (channel & CHANNEL_3) { 
+		sfx_buffer[1] = 0b11111010;
+		len = 5;
+	} else if (channel & CHANNEL_4) { 
+		sfx_buffer[1] = 0b11110011;
+		len = 4;
+	} else if (channel & CHANNEL_5) {
+		sfx_buffer[1] = 0b11100100;
+		len = 3;
+	} else len = 0;
+
+	UINT8 *ptr = sfx_buffer + 2;
 	va_list list;
 
-	if(channel != CHANNEL_5) {
-		MUTE_CHANNEL(channel);
-	}
-	music_mute_frames = mute_frames;
-
-        va_start(list, mute_frames);
-	for(UINT8 * const *reg = FX_ADDRESS[channel], *attr = FX_ATTRIBUTES[channel]; (*reg); ++reg, ++attr) {
-		UINT8 value = va_arg(list, INT16);
-		if (*attr & NIBBLE_SWAP) {
-			value = ((UINT8)(value << 4) | (UINT8)(value >> 4));
-		} else if (*attr & VOLUME_FIX) {
-			value = (((~(UINT8)value) + (UINT8)0x20u) & (UINT8)0x60u);
-		}
-		**reg = value;
+	va_start(list, mute_frames);
+	for(; len != 0; --len) {
+		*ptr++ = va_arg(list, INT16); // copy len registers to the temporary buffer
 	}
 	va_end(list);
+
+	*ptr++ = 1; // one packet without delay and terminator
+	*ptr = 0x07; // add terminator
+
+	ExecuteSFX(CURRENT_BANK, sfx_buffer, channel, SFX_PRIORITY_NORMAL);
 }

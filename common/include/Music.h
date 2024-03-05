@@ -33,7 +33,7 @@ inline void INIT_SOUND(void) {
 	#define StopMusic hUGE_paused = 1; hUGE_mute(HT_CH_MUTE); last_music = 0
 
 	#define MUTE_CHANNEL(CHANNEL) if(last_music) hUGE_mute_channel(CHANNEL, HT_CH_MUTE)
-	#define UNMUTE_ALL_CHANNELS hUGE_mute(HT_CH_PLAY)
+	#define UNMUTE_ALL_CHANNELS hUGE_reset_wave(),hUGE_mute(HT_CH_PLAY)
 #elif defined(MUSIC_DRIVER_GBT)
 	#include "gbt_player.h"
 
@@ -42,7 +42,7 @@ inline void INIT_SOUND(void) {
 	#define PlayMusic(SONG, LOOP) __PlayMusic(SONG ## _mod_Data, (uint8_t)&__bank_ ## SONG ## _mod_Data, LOOP)
 	#define StopMusic gbt_stop(); last_music = 0
 
-	#define MUTE_CHANNEL(CHANNEL) gbt_enable_channels(~(0xF & (1 << CHANNEL)))
+	#define MUTE_CHANNEL(CHANNEL) gbt_enable_channels(~(0xF & CHANNEL))
 	#define UNMUTE_ALL_CHANNELS gbt_enable_channels(0xF)
 #else
 	extern UINT8 mute_channels;
@@ -51,8 +51,8 @@ inline void INIT_SOUND(void) {
 	#define PlayMusic(SONG, LOOP)
 	#define StopMusic
 
-	#define MUTE_CHANNEL(CHANNEL) mute_channels |= (1 << CHANNEL)
-	#define UNMUTE_ALL_CHANNELS mute_channels = 0
+	#define MUTE_CHANNEL(CHANNEL) (mute_channels |= CHANNEL)
+	#define UNMUTE_ALL_CHANNELS (mute_channels = 0)
 #endif
 
 #endif
