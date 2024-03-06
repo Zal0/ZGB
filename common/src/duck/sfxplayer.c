@@ -147,8 +147,8 @@ lbl:
 
 30$:                                ; NR3x
         copy_reg _NR30_REG
-        copy_volume_reg _NR31_REG
-        copy_reg _NR32_REG
+        copy_reg _NR31_REG
+        copy_volume_reg _NR32_REG
         copy_reg _NR33_REG
         copy_reg _NR34_REG
         jr 4$
