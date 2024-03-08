@@ -17,13 +17,15 @@
 
 // reference font_recode_table so that allow passing -Wl-g_font_recode_table=ADDR when not using Print()
 void __force_use_font(void) NAKED {
+#if defined(__SDCC)
 	__asm
 		.globl _font_recode_table
 	__endasm;
+#endif
 }
 
 extern UINT8 next_state;
-      
+
 UINT8 _is_SGB = 0;
 
 UINT8 delta_time;
@@ -94,7 +96,7 @@ void main(void) {
 #if defined(NINTENDO)
 	// this delay is required for PAL SNES SGB border commands to work
 	for (UINT8 i = 4; i != 0; i--) wait_vbl_done();
-	// set global SGB detection variable 
+	// set global SGB detection variable
 	_is_SGB = sgb_check();
 	#ifdef CGB
 		cpu_fast();
