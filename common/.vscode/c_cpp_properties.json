@@ -1,24 +1,21 @@
 {
     "configurations": [
         {
-            "name": "Win32",
+            "name": "gameboy",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/include",
-                "${env:ZGB_PATH}/include",
-                "${env:ZGB_PATH}/../env/gbdk/include"
+                "${workspaceFolder}/include/**",
+                "${env:ZGB_PATH}/include/**",
+                "${env:GBDK_HOME}/include/**"
             ],
-            "defines": [
-                "_DEBUG",
-                "UNICODE",
-                "_UNICODE",
-                "__PORT_gbz80"
-            ],
-            "windowsSdkVersion": "8.1",
-            "compilerPath": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.24.28314\\bin\\Hostx64\\x64\\cl.exe",
-            "cStandard": "c17",
-            "cppStandard": "c++17",
-            "intelliSenseMode": "${default}"
+            "defines": ["__PORT_sm83", "__TARGET_gb", "HUGE_TRACKER"],
+            "compilerPath": "",
+            "cStandard": "c11",
+            "intelliSenseMode": "${default}",
+            "compilerArgs": [],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true
+            }
         }
     ],
     "version": 4
