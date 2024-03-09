@@ -37,14 +37,14 @@ void SpriteManagerReset(void) {
 #endif
 	last_sprite_pal_loaded = 0;
 
+	UINT8 __save = CURRENT_BANK;
 	//Call Destroy on all sprites still on the list
 	for(i = 0u; i != sprite_manager_updatables[0]; ++ i) {
 		THIS = sprite_manager_sprites[sprite_manager_updatables[i + 1]];
-		UINT8 __save = CURRENT_BANK;
 		SWITCH_ROM(spriteBanks[THIS->type]);
-				spriteDestroyFuncs[THIS->type]();
-		SWITCH_ROM(__save);
+		spriteDestroyFuncs[THIS->type]();
 	}
+	SWITCH_ROM(__save);
 
 	//place all sprites on the pool
 	StackClear(sprite_manager_sprites_pool);
@@ -186,10 +186,12 @@ Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y) {
 	spriteIdxTmp = THIS_IDX;
 	THIS = sprite;
 	THIS_IDX = sprite_manager_updatables[0] - 1;
+
 	UINT8 __save = CURRENT_BANK;
 	SWITCH_ROM(spriteBanks[sprite->type]);
-		spriteStartFuncs[sprite->type]();
+	spriteStartFuncs[sprite->type]();
 	SWITCH_ROM(__save);
+
 	//And now they must be restored
 	THIS = cachedSprite;
 	THIS_IDX = spriteIdxTmp;
@@ -215,23 +217,22 @@ void SpriteManagerRemoveSprite(Sprite* sprite) {
 
 void SpriteManagerFlushRemove(void) {
 	//We must remove sprites in inverse order because everytime we remove one the vector shrinks and displaces all elements
+	UINT8 __save = CURRENT_BANK;
 	for(THIS_IDX = sprite_manager_updatables[0] - 1u; (UINT8)(THIS_IDX + 1u) != 0u; THIS_IDX --) {
 		THIS = sprite_manager_sprites[sprite_manager_updatables[THIS_IDX + 1u]];
 		if(THIS->marked_for_removal) {
 			StackPush(sprite_manager_sprites_pool, sprite_manager_updatables[THIS_IDX + 1u]);
 			VectorRemovePos(sprite_manager_updatables, THIS_IDX);
 
-			UINT8 __save = CURRENT_BANK;
 			SWITCH_ROM(spriteBanks[THIS->type]);
-				spriteDestroyFuncs[THIS->type]();
-			SWITCH_ROM(__save);
+			spriteDestroyFuncs[THIS->type]();
 		}
 	}
 	sprite_manager_removal_check = 0;
+	SWITCH_ROM(__save);
 }
 
 UINT8 enable_flickering = 1;
-
 UINT8 THIS_IDX = 0;
 Sprite* THIS = 0;
 void SpriteManagerUpdate(void) {
@@ -260,9 +261,10 @@ void SpriteManagerUpdate(void) {
 	} else {
 		THIS_IDX = 0;
 	}
+
 	// render other sprites roundrobin 
+	if (THIS_IDX >= sprite_manager_updatables[0]) THIS_IDX = 0;
 	for (i = 0; i != sprite_manager_updatables[0]; ++i) {
-		if (++THIS_IDX >= sprite_manager_updatables[0]) THIS_IDX = 0;
 		THIS = sprite_manager_sprites[sprite_manager_updatables[THIS_IDX + 1]];
 		if ((THIS_IDX != target_idx) && (!THIS->marked_for_removal)) {
 			SWITCH_ROM(spriteBanks[THIS->type]);
@@ -272,14 +274,18 @@ void SpriteManagerUpdate(void) {
 			}
 			DrawSprite(); // this needs to be done using the sprite bank because the animation array is stored there
 		}
+		if (++THIS_IDX >= sprite_manager_updatables[0]) THIS_IDX = 0;
 	}
-	if (++THIS_IDX >= sprite_manager_updatables[0]) THIS_IDX = 0;
+	++THIS_IDX;
 
+	SWITCH_ROM(__save);
+
+	// hide unused sprites and swap shadow OAMs
 	SwapOAMs();
 
+	// remove sprites pending for remove
 	if (sprite_manager_removal_check) {
 		SpriteManagerFlushRemove();
 	}
 
-	SWITCH_ROM(__save);
 }
