@@ -230,28 +230,56 @@ void SpriteManagerFlushRemove(void) {
 	sprite_manager_removal_check = 0;
 }
 
+UINT8 enable_flickering = 1;
+
 UINT8 THIS_IDX = 0;
 Sprite* THIS = 0;
 void SpriteManagerUpdate(void) {
-	UBYTE __save = CURRENT_BANK;
-	SPRITEMANAGER_ITERATE(THIS_IDX, THIS) {
-		if(!THIS->marked_for_removal) {
-			//No need to call push and pop here, just change the current bank
-			SWITCH_ROM(spriteBanks[THIS->type]);
+	static UINT8 __save, i, target_idx, target_save;
 
-			spriteUpdateFuncs[THIS->type]();
+	__save = CURRENT_BANK;
 
-			if(THIS == scroll_target)
+	// render scroll target first to give it priority over the others 
+	target_idx = N_SPRITE_MANAGER_SPRITES;
+	if (enable_flickering) {
+		target_save = THIS_IDX; // save THIS_IDX from the last iteration
+		for (i = 0; i != sprite_manager_updatables[0]; ++i) {
+			THIS = sprite_manager_sprites[sprite_manager_updatables[i + 1]];
+			if ((THIS == scroll_target) && (!THIS->marked_for_removal)) {
+				THIS_IDX = i;
+				SWITCH_ROM(spriteBanks[THIS->type]);
+				spriteUpdateFuncs[THIS->type](); // call sprite update func
 				RefreshScroll();
-
-			DrawSprite(); //this needs to be done using the sprite bank because the animation array is stored there
+				DrawSprite(); // this needs to be done using the sprite bank because the animation array is stored there
+				THIS_IDX = target_save; // restore THIS_IDX
+				target_idx = i;
+				break;
+			}
+			
+		}
+	} else {
+		THIS_IDX = 0;
+	}
+	// render other sprites roundrobin 
+	for (i = 0; i != sprite_manager_updatables[0]; ++i) {
+		if (++THIS_IDX >= sprite_manager_updatables[0]) THIS_IDX = 0;
+		THIS = sprite_manager_sprites[sprite_manager_updatables[THIS_IDX + 1]];
+		if ((THIS_IDX != target_idx) && (!THIS->marked_for_removal)) {
+			SWITCH_ROM(spriteBanks[THIS->type]);
+			spriteUpdateFuncs[THIS->type](); // call sprite update func
+			if (THIS == scroll_target) {
+				RefreshScroll();
+			}
+			DrawSprite(); // this needs to be done using the sprite bank because the animation array is stored there
 		}
 	}
+	if (++THIS_IDX >= sprite_manager_updatables[0]) THIS_IDX = 0;
 
 	SwapOAMs();
 
-	if(sprite_manager_removal_check) {
+	if (sprite_manager_removal_check) {
 		SpriteManagerFlushRemove();
 	}
+
 	SWITCH_ROM(__save);
 }

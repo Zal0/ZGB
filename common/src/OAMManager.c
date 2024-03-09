@@ -27,6 +27,7 @@ UINT8* oam1 = (UINT8*)mirror_OAM;
 
 void SwapOAMs(void) {
 	hide_sprites_range(next_oam_idx, MAX_HARDWARE_SPRITES);
+
 	if ((_shadow_OAM_base = __render_shadow_OAM) == (UINT8)((UINT16)mirror_OAM >> 8)) {
 		__render_shadow_OAM = (UINT8)((UINT16)(oam = (UINT8*)shadow_OAM) >> 8);
 	} else {
