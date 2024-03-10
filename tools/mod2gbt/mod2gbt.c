@@ -11,7 +11,7 @@
 #include <string.h>
 
 #define DEFAULT_ROM_BANK (2)
-#define BANK_NUM_UNBANKED 0
+#define BANK_NUM_NONBANKED 0
 
 unsigned int current_output_bank;
 
@@ -178,9 +178,9 @@ u8 mod_get_index_from_period(u16 period, int pattern, int step, int channel)
 FILE *output_file;
 char label_name[64];
 
-void out_open(void)
+void out_open(const char *file_name)
 {
-    output_file = fopen("output.c", "w");
+    output_file = fopen(file_name, "w");
 }
 
 void out_write_str(const char *str)
@@ -863,8 +863,8 @@ void convert_pattern(_pattern_t *pattern, u8 number)
 
 void print_usage(void)
 {
-    printf("Usage: mod2gbt modfile.mod label_name [N]\n");
-    printf("       N: Set output to ROM bank N (defaults to %d, use 0 for unbanked)",
+    printf("Usage: mod2gbt modfile.mod output_file label_name [N]\n");
+    printf("       N: Set output to ROM bank N (defaults to %d, use 0 for nonbanked)",
            DEFAULT_ROM_BANK);
     printf("\n\n");
 }
@@ -879,19 +879,19 @@ int main(int argc, char *argv[])
     printf("All rights reserved\n");
     printf("\n");
 
-    if ((argc < 3) || (argc > 4))
+    if ((argc < 4) || (argc > 5))
     {
         print_usage();
         return -1;
     }
 
-    strcpy(label_name, argv[2]);
+    strcpy(label_name, argv[3]);
 
     current_output_bank = DEFAULT_ROM_BANK;
 
-    if (argc == 4)
+    if (argc == 5)
     {
-        if (sscanf(argv[3], "%d", &current_output_bank) != 1)
+        if (sscanf(argv[4], "%d", &current_output_bank) != 1)
         {
             printf("Invalid bank: '%s'\n\n", argv[4]);
             print_usage();
@@ -899,8 +899,8 @@ int main(int argc, char *argv[])
         }
         else
         {
-            if (current_output_bank == BANK_NUM_UNBANKED) {
-                printf("Bank set to 0, so output will be unbanked\n");
+            if (current_output_bank == BANK_NUM_NONBANKED) {
+                printf("Bank set to 0, so output will be nonbanked\n");
             } else {
                 printf("Output to bank: %d\n", current_output_bank);
             }
@@ -941,11 +941,11 @@ int main(int argc, char *argv[])
 
     printf("Number of patterns: %d\n", num_patterns);
 
-    out_open();
+    out_open(argv[2]);
 
     out_write_str("\n// File created by mod2gbt\n\n");
 
-    if (current_output_bank != BANK_NUM_UNBANKED) {
+    if (current_output_bank != BANK_NUM_NONBANKED) {
         out_write_str("#pragma bank ");
         out_write_dec(current_output_bank);
         out_write_str("\n\n");

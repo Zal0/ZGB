@@ -245,8 +245,7 @@ $(OBJDIR_RES)/%.vgm.c: ../res/sounds/$(EXT)/%.vgm $$(wildcard ../res/sounds/$(EX
 	@$(VGM2DATA) -b 255 $(if $(wildcard $<.meta),`cat <$<.meta`) -o $@ $<
 
 $(OBJDIR_RES)/%.mod.c: ../res/music/%.mod
-	@$(MOD2GBT) $< $(basename $(basename $(notdir $<)))_mod 255 > /dev/null
-	@mv output.c $@
+	@$(MOD2GBT) $< $@ $(basename $(basename $(notdir $<)))_mod 255 > /dev/null
 
 $(OBJDIR_RES)/%.uge.c: ../res/music/%.uge
 	@$(UGE2SOURCE) $< -b 255 $(basename $(basename $(notdir $<)))_uge $@
