@@ -7,8 +7,6 @@
 #include "MetaSpriteInfo.h"
 #include "Flip.h"
 
-#define CUSTOM_DATA_SIZE 8
-
 typedef struct {
 	//Meta sprite info
 	UINT8 mt_sprite_bank;

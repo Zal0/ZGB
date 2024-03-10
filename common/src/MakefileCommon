@@ -14,12 +14,15 @@ endif
 ifeq ($(DEFAULT_SPRITES_SIZE), )
 	DEFAULT_SPRITES_SIZE = SPRITES_8x16
 endif
+ifndef CUSTOM_DATA_SIZE
+	CUSTOM_DATA_SIZE = 8
+endif
 
 # Configure platform specific link and binary making flags here:
 BINFLAGS_gb      = 
 BINFLAGS_pocket  = 
 BINFLAGS_duck    = 
-BINFLAGS_gbc     = -Wm-yc -DCGB
+BINFLAGS_gbc     = -Wm-yc
 BINFLAGS_sms     = 
 BINFLAGS_gg      = 
 BINFLAGS_nes     = 
@@ -81,7 +84,7 @@ FLAGSGBR2C_gg = -bpp 4
 FLAGSGBR2C_sms = $(FLAGSGBR2C_gg)
 FLAGSGBR2C += $(FLAGSGBR2C_$(EXT)) 
 
-CFLAGS += $(TARGET) -Wf-MMD $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include -DFILE_NAME=$(basename $(<F)) $(CFLAGS_$(EXT))
+CFLAGS += $(TARGET) -Wf-MMD $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include -DFILE_NAME=$(basename $(<F)) -DCUSTOM_DATA_SIZE=$(CUSTOM_DATA_SIZE) $(CFLAGS_$(EXT))
 
 ifeq ($(strip $(N_BANKS)),)
 	NBANKS = A
