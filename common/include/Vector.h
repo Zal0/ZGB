@@ -2,6 +2,11 @@
 #define VECTOR_H
 
 #include <gbdk/platform.h>
+#include <string.h>
+
+#ifndef NDEBUG
+#include "Print.h"
+#endif
 
 #define PP_NARG(...) \
          PP_NARG_(__VA_ARGS__,PP_RSEQ_N())
@@ -24,16 +29,30 @@
          19,18,17,16,15,14,13,12,11,10, \
          9,8,7,6,5,4,3,2,1,0
 
-#define DECLARE_VECTOR(NAME, NUM_ELEMS) UINT8 NAME[NUM_ELEMS + 1] = {0}
-#define PRINT_VECTOR(V) Printf("N:%u(", (UINT16) V[0]); \
-		for(i = 1u; i != V[0] + 1; ++i) Printf("%u ", (UINT16)V[i]); \
-		Printf(")");
+#define VECTOR_DECLARE(NAME, NUM_ELEMS) UINT8 NAME[NUM_ELEMS + 1]
 #define VECTOR(...) {PP_NARG(__VA_ARGS__), __VA_ARGS__}
+#define VECTOR_ITERATE(V, IDX, ELEM) for(IDX = 0, ELEM = V[1]; IDX < V_LEN(V); IDX++, ELEM = V[IDX + 1])
+#define VECTOR_LEN(V) (V[0])
+#define VECTOR_CLEAR(V) (V[0]=0)
+#define VECTOR_GET(V, POS) (V[(POS) + 1])
+#define VECTOR_ADD(V, ELEM) (V[++V[0]] = (ELEM))
+#define VECTOR_DEL(V, POS) (memcpy(&(V[(POS) + 1]), &(V[(POS) + 2]), ((V[0]) - (POS)) * sizeof(V[0])),V[0]--)
+#define VECTOR_POP(V) (V[V[0]--])
+#define VECTOR_INS(V, POS, ELEM) (memmove(&(V[(POS) + 2]), &(V[(POS) + 1]), ((V[0]) - (POS) + 1) * sizeof(V[0])), (V[(POS) + 1] = (ELEM)), V[0]++)
+#define VECTOR_SET_DIRECT(V, POS, ELEM) ((V[(POS) + 1]) = (ELEM))
 
-#define VectorGetElem(V, IDX) V[IDX + 1]
+#define DECLARE_VECTOR(NAME, NUM_ELEMS) UINT8 NAME[NUM_ELEMS + 1] = {0}
+#ifndef NDEBUG
+	#define PRINT_VECTOR(V) Printf("N:%u(", (UINT16) V[0]); \
+			for(i = 1u; i != V[0] + 1; ++i) Printf("%u ", (UINT16)V[i]); \
+			Printf(")");
+#else
+	#define PRINT_VECTOR(V)
+#endif
+
+#define VectorGetElem(V, IDX) (V[IDX + 1])
+#define VectorAdd(V, ELEM) (V[++V[0]] = (ELEM))
 #define IterateVector(V, IDX, ELEM) for (IDX = 0, ELEM = V[1]; IDX != V[0]; IDX++, ELEM = V[IDX + 1])
-
-void VectorAdd(UINT8* v, UINT8 elem);
 void VectorRemovePos(UINT8* v, UINT8 pos);
 
 #endif
