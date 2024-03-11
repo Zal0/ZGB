@@ -25,13 +25,13 @@
          9,8,7,6,5,4,3,2,1,0
 
 #define DECLARE_VECTOR(NAME, NUM_ELEMS) UINT8 NAME[NUM_ELEMS + 1] = {0}
-#define PRINT_VECTOR(VECTOR) Printf("N:%u(", (UINT16) VECTOR[0]); \
-		for(i = 1u; i != VECTOR[0] + 1; ++i) Printf("%u ", (UINT16)VECTOR[i]); \
+#define PRINT_VECTOR(V) Printf("N:%u(", (UINT16) V[0]); \
+		for(i = 1u; i != V[0] + 1; ++i) Printf("%u ", (UINT16)V[i]); \
 		Printf(")");
 #define VECTOR(...) {PP_NARG(__VA_ARGS__), __VA_ARGS__}
 
-#define VectorGetElem(VECTOR, IDX) VECTOR[IDX + 1]
-#define IterateVector(VECTOR, IDX, ELEM) for (IDX = 0, ELEM = VECTOR[1]; IDX != VECTOR[0]; IDX++, ELEM = VECTOR[IDX + 1])
+#define VectorGetElem(V, IDX) V[IDX + 1]
+#define IterateVector(V, IDX, ELEM) for (IDX = 0, ELEM = V[1]; IDX != V[0]; IDX++, ELEM = V[IDX + 1])
 
 void VectorAdd(UINT8* v, UINT8 elem);
 void VectorRemovePos(UINT8* v, UINT8 pos);
