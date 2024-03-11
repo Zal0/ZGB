@@ -38,8 +38,7 @@ void SetState(UINT8 state) {
 }
 
 UINT8 vbl_count = 0;
-UINT8 music_mute_frames = 0;
-void vbl_update(void) {
+void VBL_isr(void) {
 	vbl_count ++;
 
 #if defined(NINTENDO)
@@ -49,12 +48,6 @@ void vbl_update(void) {
 		move_bkg(scroll_x_vblank + (scroll_offset_x << 3), ((UINT16)(scroll_y_vblank + (scroll_offset_y << 3))) % (DEVICE_SCREEN_BUFFER_HEIGHT << 3));
 	}
 #endif
-
-	if (music_mute_frames != 0) {
-		if (--music_mute_frames == 0) {
-			UNMUTE_ALL_CHANNELS;
-		}
-	}
 }
 
 void InitStates(void);
@@ -74,11 +67,8 @@ void LCD_isr(void) NONBANKED {
 		LYC_REG = 0;
 	}
 }
-#endif
 
 void SetWindowY(UINT8 y) {
-	y;
-#if defined(NINTENDO)
 	WY_REG = y;
 	LYC_REG = y - 1;
 	if (y < (DEVICE_WINDOW_PX_OFFSET_Y + DEVICE_SCREEN_PX_HEIGHT)) {
@@ -87,8 +77,8 @@ void SetWindowY(UINT8 y) {
 		HIDE_WIN;
 		LYC_REG = 160u;
 	}
-#endif
 }
+#endif
 
 void main(void) {
 	static UINT8 __save;
@@ -128,15 +118,15 @@ void main(void) {
 		TAC_REG = 0x04u;
 		//Instead of calling add_TIM add_low_priority_TIM is used because it can be interrupted. This fixes a random
 		//bug hiding sprites under the window (some frames the call is delayed and you can see sprites flickering under the window)
-		add_low_priority_TIM(MusicCallback);
+		add_low_priority_TIM(MUSIC_isr);
 
-		add_VBL(vbl_update);
+		add_VBL(VBL_isr);
 
 		STAT_REG |= STATF_LYC;
 		add_LCD(LCD_isr);
 #elif defined(SEGA)
-		add_VBL(vbl_update);
-		add_VBL(MusicCallback);
+		add_VBL(VBL_isr);
+		add_VBL(MUSIC_isr);
 #endif
 	}
 

@@ -34,10 +34,12 @@ extern UINT8 current_state;
 void SetState(UINT8 state);
 extern UINT8 delta_time;
 
-void SetWindowY(UINT8 y);
 
 #if defined(NINTENDO)
 void LCD_isr(void) NONBANKED;
+void SetWindowY(UINT8 y);
+#elif defined(SEGA)
+#define SetWindowY(A)
 #endif
 
 #define IMPORT_MAP(MAP) extern struct MapInfo MAP; extern const void __bank_##MAP

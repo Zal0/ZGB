@@ -6,8 +6,8 @@
 extern void* last_music;
 extern UINT8 stop_music_on_new_state;
 
+void MUSIC_isr(void) NONBANKED;
 void __PlayMusic(void* music, unsigned char bank, unsigned char loop);
-void MusicCallback(void) NONBANKED;
 
 inline void INIT_SOUND(void) {
 #if defined(NINTENDO)

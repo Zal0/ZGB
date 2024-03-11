@@ -24,7 +24,7 @@ void hUGE_mute(UBYTE mute) {
 #else 
 UINT8 mute_channels = 0;
 #endif
-void MusicCallback(void) NONBANKED {
+void MUSIC_isr(void) NONBANKED {
 	if (sfx_play_bank != SFX_STOP_BANK) {
 		MUTE_CHANNEL(music_mute_mask);
 		if (!sfx_play_isr()) {
