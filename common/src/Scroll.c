@@ -82,9 +82,6 @@ UINT16 hud_map_offset;
 UINT8 tiles_bank_0;
 const struct TilesInfo* tiles_0;
 
-extern UINT8 vbl_count;
-UINT8 current_vbl_count;
-
 void UPDATE_TILE(INT16 x, INT16 y, UINT8* t, UINT8* c) {
 	static UINT8 replacement;
 	static UINT8 type;
