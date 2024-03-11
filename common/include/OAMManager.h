@@ -5,10 +5,10 @@
 
 #if defined(NINTENDO)
 	#define OAM_ENTRY_SIZE sizeof(OAM_item_t)
-    #define OAM_OFFSET_SIZE OAM_ENTRY_SIZE
+	#define OAM_OFFSET_SIZE OAM_ENTRY_SIZE
 #elif defined(SEGA)
 	#define OAM_ENTRY_SIZE 3
-    #define OAM_OFFSET_SIZE 1
+	#define OAM_OFFSET_SIZE 1
 #endif
 
 #define OAMS   (oam)
