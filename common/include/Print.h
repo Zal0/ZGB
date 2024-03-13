@@ -2,6 +2,9 @@
 #define ZCONSOLE_H
 
 #include <gbdk/platform.h>
+#ifndef NDEBUG
+#include <gbdk/emu_debug.h>
+#endif
 
 extern UINT8 last_tile_loaded;
 #define INIT_FONT(FONT, TARGET) InitDefaultRecode(),print_target=(TARGET),font_offset=ScrollSetTiles(last_tile_loaded, BANK(FONT), &FONT)
@@ -25,21 +28,13 @@ void Printf(const unsigned char* txt, ...);
 #define PRINT_POS(X, Y) print_x=(X),print_y=(Y)
 #define PRINT(X, Y, ...) PRINT_POS((X),(Y)),Printf(__VA_ARGS__)
 
+#define INIT_CONSOLE(FONT, NLINES)
 #ifdef NDEBUG 
-#define INIT_CONSOLE
 #define DPrintf
 #define DPRINT_POS
 #define DPRINT
 #else
-#define INIT_CONSOLE(FONT, NLINES) \
-	INIT_FONT(FONT, PRINT_WIN); \
-	print_x = print_y = 0; \
-	WX_REG = DEVICE_WINDOW_PX_OFFSET_X; \
-	SetWindowY((DEVICE_WINDOW_PX_OFFSET_Y + DEVICE_SCREEN_PX_HEIGHT) - ((NLINES) << 3)); \
-	scroll_h_border = (NLINES) << 3; \
-	SHOW_WIN;
-
-#define DPrintf Printf
+#define DPrintf EMU_printf
 #define DPRINT_POS PRINT_POS
 #define DPRINT PRINT
 

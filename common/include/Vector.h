@@ -43,11 +43,13 @@
 
 #define DECLARE_VECTOR(NAME, NUM_ELEMS) UINT8 NAME[NUM_ELEMS + 1] = {0}
 #ifndef NDEBUG
-	#define PRINT_VECTOR(V) Printf("N:%u(", (UINT16) V[0]); \
-			for(i = 1u; i != V[0] + 1; ++i) Printf("%u ", (UINT16)V[i]); \
-			Printf(")");
+#define PP_Q(x) #x
+#define PP_QUOTE(x) PP_Q(x)
+#define PRINT_VECTOR(V) DPrintf("Vector: %s (%u)", PP_QUOTE(V), (UINT16) V[0]); \
+		for(UINT8 i = 1u; i != V[0] + 1; ++i) DPrintf("%u", (UINT16)V[i]); \
+		DPrintf("---");
 #else
-	#define PRINT_VECTOR(V)
+#define PRINT_VECTOR(V)
 #endif
 
 #define VectorGetElem(V, IDX) (V[IDX + 1])
