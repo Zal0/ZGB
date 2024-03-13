@@ -28,7 +28,7 @@ void Printf(const unsigned char* txt, ...);
 #define PRINT_POS(X, Y) print_x=(X),print_y=(Y)
 #define PRINT(X, Y, ...) PRINT_POS((X),(Y)),Printf(__VA_ARGS__)
 
-#define INIT_CONSOLE(FONT, NLINES)
+#define INIT_CONSOLE(...)
 #ifdef NDEBUG 
 #define DPrintf
 #define DPRINT_POS
