@@ -12,9 +12,15 @@ static const UINT8 * copy_row(const UINT8* src, UINT8* dest) NAKED PRESERVES_REG
 	dest; src;
 	__asm
 		ldi
+		jr 0$
+0$:
 		ldi
 #if DEFAULT_COLOR_DEPTH == 4
+		jr 1$
+1$:
 		ldi
+		jr 2$
+2$:
 		ldi
 #endif		
 		ex de, hl
@@ -71,7 +77,14 @@ static const UINT8 * set_flipped_tile(UINT8 tile_idx, const UINT8* data, UINT8 f
 	return src;
 }
 
-void set_sprite_data_flip(UINT8 first_tile, UINT8 nb_tiles, UINT8 *data, UINT8 flip) {
+void set_sprite_native_data_flipx(UINT8 start, UINT16 ntiles, const UINT8 *src);
+
+void set_sprite_data_flip(UINT8 first_tile, UINT8 nb_tiles, const UINT8 *data, UINT8 flip) {
+#if DEFAULT_COLOR_DEPTH == 4
+	if (flip == FLIP_X) {
+		set_sprite_native_data_flipx(first_tile, nb_tiles, data);
+	} else 
+#endif
 	if (flip & (FLIP_X | FLIP_Y)) {
 		const UINT8* src = data;
 #if DEFAULT_SPRITES_SIZE == 16

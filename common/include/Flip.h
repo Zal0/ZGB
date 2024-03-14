@@ -16,7 +16,7 @@ typedef enum {
 } MirroMode;
 
 #if defined(SEGA)
-void set_sprite_data_flip(UINT8 first_tile, UINT8 nb_tiles, UINT8 *data, UINT8 flip);
+void set_sprite_data_flip(UINT8 first_tile, UINT8 nb_tiles, const UINT8 *data, UINT8 flip);
 #endif
 
 #endif
