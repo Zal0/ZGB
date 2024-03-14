@@ -12,15 +12,9 @@ static const UINT8 * copy_row(const UINT8* src, UINT8* dest) NAKED PRESERVES_REG
 	dest; src;
 	__asm
 		ldi
-		jr 0$
-0$:
 		ldi
 #if DEFAULT_COLOR_DEPTH == 4
-		jr 1$
-1$:
 		ldi
-		jr 2$
-2$:
 		ldi
 #endif		
 		ex de, hl
