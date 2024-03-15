@@ -15,7 +15,7 @@
 #endif
 
 //Pool
-UINT8 sprite_manager_sprites_mem[N_SPRITE_MANAGER_SPRITES * sizeof(Sprite)];
+Sprite sprite_manager_sprites_mem[N_SPRITE_MANAGER_SPRITES];
 Sprite* sprite_manager_sprites[N_SPRITE_MANAGER_SPRITES];
 DECLARE_STACK(sprite_manager_sprites_pool, N_SPRITE_MANAGER_SPRITES);
 
@@ -28,8 +28,6 @@ INT16 last_sprite_loaded = 0;
 UINT8 last_sprite_pal_loaded = 0;
 
 void SpriteManagerReset(void) {
-	UINT8 i;
-
 #if defined(NINTENDO)
 	last_sprite_loaded = LAST_SPRITE_IDX;
 #elif defined(SEGA)
@@ -39,8 +37,8 @@ void SpriteManagerReset(void) {
 
 	UINT8 __save = CURRENT_BANK;
 	//Call Destroy on all sprites still on the list
-	for(i = 0u; i != sprite_manager_updatables[0]; ++ i) {
-		THIS = sprite_manager_sprites[sprite_manager_updatables[i + 1]];
+	for(UINT8 i = 0u; i != VECTOR_LEN(sprite_manager_updatables); ++ i) {
+		THIS = sprite_manager_sprites[VECTOR_GET(sprite_manager_updatables, i)];
 		SWITCH_ROM(spriteBanks[THIS->type]);
 		spriteDestroyFuncs[THIS->type]();
 	}
@@ -48,8 +46,8 @@ void SpriteManagerReset(void) {
 
 	//place all sprites on the pool
 	StackClear(sprite_manager_sprites_pool);
-	for(i = 0; i != N_SPRITE_MANAGER_SPRITES; ++i) {
-		sprite_manager_sprites[i] = (Sprite*)&sprite_manager_sprites_mem[sizeof(Sprite) * (UINT16)i];
+	for(UINT8 i = 0; i != N_SPRITE_MANAGER_SPRITES; ++i) {
+		sprite_manager_sprites[i] = &sprite_manager_sprites_mem[i];
 		StackPush(sprite_manager_sprites_pool, i);
 	}
 	ClearOAMs();
@@ -60,7 +58,7 @@ void SpriteManagerReset(void) {
 	memset(spriteIdxsHV, LAST_SPRITE_IDX, N_SPRITE_TYPES);
 
 	//Clear the list of updatable sprites
-	sprite_manager_updatables[0] = 0;
+	VECTOR_CLEAR(sprite_manager_updatables);
 	sprite_manager_removal_check = 0;
 }
 
