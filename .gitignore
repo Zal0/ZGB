@@ -254,3 +254,12 @@ paket-files/
 
 #VS.Code
 .vscode
+
+tools/gbm2c/gbm2c.exe
+tools/gbm2c/gbm2c
+tools/gbr2c/gbr2c.exe
+tools/gbr2c/gbr2c
+tools/gbr2png/gbr2png.exe
+tools/gbr2png/gbr2png
+tools/mod2gbt/mod2gbt.exe
+tools/mod2gbt/mod2gbt
