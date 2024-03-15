@@ -20,7 +20,7 @@ Sprite* sprite_manager_sprites[N_SPRITE_MANAGER_SPRITES];
 DECLARE_STACK(sprite_manager_sprites_pool, N_SPRITE_MANAGER_SPRITES);
 
 //Current sprites
-DECLARE_VECTOR(sprite_manager_updatables, N_SPRITE_MANAGER_SPRITES);
+VECTOR_DECLARE(sprite_manager_updatables, N_SPRITE_MANAGER_SPRITES);
 
 UINT8 sprite_manager_removal_check;
 
@@ -239,19 +239,22 @@ void SpriteManagerUpdate(void) {
 
 	// render scroll target first to give it priority over the others 
 	if (enable_flickering) {
-		for (target_idx = 0; target_idx != VECTOR_LEN(sprite_manager_updatables); ++target_idx) {
-			THIS = sprite_manager_sprites[VECTOR_GET(sprite_manager_updatables, target_idx)];
-			if ((THIS == scroll_target) && (!THIS->marked_for_removal)) {
-				i = THIS_IDX; // save THIS_IDX from the last iteration
-				THIS_IDX = target_idx;
-				SWITCH_ROM(spriteBanks[THIS->type]);
-				spriteUpdateFuncs[THIS->type](); // call sprite update func
-				RefreshScroll();
-				DrawSprite(); // this needs to be done using the sprite bank because the animation array is stored there
-				THIS_IDX = i; // restore THIS_IDX
-				break;
-			}
+		if ((scroll_target) && (!scroll_target->marked_for_removal)) {
+			for (target_idx = 0; target_idx != VECTOR_LEN(sprite_manager_updatables); ++target_idx) {
+				if ((THIS = sprite_manager_sprites[VECTOR_GET(sprite_manager_updatables, target_idx)]) == scroll_target) {
+					i = THIS_IDX; // save THIS_IDX from the last iteration
+					THIS_IDX = target_idx;
+					SWITCH_ROM(spriteBanks[THIS->type]);
+					spriteUpdateFuncs[THIS->type](); // call sprite update func
+					RefreshScroll();
+					DrawSprite(); // this needs to be done using the sprite bank because the animation array is stored there
+					THIS_IDX = i; // restore THIS_IDX
+					break;
+				}
 			
+			}
+		} else {
+			target_idx = N_SPRITE_MANAGER_SPRITES;
 		}
 	} else {
 		target_idx = N_SPRITE_MANAGER_SPRITES;
