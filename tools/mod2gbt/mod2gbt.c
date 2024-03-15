@@ -185,7 +185,7 @@ void out_open(const char *file_name)
 
 void out_write_str(const char *str)
 {
-    fprintf(output_file, str);
+    fprintf(output_file, "%s", str);
 }
 
 void out_write_dec(u8 number)
@@ -907,7 +907,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    mod_file_t *modfile = load_file(argv[1]);
+    mod_file_t *modfile = (mod_file_t*) load_file(argv[1]);
 
     if (modfile == NULL)
         return -2;
