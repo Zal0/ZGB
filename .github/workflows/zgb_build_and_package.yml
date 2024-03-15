@@ -1,0 +1,137 @@
+name: ZGB Build and Package
+
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+  # Triggers the workflow on push or pull request events but only for the develop branch
+  # push:
+  #   branches: [ develop ]
+  # pull_request:
+  #   branches: [ develop ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}  
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-20.04
+            name: Linux-x64
+          - os: macos-11
+            name: MacOS-x64
+          - os: windows-2019
+            name: Windows-x64
+#          - os: windows-2019
+#            name: Windows-x32
+    steps:
+
+      # ==== OS Specific Dependencies ====
+      - name: Linux Depends
+        if: matrix.name == 'Linux-x64'
+        run: |
+          curl -Lo gbdk.tar.gz https://github.com/gbdk-2020/gbdk-2020/releases/download/pre-release/gbdk-linux64.tar.gz
+          tar xvfz gbdk.tar.gz
+
+      - name: MacOS Depends
+        if: matrix.name == 'MacOS-x64'
+        run: |
+          curl -Lo gbdk.tar.gz https://github.com/gbdk-2020/gbdk-2020/releases/download/pre-release/gbdk-linux64.tar.gz
+          tar xvfz gbdk.tar.gz
+
+      - name: Windows-x64 Depends
+        if: matrix.name == 'Windows-x64'
+        run: |
+          curl -Lo gbdk.zip https://github.com/gbdk-2020/gbdk-2020/releases/download/pre-release/gbdk-win64.zip
+          7z x gbdk.zip
+
+      - name: Windows-x32 Depends
+        if: matrix.name == 'Windows-x32'
+        run: |
+          curl -Lo gbdk.zip https://github.com/gbdk-2020/gbdk-2020/releases/download/pre-release/gbdk-win64.zip
+          7z x gbdk.zip
+
+      - name: Windows Depends MSYS2/MinGW64
+        if: matrix.name == 'Windows-x64'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          path-type: minimal #strict
+          release: false
+          update: false
+          install: >-
+            base-devel
+            mingw-w64-x86_64-toolchain
+
+      - name: Windows Depends MSYS2/MinGW32
+        if: matrix.name == 'Windows-x32'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW32
+          path-type: minimal #strict
+          release: false
+          update: false
+          install: >-
+            base-devel
+            mingw-w64-i686-toolchain
+
+      # ==== Build Steps ====
+      - name: Check out ZGB
+        uses: actions/checkout@v4
+        with:
+          path: ZGB
+          submodules: false
+
+      # ==== Pre-Build: Set environment vars ====
+      # Needs to be in a separate step than build so that setting the environment var takes effect
+      #
+      - name: Pre-Build Linux/MacOS
+        if: (matrix.name == 'Linux-x64') || (matrix.name == 'MacOS-x64')
+        shell: bash
+        run: |
+          echo "BUILD_PACKAGE_FILENAME=zgb-${{ matrix.name }}.tar.gz" >> $GITHUB_ENV
+
+      - name: Pre-Build Windows
+        if: (matrix.name == 'Windows-x64') || (matrix.name == 'Windows-x32')
+        shell: bash
+        run: |
+          echo "BUILD_PACKAGE_FILENAME=zgb-${{ matrix.name }}.zip" >> $GITHUB_ENV
+
+      # ==== Builds ====
+      - name: Build zgb Linux/MacOS
+        if: (matrix.name == 'Linux-x64') || (matrix.name == 'MacOS-x64')
+        shell: bash
+        run: |
+          cd ZGB/tools/
+          make
+          cd ..
+
+      - name: Build zgb Windows
+        if: (matrix.name == 'Windows-x64') || (matrix.name == 'Windows-x32')
+        shell: cmd
+        run: |
+          cd ZGB/tools/
+          make
+          cd ../..
+
+      # ==== Packaging ====
+      - name: Package build Linux/MacOS
+        if: (matrix.name == 'Linux-x64') || (matrix.name == 'MacOS-x64')
+        shell: bash
+        run: |
+          mkdir package
+          tar czf package/${{ env.BUILD_PACKAGE_FILENAME }} gbdk ZGB
+
+      - name: Package build Windows
+        if: (matrix.name == 'Windows-x64') || (matrix.name == 'Windows-x32')
+        shell: cmd
+        run: |
+          mkdir package
+          7z a package/${{ env.BUILD_PACKAGE_FILENAME }} gbdk ZGB
+
+      - name: Store build
+        if: (matrix.name == 'Linux-64') || (matrix.name == 'MacOS-64') || ('Windows-x64') || ('Windows-x32')
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.name }} build
+          path: package/${{ env.BUILD_PACKAGE_FILENAME }}
+          # retention-days: 14
