@@ -233,35 +233,34 @@ UINT8 enable_flickering = 1;
 UINT8 THIS_IDX = 0;
 Sprite* THIS = 0;
 void SpriteManagerUpdate(void) {
-	static UINT8 __save, i, target_idx, target_save;
+	static UINT8 __save, i, target_idx;
 
 	__save = CURRENT_BANK;
 
 	// render scroll target first to give it priority over the others 
-	target_idx = N_SPRITE_MANAGER_SPRITES;
 	if (enable_flickering) {
-		target_save = THIS_IDX; // save THIS_IDX from the last iteration
-		for (i = 0; i != VECTOR_LEN(sprite_manager_updatables); ++i) {
-			THIS = sprite_manager_sprites[VECTOR_GET(sprite_manager_updatables, i)];
+		for (target_idx = 0; target_idx != VECTOR_LEN(sprite_manager_updatables); ++target_idx) {
+			THIS = sprite_manager_sprites[VECTOR_GET(sprite_manager_updatables, target_idx)];
 			if ((THIS == scroll_target) && (!THIS->marked_for_removal)) {
-				THIS_IDX = i;
+				i = THIS_IDX; // save THIS_IDX from the last iteration
+				THIS_IDX = target_idx;
 				SWITCH_ROM(spriteBanks[THIS->type]);
 				spriteUpdateFuncs[THIS->type](); // call sprite update func
 				RefreshScroll();
 				DrawSprite(); // this needs to be done using the sprite bank because the animation array is stored there
-				THIS_IDX = target_save; // restore THIS_IDX
-				target_idx = i;
+				THIS_IDX = i; // restore THIS_IDX
 				break;
 			}
 			
 		}
 	} else {
+		target_idx = N_SPRITE_MANAGER_SPRITES;
 		THIS_IDX = 0;
 	}
 
 	// render other sprites roundrobin 
 	if (THIS_IDX >= VECTOR_LEN(sprite_manager_updatables)) THIS_IDX = 0;
-	for (i = 0; i != VECTOR_LEN(sprite_manager_updatables); ++i) {
+	for (i = VECTOR_LEN(sprite_manager_updatables); i != 0; --i) {
 		THIS = sprite_manager_sprites[VECTOR_GET(sprite_manager_updatables, THIS_IDX)];
 		if ((THIS_IDX != target_idx) && (!THIS->marked_for_removal)) {
 			SWITCH_ROM(spriteBanks[THIS->type]);
