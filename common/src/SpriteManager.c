@@ -183,7 +183,7 @@ Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y) {
 	cachedSprite = THIS;
 	spriteIdxTmp = THIS_IDX;
 	THIS = sprite;
-	THIS_IDX = sprite_manager_updatables[0] - 1;
+	THIS_IDX = VECTOR_LEN(sprite_manager_updatables) - 1;
 
 	UINT8 __save = CURRENT_BANK;
 	SWITCH_ROM(spriteBanks[sprite->type]);
@@ -198,14 +198,13 @@ Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y) {
 
 void SpriteManagerRemove(int idx) {
 	sprite_manager_removal_check = 1;
-	sprite_manager_sprites[sprite_manager_updatables[idx + 1]]->marked_for_removal = 1;
+	sprite_manager_sprites[VECTOR_GET(sprite_manager_updatables, idx)]->marked_for_removal = 1;
 }
 
 void SpriteManagerRemoveSprite(Sprite* sprite) {
-	UINT8 i;
 	Sprite* s;
-	for(i = 0u; i != sprite_manager_updatables[0]; ++i) {
-		s = sprite_manager_sprites[sprite_manager_updatables[i + 1]];
+	for(UINT8 i = 0u; i != VECTOR_LEN(sprite_manager_updatables); ++i) {
+		s = sprite_manager_sprites[VECTOR_GET(sprite_manager_updatables, i)];
 		if(s == sprite) {
 			SpriteManagerRemove(i);
 			break;
@@ -216,10 +215,10 @@ void SpriteManagerRemoveSprite(Sprite* sprite) {
 void SpriteManagerFlushRemove(void) {
 	//We must remove sprites in inverse order because everytime we remove one the vector shrinks and displaces all elements
 	UINT8 __save = CURRENT_BANK;
-	for(THIS_IDX = sprite_manager_updatables[0] - 1u; (UINT8)(THIS_IDX + 1u) != 0u; THIS_IDX --) {
-		THIS = sprite_manager_sprites[sprite_manager_updatables[THIS_IDX + 1u]];
+	for(THIS_IDX = VECTOR_LEN(sprite_manager_updatables) - 1u; (UINT8)(THIS_IDX + 1u) != 0u; THIS_IDX --) {
+		THIS = sprite_manager_sprites[VECTOR_GET(sprite_manager_updatables, THIS_IDX)];
 		if(THIS->marked_for_removal) {
-			StackPush(sprite_manager_sprites_pool, sprite_manager_updatables[THIS_IDX + 1u]);
+			StackPush(sprite_manager_sprites_pool, VECTOR_GET(sprite_manager_updatables, THIS_IDX));
 			VectorRemovePos(sprite_manager_updatables, THIS_IDX);
 
 			SWITCH_ROM(spriteBanks[THIS->type]);
@@ -242,8 +241,8 @@ void SpriteManagerUpdate(void) {
 	target_idx = N_SPRITE_MANAGER_SPRITES;
 	if (enable_flickering) {
 		target_save = THIS_IDX; // save THIS_IDX from the last iteration
-		for (i = 0; i != sprite_manager_updatables[0]; ++i) {
-			THIS = sprite_manager_sprites[sprite_manager_updatables[i + 1]];
+		for (i = 0; i != VECTOR_LEN(sprite_manager_updatables); ++i) {
+			THIS = sprite_manager_sprites[VECTOR_GET(sprite_manager_updatables, i)];
 			if ((THIS == scroll_target) && (!THIS->marked_for_removal)) {
 				THIS_IDX = i;
 				SWITCH_ROM(spriteBanks[THIS->type]);
@@ -261,9 +260,9 @@ void SpriteManagerUpdate(void) {
 	}
 
 	// render other sprites roundrobin 
-	if (THIS_IDX >= sprite_manager_updatables[0]) THIS_IDX = 0;
-	for (i = 0; i != sprite_manager_updatables[0]; ++i) {
-		THIS = sprite_manager_sprites[sprite_manager_updatables[THIS_IDX + 1]];
+	if (THIS_IDX >= VECTOR_LEN(sprite_manager_updatables)) THIS_IDX = 0;
+	for (i = 0; i != VECTOR_LEN(sprite_manager_updatables); ++i) {
+		THIS = sprite_manager_sprites[VECTOR_GET(sprite_manager_updatables, THIS_IDX)];
 		if ((THIS_IDX != target_idx) && (!THIS->marked_for_removal)) {
 			SWITCH_ROM(spriteBanks[THIS->type]);
 			spriteUpdateFuncs[THIS->type](); // call sprite update func
@@ -272,7 +271,7 @@ void SpriteManagerUpdate(void) {
 			}
 			DrawSprite(); // this needs to be done using the sprite bank because the animation array is stored there
 		}
-		if (++THIS_IDX >= sprite_manager_updatables[0]) THIS_IDX = 0;
+		if (++THIS_IDX >= VECTOR_LEN(sprite_manager_updatables)) THIS_IDX = 0;
 	}
 	++THIS_IDX;
 
