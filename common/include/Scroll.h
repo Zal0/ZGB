@@ -7,6 +7,11 @@
 #include "MapInfo.h"
 #include "Sprite.h"
 
+typedef enum {
+	TARGET_BKG = 0,
+	TARGET_WIN = 1
+} LOAD_TARGET;
+
 #define SPRITE_UNIQUE_ID(TILE_X, TILE_Y) ((0x00FF & TILE_X) | ((0xFF00 & (TILE_Y << 8))))
 
 #if defined(NINTENDO)
@@ -14,13 +19,13 @@
 	GetMapSize(BANK(MAP), &MAP, 0, &scroll_h_border); \
 	scroll_h_border = scroll_h_border << 3; \
 	WX_REG = DEVICE_WINDOW_PX_OFFSET_X, WY_REG = (DEVICE_WINDOW_PX_OFFSET_Y + DEVICE_SCREEN_PX_HEIGHT) - scroll_h_border; \
-	hud_map_offset = LoadMap(1, 0, 0, BANK(MAP), &MAP); \
+	hud_map_offset = LoadMap(TARGET_WIN, 0, 0, BANK(MAP), &MAP); \
 	SHOW_WIN;
 #else
 #define INIT_HUD(MAP)
 #endif
 
-#define INIT_BKG(MAP) LoadMap(0, 0, 0, BANK(MAP), &MAP)
+#define INIT_BKG(MAP) LoadMap(TARGET_BKG, 0, 0, BANK(MAP), &MAP)
 
 #define UPDATE_HUD_TILE(X, Y, TILE) UpdateMapTile(1, X, Y, hud_map_offset, TILE, 0)
 

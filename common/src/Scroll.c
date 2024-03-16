@@ -181,7 +181,7 @@ void UpdateMapTile(UINT8 bg_or_win, UINT8 x, UINT8 y, UINT16 map_offset, UINT8 d
 {
 attr;
 #if defined(NINTENDO)
-	UINT8* addr = (bg_or_win == 0) ? set_bkg_tile_xy(x, y, (UINT8)map_offset + data) : set_win_tile_xy(x, y, (UINT8)map_offset + data);
+	UINT8* addr = (bg_or_win == TARGET_BKG) ? set_bkg_tile_xy(x, y, (UINT8)map_offset + data) : set_win_tile_xy(x, y, (UINT8)map_offset + data);
 #ifdef CGB
 	if (_cpu == CGB_TYPE) {
 		VBK_REG = 1;
@@ -190,7 +190,7 @@ attr;
 	}
 #endif
 #elif defined(SEGA)
-	if (bg_or_win == 0) {
+	if (bg_or_win == TARGET_BKG) {
 		UINT8 c = ((UINT8)(map_offset >> 8)) + ((attr) ? *attr : scroll_tile_info[data]);
 		set_attributed_tile_xy(SCREEN_BKG_OFFSET_X + x, y, (UINT16)(c << 8) | ((UINT8)map_offset + data));
 	}

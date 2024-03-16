@@ -20,8 +20,8 @@ extern unsigned char font_recode_table[RECODE_TABLE_SIZE];
 void InitDefaultRecode(void) BANKED;
 
 typedef enum {
-	PRINT_BKG,
-	PRINT_WIN
+	PRINT_BKG = 0,
+	PRINT_WIN = 1,
 } PRINT_TARGET;
 
 void Printf(const unsigned char* txt, ...);
