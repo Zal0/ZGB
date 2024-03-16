@@ -4,6 +4,7 @@
 #include <gbdk/platform.h>
 
 #include "Sprite.h"
+#include "Scroll.h"
 #include "TilesInfo.h"
 
 typedef void (*Void_Func_Void)(void);
@@ -37,7 +38,7 @@ extern UINT8 delta_time;
 
 #if defined(NINTENDO)
 void LCD_isr(void) NONBANKED;
-void SetWindowY(UINT8 y);
+#define SetWindowY(A) SetWindowPos(DEVICE_WINDOW_PX_OFFSET_X, (A), DEVICE_SCREEN_PX_HEIGHT) 
 #elif defined(SEGA)
 #define SetWindowY(A)
 #endif

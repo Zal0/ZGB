@@ -54,28 +54,30 @@ void InitStates(void);
 void InitSprites(void);
 
 #if defined(NINTENDO)
+#define LYC_SYNC_VALUE 150u
+#define LYC_NEVER_FIRE 160u
+UINT8 win_start = DEVICE_SCREEN_PX_HEIGHT + 1u, win_stop = LYC_SYNC_VALUE, win_x = DEVICE_WINDOW_PX_OFFSET_X;
 void LCD_isr(void) NONBANKED {
-	if (LYC_REG == 0) {
-		if (WY_REG == 0) {
-			HIDE_SPRITES;
-		} else {
-			SHOW_SPRITES;
-			LYC_REG = WY_REG - 1;
-		}
+	if (LYC_REG == win_start) {
+		WX_REG = win_x;
+		SHOW_WIN; HIDE_SPRITES;
+		LYC_REG = win_stop;
 	} else {
-		HIDE_SPRITES;
-		LYC_REG = 0;
+		WX_REG = 0;
+		HIDE_WIN; SHOW_SPRITES;
+		LYC_REG = win_start;
 	}
 }
 
-void SetWindowY(UINT8 y) {
-	WY_REG = y;
-	LYC_REG = y - 1;
-	if (y < (DEVICE_WINDOW_PX_OFFSET_Y + DEVICE_SCREEN_PX_HEIGHT)) {
-		SHOW_WIN;
+void SetWindowPos(UINT8 x, UINT8 y, UINT8 h) {
+	if ((h) && (y < DEVICE_SCREEN_PX_HEIGHT)) {
+		win_x = WX_REG = x;
+		WY_REG = y;
+		win_stop = (((UINT16)(y) + h) < LYC_SYNC_VALUE) ? (y + h) : LYC_SYNC_VALUE;
+		LYC_REG = win_start = (y) ? (y - 1u) : (LYC_SYNC_VALUE + 1u);
 	} else {
-		HIDE_WIN;
-		LYC_REG = 160u;
+		LYC_REG = LYC_NEVER_FIRE;
+		HIDE_WIN; SHOW_SPRITES;		
 	}
 }
 #endif
