@@ -58,6 +58,7 @@ typedef enum {
 
 // muting masks
 #define MUTE_MASK_NONE 0
+#define MUTE_MASK_ALL (SFX_CH_1 | SFX_CH_2 | SFX_CH_3 | SFX_CH_4)
 #define MUTE_MASK_WAVE SFX_CH_3
 
 // cut sound on the selected channels

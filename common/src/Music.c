@@ -14,13 +14,6 @@ volatile UINT8 sfx_priority = SFX_PRIORITY_MINIMAL;
 BYTE hUGE_paused = 1;
 const hUGESong_t * hUGE_current_track;
 UBYTE hUGE_current_track_bank;
-
-void hUGE_mute(UBYTE mute) {
-	hUGE_mute_channel(HT_CH1, mute);
-	hUGE_mute_channel(HT_CH2, mute);
-	hUGE_mute_channel(HT_CH3, mute);
-	hUGE_mute_channel(HT_CH4, mute);
-}
 #else 
 UINT8 mute_channels = 0;
 #endif
