@@ -45,7 +45,7 @@ inline void INIT_SOUND(void) {
 	#define PlayMusic(SONG, LOOP) __PlayMusic(SONG ## _mod_Data, (uint8_t)&__bank_ ## SONG ## _mod_Data, LOOP)
 	#define StopMusic gbt_stop(); last_music = 0
 
-	#define MUTE_CHANNEL(CHANNEL) if (mute_channels != (CHANNEL)) (mute_channels = (CHANNEL)), gbt_enable_channels(~(0xF & (CHANNEL)))
+	#define MUTE_CHANNEL(CHANNEL) if (mute_channels != (CHANNEL)) (mute_channels = (CHANNEL)), gbt_enable_channels(0xF & ~(CHANNEL))
 	#define UNMUTE_ALL_CHANNELS (mute_channels = MUTE_MASK_NONE), gbt_enable_channels(0xF)
 #else
 	extern UINT8 mute_channels;

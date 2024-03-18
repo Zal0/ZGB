@@ -25,7 +25,7 @@ void MUSIC_isr(void) NONBANKED {
 #ifdef FORCE_CUT_SFX
 			sfx_sound_cut_mask(music_mute_mask);
 #endif
-			music_mute_mask = MUTE_MASK_NONE;
+			UNMUTE_ALL_CHANNELS;
 			sfx_priority = SFX_PRIORITY_MINIMAL;
 			sfx_play_bank = SFX_STOP_BANK;
 		}
