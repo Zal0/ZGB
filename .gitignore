@@ -265,4 +265,5 @@ tools/mod2gbt/mod2gbt.exe
 tools/mod2gbt/mod2gbt
 
 tools/*/*.o
+tools/*/*/*.o
 
