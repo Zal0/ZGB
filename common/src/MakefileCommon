@@ -85,7 +85,12 @@ FLAGSGBR2C_gg = -bpp 4
 FLAGSGBR2C_sms = $(FLAGSGBR2C_gg)
 FLAGSGBR2C += $(FLAGSGBR2C_$(EXT)) 
 
-CFLAGS += $(TARGET) -Wf-MMD $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include -DFILE_NAME=$(basename $(<F)) -DCUSTOM_DATA_SIZE=$(CUSTOM_DATA_SIZE) $(CFLAGS_$(EXT))
+#fxhammer converter flags
+FLAGSFXHAMMER_gg = -m psg
+FLAGSFXHAMMER_sms = -m psg
+FLAGSFXHAMMER += $(FLAGSFXHAMMER_$(EXT))
+
+CFLAGS += $(TARGET) -Wf-MMD $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include -I$(OBJDIR_RES) -DFILE_NAME=$(basename $(<F)) -DCUSTOM_DATA_SIZE=$(CUSTOM_DATA_SIZE) $(CFLAGS_$(EXT))
 
 ifeq ($(strip $(N_BANKS)),)
 	NBANKS = A
@@ -248,7 +253,7 @@ $(OBJDIR_RES)/%.vgm.c: ../res/sounds/$(EXT)/%.vgm $$(wildcard ../res/sounds/$(EX
 
 .SECONDEXPANSION:
 $(OBJDIR_RES)/%.sav.c: ../res/sounds/$(EXT)/%.sav $$(wildcard ../res/sounds/$(EXT)/%.sav.meta)
-	@$(FXHAMMER2DATA) -b 255 $(if $(wildcard $<.meta),`cat <$<.meta`) -o $@ $<
+	@$(FXHAMMER2DATA) $(FLAGSFXHAMMER) -b 255 $(if $(wildcard $<.meta),`cat <$<.meta`) -o $@ $<
 
 $(OBJDIR_RES)/%.mod.c: ../res/music/%.mod
 	@$(MOD2GBT) $< $@ $(basename $(basename $(notdir $<)))_mod 255 > /dev/null
