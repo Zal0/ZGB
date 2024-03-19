@@ -105,13 +105,13 @@ void GetGBRPath(char* gbm_path, char* tile_file, char* gbr_path)
 int main(int argc, char* argv[])
 {
 	if(argc != 3) {
-		printf("usage: gbm2c file_in.gbm export_folder");
+		printf("usage: gbm2c file_in.gbm export_folder\n");
 		return 1;
 	}
 
 	FILE* file = fopen(argv[1], "rb");
 	if(!file) {
-		printf("Error reading file %s", argv[1]);
+		printf("Error reading file %s\n", argv[1]);
 		return 1;
 	}
 
@@ -194,7 +194,7 @@ int main(int argc, char* argv[])
 		char gbr_path[256];
 		GetGBRPath(argv[1], map.tile_file, gbr_path);
 		if(!GbrParser::LoadGBR(gbr_path, &gbrInfo)) {
-			printf("Error reading gbr file %s", map.tile_file);
+			printf("Error reading gbr file %s\n", map.tile_file);
 			return 1;
 		}
 	}
@@ -223,7 +223,7 @@ int main(int argc, char* argv[])
 	sprintf(export_file, "%s/%s.h", argv[2], export_file_name);
 	file = fopen(export_file, "w");
 	if(!file) {
-		printf("Error writing file");
+		printf("Error writing file\n");
 		return 1;
 	}
 
@@ -245,7 +245,7 @@ int main(int argc, char* argv[])
 	sprintf(export_file, "%s/%s.gbm.c", argv[2], export_file_name);
 	file = fopen(export_file, "w");
 	if(!file) {
-		printf("Error writing file");
+		printf("Error writing file\n");
 		return 1;
 	}
 	

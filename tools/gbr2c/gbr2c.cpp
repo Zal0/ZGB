@@ -8,7 +8,7 @@ int main(int argc, char* argv[]) {
 	int bpp = 2;
 
 	if((argc != 3) && (argc != 5)) {
-		printf("usage: gbr2c file_in.gbr export_folder [-bpp N]");
+		printf("usage: gbr2c file_in.gbr export_folder [-bpp N]\n");
 		return 1;
 	}
 
@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
 
 	if(argc == 5) {
 		if (strcmp(argv[3], "-bpp") != 0) {
-			printf("unknown argument %s", argv[3]);
+			printf("unknown argument %s\n", argv[3]);
 			return 1;
 		}
 		if (strcmp(argv[4], "2") == 0) {
@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 		} else if (strcmp(argv[4], "4") == 0) {
 			bpp = 4;
 		} else {
-			printf("unsupported bpp depth not in [2, 4]: %s", argv[4]);
+			printf("unsupported bpp depth not in [2, 4]: %s\n", argv[4]);
 			return 1;
 		}
 	}
@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
 	sprintf(export_file, "%s/%s.h", argv[2], export_file_name); 
 	FILE* file = fopen(export_file, "w");
 	if(!file) {
-		printf("Error writing file");
+		printf("Error writing file\n");
 		return 1;
 	}
 
@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
 	sprintf(export_file, "%s/%s.gbr.c", argv[2], export_file_name);
 	file = fopen(export_file, "w");
 	if(!file) {
-		printf("Error writing file");
+		printf("Error writing file\n");
 		return 1;
 	}
 	

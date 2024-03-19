@@ -59,7 +59,7 @@ bool IsTileEmpty(TileSet* tile_set, int tile){
 bool LoadGBR(const char* path, GBRInfo* info) {
 	FILE* file = fopen(path, "rb");
 	if(!file) {
-		printf("Error reading file %s", path);
+		printf("Error reading file %s\n", path);
 		return false;
 	}
 
