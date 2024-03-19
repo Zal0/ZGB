@@ -83,7 +83,7 @@ def parse_gameboy(inf, outf, options):
                     result = "{}0b{:08b},0x{:02x},".format(result, 0b00100100, val)
                 mask = NR5x
                 tmp = ""
-                for i in range(0, 1):
+                for i in range(0, 2):
                     val = ch.pop(i, -1)
                     if (val != -1):
                         mask |= 1 << (7 - i)
