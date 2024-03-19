@@ -33,15 +33,6 @@ inline void sfx_sound_init(void) {
 #endif
 }
 
-// cut sound on all channels
-inline void sfx_sound_cut(void) {
-#if defined(NINTENDO)
-	NR12_REG = NR22_REG = NR32_REG = NR42_REG = 0;
-	NR14_REG = NR24_REG = NR44_REG = SFX_CH_RETRIGGER;
-	NR51_REG = 0xFF;
-#endif
-}
-
 // SFX channel constants
 
 typedef enum {
@@ -74,6 +65,17 @@ inline void sfx_sound_cut_mask(UINT8 mask) {
 #elif defined(SEGA)
 void sfx_sound_cut_mask(UINT8 mask);
 #endif
+
+// cut sound on all channels
+inline void sfx_sound_cut(void) {
+#if defined(NINTENDO)
+	NR12_REG = NR22_REG = NR32_REG = NR42_REG = 0;
+	NR14_REG = NR24_REG = NR44_REG = SFX_CH_RETRIGGER;
+	NR51_REG = 0xFF;
+#elif defined(SEGA)
+	sfx_sound_cut_mask(MUTE_MASK_ALL);
+#endif
+}
 
 // stop playing SFX
 inline void sfx_reset_sample(void) {
