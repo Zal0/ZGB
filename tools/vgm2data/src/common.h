@@ -1,6 +1,8 @@
 #ifndef _COMMON_H
 #define _COMMON_H
 
+#include <stdint.h>
+
 #define MAX_STR_LEN     4096
 #define DEFAULT_STR_LEN 100
 

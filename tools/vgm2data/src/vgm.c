@@ -15,6 +15,7 @@
 
 #include "vgm.h"
 #include "vgm_gb.h"
+#include "vgm_psg.h"
 
 // https://vgmrips.net/wiki/VGM_Specification
 
@@ -129,7 +130,10 @@ static bool vgm_process_gameboy(uint8_t * p_buf, size_t buf_len) {
 
         fclose(file_out);
         file_out = NULL;
+        return true;
     }
+
+    return false; // Failed
 }
 
 
@@ -150,11 +154,14 @@ static bool vgm_process_psg(uint8_t * p_buf, size_t buf_len) {
 
         fclose(file_out);
         file_out = NULL;
+        return true;
     }
+
+    return false; // Failed
 }
 
 
-static void vgm_write_c_header_file(void) {
+static bool vgm_write_c_header_file(void) {
 
     if (matches_extension(vgm_opt.outfilename, ".c")) {
     
@@ -177,23 +184,30 @@ static void vgm_write_c_header_file(void) {
                               vgm_opt.identifier, vgm_opt.identifier);
             fclose(file_out);
             file_out = NULL;
+            return true;
+        }
+        else {
+            return false; // Failed
         }
     }
+    return true;
 }
 
 
 bool vgm_load(uint8_t * p_buf, size_t buf_len) {
 
+    bool ret = false;
     if (vgm_parse_header(p_buf, buf_len)) {
 
         if (soundchip == CHIP_GB)
-            vgm_process_gameboy(p_buf + vgm_data_start, buf_len - vgm_data_start);
+            ret = vgm_process_gameboy(p_buf + vgm_data_start, buf_len - vgm_data_start);
         else
-            vgm_process_psg(p_buf, buf_len);
+            ret = vgm_process_psg(p_buf, buf_len);
 
-        vgm_write_c_header_file();
+        if (ret)
+            ret = vgm_write_c_header_file();
 
-        return true;
+        return ret;
     } else
         return false;
 }
