@@ -59,8 +59,8 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJDIR)*.o
-	rm -f $(BINDIR)*.exe
+	rm -f $(OBJDIR)/*.o
+	rm -f $(BINDIR)/*.exe
 	rm -f $(BIN)
 
 test:
