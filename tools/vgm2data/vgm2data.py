@@ -25,7 +25,7 @@ reg_names = {
     PCM_SAMPLE +  0: "PCM[0]", PCM_SAMPLE +  1: "PCM[1]", PCM_SAMPLE +  2: "PCM[2]", PCM_SAMPLE +  3: "PCM[3]", 
     PCM_SAMPLE +  4: "PCM[4]", PCM_SAMPLE +  5: "PCM[5]", PCM_SAMPLE +  6: "PCM[6]", PCM_SAMPLE +  7: "PCM[7]", 
     PCM_SAMPLE +  8: "PCM[8]", PCM_SAMPLE +  9: "PCM[9]", PCM_SAMPLE + 10: "PCM[A]", PCM_SAMPLE + 11: "PCM[B]", 
-    PCM_SAMPLE + 12: "PCM[C]", PCM_SAMPLE + 13: "PCM[D]", PCM_SAMPLE + 14: "PCM[E]", PCM_SAMPLE + 25: "PCM[F]" 
+    PCM_SAMPLE + 12: "PCM[C]", PCM_SAMPLE + 13: "PCM[D]", PCM_SAMPLE + 14: "PCM[E]", PCM_SAMPLE + 15: "PCM[F]"
 }
 
 NR1x, NR2x, NR3x, NR4x, NR5x, PCMDATA = 0, 1, 2, 3, 4, 5
@@ -70,7 +70,7 @@ def parse_gameboy(inf, outf, options):
             if data == b'\x61': 
                 inf.seek(2, 1)                  
                 
-            if (options.verbose): print("PACKET (resaon: {}): {}".format(hex(data[0]), row))
+            if (options.verbose): print("PACKET (reason: {}): {}".format(hex(data[0]), row))
                 
             result = ""
             count = 0
@@ -124,6 +124,8 @@ def parse_gameboy(inf, outf, options):
 
             # output result
             result = "0x{:02x},{}\n".format(count, result)
+            # Debug line breaks between packets out
+            # result = "{}\n".format(result)
             outf.write(bytes(result, "ascii"))
 
             # reset row
@@ -171,7 +173,7 @@ def parse_psg(inf, outf, options):
             inf.seek(-1, 1)
             if (data == b'\x66') or not ((ahead >= b'\x61' and ahead <= b'\x63') or (ahead >= b'\x70' and ahead <= b'\x7f')):
                 # output packet
-                if (options.verbose): print("PACKET (resaon: {}): {}".format(hex(data[0]), row))
+                if (options.verbose): print("PACKET (reason: {}): {}".format(hex(data[0]), row))
                     
                 # delay + packet length
                 count = (min(15, ((count - 1) * max(1, int(options.delay)))) << 4) | (len(row) & 0x0f)
