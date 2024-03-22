@@ -50,7 +50,7 @@ inline void INIT_SOUND(void) {
 #else
 	extern UINT8 mute_channels;
 	#define INIT_MUSIC
-	#define DECLARE_MUSIC(SONG)
+	#define DECLARE_MUSIC(SONG) extern void SONG ## _undetected
 	#define PlayMusic(SONG, LOOP)
 	#define StopMusic
 
