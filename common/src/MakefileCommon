@@ -166,11 +166,11 @@ SGB_BORDERS      = $(foreach dir,../res/borders,$(notdir $(wildcard $(dir)/*.png
 # detect music driver
 ifeq ($(MUSIC_PLAYER), )
 	# check 
-	ifneq ($(MUSICS_UGE_PLAT), )
+	ifneq ($(wildcard ../res/music/$(EXT)/*.uge), )
 		CFLAGS += -DMUSIC_DRIVER_HUGE
 		MUSICS_UGE = $(foreach dir,../res/music/$(EXT),$(notdir $(wildcard $(dir)/*.uge)))
 	else 
-		ifneq (MUSICS_MOD_PLAT, )
+		ifneq ($(wildcard ../res/music/$(EXT)/*.mod), )
 			CFLAGS += -DMUSIC_DRIVER_GBT
 			MUSICS_MOD = $(foreach dir,../res/music/$(EXT),$(notdir $(wildcard $(dir)/*.mod)))
 		else
