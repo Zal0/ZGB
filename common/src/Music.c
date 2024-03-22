@@ -97,4 +97,15 @@ void __StopMusic(void) NONBANKED {
 	last_music = 0;
 }
 
+void __SetMusicMuteMask(UINT8 mask) NONBANKED {
+	UBYTE __save = CURRENT_BANK;
+	SWITCH_ROM(1);
+	SWITCH_ROM2(banjo_current_track_bank);
+	if (mask & CHANNEL_1) banjo_mute_song_channel(0); else banjo_unmute_song_channel(0);
+	if (mask & CHANNEL_2) banjo_mute_song_channel(1); else banjo_unmute_song_channel(1);
+	if (mask & CHANNEL_3) banjo_mute_song_channel(2); else banjo_unmute_song_channel(2);
+	if (mask & CHANNEL_4) banjo_mute_song_channel(3); else banjo_unmute_song_channel(3);
+	SWITCH_ROM(__save);
+}
+
 #endif

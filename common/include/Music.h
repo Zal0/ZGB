@@ -54,13 +54,14 @@ inline void INIT_SOUND(void) {
 	extern UINT8 mute_channels;
 	void __InitMusicDriver(void);
 	void __StopMusic(void);
+	void __SetMusicMuteMask(UINT8 mask);
 	#define INIT_MUSIC __InitMusicDriver()
 	#define DECLARE_MUSIC(SONG) extern const void __bank_ ## SONG ## _fur; extern const song_data_t SONG ## _fur
 	#define PlayMusic(SONG, LOOP) __PlayMusic(&SONG ## _fur, (uint8_t)&__bank_ ## SONG ## _fur, LOOP)
 	#define StopMusic __StopMusic()
 
-	#define MUTE_CHANNEL(CHANNEL) (mute_channels = CHANNEL)
-	#define UNMUTE_ALL_CHANNELS (mute_channels = 0)
+	#define MUTE_CHANNEL(CHANNEL) if (mute_channels != (CHANNEL)) (mute_channels = (CHANNEL)), __SetMusicMuteMask((CHANNEL))
+	#define UNMUTE_ALL_CHANNELS (mute_channels = MUTE_MASK_NONE), __SetMusicMuteMask(0)
 #else
 	extern UINT8 mute_channels;
 	#define INIT_MUSIC
