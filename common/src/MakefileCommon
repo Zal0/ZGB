@@ -56,11 +56,13 @@ MOD2GBT = $(ZGB_PATH_UNIX)/../tools/mod2gbt/mod2gbt
 UGE2SOURCE = $(ZGB_PATH_UNIX)/../env/uge2source
 VGM2DATA = python $(ZGB_PATH_UNIX)/../tools/vgm2data/vgm2data.py
 FXHAMMER2DATA = python $(ZGB_PATH_UNIX)/../tools/fxhammer2data/fxhammer2data.py
+FUR2JSON = python $(ZGB_PATH_UNIX)/../tools/banjo/furnace2json.py 
+JSON2SMS = python $(ZGB_PATH_UNIX)/../tools/banjo/json2sms.py
 
 ADDR_gb = -Wl-g.STACK=0xDF00 -Wl-g_mirror_OAM=0xDF00 -Wl-g_font_recode_table=0xDFA0 -Wb-reserve=1:1000
 ADDR_duck = $(ADDR_gb)
 ADDR_ap = $(ADDR_gb)
-ADDR_gg = -Wl-g.STACK=0xDEA0 -Wl-g_mirror_OAM=0xDF00 -Wl-g_font_recode_table=0xDEA0 -Wb-reserve=1:1000
+ADDR_gg = -Wl-g.STACK=0xDEA0 -Wl-g_mirror_OAM=0xDF00 -Wl-g_font_recode_table=0xDEA0 -Wb-reserve=1:1400
 ADDR_sms = $(ADDR_gg)
 
 CFLAGS_gb = -DDEFAULT_COLOR_DEPTH=2
@@ -165,7 +167,7 @@ SGB_BORDERS      = $(foreach dir,../res/borders,$(notdir $(wildcard $(dir)/*.png
 	
 # detect music driver
 ifeq ($(MUSIC_PLAYER), )
-	# check 
+	# detect music driver by presense of the music modules 
 	ifneq ($(wildcard ../res/music/$(EXT)/*.uge), )
 		CFLAGS += -DMUSIC_DRIVER_HUGE
 		MUSICS_UGE = $(foreach dir,../res/music/$(EXT),$(notdir $(wildcard $(dir)/*.uge)))
@@ -174,7 +176,10 @@ ifeq ($(MUSIC_PLAYER), )
 			CFLAGS += -DMUSIC_DRIVER_GBT
 			MUSICS_MOD = $(foreach dir,../res/music/$(EXT),$(notdir $(wildcard $(dir)/*.mod)))
 		else
-			# detect banjo PSG driver here
+			ifneq ($(wildcard ../res/music/$(EXT)/*.fur), )
+				CFLAGS += -DMUSIC_DRIVER_BANJO
+				MUSICS_FUR = $(foreach dir,../res/music/$(EXT),$(notdir $(wildcard $(dir)/*.fur)))
+			endif
 		endif
 	endif
 else
@@ -190,7 +195,7 @@ else
 	endif
 endif
 
-OBJS = $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.o) $(GBMS_PLAT:%.gbm=$(OBJDIR_RES)/%.gbm.o) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.o) $(GBRS_PLAT:%.gbr=$(OBJDIR_RES)/%.gbr.o) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.o) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.o) $(SPRITES_PNG_PLAT:%.png=$(OBJDIR_RES)/sprites/%.png.o) $(SGB_BORDERS:%.png=$(OBJDIR_RES)/borders/%.png.o) $(PNGS:%.png=$(OBJDIR_RES)/%.png.o) $(PNGS_PLAT:%.png=$(OBJDIR_RES)/%.png.o) $(VGMS_PLAT:%.vgm=$(OBJDIR_RES)/%.vgm.o) $(SAVS_PLAT:%.sav=$(OBJDIR_RES)/%.sav.o) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.o) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.o) $(ASMS:%.s=$(OBJDIR)/%.o) $(PLAT_AS:%.s=$(OBJDIR)/%.o) $(CLASSES:%.c=$(OBJDIR)/%.o) $(PLAT_C:%.c=$(OBJDIR)/%.o)
+OBJS = $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.o) $(GBMS_PLAT:%.gbm=$(OBJDIR_RES)/%.gbm.o) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.o) $(GBRS_PLAT:%.gbr=$(OBJDIR_RES)/%.gbr.o) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.o) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.o) $(SPRITES_PNG_PLAT:%.png=$(OBJDIR_RES)/sprites/%.png.o) $(SGB_BORDERS:%.png=$(OBJDIR_RES)/borders/%.png.o) $(PNGS:%.png=$(OBJDIR_RES)/%.png.o) $(PNGS_PLAT:%.png=$(OBJDIR_RES)/%.png.o) $(VGMS_PLAT:%.vgm=$(OBJDIR_RES)/%.vgm.o) $(SAVS_PLAT:%.sav=$(OBJDIR_RES)/%.sav.o) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.o) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.o) $(MUSICS_FUR:%.fur=$(OBJDIR_RES)/%.fur.o) $(ASMS:%.s=$(OBJDIR)/%.o) $(PLAT_AS:%.s=$(OBJDIR)/%.o) $(CLASSES:%.c=$(OBJDIR)/%.o) $(PLAT_C:%.c=$(OBJDIR)/%.o)
 OBJS_ZGB = $(ASMS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.o) $(PLAT_AS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(PLAT_C_ZGB:%.c=$(OBJDIR_ZGB)/%.o) $(OBJECTS_ZGB)
 
 RELS = $(OBJS:%.o=%.rel)
@@ -199,7 +204,7 @@ RELS = $(OBJS:%.o=%.rel)
 BINS = $(BINDIR)/$(PROJECT_NAME).$(EXT) #$(OBJDIR)/Makefile.uptodate
 
 #prevent gbr2c and gbm2c intermediate files from being deleted
-.SECONDARY: $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.c) $(GBMS_PLAT:%.gbm=$(OBJDIR_RES)/%.gbm.c) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.c) $(GBRS_PLAT:%.gbr=$(OBJDIR_RES)/%.gbr.c) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.c) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.c) $(SPRITES_PNG_PLAT:%.png=$(OBJDIR_RES)/sprites/%.png.c) $(SGB_BORDERS:%.png=$(OBJDIR_RES)/borders/%.png.c) $(PNGS:%.png=$(OBJDIR_RES)/%.png.c) $(PNGS_PLAT:%.png=$(OBJDIR_RES)/%.png.c) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.c) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.c)
+.SECONDARY: $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.c) $(GBMS_PLAT:%.gbm=$(OBJDIR_RES)/%.gbm.c) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.c) $(GBRS_PLAT:%.gbr=$(OBJDIR_RES)/%.gbr.c) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.c) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.c) $(SPRITES_PNG_PLAT:%.png=$(OBJDIR_RES)/sprites/%.png.c) $(SGB_BORDERS:%.png=$(OBJDIR_RES)/borders/%.png.c) $(PNGS:%.png=$(OBJDIR_RES)/%.png.c) $(PNGS_PLAT:%.png=$(OBJDIR_RES)/%.png.c) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.c) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.c) $(MUSICS_FUR:%.fur=$(OBJDIR_RES)/%.fur.c)
 
 #dependencies -------------------------------------------------------------------------------------------
 # option -MMD will generate .d files that can be included here for dependency checking (we can skip this on clean)
@@ -272,6 +277,10 @@ $(OBJDIR_RES)/%.uge.c: ../res/music/%.uge
 
 $(OBJDIR_RES)/%.uge.c: ../res/music/$(EXT)/%.uge
 	@$(UGE2SOURCE) $< -b 255 $(basename $(basename $(notdir $<)))_uge $@
+
+$(OBJDIR_RES)/%.fur.c: ../res/music/$(EXT)/%.fur
+	@$(FUR2JSON) -o $(basename $@).json $< > /dev/null
+	@$(JSON2SMS) -a LIT -b 255 -i $(basename $(basename $(notdir $<)))_fur -o $@ $(basename $@).json > /dev/null
 
 $(OBJDIR_RES)/%.o: $(OBJDIR_RES)/%.c
 	@echo compiling resource $<
