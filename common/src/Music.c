@@ -94,6 +94,7 @@ void __StopMusic(void) NONBANKED {
 	SWITCH_ROM2(banjo_current_track_bank);
 	banjo_song_stop();
 	SWITCH_ROM(__save);
+	last_music = 0;
 }
 
 #endif
