@@ -1,23 +1,3 @@
-# NAME	:= mod2gbt
-
-# SOURCES	:= mod2gbt.c
-
-# CC	:= gcc
-# CFLAGS	:= -static 
-
-# all:	$(NAME)
-
-# $(NAME):
-# 	$(CC) $(CFLAGS) -o $@ $(SOURCES)
-
-# clean:
-# 	rm -f $(OBJS) $(NAME)
-
-# *****************************************************
-# Variables to control Makefile operation
-
-# Might want when doing linux -> win cross build
-# LFLAGS = -s -static
 
 # Prefix to add to the standard tools.  Usefull for a standard gcc
 # cross-compile.
@@ -30,8 +10,8 @@ ifeq ($(OS_TARGET),Win_x64)
 endif
 
 
-CXX = $(TOOLSPREFIX)g++
-CXXFLAGS = -Os -g  # -Wall -Wextra -pedantic
+CC = $(TOOLSPREFIX)gcc
+CCFLAGS = -Os -g  # -Wall -Wextra -pedantic
 LFLAGS = -g
 
 ifeq ($(OS),Windows_NT)
@@ -66,16 +46,16 @@ TARGET = mod2gbt
 
 
 SRCS := mod2gbt.c
-OBJS := $(SRCS:%.cpp=%.o)
+OBJS := $(SRCS:%.c=%.o)
 
 $(TARGET): $(OBJS)
-	$(CXX) $(LFLAGS) -o $(TARGET) $(OBJS)
+	$(CC) $(LFLAGS) -o $(TARGET) $(OBJS)
 	strip $@$(EXT)
 
 # The main.o target can be written more simply
 
-%.cpp.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+%.c.o: %.c
+	$(CC) $(CCFLAGS) -c $< -o $@
 
 clean:
 	rm -f *.o
