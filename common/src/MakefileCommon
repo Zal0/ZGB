@@ -117,16 +117,6 @@ else
 	BINFLAGS += -Wl-yt0x19
 endif
 
-# gbt-player/Hugetracker flags
-ifeq ($(MUSIC_PLAYER), GBT_PLAYER)
-	CFLAGS += -DMUSIC_DRIVER_GBT
-else
-	ifeq ($(MUSIC_PLAYER), HUGETRACKER)
-		CFLAGS += -DMUSIC_DRIVER_HUGE
-	endif
-endif
-
-
 ifeq ($(DEFAULT_SPRITES_SIZE), SPRITES_8x16)
 	FLAGSPNG2ASSET_SPR += -spr8x16
 	CFLAGS += -DDEFAULT_SPRITES_SIZE=16
@@ -171,18 +161,34 @@ SPRITES_PNG      = $(foreach dir,../res/sprites,$(notdir $(wildcard $(dir)/*.png
 SPRITES_PNG_PLAT = $(foreach dir,../res/sprites/$(EXT),$(notdir $(wildcard $(dir)/*.png)))
 VGMS_PLAT        = $(foreach dir,../res/sounds/$(EXT),$(notdir $(wildcard $(dir)/*.vgm)))
 SAVS_PLAT        = $(foreach dir,../res/sounds/$(EXT),$(notdir $(wildcard $(dir)/*.sav)))
-
-ifneq ($(wildcard ../res/borders), )
-	SGB_BORDERS = $(foreach dir,../res/borders,$(notdir $(wildcard $(dir)/*.png)))
-endif
-ifeq ($(MUSIC_PLAYER), GBT_PLAYER)
-	MUSICS_MOD = $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.mod)))
+SGB_BORDERS      = $(foreach dir,../res/borders,$(notdir $(wildcard $(dir)/*.png)))
+	
+# detect music driver
+ifeq ($(MUSIC_PLAYER), )
+	# check 
+	ifneq ($(MUSICS_UGE_PLAT), )
+		CFLAGS += -DMUSIC_DRIVER_HUGE
+		MUSICS_UGE = $(foreach dir,../res/music/$(EXT),$(notdir $(wildcard $(dir)/*.uge)))
+	else 
+		ifneq (MUSICS_MOD_PLAT, )
+			CFLAGS += -DMUSIC_DRIVER_GBT
+			MUSICS_MOD = $(foreach dir,../res/music/$(EXT),$(notdir $(wildcard $(dir)/*.mod)))
+		else
+			# detect banjo PSG driver here
+		endif
+	endif
 else
-	ifeq ($(MUSIC_PLAYER), HUGETRACKER)
-		MUSICS_UGE = $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.uge)))
+	# legacy behavior: driver name is explicitly set in the project makefile
+	ifeq ($(MUSIC_PLAYER), GBT_PLAYER)
+		CFLAGS += -DMUSIC_DRIVER_GBT
+		MUSICS_MOD = $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.mod)))
+	else
+		ifeq ($(MUSIC_PLAYER), HUGETRACKER)
+			CFLAGS += -DMUSIC_DRIVER_HUGE
+			MUSICS_UGE = $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.uge)))
+		endif
 	endif
 endif
-
 
 OBJS = $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.o) $(GBMS_PLAT:%.gbm=$(OBJDIR_RES)/%.gbm.o) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.o) $(GBRS_PLAT:%.gbr=$(OBJDIR_RES)/%.gbr.o) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.o) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.o) $(SPRITES_PNG_PLAT:%.png=$(OBJDIR_RES)/sprites/%.png.o) $(SGB_BORDERS:%.png=$(OBJDIR_RES)/borders/%.png.o) $(PNGS:%.png=$(OBJDIR_RES)/%.png.o) $(PNGS_PLAT:%.png=$(OBJDIR_RES)/%.png.o) $(VGMS_PLAT:%.vgm=$(OBJDIR_RES)/%.vgm.o) $(SAVS_PLAT:%.sav=$(OBJDIR_RES)/%.sav.o) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.o) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.o) $(ASMS:%.s=$(OBJDIR)/%.o) $(PLAT_AS:%.s=$(OBJDIR)/%.o) $(CLASSES:%.c=$(OBJDIR)/%.o) $(PLAT_C:%.c=$(OBJDIR)/%.o)
 OBJS_ZGB = $(ASMS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.o) $(PLAT_AS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(PLAT_C_ZGB:%.c=$(OBJDIR_ZGB)/%.o) $(OBJECTS_ZGB)
@@ -193,7 +199,7 @@ RELS = $(OBJS:%.o=%.rel)
 BINS = $(BINDIR)/$(PROJECT_NAME).$(EXT) #$(OBJDIR)/Makefile.uptodate
 
 #prevent gbr2c and gbm2c intermediate files from being deleted
-.SECONDARY: $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.c) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.c) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.c) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.c) $(SGB_BORDERS:%.png=$(OBJDIR_RES)/borders/%.png.c) $(PNGS:%.png=$(OBJDIR_RES)/%.png.c) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.c) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.c)
+.SECONDARY: $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.c) $(GBMS_PLAT:%.gbm=$(OBJDIR_RES)/%.gbm.c) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.c) $(GBRS_PLAT:%.gbr=$(OBJDIR_RES)/%.gbr.c) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.c) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.c) $(SPRITES_PNG_PLAT:%.png=$(OBJDIR_RES)/sprites/%.png.c) $(SGB_BORDERS:%.png=$(OBJDIR_RES)/borders/%.png.c) $(PNGS:%.png=$(OBJDIR_RES)/%.png.c) $(PNGS_PLAT:%.png=$(OBJDIR_RES)/%.png.c) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.c) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.c)
 
 #dependencies -------------------------------------------------------------------------------------------
 # option -MMD will generate .d files that can be included here for dependency checking (we can skip this on clean)
@@ -258,7 +264,13 @@ $(OBJDIR_RES)/%.sav.c: ../res/sounds/$(EXT)/%.sav $$(wildcard ../res/sounds/$(EX
 $(OBJDIR_RES)/%.mod.c: ../res/music/%.mod
 	@$(MOD2GBT) $< $@ $(basename $(basename $(notdir $<)))_mod 255 > /dev/null
 
+$(OBJDIR_RES)/%.mod.c: ../res/music/$(EXT)/%.mod
+	@$(MOD2GBT) $< $@ $(basename $(basename $(notdir $<)))_mod 255 > /dev/null
+
 $(OBJDIR_RES)/%.uge.c: ../res/music/%.uge
+	@$(UGE2SOURCE) $< -b 255 $(basename $(basename $(notdir $<)))_uge $@
+
+$(OBJDIR_RES)/%.uge.c: ../res/music/$(EXT)/%.uge
 	@$(UGE2SOURCE) $< -b 255 $(basename $(basename $(notdir $<)))_uge $@
 
 $(OBJDIR_RES)/%.o: $(OBJDIR_RES)/%.c
