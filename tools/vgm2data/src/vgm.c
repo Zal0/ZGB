@@ -146,7 +146,7 @@ static bool vgm_process_psg(uint8_t * p_buf, size_t buf_len) {
                           "#include <gbdk/platform.h>\n"
                           "#include <stdint.h>\n\n"
                           "BANKREF(%s)\n"
-                          "const uint8_t %s[] = {{\n",
+                          "const uint8_t %s[] = {\n",
                           vgm_opt.bank, vgm_opt.identifier, vgm_opt.identifier);
     
         channel_mute_mask = vgm_process_psg_sound_data(p_buf, buf_len, file_out);
@@ -202,7 +202,7 @@ bool vgm_load(uint8_t * p_buf, size_t buf_len) {
         if (soundchip == CHIP_GB)
             ret = vgm_process_gameboy(p_buf + vgm_data_start, buf_len - vgm_data_start);
         else
-            ret = vgm_process_psg(p_buf, buf_len);
+            ret = vgm_process_psg(p_buf + vgm_data_start, buf_len - vgm_data_start);
 
         if (ret)
             ret = vgm_write_c_header_file();

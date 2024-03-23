@@ -56,12 +56,13 @@ static void row_data_reset(void) {
 
 static void log_packet_verbose(uint8_t cmd) {
 
-    log_verbose("PACKET (reason: 0x%02x): {\n", cmd);
+    log_verbose("PACKET (reason: 0x%02x): [", cmd);
 
     for (int row = 0; row < row_count; row++) {
         log_verbose("%d", row_data[row]);
+        if (row != (row_count -1)) log_verbose(", ");
     }
-    log_verbose("}\n");
+    log_verbose("]\n");
 }
 
 
@@ -119,6 +120,8 @@ uint8_t vgm_process_psg_sound_data(uint8_t * p_buf_in, size_t buf_len_in, FILE *
                 // output result
                 for (int row = 0; row < row_count; row++)
                     fprintf(FOUT, "0x%02x,", row_data[row]);
+
+                fprintf(FOUT, "\n");
 
                 // reset row
                 row_count = 0;
