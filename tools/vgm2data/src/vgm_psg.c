@@ -83,7 +83,11 @@ uint8_t vgm_process_psg_sound_data(uint8_t * p_buf_in, size_t buf_len_in, FILE *
         cmd = get_byte();
 
         if (cmd == CMD_PSG) {
-            row_data_push(get_byte());
+            uint8_t value = get_byte();
+            if (value & 0x80) {
+                channel_mute_mask |= (1 << ((value >> 5) & 3));
+            }
+            row_data_push(value);
             count = 0;
 
         } else if ((cmd == CMD_END_SND_DATA) ||
