@@ -44,7 +44,7 @@ endif
 
 SRCDIR = src
 OBJDIR = obj
-BINDIR = bin
+BINDIR = .
 MKDIRS = $(OBJDIR) $(BINDIR) $(PACKDIR)
 CFILES = $(wildcard $(SRCDIR)/*.c)
 COBJ = $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(CFILES))

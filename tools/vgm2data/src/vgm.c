@@ -101,7 +101,7 @@ static bool vgm_parse_header(uint8_t * p_buf, size_t buf_len) {
     // "All pointer offsets are written as relative to the current position in the file, 
     // so for example the GD3 offset at 0x14 in the header is the file position of the GD3 tag minus 0x14."
     vgm_data_start = vgm_hdr->vgm_data_offset + offsetof(vgm_header_t, vgm_data_offset);
-    log_standard("data start position: %d\n", vgm_data_start);
+    log_verbose("data start position: %d\n", vgm_data_start);
 
     if (buf_len < (vgm_data_start + 1)) {
         log_error("File size %d bytes too small, missing expected VGM Data at 0x%x\n", buf_len, vgm_data_start);
