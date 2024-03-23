@@ -157,11 +157,13 @@ def parse_psg(inf, outf, options):
     data = inf.read(1)
     while (data):
         if data == b'\x50':
-            row.append(inf.read(1)[0])
+            value = inf.read(1)[0]
+            if (value & 0x80):
+                channel_mute_mask |= (1 << ((value >> 5) & 3))
+            row.append(value)
             if len(row) > 15:
                 print("ERROR: Too many PSG writes per frame")
                 sys.exit(1)                
-            value = data
             count = 0
         elif (data == b'\x66') or (data >= b'\x61' and data <= b'\x63') or (data >= b'\x70' and data <= b'\x7f'):
             if data == b'\x61': 
