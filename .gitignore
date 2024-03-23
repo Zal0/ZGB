@@ -263,6 +263,9 @@ tools/gbr2png/gbr2png.exe
 tools/gbr2png/gbr2png
 tools/mod2gbt/mod2gbt.exe
 tools/mod2gbt/mod2gbt
+tools/uge2source/uge2source.exe
+tools/uge2source/uge2source
+
 
 tools/*/*.o
 tools/*/*/*.o
