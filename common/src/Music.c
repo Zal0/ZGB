@@ -47,10 +47,11 @@ void MUSIC_isr(void) NONBANKED {
 	gbt_update();
 	SWITCH_ROM(__save);
 #elif defined(MUSIC_DRIVER_BANJO)
-	UBYTE __save = CURRENT_BANK;
+	UBYTE __save = CURRENT_BANK, __save2 = MAP_FRAME2;
 	SWITCH_ROM(1);
 	SWITCH_ROM2(banjo_current_track_bank);
 	banjo_update_song();
+	SWITCH_ROM2(__save2);
 	SWITCH_ROM(__save);
 #endif
 }
@@ -70,9 +71,11 @@ void __PlayMusic(void* music, unsigned char bank, unsigned char loop) NONBANKED 
 		SWITCH_ROM(hUGE_current_track_bank = bank);
 		hUGE_init(hUGE_current_track = music);
 #elif defined(MUSIC_DRIVER_BANJO)
+		UBYTE __save2 = MAP_FRAME2;
 		SWITCH_ROM(1);
 		SWITCH_ROM2(banjo_current_track_bank = bank);
 		banjo_play_song(music, loop);
+		SWITCH_ROM2(__save2);
 #endif
 		SWITCH_ROM(__save);
 		last_music = music;
@@ -89,22 +92,24 @@ void __InitMusicDriver(void) NONBANKED {
 }
 
 void __StopMusic(void) NONBANKED {
-	UBYTE __save = CURRENT_BANK;
+	UBYTE __save = CURRENT_BANK, __save2 = MAP_FRAME2;
 	SWITCH_ROM(1);
 	SWITCH_ROM2(banjo_current_track_bank);
 	banjo_song_stop();
+	SWITCH_ROM2(__save2);
 	SWITCH_ROM(__save);
 	last_music = 0;
 }
 
 void __SetMusicMuteMask(UINT8 mask) NONBANKED {
-	UBYTE __save = CURRENT_BANK;
+	UBYTE __save = CURRENT_BANK, __save2 = MAP_FRAME2;
 	SWITCH_ROM(1);
 	SWITCH_ROM2(banjo_current_track_bank);
 	if (mask & CHANNEL_1) banjo_mute_song_channel(0); else banjo_unmute_song_channel(0);
 	if (mask & CHANNEL_2) banjo_mute_song_channel(1); else banjo_unmute_song_channel(1);
 	if (mask & CHANNEL_3) banjo_mute_song_channel(2); else banjo_unmute_song_channel(2);
 	if (mask & CHANNEL_4) banjo_mute_song_channel(3); else banjo_unmute_song_channel(3);
+	SWITCH_ROM2(__save2);
 	SWITCH_ROM(__save);
 }
 
