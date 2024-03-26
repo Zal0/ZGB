@@ -16,13 +16,13 @@ void PlayFx(SOUND_CHANNEL channel, UINT8 mute_frames, ...) {
 		sfx_buffer[1] = 0b11111000;
 		len = 5;
 	} else if (channel & CHANNEL_2) { 
-		sfx_buffer[1] = 0b11110001;
+		sfx_buffer[1] = 0b01111001;
 		len = 4;
 	} else if (channel & CHANNEL_3) { 
 		sfx_buffer[1] = 0b11111010;
 		len = 5;
 	} else if (channel & CHANNEL_4) { 
-		sfx_buffer[1] = 0b11110011;
+		sfx_buffer[1] = 0b01111011;
 		len = 4;
 	} else if (channel & CHANNEL_5) {
 		sfx_buffer[1] = 0b11100100;

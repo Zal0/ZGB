@@ -139,6 +139,7 @@ lbl:
         copy_reg _NR14_REG
         jp 4$
 20$:                                ; NR2x
+        sla b
         copy_reg _NR21_REG
         copy_swapped_reg _NR22_REG
         copy_reg _NR23_REG
@@ -153,6 +154,7 @@ lbl:
         copy_reg _NR34_REG
         jr 4$
 40$:                                ; NR4x
+        sla b
         copy_reg _NR41_REG
         copy_swapped_reg _NR42_REG
         copy_swapped_reg _NR43_REG
