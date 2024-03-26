@@ -78,6 +78,7 @@ PNG2ASSET_SPR_sms = $(PNG2ASSET_SPR_gg)
 FLAGSPNG2ASSET_SPR += $(PNG2ASSET_SPR_$(EXT))
 
 PNG2ASSET_BKG_gb = -noflip
+PNG2ASSET_BKG_duck = $(PNG2ASSET_BKG_gb)
 PNG2ASSET_BKG_gg = -noflip -pack_mode sms -bpp 4 -keep_palette_order
 PNG2ASSET_BKG_sms = $(PNG2ASSET_SPR_gg)
 FLAGSPNG2ASSET_BKG += $(PNG2ASSET_BKG_$(EXT))
