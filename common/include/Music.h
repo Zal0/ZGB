@@ -10,7 +10,7 @@ extern UINT8 stop_music_on_new_state;
 extern volatile UINT8 music_paused;
 
 void MUSIC_isr(void) NONBANKED;
-void __PlayMusic(void* music, unsigned char bank, unsigned char loop);
+void __PlayMusic(void* music, UINT8 bank, UINT8 loop);
 
 inline void INIT_SOUND(void) {
 #if defined(NINTENDO)
@@ -33,7 +33,7 @@ inline void INIT_SOUND(void) {
 	#define INIT_MUSIC
 	#define DECLARE_MUSIC(SONG) extern const void __bank_ ## SONG ## _uge; extern const hUGESong_t SONG ## _uge
 	#define PlayMusic(SONG, LOOP) __PlayMusic(&SONG ## _uge, (uint8_t)&__bank_ ## SONG ## _uge, 0)
-	#define StopMusic PauseMusic, last_music = 0
+	#define StopMusic PauseMusic, last_music = NULL
 
 	#define MUTE_CHANNEL(CHANNEL) if(last_music) hUGE_mute_mask = (CHANNEL)
 	#define UNMUTE_ALL_CHANNELS hUGE_reset_wave(),(hUGE_mute_mask = MUTE_MASK_NONE)
@@ -44,7 +44,7 @@ inline void INIT_SOUND(void) {
 	#define INIT_MUSIC gbt_stop()
 	#define DECLARE_MUSIC(SONG) extern const void __bank_ ## SONG ## _mod_Data; extern const unsigned char * SONG ## _mod_Data[]
 	#define PlayMusic(SONG, LOOP) __PlayMusic(SONG ## _mod_Data, (uint8_t)&__bank_ ## SONG ## _mod_Data, LOOP)
-	#define StopMusic gbt_stop(); last_music = 0
+	#define StopMusic gbt_stop(); last_music = NULL
 
 	#define MUTE_CHANNEL(CHANNEL) if (mute_channels != (CHANNEL)) (mute_channels = (CHANNEL)), gbt_enable_channels(0xF & ~(CHANNEL))
 	#define UNMUTE_ALL_CHANNELS (mute_channels = MUTE_MASK_NONE), gbt_enable_channels(0xF)
