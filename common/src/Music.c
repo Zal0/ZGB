@@ -97,16 +97,17 @@ void __InitMusicDriver(void) NONBANKED {
 void __StopMusic(void) NONBANKED {
 	if (last_music_bank == SFX_STOP_BANK)
 		return;
-	music_paused = 1;
+
+	UBYTE music_bank = last_music_bank; // save current music bank
+	last_music_bank = SFX_STOP_BANK;    // prevent running music updates from the interrupt
+	last_music = NULL;                  // clear the last music pointer
+
 	UBYTE __save = CURRENT_BANK, __save2 = MAP_FRAME2;
 	SWITCH_ROM(1);
-	SWITCH_ROM2(last_music_bank);
+	SWITCH_ROM2(music_bank);
 	banjo_song_stop();
 	SWITCH_ROM2(__save2);
 	SWITCH_ROM(__save);
-	last_music_bank = SFX_STOP_BANK;
-	last_music = NULL;
-	music_paused = 0;
 }
 
 void __SetMusicMuteMask(UINT8 mask) NONBANKED {
