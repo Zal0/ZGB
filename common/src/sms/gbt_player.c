@@ -21,3 +21,5 @@ void gbt_update(void) OLDCALL {
 void gbt_enable_channels(UINT8 channel_flags) OLDCALL {
 	channel_flags;
 }
+
+volatile UINT8 _gbt_channel3_loaded_instrument;

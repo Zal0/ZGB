@@ -54,6 +54,8 @@ gbt_instr:: ; Ch 1-4
 gbt_freq:: ; Ch 1-3
 	.ds	3*2
 
+__current_ch3_wave::
+__gbt_channel3_loaded_instrument::
 gbt_channel3_loaded_instrument:: ; current loaded instrument ($FF if none)
 	.ds	1
 
