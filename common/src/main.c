@@ -148,11 +148,21 @@ void main(void) {
 	HIDE_LEFT_COLUMN;
 #endif
 
+#if defined(SEGA) || (defined(NINTENDO) && defined(CGB))
+	#ifdef CGB
+	if (_cpu == CGB_TYPE) {
+	#endif
+		SetPalette(BG_PALETTE, 0, MAX_PALETTES, default_palette, BANK(default_palette));
+		SetPalette(SPRITES_PALETTE, 0, MAX_PALETTES, default_palette, BANK(default_palette));
+	#ifdef CGB
+	}
+	#endif
+#endif
+
 	DISPLAY_OFF;
 	while(1) {
 
-		if(stop_music_on_new_state)
-		{
+		if (stop_music_on_new_state) {
 			StopMusic;
 		}
 
@@ -161,17 +171,8 @@ void main(void) {
 		current_state = next_state;
 		scroll_target = 0;
 		last_tile_loaded = 0;
-
 #if defined(SEGA) || (defined(NINTENDO) && defined(CGB))
 		last_bg_pal_loaded = 0;
-	#ifdef CGB
-		if (_cpu == CGB_TYPE) {
-	#endif
-			SetPalette(BG_PALETTE, 0, MAX_PALETTES, default_palette, BANK(default_palette));
-			SetPalette(SPRITES_PALETTE, 0, MAX_PALETTES, default_palette, BANK(default_palette));
-	#ifdef CGB
-		}
-	#endif
 #endif
 
 #if defined(NINTENDO)
@@ -186,8 +187,9 @@ void main(void) {
 
 		scroll_x_vblank = scroll_x, scroll_y_vblank = scroll_y;
 
-		if(state_running)
+		if (state_running) {
 			FadeOut();
+		}
 
 		while (state_running) {
 			if(!vbl_count)
