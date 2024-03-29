@@ -20,10 +20,11 @@ INT8 SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, const pa
 	if (!nb_palettes)
 		return 0;
 	if ((first_palette + nb_palettes) > MAX_PALETTES)
-		return 0; //Adding more palettes than supported
+		return 0; // Adding more palettes than supported
 
 	UINT8 __save = CURRENT_BANK;
 	SWITCH_ROM(bank);
+	WAIT_WRITABLE_CRAM;
 	if (t == BG_PALETTE) {
 		set_bkg_palette(first_palette, nb_palettes, rgb_data);
 	} else {

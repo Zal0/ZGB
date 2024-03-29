@@ -8,6 +8,7 @@
 #define PAL_DEF(C3, C2, C1, C0) (UINT8)((C0 << 4 << 2) | (C1 << 4) | (C2 << 2) | C3)
 
 #ifdef CGB
+
 #define PALETTE_INDEX(PAL, IDX) PAL##CGBPal##IDX##c0, PAL##CGBPal##IDX##c1, PAL##CGBPal##IDX##c2, PAL##CGBPal##IDX##c3                       
 #define PALETTE_FROM_HEADER(PAL) PALETTE_INDEX(PAL, 0), \
                                  PALETTE_INDEX(PAL, 1), \
@@ -30,6 +31,8 @@
 #define PALETTE_FROM_HEADER(PAL) 0
 #endif
 
+#define WAIT_WRITABLE_CRAM
+
 #elif defined(SEGA)
 
 #if defined(MASTERSYSTEM)
@@ -45,6 +48,10 @@
 #define MAX_PALETTES 1
 #define N_PALETTE_COLORS 16
 
+#define WAIT_WRITABLE_CRAM while (VCOUNTER < 216) {}
+
+#else 
+#define WAIT_WRITABLE_CRAM
 #endif
 
 #if defined(SEGA) || (defined(NINTENDO) && defined(CGB))
@@ -66,6 +73,15 @@ typedef enum {
 } PALETTE_TYPE;
 
 INT8 SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, const palette_color_t *rgb_data, UINT8 bank);
+
+#endif
+
+#if defined(SEGA)
+inline void SetBorderColor(palette_color_t color) {
+	set_sprite_palette_entry(0, 0, ZGB_Fading_SPal[0] = color);
+}
+#else
+#define SetBorderColor(A)
 #endif
 
 #endif
