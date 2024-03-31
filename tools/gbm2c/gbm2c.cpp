@@ -292,16 +292,16 @@ int main(int argc, char* argv[])
 
 	fprintf(file, "const void __at(%d) __bank_%s;\n", bank, map_export_settings.label_name);
 	fprintf(file, "const struct MapInfo %s = {\n", map_export_settings.label_name);
-	fprintf(file, "\t%s_map, //map\n", map_export_settings.label_name);
-	fprintf(file, "\t%d, //width\n", map.width);
-	fprintf(file, "\t%d, //height\n", map.height);
-	if(export_attributes) {
-		fprintf(file, "\t%s_attributes, //attributes\n", map_export_settings.label_name);
+	fprintf(file, "\t.data = %s_map, //map\n", map_export_settings.label_name);
+	fprintf(file, "\t.width = %d, //width\n", map.width);
+	fprintf(file, "\t.height = %d, //height\n", map.height);
+	if (export_attributes) { 
+		fprintf(file, "\t.attributes = %s_attributes, //attributes\n", map_export_settings.label_name);
 	} else {
-		fprintf(file, "\t%s, //attributes\n", "0");
+		fprintf(file, "\t.attributes = 0, //attributes\n");
 	}
-	fprintf(file, "\tBANK(%s), //tiles bank\n", tile_file);
-	fprintf(file, "\t&%s, //tiles info\n", tile_file);
+	fprintf(file, "\t.tiles_bank = BANK(%s), //tiles bank\n", tile_file);
+	fprintf(file, "\t.tiles = &%s, //tiles info\n", tile_file);
 	fprintf(file, "};");
 
 	return 0;
