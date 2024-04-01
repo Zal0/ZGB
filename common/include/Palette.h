@@ -19,15 +19,15 @@
                                  PALETTE_INDEX(PAL, 6), \
                                  PALETTE_INDEX(PAL, 7)
 
-#define PAL_RED(C)   (((C)      ) & 0x1F)
-#define PAL_GREEN(C) (((C) >>  5) & 0x1F)
-#define PAL_BLUE(C)  (((C) >> 10) & 0x1F)
+#define PAL_RED(C)   (((C)      ) & 0x1Fu)
+#define PAL_GREEN(C) (((C) >>  5) & 0x1Fu)
+#define PAL_BLUE(C)  (((C) >> 10) & 0x1Fu)
 
-#define MAX_PALETTES 8
+#define MAX_PALETTES     8
 #define N_PALETTE_COLORS 4
 
 #else
-#define PALETTE_INDEX(PAL, IDX) 0
+#define PALETTE_INDEX(PAL, IDX)  0
 #define PALETTE_FROM_HEADER(PAL) 0
 #endif
 
@@ -36,16 +36,16 @@
 #elif defined(SEGA)
 
 #if defined(MASTERSYSTEM)
-#define PAL_RED(C)   (((C)      ) & 0x03)
-#define PAL_GREEN(C) (((C) >>  2) & 0x03)
-#define PAL_BLUE(C)  (((C) >>  4) & 0x03)
+#define PAL_RED(C)   (((C)      ) & 0x03u)
+#define PAL_GREEN(C) (((C) >>  2) & 0x03u)
+#define PAL_BLUE(C)  (((C) >>  4) & 0x03u)
 #else
-#define PAL_RED(C)   (((C)      ) & 0x0F)
-#define PAL_GREEN(C) (((C) >>  4) & 0x0F)
-#define PAL_BLUE(C)  (((C) >>  8) & 0x0F)
+#define PAL_RED(C)   (((C)      ) & 0x0Fu)
+#define PAL_GREEN(C) (((C) >>  4) & 0x0Fu)
+#define PAL_BLUE(C)  (((C) >>  8) & 0x0Fu)
 #endif
 
-#define MAX_PALETTES 1
+#define MAX_PALETTES     1
 #define N_PALETTE_COLORS 16
 
 #define WAIT_WRITABLE_CRAM while (VCOUNTER < 216) {}
@@ -64,9 +64,6 @@ extern palette_color_t ZGB_Fading_SPal[N_TOTAL_COLORS];
 
 extern UINT8 last_bg_pal_loaded;
 
-extern const palette_color_t default_palette[N_TOTAL_COLORS];
-BANKREF_EXTERN(default_palette)
-
 typedef enum {
 	BG_PALETTE,
 	SPRITES_PALETTE
@@ -74,11 +71,13 @@ typedef enum {
 
 INT8 SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, const palette_color_t *rgb_data, UINT8 bank);
 
+void SetDefaultColorPalettes(void) BANKED;
+
 #endif
 
 #if defined(SEGA)
 inline void SetBorderColor(palette_color_t color) {
-	set_sprite_palette_entry(0, 0, ZGB_Fading_SPal[0] = color);
+	set_sprite_palette_entry(0, (__READ_VDP_REG(VDP_R7) & 0x0fu), ZGB_Fading_SPal[0] = color);
 }
 #else
 #define SetBorderColor(A)

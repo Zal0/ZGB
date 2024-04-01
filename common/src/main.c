@@ -149,14 +149,7 @@ void main(void) {
 #endif
 
 #if defined(SEGA) || (defined(NINTENDO) && defined(CGB))
-	#ifdef CGB
-	if (_cpu == CGB_TYPE) {
-	#endif
-		SetPalette(BG_PALETTE, 0, MAX_PALETTES, default_palette, BANK(default_palette));
-		SetPalette(SPRITES_PALETTE, 0, MAX_PALETTES, default_palette, BANK(default_palette));
-	#ifdef CGB
-	}
-	#endif
+	SetDefaultColorPalettes();
 #endif
 
 	DISPLAY_OFF;
