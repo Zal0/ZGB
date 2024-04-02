@@ -1,21 +1,29 @@
+# Disclamer
+
+This repo is a fork of the original [ZGB](https://github.com/Zal0/ZGB/) repo, which extends the functionality and allows compiling your projects, keeping backward compatibility as much as possible, for the following platforms:
+- Nintento Game Boy / Nintento Game Boy Color
+- Analogue Pocker .pocket format
+- Mega Duck / Coguar Boy
+- Sega Master System
+- Sega Game Gear
+
 # ZGB
 
 ZGB is a Game Boy / Game Boy Color engine that lets you write your own games in C or asm.
 
-It uses [GBDK 2020](https://github.com/Zal0/gbdk-2020) but expands it to give you some common functionallity for writing games such as: a main loop, sprites spawning, sprites life cycle, sprites animations, collison management, easily getting assets into the game, music, fx...
+It uses [GBDK 2020](https://github.com/gbdk-2020/gbdk-2020/releases/latest) but expands it to give you some common functionallity for writing games such as: a main loop, sprites spawning, sprites life cycle, sprites animations, collison management, easily getting assets into the game, music, fx...
 
 ![gif](https://raw.githubusercontent.com/Zal0/ZGB/master/doc%20files/tuto.gif) ![gif](https://github.com/Zal0/bitbitjam2016/blob/develop/bitbit3/res/marketing/screenshots/pretty.gif?raw=true) ![gif](https://github.com/Zal0/gbjam2016/raw/develop/res/marketing/gifs/fly.gif?raw=true)
 
 ## Getting started
 - Installing ZGB
-  - Download the latest [release](https://github.com/Zal0/ZGB/releases)
+  - Download the latest [release](https://github.com/untoxa/ZGB/releases/latest) or the nightly build from [CI](https://github.com/untoxa/ZGB/actions/workflows/zgb_build_and_package.yml)
   - Run install.bat (this will create a new environment var ZGB_PATH pointing to %ZGB%/common)
-> NOTE: ensure ZGB path doesn't contain any spaces (more info [here](https://github.com/Zal0/ZGB/issues/31))
+> NOTE: ensure ZGB path doesn't contain any spaces
 - Creating a new project
-  - Download the [ZGB-template](https://github.com/Zal0/ZGB-template/archive/master.zip) and build it running build.bat
+  - Take the ZGB-template from the ZGB examples subfolder and build it running build.bat or make from the template/src folder
   - Follow the tutorial on the [wiki](https://github.com/Zal0/ZGB/wiki) to understand the basic concepts of the engine
-- (**Optional**) Download [***Microsoft Visual Studio Community Edition***](https://www.visualstudio.com/downloads/) 
-The [ZGB-template](https://github.com/Zal0/ZGB-template) comes with a solution customized for visual studio
+- (**Optional**) Download [***Microsoft Visual Studio Community Edition***](https://www.visualstudio.com/downloads/) or the [***Microsoft Visual Studio Code***](https://code.visualstudio.com/download/)
 
 ## Documentation
 Check the [wiki](https://github.com/Zal0/ZGB/wiki) and this README
@@ -36,18 +44,24 @@ In most cases you just need a small makefile like this
 ```
 PROJECT_NAME = ZGB_TEMPLATE
 
-all: build_gb
+# Set platforms to build here, spaced separated. (These are in the separate Makefile.targets)
+# They can also be built/cleaned individually: "make gg" and "make gg-clean"
+# Possible are: gb gbc pocket megaduck sms gg
+TARGETS=gb megaduck gg sms
+
+# Builds all targets sequentially
+all: $(TARGETS)
+
+# Set build type to Debug, comment out owr change to Release for the release
+BUILD_TYPE = Debug
 
 # Number of banks (must be a power of 2): A (Automatic), 2, 4, 8, 16, 32...
 N_BANKS = A
 
-# Music player: HUGETRACKER(default) or GBT_PLAYER
-MUSIC_PLAYER = GBT_PLAYER
-
 # Default hardware sprites size: SPRITES_8x16(default) or SPRITES_8x8
 DEFAULT_SPRITES_SIZE = SPRITES_8x16
 
-include $(ZGB_PATH)/src/MakefileCommon
+include $(subst ',,$(subst \,/,'$(ZGB_PATH)'))/src/MakefileCommon
 ```
 When you make any changes to any of the source files of your project, or any of the assets, only that file will be recompiled. The internal Makefile that comes with ZGB creates a list of dependencies and only compiles what is needed saving you a lot of time. It will also help you a lot if you work with a version control system, like git
 
@@ -100,10 +114,10 @@ When ZGB starts it will call the **START** function of this State. Then on each 
 ```C
 #include "Banks/SetAutoBank.h"
 
-void START() {
+void START(void) {
 }
 
-void UPDATE() {
+void UPDATE(void) {
 }
 ```
 2. Register this new State in ZGBMain.h
@@ -128,7 +142,7 @@ Sprites will also be removed when getting off screen limits. You can configure h
 
 Usually you will create an Sprite in the START function of your State and assing it to scroll_target, so that the camera follows it
 ```C
-void START() {
+void START(void) {
 	scroll_target = SpriteManagerAdd(SpritePlayer, 50, 50);
 	...
 }
@@ -173,13 +187,13 @@ The template already comes with a placeholder Sprite but you surely will need to
 ```C
 #include "Banks/SetAutoBank.h"
 
-void START() {
+void START(void) {
 }
 
-void UPDATE() {
+void UPDATE(void) {
 }
 
-void DESTROY() {
+void DESTROY(void) {
 }
 ```
 3. Register this new Sprite in ZGBMain.h
@@ -189,6 +203,14 @@ void DESTROY() {
 _SPRITE_DMG(<YourNewSprite>, <image>)\
 SPRITE_DEF_END
 ```
+If you are compiling for some system which does not support hardware sprite flipping like Sega Master System or Sega Game Gear, you should declare which axis sprites may be flipped:
+```C
+#define SPRITES \
+...
+_SPRITE_DMG_MIRROR(<YourNewSprite>, <image>, <MirrorFlags>)\
+SPRITE_DEF_END
+```
+Creating mirrored copies of the sprites occupy additional space in VRAM.
 </details>
 
 ---
@@ -209,7 +231,7 @@ Here is how you create a new map and load it into your game:
 ```C
 IMPORT_MAP(map); //This is the name of your map without the extension
 
-void START() {
+void START(void) {
 	scroll_target = SpriteManagerAdd(SpritePlayer, 50, 50);
 	InitScroll(BANK(map), &map, 0, 0);
 }
@@ -224,7 +246,7 @@ The default behaviour of this function is to spawn sprites using sprite_tye = 25
   <summary><strong>Metasprites</strong></summary>
 
 Metasprites are sprites composed of 8x8 or 8x16 native sprites. 
-The tool png2asset from GBDK is used to create the data that will end up in the final build:
+The tool png2asset from GBDK-2020 is used to create the data that will end up in the final build:
 - duplicated tiles will be only added once
 - mirrored tiles will also count as duplicated
 - empty tiles will be ignored
@@ -255,7 +277,7 @@ DEFAULT_SPRITES_SIZE = SPRITES_8x16
 
 Animations in ZGB are defined by arrays of frames where the first element is the number of frames
 ```C
-const UINT8 anim_walk[] = {4, 0, 1, 2, 1, 0};
+const UINT8 anim_walk[] = VECTOR(0, 1, 2, 1, 0);
 ```
 
 Setting the current animation is done with **SetSpriteAnim**(sprite, animation, speed)
@@ -326,8 +348,8 @@ ZGB uses [bankpack](https://bbbbbr.github.io/gbdk-2020/docs/api/docs_toolchain.h
 - **_#include "Banks/SetAutoBank.h"_** is added at the beggining of your States and Sprites
 - If you need to call an sprite function from another sprite, declare it **BANKED**
 ```C
-void HitMe();        //WRONG!!
-void HitMe() BANKED; //RIGHT!
+void HitMe(void);        //WRONG!!
+void HitMe(void) BANKED; //RIGHT!
 ```
 
 - Check the png created in the Debug/Release folder of your build to get an overview of your banks usage. For a more detailed information you can use [RomUsage](https://github.com/bbbbbr/romusage)
@@ -365,14 +387,16 @@ You can change the target (background or window) with the var **print_target**
 <details>
   <summary><strong>Music</strong></summary>
 
-You can select witch music drive to use [gbt-player](https://github.com/AntonioND/gbt-player) or [hUGETracker](https://github.com/SuperDisk/hUGETracker) in the Makefile
+Music driver is automatically detected, depending on the assets you actually use. `*.MOD` files enable the [gbt-player](https://github.com/AntonioND/gbt-player) driver, `*.UGE` files enable the [hUGETracker](https://github.com/SuperDisk/hUGETracker) driver, `*.FUR` files enable the [banjo](https://github.com/joffb/banjo) driver for the PSG sound chip.
+
+You can force select witch music drive to use in the Makefile, but usually you don't need that. You can not mix several music drivers in one project.
 ```
 # Music player: HUGETRACKER(default) or GBT_PLAYER
 MUSIC_PLAYER = GBT_PLAYER
 ```
 
 To play some music in your game
-- Place the .mod or .uge files in the res/music folder
+- Place the .mod or .uge files in the res/music/<ext>/ folder
 - Import the music with
 ```C
 DECLARE_MUSIC(<music_filename>)
@@ -380,6 +404,10 @@ DECLARE_MUSIC(<music_filename>)
 - Play it with
 ```C
 PlayMusic(<music_filename>, LOOP)
+```
+- Pause it with
+```C
+PauseMusic;
 ```
 - And Stop it with
 ```C
