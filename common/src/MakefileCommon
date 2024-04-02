@@ -69,8 +69,8 @@ CFLAGS_gb = -DDEFAULT_COLOR_DEPTH=2
 CFLAGS_gbc = $(CFLAGS_gb) -DCGB
 CFLAGS_duck = $(CFLAGS_gb)
 CFLAGS_pocket = $(CFLAGS_gb)
-CFLAGS_gg = -DDEFAULT_COLOR_DEPTH=4
-CFLAGS_sms = -Wf--nmos-z80 $(CFLAGS_gg)
+CFLAGS_gg = -Wf--nmos-z80 -DDEFAULT_COLOR_DEPTH=4
+CFLAGS_sms = $(CFLAGS_gg)
 
 #png2asset cross-platform flags
 PNG2ASSET_SPR_gg = -noflip -pack_mode sms -bpp 4 -keep_palette_order
