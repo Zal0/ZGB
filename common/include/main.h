@@ -47,6 +47,12 @@ void LCD_isr(void) NONBANKED;
 #define IMPORT_TILES(TILES) extern struct TilesInfo TILES; extern const void __bank_##TILES
 #define IMPORT_FONT(FONT) IMPORT_TILES(FONT)
 
+#ifdef USE_SGB_BORDER
+#define IMPORT_BORDER(MAP) extern struct MapInfo MAP; extern const void __bank_##MAP
+#else
+#define IMPORT_BORDER(MAP) extern void MAP
+#endif
+
 #ifdef SEGA
 #define MAP_OVERLAP_SPR __WRITE_VDP_REG(VDP_R2, R2_MAP_0x3800); __WRITE_VDP_REG(VDP_R5, R5_SAT_0x3F00)
 #define MAP_OVERLAP_BKG __WRITE_VDP_REG(VDP_R2, R2_MAP_0x1800); __WRITE_VDP_REG(VDP_R5, R5_SAT_0x1F00)
