@@ -2,6 +2,15 @@
 
 #include "Sound.h"
 
+#define PERIOD_8192 0x700
+#define LENGTH_8192 0x3f
+#define PERIOD_1920 0x3BB
+#define LENGTH_1920 0x3b
+
+#define CH3_LENGTH (LENGTH_1920)
+#define CH3_VALUES (PERIOD_1920 | 0xc000)
+
+
 volatile UINT8 sfx_play_bank = SFX_STOP_BANK;
 const UINT8 * sfx_play_sample = NULL;
 UINT8 sfx_frame_skip;
@@ -84,13 +93,13 @@ lbl:
 
         ld a, #0x80
         ldh (_NR30_REG),a
-        ld a, #0xFE                 ; length of wave
+        ld a, #(CH3_LENGTH)         ; length of wave
         ldh (_NR31_REG),a
         ld a, #0x20                 ; volume
         ldh (_NR32_REG),a
-        xor a                       ; low freq bits are zero
+        ld a, #<(CH3_VALUES)
         ldh (_NR33_REG),a
-        ld a, #0xC7                 ; start; no loop; high freq bits are 111
+        ld a, #>(CH3_VALUES)
         ldh (_NR34_REG),a
 
 9$:
