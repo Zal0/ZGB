@@ -42,6 +42,7 @@ Check the [wiki](https://github.com/Zal0/ZGB/wiki) and this README
 In most cases you just need a small makefile like this
 
 ```
+# Project name must not be empty or contain special characters or spaces
 PROJECT_NAME = ZGB_TEMPLATE
 
 # Set platforms to build here, spaced separated. (These are in the separate Makefile.targets)

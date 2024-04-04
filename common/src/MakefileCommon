@@ -5,7 +5,7 @@ ifndef GBDK_HOME
 endif
 GBDK_HOME_UNIX := $(subst ',,$(subst \,/,'$(GBDK_HOME)'))
 
-#--- Default build will be release. Can be overiden passing BUILD_TYPE = debug as a parameter
+#--- Default build will be Release. Can be overiden passing BUILD_TYPE = Debug as a parameter
 ifndef BUILD_TYPE
 	BUILD_TYPE = Release
 endif
@@ -27,11 +27,8 @@ BINFLAGS_sms     =
 BINFLAGS_gg      = 
 BINFLAGS_nes     = 
 
-# Optional verbose output for lcc, linker and bankpack
-# BINFLAGS += -v -Wl-p -Wb-v
-
 # Append current platform extension type to output and intermediate directories
-OBJDIR = ../$(BUILD_TYPE)/$(EXT)
+OBJDIR = ../obj/$(subst Verbose,,$(BUILD_TYPE))/$(EXT)
 OBJDIR_RES = $(OBJDIR)/res
 OBJDIR_ZGB = $(OBJDIR)/zgb
 BINDIR = ../bin/$(EXT)
@@ -96,13 +93,7 @@ FLAGSFXHAMMER += $(FLAGSFXHAMMER_$(EXT))
 
 CFLAGS += $(TARGET) -Wf-MMD $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include -I$(OBJDIR_RES) -DFILE_NAME=$(basename $(<F)) -DCUSTOM_DATA_SIZE=$(CUSTOM_DATA_SIZE) $(CFLAGS_$(EXT))
 
-ifeq ($(strip $(N_BANKS)),)
-	NBANKS = A
-endif
-BINFLAGS += $(TARGET) -Wl-j -Wm-yS -autobank -Wl-yo$(N_BANKS) -Wb-ext=.rel $(ADDR_$(PLAT)) $(BINFLAGS_$(EXT)) -Wm-yn"$(PROJECT_NAME)"
-
-
-# tune mapper and color settings
+# Tune Mapper and SGB settings
 ifneq ($(strip $(PLAT)),duck)
 	ifeq ($(wildcard savegame.c), )
 		# No savegame
@@ -122,6 +113,14 @@ else
 	BINFLAGS += -Wl-yt0x19
 endif
 
+# Compose flags for final binary emission stage
+ifeq ($(strip $(N_BANKS)),)
+	NBANKS = A
+endif
+BINFLAGS += $(TARGET) -Wl-j -Wm-yS -autobank -Wl-yo$(N_BANKS) -Wb-ext=.rel $(ADDR_$(PLAT)) $(BINFLAGS_$(EXT)) -Wm-yn$(PROJECT_NAME)
+
+
+# Sprite sizes
 ifeq ($(DEFAULT_SPRITES_SIZE), SPRITES_8x16)
 	FLAGSPNG2ASSET_SPR += -spr8x16
 	CFLAGS += -DDEFAULT_SPRITES_SIZE=16
@@ -129,6 +128,7 @@ else
 	FLAGSPNG2ASSET_SPR += -spr8x8
 	CFLAGS += -DDEFAULT_SPRITES_SIZE=8
 endif
+
 
 # Release/Debug flags
 ifneq (,$(findstring Debug,$(BUILD_TYPE)))
@@ -138,6 +138,12 @@ ifneq (,$(findstring Debug,$(BUILD_TYPE)))
 else
 	CFLAGS += -Wf'--max-allocs-per-node 50000' -DNDEBUG
 endif
+# Optional verbose output for lcc, linker and bankpack
+ifneq (,$(findstring Verbose,$(BUILD_TYPE)))
+	CFLAGS += -v
+	BINFLAGS += -Wl-p -Wb-v
+endif
+
 
 current_dir = $(shell pwd)
 
