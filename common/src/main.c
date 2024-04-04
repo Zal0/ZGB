@@ -16,13 +16,9 @@
 #endif
 
 // reference font_recode_table so that allow passing -Wl-g_font_recode_table=ADDR when not using Print()
-void __force_use_font(void) NAKED {
 #if defined(__SDCC)
-	__asm
-		.globl _font_recode_table
-	__endasm;
+static void __force_use_font(void) NAKED { __asm__(".globl _font_recode_table"); }
 #endif
-}
 
 extern UINT8 next_state;
 
