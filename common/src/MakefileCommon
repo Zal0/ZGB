@@ -53,7 +53,7 @@ MOD2GBT = $(ZGB_PATH_UNIX)/../tools/mod2gbt/mod2gbt
 UGE2SOURCE = $(ZGB_PATH_UNIX)/../tools/uge2source/uge2source
 VGM2DATA = $(ZGB_PATH_UNIX)/../tools/vgm2data/vgm2data
 WAV2DATA = python $(ZGB_PATH_UNIX)/../tools/wav2data/wav2data.py
-FXHAMMER2DATA = python $(ZGB_PATH_UNIX)/../tools/fxhammer2data/fxhammer2data.py
+FXHAMMER2DATA = python $(ZGB_PATH_UNIX)/../tools/fxhammer2data/fxhammer2data
 FUR2JSON = python $(ZGB_PATH_UNIX)/../tools/banjo/furnace2json.py 
 JSON2SMS = python $(ZGB_PATH_UNIX)/../tools/banjo/json2sms.py
 
