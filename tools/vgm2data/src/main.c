@@ -88,7 +88,7 @@ int main( int argc, char *argv[] )  {
 static void display_help(void) {
     log_standard(
     "\n"
-    "Usage: vgm2data.py [options] INPUT_FILE_NAME.VGM\n"
+    "Usage: vgm2data [options] INPUT_FILE_NAME.VGM\n"
     "\n"
     "Options:\n"
     "  -h, --help            show this help message and exit\n"
@@ -201,7 +201,7 @@ static int handle_args(int argc, char * argv[]) {
             vgm_opt.bank = strtol(argv[i] + strlen("--bank="), NULL, 10);
 
         // == Delay ==
-        } else if (strstr(argv[i], "-b") == argv[i]) {
+        } else if (strstr(argv[i], "-d") == argv[i]) {
             if (! increment_if_next_arg_available(&i, argc, "-d")) return false;
             warn_if_arg_looks_like_option(argv[i], "-d", "Usage: -d delay");
             vgm_opt.delay = strtol(argv[i], NULL, 10);
