@@ -7,10 +7,20 @@
 
 UINT8 last_bg_pal_loaded = 0;
 
-BANKREF(default_palette)
 const palette_color_t default_palette[N_TOTAL_COLORS] = {
 	RGB8(255, 255, 255), RGB8(160, 160, 160), RGB8(80, 80, 80), RGB8(0, 0, 0)
 };
+
+void SetDefaultColorPalettes(void) BANKED {
+	#ifdef CGB
+	if (_cpu == CGB_TYPE) {
+	#endif
+		set_bkg_palette(0, MAX_PALETTES, default_palette);
+		set_sprite_palette(0, MAX_PALETTES, default_palette);
+	#ifdef CGB
+	}
+	#endif
+}
 
 INT8 SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, const palette_color_t *rgb_data, UINT8 bank) NONBANKED {
 #if defined(SEGA) && (DEFAULT_COLOR_DEPTH == 2)
@@ -38,3 +48,4 @@ INT8 SetPalette(PALETTE_TYPE t, UINT8 first_palette, UINT8 nb_palettes, const pa
 }
 
 #endif
+

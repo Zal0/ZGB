@@ -5,7 +5,7 @@ ifndef GBDK_HOME
 endif
 GBDK_HOME_UNIX := $(subst ',,$(subst \,/,'$(GBDK_HOME)'))
 
-#--- Default build will be release. Can be overiden passing BUILD_TYPE = debug as a parameter
+#--- Default build will be Release. Can be overiden passing BUILD_TYPE = Debug as a parameter
 ifndef BUILD_TYPE
 	BUILD_TYPE = Release
 endif
@@ -27,17 +27,14 @@ BINFLAGS_sms     =
 BINFLAGS_gg      = 
 BINFLAGS_nes     = 
 
-# Optional verbose output for lcc, linker and bankpack
-# BINFLAGS += -v -Wl-p -Wb-v
-
 # Append current platform extension type to output and intermediate directories
-OBJDIR = ../$(BUILD_TYPE)/$(EXT)
+OBJDIR = ../obj/$(subst Verbose,,$(BUILD_TYPE))/$(EXT)
 OBJDIR_RES = $(OBJDIR)/res
 OBJDIR_ZGB = $(OBJDIR)/zgb
 BINDIR = ../bin/$(EXT)
 
 # See bottom of Makefile for directory auto-creation
-MKDIRS = $(BINDIR) $(OBJDIR) $(OBJDIR_RES) $(OBJDIR_RES)/sprites $(OBJDIR_RES)/borders $(OBJDIR_ZGB)
+MKDIRS = $(BINDIR) $(OBJDIR) $(OBJDIR_RES) $(OBJDIR_RES)/sprites $(OBJDIR_ZGB)
 
 
 LCC = $(GBDK_HOME_UNIX)/bin/lcc
@@ -55,6 +52,7 @@ GBM2C = $(ZGB_PATH_UNIX)/../tools/gbm2c/gbm2c
 MOD2GBT = $(ZGB_PATH_UNIX)/../tools/mod2gbt/mod2gbt
 UGE2SOURCE = $(ZGB_PATH_UNIX)/../tools/uge2source/uge2source
 VGM2DATA = $(ZGB_PATH_UNIX)/../tools/vgm2data/vgm2data
+WAV2DATA = python $(ZGB_PATH_UNIX)/../tools/wav2data/wav2data.py
 FXHAMMER2DATA = python $(ZGB_PATH_UNIX)/../tools/fxhammer2data/fxhammer2data
 FUR2JSON = python $(ZGB_PATH_UNIX)/../tools/banjo/furnace2json.py 
 JSON2SMS = python $(ZGB_PATH_UNIX)/../tools/banjo/json2sms.py
@@ -69,7 +67,7 @@ CFLAGS_gb = -DDEFAULT_COLOR_DEPTH=2
 CFLAGS_gbc = $(CFLAGS_gb) -DCGB
 CFLAGS_duck = $(CFLAGS_gb)
 CFLAGS_pocket = $(CFLAGS_gb)
-CFLAGS_gg = -DDEFAULT_COLOR_DEPTH=4
+CFLAGS_gg = -Wf--nmos-z80 -DDEFAULT_COLOR_DEPTH=4
 CFLAGS_sms = $(CFLAGS_gg)
 
 #png2asset cross-platform flags
@@ -95,13 +93,7 @@ FLAGSFXHAMMER += $(FLAGSFXHAMMER_$(EXT))
 
 CFLAGS += $(TARGET) -Wf-MMD $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include -I$(OBJDIR_RES) -DFILE_NAME=$(basename $(<F)) -DCUSTOM_DATA_SIZE=$(CUSTOM_DATA_SIZE) $(CFLAGS_$(EXT))
 
-ifeq ($(strip $(N_BANKS)),)
-	NBANKS = A
-endif
-BINFLAGS += $(TARGET) -Wl-j -Wm-yS -autobank -Wl-yo$(N_BANKS) -Wb-ext=.rel $(ADDR_$(PLAT)) $(BINFLAGS_$(EXT)) -Wm-yn"$(PROJECT_NAME)"
-
-
-# tune mapper and color settings
+# Tune Mapper and SGB settings
 ifneq ($(strip $(PLAT)),duck)
 	ifeq ($(wildcard savegame.c), )
 		# No savegame
@@ -113,13 +105,22 @@ ifneq ($(strip $(PLAT)),duck)
 	endif
 
 	# set SGB flags if has border and not SMS/GG
-	ifneq ($(wildcard ../res/borders), )
-		BINFLAGS += -Wm-ys 
+	ifneq ($(wildcard ../res/borders/$(EXT)), )
+		BINFLAGS += -Wm-ys
+		CFLAGS += -DUSE_SGB_BORDER 
 	endif
 else
 	BINFLAGS += -Wl-yt0x19
 endif
 
+# Compose flags for final binary emission stage
+ifeq ($(strip $(N_BANKS)),)
+	NBANKS = A
+endif
+BINFLAGS += $(TARGET) -Wl-j -Wm-yS -autobank -Wl-yo$(N_BANKS) -Wb-ext=.rel $(ADDR_$(PLAT)) $(BINFLAGS_$(EXT)) -Wm-yn$(PROJECT_NAME)
+
+
+# Sprite sizes
 ifeq ($(DEFAULT_SPRITES_SIZE), SPRITES_8x16)
 	FLAGSPNG2ASSET_SPR += -spr8x16
 	CFLAGS += -DDEFAULT_SPRITES_SIZE=16
@@ -127,6 +128,7 @@ else
 	FLAGSPNG2ASSET_SPR += -spr8x8
 	CFLAGS += -DDEFAULT_SPRITES_SIZE=8
 endif
+
 
 # Release/Debug flags
 ifneq (,$(findstring Debug,$(BUILD_TYPE)))
@@ -136,6 +138,12 @@ ifneq (,$(findstring Debug,$(BUILD_TYPE)))
 else
 	CFLAGS += -Wf'--max-allocs-per-node 50000' -DNDEBUG
 endif
+# Optional verbose output for lcc, linker and bankpack
+ifneq (,$(findstring Verbose,$(BUILD_TYPE)))
+	CFLAGS += -v
+	BINFLAGS += -Wl-p -Wb-v
+endif
+
 
 current_dir = $(shell pwd)
 
@@ -163,8 +171,9 @@ SPRITES          = $(foreach dir,../res/sprites,$(notdir $(wildcard $(dir)/*.gbr
 SPRITES_PNG      = $(foreach dir,../res/sprites,$(notdir $(wildcard $(dir)/*.png)))
 SPRITES_PNG_PLAT = $(foreach dir,../res/sprites/$(EXT),$(notdir $(wildcard $(dir)/*.png)))
 VGMS_PLAT        = $(foreach dir,../res/sounds/$(EXT),$(notdir $(wildcard $(dir)/*.vgm)))
+WAVS_PLAT        = $(foreach dir,../res/sounds/$(EXT),$(notdir $(wildcard $(dir)/*.wav)))
 SAVS_PLAT        = $(foreach dir,../res/sounds/$(EXT),$(notdir $(wildcard $(dir)/*.sav)))
-SGB_BORDERS      = $(foreach dir,../res/borders,$(notdir $(wildcard $(dir)/*.png)))
+SGB_BORDERS      = $(foreach dir,../res/borders/$(EXT),$(notdir $(wildcard $(dir)/*.png)))
 	
 # detect music driver
 ifeq ($(MUSIC_PLAYER), )
@@ -196,7 +205,7 @@ else
 	endif
 endif
 
-OBJS = $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.o) $(GBMS_PLAT:%.gbm=$(OBJDIR_RES)/%.gbm.o) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.o) $(GBRS_PLAT:%.gbr=$(OBJDIR_RES)/%.gbr.o) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.o) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.o) $(SPRITES_PNG_PLAT:%.png=$(OBJDIR_RES)/sprites/%.png.o) $(SGB_BORDERS:%.png=$(OBJDIR_RES)/borders/%.png.o) $(PNGS:%.png=$(OBJDIR_RES)/%.png.o) $(PNGS_PLAT:%.png=$(OBJDIR_RES)/%.png.o) $(VGMS_PLAT:%.vgm=$(OBJDIR_RES)/%.vgm.o) $(SAVS_PLAT:%.sav=$(OBJDIR_RES)/%.sav.o) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.o) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.o) $(MUSICS_FUR:%.fur=$(OBJDIR_RES)/%.fur.o) $(ASMS:%.s=$(OBJDIR)/%.o) $(PLAT_AS:%.s=$(OBJDIR)/%.o) $(CLASSES:%.c=$(OBJDIR)/%.o) $(PLAT_C:%.c=$(OBJDIR)/%.o)
+OBJS = $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.o) $(GBMS_PLAT:%.gbm=$(OBJDIR_RES)/%.gbm.o) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.o) $(GBRS_PLAT:%.gbr=$(OBJDIR_RES)/%.gbr.o) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.o) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.o) $(SPRITES_PNG_PLAT:%.png=$(OBJDIR_RES)/sprites/%.png.o) $(SGB_BORDERS:%.png=$(OBJDIR_RES)/%.png.o) $(PNGS:%.png=$(OBJDIR_RES)/%.png.o) $(PNGS_PLAT:%.png=$(OBJDIR_RES)/%.png.o) $(VGMS_PLAT:%.vgm=$(OBJDIR_RES)/%.vgm.o) $(WAVS_PLAT:%.wav=$(OBJDIR_RES)/%.wav.o) $(SAVS_PLAT:%.sav=$(OBJDIR_RES)/%.sav.o) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.o) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.o) $(MUSICS_FUR:%.fur=$(OBJDIR_RES)/%.fur.o) $(ASMS:%.s=$(OBJDIR)/%.o) $(PLAT_AS:%.s=$(OBJDIR)/%.o) $(CLASSES:%.c=$(OBJDIR)/%.o) $(PLAT_C:%.c=$(OBJDIR)/%.o)
 OBJS_ZGB = $(ASMS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.o) $(PLAT_AS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(PLAT_C_ZGB:%.c=$(OBJDIR_ZGB)/%.o) $(OBJECTS_ZGB)
 
 RELS = $(OBJS:%.o=%.rel)
@@ -205,7 +214,7 @@ RELS = $(OBJS:%.o=%.rel)
 BINS = $(BINDIR)/$(PROJECT_NAME).$(EXT) #$(OBJDIR)/Makefile.uptodate
 
 #prevent gbr2c and gbm2c intermediate files from being deleted
-.SECONDARY: $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.c) $(GBMS_PLAT:%.gbm=$(OBJDIR_RES)/%.gbm.c) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.c) $(GBRS_PLAT:%.gbr=$(OBJDIR_RES)/%.gbr.c) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.c) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.c) $(SPRITES_PNG_PLAT:%.png=$(OBJDIR_RES)/sprites/%.png.c) $(SGB_BORDERS:%.png=$(OBJDIR_RES)/borders/%.png.c) $(PNGS:%.png=$(OBJDIR_RES)/%.png.c) $(PNGS_PLAT:%.png=$(OBJDIR_RES)/%.png.c) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.c) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.c) $(MUSICS_FUR:%.fur=$(OBJDIR_RES)/%.fur.c)
+.SECONDARY: $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.c) $(GBMS_PLAT:%.gbm=$(OBJDIR_RES)/%.gbm.c) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.c) $(GBRS_PLAT:%.gbr=$(OBJDIR_RES)/%.gbr.c) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.c) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.c) $(SPRITES_PNG_PLAT:%.png=$(OBJDIR_RES)/sprites/%.png.c) $(SGB_BORDERS:%.png=$(OBJDIR_RES)/%.png.c) $(PNGS:%.png=$(OBJDIR_RES)/%.png.c) $(PNGS_PLAT:%.png=$(OBJDIR_RES)/%.png.c) $(VGMS_PLAT:%.vgm=$(OBJDIR_RES)/%.vgm.c) $(WAVS_PLAT:%.wav=$(OBJDIR_RES)/%.wav.c) $(SAVS_PLAT:%.sav=$(OBJDIR_RES)/%.sav.c) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.c) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.c) $(MUSICS_FUR:%.fur=$(OBJDIR_RES)/%.fur.c)
 
 #dependencies -------------------------------------------------------------------------------------------
 # option -MMD will generate .d files that can be included here for dependency checking (we can skip this on clean)
@@ -248,7 +257,7 @@ $(OBJDIR_RES)/%.gbr.c: ../res/%.gbr
 $(OBJDIR_RES)/%.gbr.c: ../res/backgrounds/$(EXT)/%.gbr
 	@$(GBR2C) $< $(OBJDIR_RES) $(FLAGSGBR2C)
 
-$(OBJDIR_RES)/borders/%.png.c: ../res/borders/%.png $(OBJDIR_RES)/borders
+$(OBJDIR_RES)/%.png.c: ../res/borders/$(EXT)/%.png
 	@$(PNG2ASSET) $< -b 255 -map -bpp 4 -max_palettes 4 -use_map_attributes -use_structs -pack_mode sgb -c $@
 
 .SECONDEXPANSION:
@@ -262,6 +271,10 @@ $(OBJDIR_RES)/%.png.c: ../res/backgrounds/$(EXT)/%.png $$(wildcard ../res/backgr
 .SECONDEXPANSION:
 $(OBJDIR_RES)/%.vgm.c: ../res/sounds/$(EXT)/%.vgm $$(wildcard ../res/sounds/$(EXT)/%.vgm.meta)
 	@$(VGM2DATA) -b 255 $(if $(wildcard $<.meta),`cat <$<.meta`) -o $@ $<
+
+.SECONDEXPANSION:
+$(OBJDIR_RES)/%.wav.c: ../res/sounds/$(EXT)/%.wav $$(wildcard ../res/sounds/$(EXT)/%.wav.meta)
+	@$(WAV2DATA) -b 255 $(if $(wildcard $<.meta),`cat <$<.meta`) -o $@ $<
 
 .SECONDEXPANSION:
 $(OBJDIR_RES)/%.sav.c: ../res/sounds/$(EXT)/%.sav $$(wildcard ../res/sounds/$(EXT)/%.sav.meta)

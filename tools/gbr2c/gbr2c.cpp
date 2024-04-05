@@ -1,14 +1,31 @@
 #include <stdio.h>
 #include <string.h>
+#include <limits.h>
 
 #include "gbrParser.h"
 using namespace GbrParser;
 
+Color nearest_sms(Color col) {
+	Color res = col;
+	int distance = INT_MAX;
+	for (int i = 0; i < 64; i++) {
+		int r = (i & 0b00000011) << 6, g = (i & 0b00001100) << 4, b = (i & 0b00110000) << 2;
+		int dist = (r - col.r) * (r - col.r) + (g - col.g) * (g - col.g) + (b - col.b) * (b - col.b);
+		if (dist < distance) {
+			res.r = r, res.g = g, res.b = b;
+			distance = dist;
+		}
+	}
+	return res;
+}
+
 int main(int argc, char* argv[]) {
 	int bpp = 2;
+	int sms = 0;
 
-	if((argc != 3) && (argc != 5)) {
-		printf("usage: gbr2c file_in.gbr export_folder [-bpp N]\n");
+
+	if (argc < 3) {
+		printf("usage: gbr2c file_in.gbr export_folder [-bpp N] [-sms]\n");
 		return 1;
 	}
 
@@ -17,20 +34,25 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
-	if(argc == 5) {
-		if (strcmp(argv[3], "-bpp") != 0) {
+	for (int arg = 3; arg < argc; arg++) {
+		if (strcmp(argv[arg], "-bpp") == 0) {
+			++arg;
+			if (strcmp(argv[arg], "2") == 0) {
+				bpp = 2;
+			} else if (strcmp(argv[arg], "4") == 0) {
+				bpp = 4;
+			} else {
+				printf("unsupported bpp depth not in [2, 4]: %s\n", argv[arg]);
+				return 1;
+			}
+
+		} else if (strcmp(argv[arg], "-sms") == 0) {
+			sms = 1;
+		} else {
 			printf("unknown argument %s\n", argv[3]);
 			return 1;
-		}
-		if (strcmp(argv[4], "2") == 0) {
-			bpp = 2;
-		} else if (strcmp(argv[4], "4") == 0) {
-			bpp = 4;
-		} else {
-			printf("unsupported bpp depth not in [2, 4]: %s\n", argv[4]);
-			return 1;
-		}
-	}
+        	}
+    	}
 
 	TileSet& tile_set = gbrInfo.tile_set;
 	TileExport& tile_export = gbrInfo.tile_export;
@@ -58,7 +80,7 @@ int main(int argc, char* argv[]) {
 		for(int p = 0; p < palettes.count; ++ p) {
 			if(palette_order[p] != -1) {
 				for(int c = 0; c < 4; ++c) {
-					Color color = palettes.colors[p].colors[c];
+					Color color = (sms) ? nearest_sms(palettes.colors[p].colors[c]) : palettes.colors[p].colors[c];
 					fprintf(file, "#define %sCGBPal%dc%d %d\n", tile_export.label_name, palette_order[p], c, (color.r >> 3) | ((color.g >> 3) << 5) | ((color.b >> 3) << 10));
 				}
 				fprintf(file, "\n");
@@ -99,7 +121,7 @@ int main(int argc, char* argv[]) {
 					fprintf(file, "\t");
 			
 					for(int c = 0; c < 4; ++c) {
-						Color color = palettes.colors[p].colors[c];
+						Color color = (sms) ? nearest_sms(palettes.colors[p].colors[c]) : palettes.colors[p].colors[c];
 						fprintf(file, "RGB8(%d, %d, %d)", color.r, color.g, color.b);
 						if(c != 3)
 							fprintf(file, ", ");
@@ -111,7 +133,7 @@ int main(int argc, char* argv[]) {
 			for(int p = 0; p < 4; ++p) {
 				if (p < palettes.count) {
 					for(int c = 0; c < 4; ++c) {
-						Color color = palettes.colors[p].colors[c];
+						Color color = (sms) ? nearest_sms(palettes.colors[p].colors[c]) : palettes.colors[p].colors[c];
 						fprintf(file, "RGB8(%d, %d, %d)", color.r, color.g, color.b);
 						if(c != 3)
 							fprintf(file, ", ");

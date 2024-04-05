@@ -47,14 +47,18 @@ typedef struct {
 } Sprite;
 
 //Palette flag
-#define SPRITE_SET_CGB_PALETTE(SPRITE, PALETTE) SPRITE->attr_add = ((SPRITE->attr_add & 0xF8) | PALETTE | 0x10)
-#define SPRITE_SET_DMG_PALETTE(SPRITE, PALETTE) SPRITE->attr_add = ((SPRITE->attr_add & 0xEF) | (PALETTE << 4))
-
+#if defined(NINTENDO)
+#define SPRITE_SET_CGB_PALETTE(SPRITE, PALETTE) SPRITE->attr_add = ((SPRITE->attr_add & 0xF8u) | ((PALETTE) & 0x07u))
+#define SPRITE_SET_DMG_PALETTE(SPRITE, PALETTE) SPRITE->attr_add = ((SPRITE->attr_add & 0xEFu) | (((PALETTE) & 0x01u) << 4))
 #ifdef CGB
 #define SPRITE_SET_PALETTE(SPRITE, PALETTE) if(_cpu == CGB_TYPE) SPRITE_SET_CGB_PALETTE(SPRITE, PALETTE); else SPRITE_SET_DMG_PALETTE(SPRITE, PALETTE)
-#define SPRITE_SET_DEFAULT_PALETTE(SPRITE)  if(_cpu == CGB_TYPE) SPRITE->attr_add = SPRITE->attr_add & 0xEF
+#define SPRITE_SET_DEFAULT_PALETTE(SPRITE)  if(_cpu == CGB_TYPE) SPRITE->attr_add = SPRITE->attr_add & 0xEFu
 #else
 #define SPRITE_SET_PALETTE(SPRITE, PALETTE) SPRITE_SET_DMG_PALETTE(SPRITE, PALETTE)
+#endif
+#elif defined(SEGA)
+#define SPRITE_SET_PALETTE(SPRITE, PALETTE)
+#define SPRITE_SET_DEFAULT_PALETTE(SPRITE)
 #endif
 
 void SetFrame(Sprite* sprite, UINT8 frame);
