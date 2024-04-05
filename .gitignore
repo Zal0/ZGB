@@ -265,8 +265,13 @@ tools/mod2gbt/mod2gbt.exe
 tools/mod2gbt/mod2gbt
 tools/uge2source/uge2source.exe
 tools/uge2source/uge2source
+tools/vgm2data/vgm2data.exe
+tools/vgm2data/vgm2data
+tools/fxhammer2data/fxhammer2data.exe
+tools/fxhammer2data/fxhammer2data
 
 
 tools/*/*.o
 tools/*/*/*.o
+tools/*/test
 
