@@ -102,12 +102,12 @@ int main(int argc, char* argv[]) {
 			{
 				for(int c = 0; c < 4; ++c) {
 					Color color = (sms) ? nearest_sms(palettes.colors[p].colors[c]) : palettes.colors[p].colors[c];
-					ADD_PALETTE(color.r, color.g, color.b, c == 0 ? 0 : 255);
+					ADD_PALETTE(color.r, color.g, color.b, 255);
 				}
 			}
 		}
 	} else {
-		ADD_PALETTE(255, 255, 255,   0);
+		ADD_PALETTE(255, 255, 255, 255);
 		ADD_PALETTE(170, 170, 170, 255);
 		ADD_PALETTE( 85,  85,  85, 255);
 		ADD_PALETTE(  0,   0,   0, 255);
