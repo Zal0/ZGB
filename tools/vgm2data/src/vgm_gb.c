@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-// #include <stddef.h>
-// #include <unistd.h>
+#include <stddef.h>
+#include <unistd.h>
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -252,7 +252,7 @@ uint8_t vgm_process_gb_sound_data(uint8_t * p_buf_in, size_t buf_len_in, FILE * 
             }
 
             // optional delay
-            count |= MAX(0, (vgm_opt.delay - 1)) << 4;
+            count |= MAX(0, ((int)vgm_opt.delay - 1)) << 4;
 
             // Write resulting Count value (at start of current command data)
             //

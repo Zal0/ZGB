@@ -58,9 +58,9 @@ static void log_packet_verbose(uint8_t cmd) {
 
     log_verbose("PACKET (reason: 0x%02x): [", cmd);
 
-    for (int row = 0; row < row_count; row++) {
+    for (unsigned int row = 0; row < row_count; row++) {
         log_verbose("%d", row_data[row]);
-        if (row != (row_count -1)) log_verbose(", ");
+        if (row != (row_count - 1)) log_verbose(", ");
     }
     log_verbose("]\n");
 }
@@ -72,7 +72,7 @@ uint8_t vgm_process_psg_sound_data(uint8_t * p_buf_in, size_t buf_len_in, FILE *
     p_buf   = p_buf_in;
     buf_len = buf_len_in;
 
-    uint8_t   cmd, addr, data;
+    uint8_t   cmd;
     uint8_t   channel_mute_mask = 0;
     int       count = 0;
 
@@ -118,7 +118,7 @@ uint8_t vgm_process_psg_sound_data(uint8_t * p_buf_in, size_t buf_len_in, FILE *
                 fprintf(FOUT, "0x%02x,", count);
 
                 // output result
-                for (int row = 0; row < row_count; row++)
+                for (unsigned int row = 0; row < row_count; row++)
                     fprintf(FOUT, "0x%02x,", row_data[row]);
 
                 fprintf(FOUT, "\n");

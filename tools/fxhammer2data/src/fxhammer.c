@@ -38,7 +38,7 @@ FILE * file_out_c = NULL;
 FILE * file_out_header = NULL;
 
 
-static bool process_and_write_data(uint8_t * p_buf, size_t buf_len);
+static bool process_and_write_data(uint8_t * p_buf);
 
 
 void fxhammer_cleanup(void) {
@@ -66,14 +66,14 @@ bool fxhammer_load(uint8_t * p_buf, size_t buf_len) {
         exit(EXIT_FAILURE);
     }
 
-    ret = process_and_write_data(p_buf, buf_len);
+    ret = process_and_write_data(p_buf);
 
     return ret;
 }
 
 
 
-static bool process_and_write_data(uint8_t * p_buf, size_t buf_len) {
+static bool process_and_write_data(uint8_t * p_buf) {
 
     uint8_t ch_mask = 0;
     file_out_c = fopen(opt.outfilename, "w");
@@ -101,7 +101,7 @@ static bool process_and_write_data(uint8_t * p_buf, size_t buf_len) {
 
                 uint8_t channels  = p_buf[ADDR_CHAN_USED + effectnum];
                 size_t data_start = ADDR_SFX_DATA + (effectnum * SFX_DATA_SZ);
-                size_t data_end   = data_start + SFX_DATA_SZ - 1;
+                // size_t data_end   = data_start + SFX_DATA_SZ - 1;
                 char identifier[MAX_STR_LEN];
 
                 int res;
