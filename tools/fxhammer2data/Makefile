@@ -10,7 +10,7 @@ ifeq ($(OS_TARGET),Win_x64)
 endif
 
 CC = $(TOOLSPREFIX)gcc
-CCFLAGS = -Os -g  # -Wall -Wextra -pedantic
+CFLAGS = -g -Wall -Wextra # -pedantic #  -std=c2x
 LFLAGS = -g
 
 ifeq ($(OS),Windows_NT)

@@ -3,37 +3,37 @@
 
 
 // NR1x
-#define NR10_REG 0x10
-#define NR11_REG 0x11 
-#define NR12_REG 0x12 
-#define NR13_REG 0x13 
-#define NR14_REG 0x14 
+#define NR10_REG 0x10u
+#define NR11_REG 0x11u
+#define NR12_REG 0x12u
+#define NR13_REG 0x13u
+#define NR14_REG 0x14u
 
 // NR2x
-#define NR20_REG 0x15
-#define NR21_REG 0x16
-#define NR22_REG 0x17
-#define NR23_REG 0x18
-#define NR24_REG 0x19 
+#define NR20_REG 0x15u
+#define NR21_REG 0x16u
+#define NR22_REG 0x17u
+#define NR23_REG 0x18u
+#define NR24_REG 0x19u
 
 // NR3x
-#define NR30_REG 0x1A
-#define NR31_REG 0x1B
-#define NR32_REG 0x1C
-#define NR33_REG 0x1D
-#define NR34_REG 0x1E
+#define NR30_REG 0x1Au
+#define NR31_REG 0x1Bu
+#define NR32_REG 0x1Cu
+#define NR33_REG 0x1Du
+#define NR34_REG 0x1Eu
 
 // NR4x
-#define NR40_REG 0x1F
-#define NR41_REG 0x20
-#define NR42_REG 0x21
-#define NR43_REG 0x22
-#define NR44_REG 0x23
+#define NR40_REG 0x1Fu
+#define NR41_REG 0x20u
+#define NR42_REG 0x21u
+#define NR43_REG 0x22u
+#define NR44_REG 0x23u
 
 // RE5x
-#define NR50_REG 0x24
-#define NR51_REG 0x25
-#define NR52_REG 0x26
+#define NR50_REG 0x24u
+#define NR51_REG 0x25u
+#define NR52_REG 0x26u
 
 #define PCM_SAMPLE 0x30 // PCM wave pattern
 #define PCM_LENGTH 0x10 // PCM wave pattern
