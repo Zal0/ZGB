@@ -14,6 +14,7 @@
 #define ARRAY_LEN(A)  sizeof(A) / sizeof(A[0])
 #define FIELD_SIZEOF(type, field) (sizeof(((type*)0)->field))
 
+#undef MAX_PATH
 #define MAX_PATH (MAX_STR_LEN)
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 #define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))

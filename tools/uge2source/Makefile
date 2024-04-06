@@ -16,3 +16,5 @@ else ifeq ($(BUILD_OS),Windows_NT)
 	cp dist/windows/uge2source.exe ./uge2source.exe
 endif
 
+clean:
+
