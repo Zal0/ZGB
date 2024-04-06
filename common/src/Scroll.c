@@ -182,22 +182,26 @@ void UpdateMapTile(UINT8 bg_or_win, UINT8 x, UINT8 y, UINT16 map_offset, UINT8 d
 attr;
 #if defined(NINTENDO)
 	UINT8* addr = (bg_or_win == TARGET_BKG) ? set_bkg_tile_xy(x, y, (UINT8)map_offset + data) : set_win_tile_xy(x, y, (UINT8)map_offset + data);
-#ifdef CGB
+	#if defined(CGB)
 	if (_cpu == CGB_TYPE) {
 		VBK_REG = 1;
 		set_vram_byte(addr, (attr) ? *attr : (UINT8)(map_offset >> 8) + scroll_tile_info[(UINT8)map_offset + data]);
 		VBK_REG = 0;
 	}
-#endif
+	#endif
 #elif defined(SEGA)
-	if (bg_or_win == TARGET_BKG) {
-		UINT8 c = ((UINT8)(map_offset >> 8)) + ((attr) ? *attr : scroll_tile_info[data]);
-		set_attributed_tile_xy(SCREEN_BKG_OFFSET_X + x, y, (UINT16)(c << 8) | ((UINT8)map_offset + data));
-	}
+	if (bg_or_win != TARGET_BKG) return;
+
+	UINT8 c = ((UINT8)(map_offset >> 8)) + ((attr) ? *attr : scroll_tile_info[data]);
+	set_attributed_tile_xy(SCREEN_BKG_OFFSET_X + x, y, (UINT16)(c << 8) | ((UINT8)map_offset + data));
 #endif
 }
 
 UINT16 LoadMap(UINT8 bg_or_win, UINT8 x, UINT8 y, UINT8 map_bank, struct MapInfo* map) {
+#if defined(SEGA)
+	if (bg_or_win != TARGET_BKG) return 0;
+#endif
+
 	UINT8 __save = CURRENT_BANK;
 	SWITCH_ROM(map_bank);
 

@@ -31,6 +31,9 @@ void Printf(const unsigned char* txt, ...) NONBANKED {
 	const unsigned char *ptr = txt; 
 	va_list list;
 
+#if defined(SEGA)
+	if(print_target != PRINT_BKG) return;
+#endif
 	va_start(list, txt); 
 	while(*ptr) {
 		c = (*ptr++) & 0x7fu; // support only ascii
@@ -53,11 +56,14 @@ void Printf(const unsigned char* txt, ...) NONBANKED {
 			}
 		}
 		c = font_recode_table[((c < ' ') ? 0u : (c - ' '))];
+#if !defined(SEGA)
 		if(print_target == PRINT_BKG)
+#endif
 			UpdateMapTile(print_target, print_x + scroll_offset_x, print_y + scroll_offset_y, font_offset, c, NULL);
+#if !defined(SEGA)
 		else
 			UpdateMapTile(print_target, print_x, print_y, font_offset, c, NULL);
-
+#endif
 		print_x ++;
 	}
 	va_end(list);
