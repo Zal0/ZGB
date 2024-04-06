@@ -1,27 +1,25 @@
-# Disclamer
+# CrossZGB
 
-This repo is a fork of the original [ZGB](https://github.com/Zal0/ZGB/) repo, which extends the functionality and allows compiling your projects, keeping backward compatibility as much as possible, for the following platforms:
+CrossZGB is a multi-platform game engine that lets you write your own games in C or asm for the following platforms:
 - Nintento Game Boy / Nintento Game Boy Color
 - Analogue Pocker .pocket format
 - Mega Duck / Coguar Boy
 - Sega Master System
 - Sega Game Gear
 
-# ZGB
-
-ZGB is a Game Boy / Game Boy Color engine that lets you write your own games in C or asm.
+This repo is a fork of the original [ZGB](https://github.com/Zal0/ZGB/) repo, which extends the functionality and allows compiling your projects, keeping backward compatibility as much as possible.
 
 It uses [GBDK 2020](https://github.com/gbdk-2020/gbdk-2020/releases/latest) but expands it to give you some common functionallity for writing games such as: a main loop, sprites spawning, sprites life cycle, sprites animations, collison management, easily getting assets into the game, music, fx...
 
-![gif](https://raw.githubusercontent.com/Zal0/ZGB/master/doc%20files/tuto.gif) ![gif](https://github.com/Zal0/bitbitjam2016/blob/develop/bitbit3/res/marketing/screenshots/pretty.gif?raw=true) ![gif](https://github.com/Zal0/gbjam2016/raw/develop/res/marketing/gifs/fly.gif?raw=true)
+![gif](https://raw.githubusercontent.com/gbdk-2020/CrossZGB/develop/doc%20files/tuto.gif) ![gif](https://github.com/Zal0/bitbitjam2016/blob/develop/bitbit3/res/marketing/screenshots/pretty.gif?raw=true) ![gif](https://github.com/Zal0/gbjam2016/raw/develop/res/marketing/gifs/fly.gif?raw=true)
 
 ## Getting started
-- Installing ZGB
-  - Download the latest [release](https://github.com/untoxa/ZGB/releases/latest) or the nightly build from [CI](https://github.com/untoxa/ZGB/actions/workflows/zgb_build_and_package.yml)
+- Installing CrossZGB
+  - Download the latest [release](https://github.com/gbdk-2020/CrossZGB/releases/latest) or the nightly build from [CI](https://github.com/gbdk-2020/CrossZGB/actions/workflows/zgb_build_and_package.yml)
   - Run install.bat (this will create a new environment var ZGB_PATH pointing to %ZGB%/common)
 > NOTE: ensure ZGB path doesn't contain any spaces
 - Creating a new project
-  - Take the ZGB-template from the ZGB examples subfolder and build it running build.bat or make from the template/src folder
+  - Take the CrossZGB-template from the CrossZGB examples subfolder and build it running build.bat or make from the template/src folder
   - Follow the tutorial on the [wiki](https://github.com/Zal0/ZGB/wiki) to understand the basic concepts of the engine
 - (**Optional**) Download [***Microsoft Visual Studio Community Edition***](https://www.visualstudio.com/downloads/) or the [***Microsoft Visual Studio Code***](https://code.visualstudio.com/download/)
 
@@ -29,7 +27,6 @@ It uses [GBDK 2020](https://github.com/gbdk-2020/gbdk-2020/releases/latest) but 
 Check the [wiki](https://github.com/Zal0/ZGB/wiki) and this README
 
 ## Support
-- twitter: [Zal0](https://twitter.com/Zal0)
 - discord: [gbdk/zgb discord](https://discord.gg/XCbjCvqnUY)
 
 ## Features <a name="features"></a>
@@ -64,7 +61,7 @@ DEFAULT_SPRITES_SIZE = SPRITES_8x16
 
 include $(subst ',,$(subst \,/,'$(ZGB_PATH)'))/src/MakefileCommon
 ```
-When you make any changes to any of the source files of your project, or any of the assets, only that file will be recompiled. The internal Makefile that comes with ZGB creates a list of dependencies and only compiles what is needed saving you a lot of time. It will also help you a lot if you work with a version control system, like git
+When you make any changes to any of the source files of your project, or any of the assets, only that file will be recompiled. The internal Makefile that comes with CrossZGB creates a list of dependencies and only compiles what is needed saving you a lot of time. It will also help you a lot if you work with a version control system, like git
 
 ---
 </details>
@@ -72,7 +69,7 @@ When you make any changes to any of the source files of your project, or any of 
 <details>
   <summary><strong>Transparent asset management</strong></summary>
   
-ZGB will automatically turn all your assets files into C data:
+CrossZGB will automatically turn all your assets files into C data:
 - **Graphics**
   - .gbr from Game Boy Tile Designer
   - .gbm from Game Boy Map Builder
@@ -102,11 +99,11 @@ DECLARE_MUSIC(<map_filename_without_extension>)
 <details>
   <summary><strong>States</strong></summary>
 
-All ZGB games must contain at least one State. This state must be assigned on ZGBMain.c
+All CrossZGB games must contain at least one State. This state must be assigned on ZGBMain.c
 ```C
 UINT8 next_state = StateGame;
 ```
-When ZGB starts it will call the **START** function of this State. Then on each frame it will call the **UPDATE** function until **SetState** is called to assign a new State
+When CrossZGB starts it will call the **START** function of this State. Then on each frame it will call the **UPDATE** function until **SetState** is called to assign a new State
 
 <details>
   <summary>Creating a new State</summary>
@@ -137,7 +134,7 @@ Now, whenever you want to enter this new state you just need to call **SetState*
 <details>
   <summary><strong>Sprites</strong></summary>
 
-You can manually add Sprites calling **SpriteMangerAdd**(type, x, y). ZGB will call the **START** function of this Sprite first and then it will call **UPDATE** on each frame until the Sprite is removed. You can manually remove an Sprite with the function **SpriteManagerRemove** (faster) or **SpriteManagerRemoveSprite** and then the engine will call its **DESTROY** function. 
+You can manually add Sprites calling **SpriteMangerAdd**(type, x, y). CrossZGB will call the **START** function of this Sprite first and then it will call **UPDATE** on each frame until the Sprite is removed. You can manually remove an Sprite with the function **SpriteManagerRemove** (faster) or **SpriteManagerRemoveSprite** and then the engine will call its **DESTROY** function. 
 
 Sprites will also be removed when getting off screen limits. You can configure how far you allow them to go before the engine disposes them with the fields **lim_x** and **lim_y**
 
@@ -220,7 +217,7 @@ Creating mirrored copies of the sprites occupy additional space in VRAM.
 <details>
   <summary><strong>Big maps scroll support</strong></summary>
 
-ZGB support maps up to 16384 bytes with a maximum width or height of 255 tiles. The engine will take care of updating the native 32x32 background as the camera moves
+CrossZGB support maps up to 16384 bytes with a maximum width or height of 255 tiles. The engine will take care of updating the native 32x32 background as the camera moves
 
 ![gif](/doc%20files/readme/scroll.gif)
 
@@ -276,7 +273,7 @@ DEFAULT_SPRITES_SIZE = SPRITES_8x16
 <details>
   <summary><strong>Sprite animations</strong></summary>
 
-Animations in ZGB are defined by arrays of frames where the first element is the number of frames
+Animations in CrossZGB are defined by arrays of frames where the first element is the number of frames
 ```C
 const UINT8 anim_walk[] = VECTOR(0, 1, 2, 1, 0);
 ```
@@ -345,7 +342,7 @@ if(CheckCollision(THIS, other_sprite))
 <details>
   <summary><strong>Auto Banking</strong></summary>
 
-ZGB uses [bankpack](https://bbbbbr.github.io/gbdk-2020/docs/api/docs_toolchain.html#autotoc_md79) so you don't need to worry about where to place your code or resources. Just make sure that:
+CrossZGB uses [bankpack](https://bbbbbr.github.io/gbdk-2020/docs/api/docs_toolchain.html#autotoc_md79) so you don't need to worry about where to place your code or resources. Just make sure that:
 - **_#include "Banks/SetAutoBank.h"_** is added at the beggining of your States and Sprites
 - If you need to call an sprite function from another sprite, declare it **BANKED**
 ```C
@@ -361,7 +358,7 @@ void HitMe(void) BANKED; //RIGHT!
 <details>
   <summary><strong>Fonts</strong></summary>
 
-Fonts in ZGB are gbr files of **45** tiles, with uppercase characters **_A-Z 0-9 !'()-.:?_** The ZGB-Template already comes with a default font that you can customize
+Fonts in CrossZGB are gbr files of **45** tiles, with uppercase characters **_A-Z 0-9 !'()-.:?_** The ZGB-Template already comes with a default font that you can customize
 
 In order to print some texts in your game
 1. Import the font using 
@@ -434,7 +431,7 @@ The channel will be occupied during mute_frames and the music player won't be ab
 <details>
   <summary><strong>Game Boy Color</strong></summary>
 
-Because ZGB uses png2asset, palette data will be always included for each sprite allowing ZGB to load the palette automatically when the Sprite is loaded
+Because CrossZGB uses png2asset, palette data will be always included for each sprite allowing CrossZGB to load the palette automatically when the Sprite is loaded
 
 Just make sure that:
 - The total Sprites loaded don't need more than 8 different palettes (if two sprites have the same palettes, they will share them)
