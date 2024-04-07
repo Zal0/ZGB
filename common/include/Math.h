@@ -3,7 +3,7 @@
 
 #include <gbdk/platform.h>
 
-#define U_LESS_THAN(A, B) (((A) < (B)) ? 1 : 0)
+#define U_LESS_THAN(A, B) (((INT16)((A) - (B)) < 0) ? 1 : 0)
 
 #define DISTANCE(A, B) ((A < B) ? (B - A) : (A - B))
 
