@@ -16,7 +16,9 @@ void SetDefaultColorPalettes(void) BANKED {
 	if (_cpu == CGB_TYPE) {
 	#endif
 		set_bkg_palette(0, MAX_PALETTES, default_palette);
+		memcpy(ZGB_Fading_BPal, default_palette, MAX_PALETTES * PALETTE_SIZE);
 		set_sprite_palette(0, MAX_PALETTES, default_palette);
+		memcpy(ZGB_Fading_SPal, default_palette, MAX_PALETTES * PALETTE_SIZE);
 	#ifdef CGB
 	}
 	#endif
