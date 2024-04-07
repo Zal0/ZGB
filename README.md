@@ -2,7 +2,7 @@
 
 CrossZGB is a multi-platform game engine that lets you write your own games in C or asm for the following platforms:
 - Nintento Game Boy / Nintento Game Boy Color
-- Analogue Pocker .pocket format
+- Analogue Pocket .pocket format
 - Mega Duck / Coguar Boy
 - Sega Master System
 - Sega Game Gear
@@ -61,7 +61,7 @@ DEFAULT_SPRITES_SIZE = SPRITES_8x16
 
 include $(subst ',,$(subst \,/,'$(ZGB_PATH)'))/src/MakefileCommon
 ```
-When you make any changes to any of the source files of your project, or any of the assets, only that file will be recompiled. The internal Makefile that comes with CrossZGB creates a list of dependencies and only compiles what is needed saving you a lot of time. It will also help you a lot if you work with a version control system, like git
+When you make any changes to any of the source files of your project, or any of the assets, only that file will be recompiled. The internal Makefile that comes with CrossZGB creates a list of dependencies and only compiles what is needed saving you a lot of time. It will also help you a lot if you work with a version control system, like git.
 
 ---
 </details>
