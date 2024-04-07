@@ -45,7 +45,7 @@ void LCD_isr(void) NONBANKED;
 
 #define IMPORT_MAP(MAP) extern struct MapInfo MAP; extern const void __bank_##MAP
 #define IMPORT_TILES(TILES) extern struct TilesInfo TILES; extern const void __bank_##TILES
-#define IMPORT_FONT(FONT) IMPORT_TILES(FONT)
+#define IMPORT_FONT(FONT) extern const UINT8 FONT##_table[]; extern const UINT8 FONT##_tiles[]; IMPORT_TILES(FONT)
 
 #ifdef USE_SGB_BORDER
 #define IMPORT_BORDER(MAP) extern struct MapInfo MAP; extern const void __bank_##MAP
