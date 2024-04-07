@@ -20,11 +20,11 @@ It uses [GBDK 2020](https://github.com/gbdk-2020/gbdk-2020/releases/latest) but 
 > NOTE: ensure ZGB path doesn't contain any spaces
 - Creating a new project
   - Take the CrossZGB-template from the CrossZGB examples subfolder and build it running build.bat or make from the template/src folder
-  - Follow the tutorial on the [wiki](https://github.com/Zal0/ZGB/wiki) to understand the basic concepts of the engine
+  - Follow the tutorial on the [wiki](https://github.com/gbdk-2020/CrossZGB/wiki) to understand the basic concepts of the engine
 - (**Optional**) Download [***Microsoft Visual Studio Community Edition***](https://www.visualstudio.com/downloads/) or the [***Microsoft Visual Studio Code***](https://code.visualstudio.com/download/)
 
 ## Documentation
-Check the [wiki](https://github.com/Zal0/ZGB/wiki) and this README
+Check the [wiki](https://github.com/gbdk-2020/CrossZGB/wiki) and this README
 
 ## Support
 - discord: [gbdk/zgb discord](https://discord.gg/XCbjCvqnUY)
