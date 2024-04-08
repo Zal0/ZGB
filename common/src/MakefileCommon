@@ -84,6 +84,7 @@ FLAGSPNG2ASSET_BKG += $(PNG2ASSET_BKG_$(EXT))
 
 #png2font cross-platform flags
 PNG2FONT_gb = -p 2
+PNG2FONT_gbc = $(PNG2FONT_gb)
 PNG2FONT_duck = $(PNG2FONT_gb)
 PNG2FONT_pocket = $(PNG2FONT_gb)
 PNG2FONT_gg = -p 4
