@@ -46,8 +46,8 @@ void VBL_isr(void) {
 #endif
 }
 
-void InitStates(void);
-void InitSprites(void);
+void InitStates(void) BANKED;
+void InitSprites(void) BANKED;
 
 #if defined(NINTENDO)
 #define LYC_SYNC_VALUE 150u

@@ -14,7 +14,7 @@ Void_Func_Void updateFuncs[N_STATES];
 	startFuncs[STATE_ID] = Start_##STATE_ID; \
 	updateFuncs[STATE_ID] = Update_##STATE_ID; \
 	stateBanks[STATE_ID] = BANK(STATE_ID);
-void InitStates(void) {
+void InitStates(void) BANKED {
 	STATES
 }
 #undef _STATE
@@ -53,7 +53,7 @@ UINT8 spritePalsOffset[N_SPRITE_TYPES];
 	spriteDataBanks[SPRITE_ID] = BANK(DATA); \
 	spriteDatas[SPRITE_ID] = &DATA; \
 	spriteFlips[SPRITE_ID] = FLIP;
-void InitSprites(void) {
+void InitSprites(void) BANKED {
 	SPRITES
 }
 #undef _SPRITE
