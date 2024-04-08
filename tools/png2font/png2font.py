@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import sys
-import wave
 from pathlib import Path
 from optparse import OptionParser
 from PIL import Image
