@@ -49,11 +49,11 @@ endif
 BINFLAGS += -yo $(N_BANKS)
 
 ifeq ($(wildcard savegame.c), )
-	#No savegame, mbc1
-	BINFLAGS += -yt 1
+	#No savegame, mbc5
+	BINFLAGS += -yt 0x19
 else
 	#Savegame
-	BINFLAGS += -yt 3 -ya 1
+	BINFLAGS += -yt 0x1b -ya 4
 	CFLAGS += -DUSE_SAVEGAME
 endif
 

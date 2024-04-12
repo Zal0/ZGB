@@ -10,9 +10,9 @@ void MusicCallback() __nonbanked {
 			return;
 
     UBYTE __save = _current_bank;
-    SWITCH_ROM_MBC1(hUGE_current_track_bank);
+    SWITCH_ROM(hUGE_current_track_bank);
     hUGE_dosound();
-    SWITCH_ROM_MBC1(__save);
+    SWITCH_ROM(__save);
 }
 
 void hUGE_mute(UBYTE mute) {
@@ -54,9 +54,9 @@ loop;
 		hUGE_paused = 1;
     hUGE_current_track = music; hUGE_current_track_bank = bank;
     UBYTE __save = _current_bank;
-    SWITCH_ROM_MBC1(hUGE_current_track_bank);
+    SWITCH_ROM(hUGE_current_track_bank);
     hUGE_init(hUGE_current_track);
-    SWITCH_ROM_MBC1(__save);
+    SWITCH_ROM(__save);
 		hUGE_paused = 0;
 #endif
 	}

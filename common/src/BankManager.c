@@ -20,7 +20,7 @@ __asm
 	ldhl	sp,	#2
 	ld	a, (hl)
 	ld (#__current_bank), a
-	//SWITCH_ROM_MBC1(b);
+	//SWITCH_ROM(b);
 	ld (#0x2000), a
 __endasm;
 }
@@ -34,7 +34,7 @@ __asm
 	ld	b, (hl)
 	ld	a, (bc)
 	ld  (#__current_bank), a
-//SWITCH_ROM_MBC1(_current_bank);
+//SWITCH_ROM(_current_bank);
 	ld  (#0x2000), a
 //bank_stack --;
 	dec hl

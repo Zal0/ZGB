@@ -169,7 +169,7 @@ __asm
 	ld	a, (hl)
 //*bank_stack = bank;
 	ld  (#__current_bank), a
-//SWITCH_ROM_MBC1(bank);
+//SWITCH_ROM(bank);
 	ld (#0x2000), a
 __endasm;
 }
