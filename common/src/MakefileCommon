@@ -221,7 +221,7 @@ $(OBJDIR)/savegame.o: savegame.c
 
 $(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR) $(OBJDIR_ZGB)/zgb.lib $(OBJDIR_RES) $(OBJDIR_RES)/sprites $(BINDIR) $(OBJS)
 	@echo Linking
-	@$(BANKPACK) -ext=.rel -min=1 -yt1 $(OBJS) $(OBJS_ZGB)
+	@$(BANKPACK) -ext=.rel -min=1 -mbc=5 $(OBJS) $(OBJS_ZGB)
 	@$(SDLDGB) $(LFLAGS) $(OBJDIR)/rom.ihx $(GBDK_HOME)/lib/gb/crt0.o $(RELS) $(ZGB_PATH_UNIX)/lib/hUGEDriver.obj.o
 	@$(IHXCHECK) $(OBJDIR)/rom.ihx -e
 	$(MAKEBIN) -Z $(BINFLAGS) $(OBJDIR)/rom.ihx $(OBJDIR)/rom.$(EXTENSION)
