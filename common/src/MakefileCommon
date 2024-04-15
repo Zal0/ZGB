@@ -61,7 +61,7 @@ JSON2SMS = python $(ZGB_PATH_UNIX)/../tools/banjo/json2sms.py
 ADDR_gb = -Wl-g.STACK=0xDF00 -Wl-g_mirror_OAM=0xDF00 -Wl-g_font_recode_table=0xDFA0 -Wb-reserve=1:1000
 ADDR_duck = $(ADDR_gb)
 ADDR_ap = $(ADDR_gb)
-ADDR_gg = -Wl-g.STACK=0xDEA0 -Wl-g_mirror_OAM=0xDF00 -Wl-g_font_recode_table=0xDEA0 -Wb-reserve=1:1400
+ADDR_gg = -Wl-g.STACK=0xDEA0 -Wl-g_mirror_OAM=0xDF00 -Wl-g_font_recode_table=0xDEA0 -Wb-reserve=1:1400 -Wb-banktype=1:CODE
 ADDR_sms = $(ADDR_gg)
 
 CFLAGS_gb = -DDEFAULT_COLOR_DEPTH=2
