@@ -91,6 +91,9 @@ gbt_get_pattern_ptr:: ; a = pattern number
 	ld	e,a
 	ld	d,#0
 
+	ldh	a,(__current_bank)
+	ld	b,a
+
 	ld	a,(gbt_bank)
 	ldh	(__current_bank),a
 	ld	(rROMB0),a ; MBC1, MBC3, MBC5 - Set bank
@@ -118,6 +121,10 @@ gbt_get_pattern_ptr:: ; a = pattern number
 	ld	(gbt_current_step_data_ptr),a
 	ld	a,h
 	ld	(gbt_current_step_data_ptr+1),a
+
+	ld	a,b
+	ldh	(__current_bank),a
+	ld	(rROMB0),a
 
 	ret
 
