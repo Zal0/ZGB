@@ -7,7 +7,7 @@
 #define BANK_DEFAULT  255
 #define DELAY_DEFAULT 1
 
-#define CHANNELS_MIN 1
+#define CHANNELS_MIN 0
 #define CHANNELS_MAX 5
 #define CHANNELS_AR_SZ  (CHANNELS_MAX + 1) // +1 so array can be 1 based and indexed of channel num
 
