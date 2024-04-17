@@ -96,10 +96,10 @@ static void display_help(void) {
     "                        output file name\n"
     "  -i IDENTIFIER, --identifier=IDENTIFIER\n"
     "                        C source identifier\n"
-    "  -1, --no-nr1x         disable channel 0\n"
-    "  -2, --no-nr2x         disable channel 1\n"
-    "  -3, --no-nr3x         disable channel 2\n"
-    "  -4, --no-nr4x         disable channel 3\n"
+    "  -1, --no-nr1x         disable channel 1\n"
+    "  -2, --no-nr2x         disable channel 2\n"
+    "  -3, --no-nr3x         disable channel 3\n"
+    "  -4, --no-nr4x         disable channel 4\n"
     "  -5, --no-nr5x         disable NR5X manipulation\n"
     "  -s, --no-init         disable sound init\n"
     "  -w, --no-wave         disable waveform loading\n"
@@ -252,10 +252,10 @@ static int handle_args(int argc, char * argv[]) {
         filename_remove_extension(vgm_opt.identifier);
     }
 
-    for (int c = CHANNELS_MIN; c <= CHANNELS_MAX; c++) {
+    for (int c = NR1x; c <= NR5x; c++) {
         if (vgm_opt.channel_enabled[c] == false) {
-            if (c < 5)
-                log_standard("Channel %d disabled\n", c);
+            if (c < NR5x)
+                log_standard("Channel %d disabled\n", c + 1);
             else
                 log_standard("NR5x registers disabled\n");
         }
