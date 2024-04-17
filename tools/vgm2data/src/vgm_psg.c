@@ -66,6 +66,8 @@ static void log_packet_verbose(uint8_t cmd) {
 }
 
 
+const char * const ch_names[4] = {"PSG_CH0", "PSG_CH1", "PSG_CH2", "PSG_CH3"};
+
 uint8_t vgm_process_psg_sound_data(uint8_t * p_buf_in, size_t buf_len_in, FILE * FOUT) {
 
     // Set global vars for reading source data
@@ -118,8 +120,14 @@ uint8_t vgm_process_psg_sound_data(uint8_t * p_buf_in, size_t buf_len_in, FILE *
                 fprintf(FOUT, "0x%02x,", count);
 
                 // output result
-                for (unsigned int row = 0; row < row_count; row++)
-                    fprintf(FOUT, "0x%02x,", row_data[row]);
+                for (unsigned int row = 0; row < row_count; row++) {
+                    uint8_t command = row_data[row];
+                    if (command & 0b10000000) {
+                        fprintf(FOUT, "PSG_LATCH|%s|", ch_names[(command & 0b01100000) >> 5]);
+                        if (command & 0b00010000) fprintf(FOUT, "PSG_VOLUME|");
+                        fprintf(FOUT, "0x%02x,", command & 0x00001111);
+                    } else fprintf(FOUT, "0x%02x,", command);
+                }
 
                 fprintf(FOUT, "\n");
 
