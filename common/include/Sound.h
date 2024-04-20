@@ -3,6 +3,8 @@
 
 #include <gbdk/platform.h>
 
+#define DECLARE_SFX(SFX) extern const void __bank_##SFX; extern const UINT8 SFX[]; extern void __mute_mask_##SFX
+
 extern volatile UINT8 music_mute_mask;
 extern volatile UINT8 sfx_priority;
 
