@@ -16,42 +16,71 @@ jobs:
       matrix:
         include:
           - os: ubuntu-20.04
-            name: Linux-x64
+            name: ZGB-Linux-x64
           - os: macos-11
-            name: MacOS-x64
+            name: ZGB-MacOS-x64
           - os: windows-2019
-            name: Windows-x64
+            name: ZGB-Windows-x64
 #          - os: windows-2019
-#            name: Windows-x32
+#            name: ZGB-Windows-x32
     steps:
 
-      # ==== OS Specific Dependencies ====
+      # ==== ZGB git repo  ====
+      - name: Check out ZGB
+        uses: actions/checkout@v4
+        with:
+          path: ZGB
+          submodules: false
+
+      # ==== OS Specific Dependencies and GBDK package ====
+      # Decompress the gbdk contents into ZGB/gbdk
+      # Remove git repo files
       - name: Linux Depends
-        if: matrix.name == 'Linux-x64'
+        if: matrix.name == 'ZGB-Linux-x64'
         run: |
+          cd ZGB
           curl -Lo gbdk.tar.gz https://github.com/gbdk-2020/gbdk-2020/releases/download/pre-release/gbdk-linux64.tar.gz
           tar xvfz gbdk.tar.gz
+          rm -f gbdk.tar.gz
+          rm -rf .git .gitignore .github
+          cd ..
 
       - name: MacOS Depends
-        if: matrix.name == 'MacOS-x64'
+        if: matrix.name == 'ZGB-MacOS-x64'
         run: |
+          cd ZGB
           curl -Lo gbdk.tar.gz https://github.com/gbdk-2020/gbdk-2020/releases/download/pre-release/gbdk-linux64.tar.gz
           tar xvfz gbdk.tar.gz
+          rm -f gbdk.tar.gz
+          rm -rf .git .gitignore .github
+          cd ..
 
-      - name: Windows-x64 Depends
-        if: matrix.name == 'Windows-x64'
+      - name: Windows x64 Depends
+        if: matrix.name == 'ZGB-Windows-x64'
         run: |
+          cd ZGB
           curl -Lo gbdk.zip https://github.com/gbdk-2020/gbdk-2020/releases/download/pre-release/gbdk-win64.zip
           7z x gbdk.zip
+          del gbdk.zip
+          Remove-Item -Path ".git" -Recurse -Force
+          Remove-Item -Path ".github" -Recurse -Force
+          Remove-Item -Path ".gitignore" -Force
+          cd ..
 
-      - name: Windows-x32 Depends
-        if: matrix.name == 'Windows-x32'
+      - name: Windows x32 Depends
+        if: matrix.name == 'ZGB-Windows-x32'
         run: |
+          cd ZGB
           curl -Lo gbdk.zip https://github.com/gbdk-2020/gbdk-2020/releases/download/pre-release/gbdk-win64.zip
           7z x gbdk.zip
+          del gbdk.zip
+          Remove-Item -Path ".git" -Recurse -Force
+          Remove-Item -Path ".github" -Recurse -Force
+          Remove-Item -Path ".gitignore" -Force
+          cd ..
 
       - name: Windows Depends MSYS2/MinGW64
-        if: matrix.name == 'Windows-x64'
+        if: matrix.name == 'ZGB-Windows-x64'
         uses: msys2/setup-msys2@v2
         with:
           msystem: MINGW64
@@ -63,7 +92,7 @@ jobs:
             mingw-w64-x86_64-toolchain
 
       - name: Windows Depends MSYS2/MinGW32
-        if: matrix.name == 'Windows-x32'
+        if: matrix.name == 'ZGB-Windows-x32'
         uses: msys2/setup-msys2@v2
         with:
           msystem: MINGW32
@@ -74,31 +103,24 @@ jobs:
             base-devel
             mingw-w64-i686-toolchain
 
-      # ==== Build Steps ====
-      - name: Check out ZGB
-        uses: actions/checkout@v4
-        with:
-          path: ZGB
-          submodules: false
-
       # ==== Pre-Build: Set environment vars ====
       # Needs to be in a separate step than build so that setting the environment var takes effect
       #
       - name: Pre-Build Linux/MacOS
-        if: (matrix.name == 'Linux-x64') || (matrix.name == 'MacOS-x64')
+        if: (matrix.name == 'ZGB-Linux-x64') || (matrix.name == 'ZGB-MacOS-x64')
         shell: bash
         run: |
-          echo "BUILD_PACKAGE_FILENAME=zgb-${{ matrix.name }}.tar.gz" >> $GITHUB_ENV
+          echo "BUILD_PACKAGE_FILENAME=${{ matrix.name }}.tar.gz" >> $GITHUB_ENV
 
       - name: Pre-Build Windows
-        if: (matrix.name == 'Windows-x64') || (matrix.name == 'Windows-x32')
+        if: (matrix.name == 'ZGB-Windows-x64') || (matrix.name == 'ZGB-Windows-x32')
         shell: bash
         run: |
-          echo "BUILD_PACKAGE_FILENAME=zgb-${{ matrix.name }}.zip" >> $GITHUB_ENV
+          echo "BUILD_PACKAGE_FILENAME=${{ matrix.name }}.zip" >> $GITHUB_ENV
 
       # ==== Builds ====
       - name: Build zgb Linux/MacOS
-        if: (matrix.name == 'Linux-x64') || (matrix.name == 'MacOS-x64')
+        if: (matrix.name == 'ZGB-Linux-x64') || (matrix.name == 'ZGB-MacOS-x64')
         shell: bash
         run: |
           cd ZGB/tools/
@@ -106,7 +128,7 @@ jobs:
           cd ..
 
       - name: Build zgb Windows
-        if: (matrix.name == 'Windows-x64') || (matrix.name == 'Windows-x32')
+        if: (matrix.name == 'ZGB-Windows-x64') || (matrix.name == 'ZGB-Windows-x32')
         shell: cmd
         run: |
           cd ZGB/tools/
@@ -115,21 +137,21 @@ jobs:
 
       # ==== Packaging ====
       - name: Package build Linux/MacOS
-        if: (matrix.name == 'Linux-x64') || (matrix.name == 'MacOS-x64')
+        if: (matrix.name == 'ZGB-Linux-x64') || (matrix.name == 'ZGB-MacOS-x64')
         shell: bash
         run: |
           mkdir package
-          tar czf package/${{ env.BUILD_PACKAGE_FILENAME }} gbdk ZGB
+          tar czf package/${{ env.BUILD_PACKAGE_FILENAME }} ZGB
 
       - name: Package build Windows
-        if: (matrix.name == 'Windows-x64') || (matrix.name == 'Windows-x32')
+        if: (matrix.name == 'ZGB-Windows-x64') || (matrix.name == 'ZGB-Windows-x32')
         shell: cmd
         run: |
           mkdir package
-          7z a package/${{ env.BUILD_PACKAGE_FILENAME }} gbdk ZGB
+          7z a package/${{ env.BUILD_PACKAGE_FILENAME }} ZGB
 
       - name: Store build
-        if: (matrix.name == 'Linux-64') || (matrix.name == 'MacOS-64') || ('Windows-x64') || ('Windows-x32')
+        if: (matrix.name == 'ZGB-Linux-x64') || (matrix.name == 'ZGB-MacOS-x64') || ('ZGB-Windows-x64') || ('ZGB-Windows-x32')
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.name }} build
