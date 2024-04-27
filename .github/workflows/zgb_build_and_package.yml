@@ -25,30 +25,50 @@ jobs:
 #            name: Windows-x32
     steps:
 
-      # ==== OS Specific Dependencies ====
+      # ==== ZGB git repo  ====
+      - name: Check out ZGB
+        uses: actions/checkout@v4
+        with:
+          path: ZGB
+          submodules: false
+
+      # ==== OS Specific Dependencies and GBDK package ====
+      # decompress the gbdk contents into ZGB/gbdk
       - name: Linux Depends
         if: matrix.name == 'Linux-x64'
         run: |
+          cd ZGB
           curl -Lo gbdk.tar.gz https://github.com/gbdk-2020/gbdk-2020/releases/download/pre-release/gbdk-linux64.tar.gz
           tar xvfz gbdk.tar.gz
+          rm xvfz gbdk.tar.gz
+          cd ..
 
       - name: MacOS Depends
         if: matrix.name == 'MacOS-x64'
         run: |
+          cd ZGB
           curl -Lo gbdk.tar.gz https://github.com/gbdk-2020/gbdk-2020/releases/download/pre-release/gbdk-linux64.tar.gz
           tar xvfz gbdk.tar.gz
+          rm xvfz gbdk.tar.gz
+          cd ..
 
       - name: Windows-x64 Depends
         if: matrix.name == 'Windows-x64'
         run: |
+          cd ZGB
           curl -Lo gbdk.zip https://github.com/gbdk-2020/gbdk-2020/releases/download/pre-release/gbdk-win64.zip
           7z x gbdk.zip
+          del xvfz gbdk.tar.gz
+          cd ..
 
       - name: Windows-x32 Depends
         if: matrix.name == 'Windows-x32'
         run: |
+          cd ZGB
           curl -Lo gbdk.zip https://github.com/gbdk-2020/gbdk-2020/releases/download/pre-release/gbdk-win64.zip
           7z x gbdk.zip
+          del xvfz gbdk.zip
+          cd ..
 
       - name: Windows Depends MSYS2/MinGW64
         if: matrix.name == 'Windows-x64'
@@ -73,13 +93,6 @@ jobs:
           install: >-
             base-devel
             mingw-w64-i686-toolchain
-
-      # ==== Build Steps ====
-      - name: Check out ZGB
-        uses: actions/checkout@v4
-        with:
-          path: ZGB
-          submodules: false
 
       # ==== Pre-Build: Set environment vars ====
       # Needs to be in a separate step than build so that setting the environment var takes effect
