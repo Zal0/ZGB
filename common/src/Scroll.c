@@ -206,8 +206,18 @@ UINT16 LoadMap(UINT8 bg_or_win, UINT8 x, UINT8 y, UINT8 map_bank, struct MapInfo
 	SWITCH_ROM(map_bank);
 
 	//Load Tiles
+	UINT16 map_offset;
 	UINT8 load_tiles = (tiles_bank_0 != map->tiles_bank) || (tiles_0 != map->tiles); //If the tile set is the same as the one used for the scroll or the bg (which is stored in tiles_bank_0 and tiles0) then do not load the tiles again
-	UINT16 map_offset = (load_tiles) ? ScrollSetTiles(last_tile_loaded, map->tiles_bank, map->tiles) : 0;
+	if (load_tiles) {
+		if (map->extra_tiles) {
+			map_offset = ScrollSetTiles(last_tile_loaded, map->extra_tiles_bank, map->extra_tiles);
+			if (map->tiles) ScrollSetTiles(last_tile_loaded, map->tiles_bank, map->tiles);
+		} else {
+			map_offset = ScrollSetTiles(last_tile_loaded, map->tiles_bank, map->tiles);
+		}
+	} else {
+		map_offset = 0;
+	}
 
 	//Load map (tile by tile because it there are not attributes when need to pick them from scroll_tile_info)
 	UINT8* data = map->data;
@@ -262,28 +272,18 @@ void ScrollSetMap(UINT8 map_bank, const struct MapInfo* map) {
 }
 
 void InitScroll(UINT8 map_bank, const struct MapInfo* map, const UINT8* coll_list, const UINT8* coll_list_down) {
-	UINT8 tiles_bank;
-	struct TilesInfo* tiles;
+	UINT8 i, __save = CURRENT_BANK;
 
-	//Init Tiles
-	UINT8 __save = CURRENT_BANK;
+	// Init Tiles
 	SWITCH_ROM(map_bank);
-		tiles_bank = map->tiles_bank;
-		tiles = map->tiles;
+		i = (map->tiles) ? (UINT8)ScrollSetTiles(0, map->tiles_bank, map->tiles) : 0;
+		if (map->extra_tiles) ScrollSetTiles(i, map->extra_tiles_bank, map->extra_tiles);
 	SWITCH_ROM(__save);
 
-	InitScrollWithTiles(map_bank, map, tiles_bank, tiles, coll_list, coll_list_down);
-}
-
-void InitScrollWithTiles(UINT8 map_bank, const struct MapInfo* map, UINT8 tiles_info_bank, const struct TilesInfo* tiles_info, const UINT8* coll_list, const UINT8* coll_list_down)
-{
-	UINT8 i;
-	INT16 y;
-
-	ScrollSetTiles(0, tiles_info_bank, tiles_info);
-
+	// Init Map
 	ScrollSetMap(map_bank, map);
 
+	// Init Collisions
 	memset(scroll_collisions, 0, sizeof(scroll_collisions));
 	memset(scroll_collisions_down, 0, sizeof(scroll_collisions_down));
 
@@ -299,15 +299,15 @@ void InitScrollWithTiles(UINT8 map_bank, const struct MapInfo* map, UINT8 tiles_
 		}
 	}
 
-	//Change bank now, after copying the collision array (it can be in a different bank)
-	UINT8 __save = CURRENT_BANK;
+	// Redraw screen
 	SWITCH_ROM(map_bank);
-	y = scroll_y >> 3;
-	for(i = 0u; i != (SCREEN_TILE_REFRES_H) && y != scroll_h; ++i, y++) {
-		ScrollUpdateRow((scroll_x >> 3) - SCREEN_PAD_LEFT,  y - SCREEN_PAD_TOP);
-	}
+		INT16 y = scroll_y >> 3;
+		for(i = 0u; i != (SCREEN_TILE_REFRES_H) && y != scroll_h; ++i, y++) {
+			ScrollUpdateRow((scroll_x >> 3) - SCREEN_PAD_LEFT,  y - SCREEN_PAD_TOP);
+		}
 	SWITCH_ROM(__save);
 }
+
 
 void ScrollUpdateRowR(void) {
 	for(UINT8 i = 0u; i != SCREEN_RESTORE_W && pending_w_i != 0; ++i, --pending_w_i)  {
