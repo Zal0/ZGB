@@ -6,7 +6,7 @@ _STATE(StateGame)\
 STATE_DEF_END
 
 #define SPRITES \
-_SPRITE_DMG(SpritePlayer, player)\
+_SPRITE(SpritePlayer, player, FLIP_NONE)\
 SPRITE_DEF_END
 
 #include "ZGBMain_Init.h"
