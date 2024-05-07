@@ -7,6 +7,15 @@
 #include "MapInfo.h"
 #include "Sprite.h"
 
+#define SCREEN_TILES_H       DEVICE_SCREEN_HEIGHT
+#if defined(MASTERSYSTEM)
+#define SCREEN_TILES_W       (DEVICE_SCREEN_WIDTH - 1)
+#else
+#define SCREEN_TILES_W       DEVICE_SCREEN_WIDTH
+#endif
+#define SCREEN_WIDTH         (SCREEN_TILES_W << 3)
+#define SCREEN_HEIGHT        (SCREEN_TILES_H << 3)
+
 typedef enum {
 	TARGET_BKG = 0,
 	TARGET_WIN = 1

@@ -7,10 +7,7 @@
 #include "main.h"
 #include "Palette.h"
 
-#define SCREEN_TILES_H       DEVICE_SCREEN_HEIGHT
-
 #if defined(MASTERSYSTEM)
-#define SCREEN_TILES_W       (DEVICE_SCREEN_WIDTH - 1)
 #define SCREEN_BKG_OFFSET_X  1
 
 #define SCREEN_PAD_LEFT      0
@@ -21,7 +18,6 @@
 #define SCREEN_RESTORE_W     16
 #define SCREEN_RESTORE_H     10
 #else
-#define SCREEN_TILES_W       DEVICE_SCREEN_WIDTH
 #define SCREEN_BKG_OFFSET_X  0
 
 #define SCREEN_PAD_LEFT      1
@@ -32,9 +28,6 @@
 #define SCREEN_RESTORE_W     5
 #define SCREEN_RESTORE_H     5
 #endif
-
-#define SCREEN_WIDTH (SCREEN_TILES_W << 3)
-#define SCREEN_HEIGHT (SCREEN_TILES_H << 3)
 
 #define SCREEN_TILE_REFRES_W (SCREEN_TILES_W + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT)
 #define SCREEN_TILE_REFRES_H (SCREEN_TILES_H + SCREEN_PAD_TOP  + SCREEN_PAD_BOTTOM)
