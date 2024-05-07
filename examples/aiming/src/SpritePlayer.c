@@ -6,15 +6,19 @@
 #include "Keys.h"
 #include "ZGBMain.h"
 
+// shooting trigger declaration, initialized in the SpriteShooter.c
 extern bool shoot_now;
 
+// player sprite pointer
 Sprite * PLAYER;
 
 void START(void) {
+	// initialize the player sprite pointer
 	PLAYER = THIS;
 }
 
 void UPDATE(void) {
+	// check D-Pad buttons and move the player within the screen boundaries
 	if (KEY_PRESSED(J_LEFT)) {
 		if (THIS->x) THIS->x--;
 	} else if (KEY_PRESSED(J_RIGHT)) {
@@ -25,10 +29,12 @@ void UPDATE(void) {
 	} else if (KEY_PRESSED(J_DOWN)) {
 		if (THIS->y < (DEVICE_SCREEN_PX_HEIGHT - 16)) THIS->y++;
 	}
+	// if A button pressed, then signal shooting the projectile
 	if (KEY_TICKED(J_A)) {
 		shoot_now = true;
 	}
 }
 
 void DESTROY(void) {
+	PLAYER = NULL;
 }
