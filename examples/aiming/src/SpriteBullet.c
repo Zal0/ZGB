@@ -13,6 +13,7 @@ typedef struct {
 	INT16 err;
 	INT8  sx, sy;
 } CUSTOM_DATA;
+CHECK_CUSTOM_DATA_SIZE(CUSTOM_DATA);
 
 void START(void) {
 	CUSTOM_DATA* data = (CUSTOM_DATA*)THIS->custom_data;
