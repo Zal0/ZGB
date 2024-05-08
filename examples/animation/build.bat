@@ -1,0 +1,3 @@
+cd src
+make
+cd ..
