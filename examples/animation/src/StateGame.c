@@ -8,7 +8,7 @@
 #define PLAYER_HEIGHT 16
 
 void START(void) {
-	// spawn the player sprite at the upper-left corner of the screen
+	// spawn the player sprite at the center of the screen
 	SpriteManagerAdd(SpritePlayer, ((SCREEN_WIDTH - PLAYER_WIDTH) / 2), ((SCREEN_HEIGHT - PLAYER_HEIGHT)/ 2));
 }
 
