@@ -7,33 +7,38 @@
 #include "main.h"
 #include "Palette.h"
 
+#define TOP_MOVEMENT_LIMIT    30
 #if defined(MASTERSYSTEM)
-#define SCREEN_BKG_OFFSET_X  1
+#define SCREEN_BKG_OFFSET_X   1
 
-#define SCREEN_PAD_LEFT      0
-#define SCREEN_PAD_RIGHT     1
-#define SCREEN_PAD_TOP       0
-#define SCREEN_PAD_BOTTOM    2
+#define SCREEN_PAD_LEFT       0
+#define SCREEN_PAD_RIGHT      1
+#define SCREEN_PAD_TOP        0
+#define SCREEN_PAD_BOTTOM     2
 
-#define SCREEN_RESTORE_W     16
-#define SCREEN_RESTORE_H     10
-#else
-#define SCREEN_BKG_OFFSET_X  0
+#define SCREEN_RESTORE_W      16
+#define SCREEN_RESTORE_H      10
 
-#define SCREEN_PAD_LEFT      1
-#define SCREEN_PAD_RIGHT     2
-#define SCREEN_PAD_TOP       1
-#define SCREEN_PAD_BOTTOM    2
+#define BOTTOM_MOVEMENT_LIMIT 150
+#else                         
+#define SCREEN_BKG_OFFSET_X   0
 
-#define SCREEN_RESTORE_W     5
-#define SCREEN_RESTORE_H     5
+#define SCREEN_PAD_LEFT       1
+#define SCREEN_PAD_RIGHT      2
+#define SCREEN_PAD_TOP        1
+#define SCREEN_PAD_BOTTOM     2
+
+#define SCREEN_RESTORE_W      5
+#define SCREEN_RESTORE_H      5
+
+#define BOTTOM_MOVEMENT_LIMIT 100
 #endif
 
 #define SCREEN_TILE_REFRES_W (SCREEN_TILES_W + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT)
 #define SCREEN_TILE_REFRES_H (SCREEN_TILES_H + SCREEN_PAD_TOP  + SCREEN_PAD_BOTTOM)
 
-extern UINT8 scroll_top_movement_limit = 30;
-extern UINT8 scroll_bottom_movement_limit = 100;
+UINT8 scroll_top_movement_limit = TOP_MOVEMENT_LIMIT;
+UINT8 scroll_bottom_movement_limit = BOTTOM_MOVEMENT_LIMIT;
 
 //To be defined on the main app
 UINT8 GetTileReplacement(UINT8* tile_ptr, UINT8* tile);
