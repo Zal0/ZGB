@@ -269,8 +269,8 @@ void InitScroll(UINT8 map_bank, const struct MapInfo* map, const UINT8* coll_lis
 
 	// Init Tiles
 	SWITCH_ROM(map_bank);
-		i = (map->tiles) ? (UINT8)ScrollSetTiles(0, map->tiles_bank, map->tiles) : 0;
-		if (map->extra_tiles) ScrollSetTiles(i, map->extra_tiles_bank, map->extra_tiles);
+		if (map->tiles) (UINT8)ScrollSetTiles(0, map->tiles_bank, map->tiles);
+		if (map->extra_tiles) ScrollSetTiles(last_tile_loaded, map->extra_tiles_bank, map->extra_tiles);
 	SWITCH_ROM(__save);
 
 	// Init Map
