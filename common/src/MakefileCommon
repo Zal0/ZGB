@@ -226,6 +226,9 @@ RELS = $(OBJS:%.o=%.rel)
 # TODO: re-enable and fix Makefile.uptodate on a per-target basis
 BINS = $(BINDIR)/$(PROJECT_NAME).$(EXT) #$(OBJDIR)/Makefile.uptodate
 
+#always build targets
+.PHONY: $(TARGETS)
+
 #prevent gbr2c and gbm2c intermediate files from being deleted
 .SECONDARY: $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.c) $(GBMS_PLAT:%.gbm=$(OBJDIR_RES)/%.gbm.c) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.c) $(GBRS_PLAT:%.gbr=$(OBJDIR_RES)/%.gbr.c) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.c) $(SPRITES_PLAT:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.c) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.c) $(SPRITES_PNG_PLAT:%.png=$(OBJDIR_RES)/sprites/%.png.c) $(SGB_BORDERS:%.png=$(OBJDIR_RES)/%.png.c) $(PNGS:%.png=$(OBJDIR_RES)/%.png.c) $(PNGS_PLAT:%.png=$(OBJDIR_RES)/%.png.c) $(FONTS_PLAT:%.png=$(OBJDIR_RES)/%.png.c) $(VGMS_PLAT:%.vgm=$(OBJDIR_RES)/%.vgm.c) $(WAVS_PLAT:%.wav=$(OBJDIR_RES)/%.wav.c) $(SAVS_PLAT:%.sav=$(OBJDIR_RES)/%.sav.c) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.c) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.c) $(MUSICS_FUR:%.fur=$(OBJDIR_RES)/%.fur.c)
 
