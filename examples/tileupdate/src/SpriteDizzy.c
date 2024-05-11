@@ -112,7 +112,7 @@ void UPDATE(void) {
 	// check bounds (should be replaced with collision handling
 	if (x < LEFT_BOUND) x = LEFT_BOUND;
 	if (x > RIGHT_BOUND) x = RIGHT_BOUND;
-        if (y > FLOOR_LEVEL) y = FLOOR_LEVEL, jump = false, xv = 0;
+	if (y > FLOOR_LEVEL) y = FLOOR_LEVEL, jump = false, xv = 0;
 
 	// update sprite X and Y position
 	THIS->x = x >> 4; THIS->y = y >> 4;
