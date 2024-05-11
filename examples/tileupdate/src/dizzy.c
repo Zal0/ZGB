@@ -44,10 +44,10 @@ static const uint8_t dizzy_tiles[] = {
 
 // metasprite of 3x3 8x8 px hardware sprites
 const metasprite_t dizzy_metasprite[] = {
-    METASPR_ITEM(  0,  0,  0, S_PALETTE), METASPR_ITEM(  0,  8,  1, S_PALETTE), METASPR_ITEM(  0,  8,  2, S_PALETTE),
-    METASPR_ITEM(  8,-16,  3, S_PALETTE), METASPR_ITEM(  0,  8,  4, S_PALETTE), METASPR_ITEM(  0,  8,  5, S_PALETTE),
-    METASPR_ITEM(  8,-16,  6, S_PALETTE), METASPR_ITEM(  0,  8,  7, S_PALETTE), METASPR_ITEM(  0,  8,  8, S_PALETTE),
-    METASPR_TERM
+	METASPR_ITEM(  0,  0,  0, S_PALETTE), METASPR_ITEM(  0,  8,  1, S_PALETTE), METASPR_ITEM(  0,  8,  2, S_PALETTE),
+	METASPR_ITEM(  8,-16,  3, S_PALETTE), METASPR_ITEM(  0,  8,  4, S_PALETTE), METASPR_ITEM(  0,  8,  5, S_PALETTE),
+	METASPR_ITEM(  8,-16,  6, S_PALETTE), METASPR_ITEM(  0,  8,  7, S_PALETTE), METASPR_ITEM(  0,  8,  8, S_PALETTE),
+	METASPR_TERM
 };
 
 // only one animation, because we stream tile data instead
