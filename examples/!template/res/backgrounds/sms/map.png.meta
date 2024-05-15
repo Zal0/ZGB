@@ -1,0 +1,1 @@
+-keep_palette_order -rel_paths -keep_duplicate_tiles -source_tileset tiles.png
