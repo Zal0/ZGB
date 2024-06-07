@@ -1,13 +1,13 @@
 # CrossZGB
 
 CrossZGB is a multi-platform game engine that lets you write your own games in C or asm for the following platforms:
-- Nintento Game Boy / Nintento Game Boy Color
+- Nintendo Game Boy / Nintendo Game Boy Color
 - Analogue Pocket .pocket format
 - Mega Duck / Coguar Boy
 - Sega Master System
 - Sega Game Gear
 
-This repo is a fork of the original [ZGB](https://github.com/Zal0/ZGB/) repo, which extends the functionality and allows compiling your projects, keeping backward compatibility as much as possible.
+This repo is a fork of the original [ZGB](https://github.com/Zal0/ZGB/) repo, which extends the functionality. It preserves as much backward compatibility as possible with existing projects based on the original ZGB.
 
 It uses [GBDK 2020](https://github.com/gbdk-2020/gbdk-2020/releases/latest) but expands it to give you some common functionallity for writing games such as: a main loop, sprites spawning, sprites life cycle, sprites animations, collison management, easily getting assets into the game, music, fx...
 
@@ -19,7 +19,7 @@ It uses [GBDK 2020](https://github.com/gbdk-2020/gbdk-2020/releases/latest) but 
   - Run install.bat (this will create a new environment var ZGB_PATH pointing to %ZGB%/common)
 > NOTE: ensure ZGB path doesn't contain any spaces
 - Creating a new project
-  - Take the CrossZGB-template from the CrossZGB examples subfolder and build it running build.bat or make from the template/src folder
+  - Take the CrossZGB-template from the CrossZGB examples subfolder and build it by running `build.bat` or `make` from the `template/src` folder
   - Follow the tutorial on the [wiki](https://github.com/gbdk-2020/CrossZGB/wiki) to understand the basic concepts of the engine
 - (**Optional**) Download [***Microsoft Visual Studio Community Edition***](https://www.visualstudio.com/downloads/) or the [***Microsoft Visual Studio Code***](https://code.visualstudio.com/download/)
 
@@ -36,13 +36,13 @@ Check the [wiki](https://github.com/gbdk-2020/CrossZGB/wiki) and this README
 <details>
   <summary><strong>Easy makefile support</strong></summary>
 
-In most cases you just need a small makefile like this
+In most cases you just need a small makefile like this:
 
 ```
 # Project name must not be empty or contain special characters or spaces
 PROJECT_NAME = ZGB_TEMPLATE
 
-# Set platforms to build here, spaced separated. (These are in the separate Makefile.targets)
+# Set platforms to build here, space separated. (These are in the separate Makefile.targets)
 # They can also be built/cleaned individually: "make gg" and "make gg-clean"
 # Possible are: gb gbc pocket megaduck sms gg
 TARGETS=gb megaduck gg sms
@@ -61,7 +61,7 @@ DEFAULT_SPRITES_SIZE = SPRITES_8x16
 
 include $(subst ',,$(subst \,/,'$(ZGB_PATH)'))/src/MakefileCommon
 ```
-When you make any changes to any of the source files of your project, or any of the assets, only that file will be recompiled. The internal Makefile that comes with CrossZGB creates a list of dependencies and only compiles what is needed saving you a lot of time. It will also help you a lot if you work with a version control system, like git.
+When you make any changes to any of the source files of your project, or any of the assets, only that file will be recompiled. The internal Makefile that comes with CrossZGB creates a list of dependencies and only compiles what is needed saving you a lot of time. It will also help you a lot if you work with a version control system, such as git.
 
 ---
 </details>
@@ -73,12 +73,12 @@ CrossZGB will automatically turn all your assets files into C data:
 - **Graphics**
   - .gbr from Game Boy Tile Designer
   - .gbm from Game Boy Map Builder
-  - .png than can be used for backgrounds or sprites
+  - .png can be used for backgrounds or sprites
 - **Musics**
   - .mod for gbt-player
   - .uge for hUGETracker
 
-In order to use any of these data in your code you need to declare it first using
+In order to use any of these resources in your code you need to declare them first using
 ```C
 IMPORT_MAP(<map_filename_without_extension>)
 IMPORT_TILES(<map_filename_without_extension>)
@@ -146,7 +146,7 @@ void START(void) {
 }
 ```
 
-You can create your sprites with the Game Boy Tile Designer or you can use pngs. 
+You can create your sprites with Game Boy Tile Designer or you can use pngs. 
 Create your sprites in the res/sprites folder so that the Makefile can identify them as sprites and pass the proper parameters to png2asset.
 
 <details>
@@ -167,9 +167,11 @@ GBTD has a few limitations:
 - The maximum sprites size is 32x32
 - It only lets you choose a palette for the whole metasprite
 
-Luckily you can overcome these limitations by using your preferred pixel art software and then export your data as a spritesheet
+Luckily you can overcome these limitations by using your preferred pixel art software and then export your data as a png spritesheet
 
-As with gbr sprites a .meta file can be created to pass arguments to png2asset. Contrary to gbr sprites this .meta file won't be created automatically so it is important that you create a it and at least indicate the sprite dimensions (or it will be exported as a single sprite)
+As with gbr sprites a .meta file can be created to pass arguments to png2asset. Unlike gbr sprites this .meta file won't be created automatically so it is important that you create it and at least indicate the sprite dimensions (or the entire spritesheet will be exported as a single sprite).
+
+There should only be one line in .meta files with no line break at the end
 ```
 -sw 32 -sh 16 
 ```
@@ -179,7 +181,7 @@ Check the png2asset params [here](https://gbdk-2020.github.io/gbdk-2020/docs/api
 <details>
   <summary>Creating a new Sprite</summary>
 
-The template already comes with a placeholder Sprite but you surely will need to add more. Yo do this by following the next 3 steps:
+The template already comes with a placeholder Sprite but you surely will need to add more. You do this by following the next 3 steps:
 1. Create the sprite image data. 
 2. Create a new file < YourNewSprite >.c containing this:
 ```C
@@ -360,7 +362,7 @@ void HitMe(void) BANKED; //RIGHT!
 
 Fonts in CrossZGB are gbr files of **45** tiles, with uppercase characters **_A-Z 0-9 !'()-.:?_** The ZGB-Template already comes with a default font that you can customize
 
-In order to print some texts in your game
+In order to print some text in your game
 1. Import the font using 
 ```C
 #include "Print.h"
@@ -385,9 +387,9 @@ You can change the target (background or window) with the var **print_target**
 <details>
   <summary><strong>Music</strong></summary>
 
-Music driver is automatically detected, depending on the assets you actually use. `*.MOD` files enable the [gbt-player](https://github.com/AntonioND/gbt-player) driver, `*.UGE` files enable the [hUGETracker](https://github.com/SuperDisk/hUGETracker) driver, `*.FUR` files enable the [banjo](https://github.com/joffb/banjo) driver for the PSG sound chip.
+The Music driver is automatically detected, depending on the assets you actually use. `*.MOD` files enable the [gbt-player](https://github.com/AntonioND/gbt-player) driver, `*.UGE` files enable the [hUGETracker](https://github.com/SuperDisk/hUGETracker) driver, `*.FUR` files enable the [banjo](https://github.com/joffb/banjo) driver for the PSG sound chip.
 
-You can force select witch music drive to use in the Makefile, but usually you don't need that. You can not mix several music drivers in one project.
+You can force which music driver is selected in the Makefile, but usually that isn't needed. You cannot mix multiple music drivers in one project.
 ```
 # Music player: HUGETRACKER(default) or GBT_PLAYER
 MUSIC_PLAYER = GBT_PLAYER
@@ -418,7 +420,7 @@ StopMusic;
 <details>
   <summary><strong>Sound Effects</strong></summary>
 
-To play an FX Sound you just need  to call
+To play an FX Sound you just need to call
 ```C
 void PlayFx(SOUND_CHANNEL channel, UINT8 mute_frames, ...); // Add register data from GBSound
 ```
@@ -471,7 +473,7 @@ void START() {
 <details>
   <summary><strong>Savegame support</strong></summary>
 
-In order to have savegames in your game you must include a couple of files named savegame.h and savegame.c with the next content
+In order to have savegames in your game you must include a couple of files named savegame.h and savegame.c with the following content
 
 ```C
 //savegame.h
@@ -499,7 +501,7 @@ extern Savegame savegame;
 Savegame savegame;
 ```
 
-Having a file named savegame.c in your project will automatically compile it using MBC1+RAM+BATTERY (otherwise it will use MBC1)
+Having a file named savegame.c in your project will automatically compile it using MBC5+RAM+BATTERY (otherwise it will use MBC5)
 
 Then before accesing any content you must enable/disable sram access
 
