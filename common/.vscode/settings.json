@@ -13,4 +13,10 @@
         ".gitignore": true,
         ".vs": true
     },
+    "files.associations": {
+        "print.h": "c",
+        "scroll.h": "c",
+        "sprite.h": "c",
+        "string.h": "c"
+    },
 }

@@ -1,17 +1,11 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
+#include <gbdk/platform.h>
+
 #include "OAMManager.h"
 #include "MetaSpriteInfo.h"
-
-#define CUSTOM_DATA_SIZE 8
-
-typedef enum {
-	NO_MIRROR,
-	H_MIRROR,
-	V_MIRROR,
-	HV_MIRROR
-} MirroMode;
+#include "Flip.h"
 
 typedef struct {
 	//Meta sprite info
@@ -19,9 +13,13 @@ typedef struct {
 	const struct MetaSpriteInfo* mt_sprite_info;
 
 	//Frame info
-	UINT8 first_tile; //tile offset, for animation indices
-	UINT8 attr_add; //metasprite attributes, used to set the DMG palette (bit 4) or the priority over Bg (bit 7) 
-	                //The engine internally sets the palette  
+	UINT8 flips;         //supported flips/mirror modes
+	UINT8 first_tile;    //tile offset, for animation indices
+	UINT8 first_tile_H;  //tile H mirrored offset, for the animation indices
+	UINT8 first_tile_V;  //tile V mirrored offset, for the animation indices
+	UINT8 first_tile_HV; //tile HV mirrored offset, for the animation indices
+	UINT8 attr_add;      //metasprite attributes, used to set the DMG palette (bit 4) or the priority over Bg (bit 7) 
+	                     //The engine internally sets the palette
 
 	//Anim data
 	UINT8* anim_data;
@@ -49,20 +47,24 @@ typedef struct {
 } Sprite;
 
 //Palette flag
-#define SPRITE_SET_CGB_PALETTE(SPRITE, PALETTE) SPRITE->attr_add = ((SPRITE->attr_add & 0xF8) | PALETTE | 0x10)
-#define SPRITE_SET_DMG_PALETTE(SPRITE, PALETTE) SPRITE->attr_add = ((SPRITE->attr_add & 0xEF) | (PALETTE << 4))
-
+#if defined(NINTENDO)
+#define SPRITE_SET_CGB_PALETTE(SPRITE, PALETTE) SPRITE->attr_add = ((SPRITE->attr_add & 0xF8u) | ((PALETTE) & 0x07u))
+#define SPRITE_SET_DMG_PALETTE(SPRITE, PALETTE) SPRITE->attr_add = ((SPRITE->attr_add & 0xEFu) | (((PALETTE) & 0x01u) << 4))
 #ifdef CGB
 #define SPRITE_SET_PALETTE(SPRITE, PALETTE) if(_cpu == CGB_TYPE) SPRITE_SET_CGB_PALETTE(SPRITE, PALETTE); else SPRITE_SET_DMG_PALETTE(SPRITE, PALETTE)
-#define SPRITE_SET_DEFAULT_PALETTE(SPRITE)  if(_cpu == CGB_TYPE) SPRITE->attr_add = SPRITE->attr_add & 0xEF
+#define SPRITE_SET_DEFAULT_PALETTE(SPRITE)  if(_cpu == CGB_TYPE) SPRITE->attr_add = SPRITE->attr_add & 0xEFu
 #else
 #define SPRITE_SET_PALETTE(SPRITE, PALETTE) SPRITE_SET_DMG_PALETTE(SPRITE, PALETTE)
+#endif
+#elif defined(SEGA)
+#define SPRITE_SET_PALETTE(SPRITE, PALETTE)
+#define SPRITE_SET_DEFAULT_PALETTE(SPRITE)
 #endif
 
 void SetFrame(Sprite* sprite, UINT8 frame);
 void InitSprite(Sprite* sprite, UINT8 sprite_type);
-void SetSpriteAnim(Sprite* sprite, UINT8* data, UINT8 speed);
-void DrawSprite();
+void SetSpriteAnim(Sprite* sprite, const UINT8* data, UINT8 speed);
+void DrawSprite(void);
 
 UINT8 TranslateSprite(Sprite* sprite, INT8 x, INT8 y);
 

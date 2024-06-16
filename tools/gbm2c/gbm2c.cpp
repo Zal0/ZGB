@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include "gbrParser.h"
 
 typedef unsigned short WORD;
 typedef unsigned int LONG;
@@ -10,7 +11,7 @@ typedef unsigned char BYTE;
 
 #define READ(var) fread((char*)&var, sizeof(var), 1, file)
 
-enum ObjectTypes {
+enum GBMObjectTypes {
 	OBJECT_TYPE_PRODUCER = 0x1,
 	OBJECT_TYPE_MAP = 0x2,
 	OBJECT_TYPE_MAP_TILE_DATA = 0x3,
@@ -69,7 +70,7 @@ struct MapExportSettings {
 	char file_name[256];
 	BYTE file_type;
 	char section_name[39];
-	char label_name[40];
+	char label_name[128];//[40];
 	BYTE bank;
 	WORD plane_count;
 	WORD plane_order;
@@ -82,42 +83,35 @@ struct MapExportSettings {
 	WORD tile_offset;
 };
 
-int GetBank(char* str) {
-	char* bank_info = strstr(str, ".b");
-	if(bank_info) {
-		return atoi(bank_info + 2);
-	}
-	return 0;
-}
+void GetGBRPath(char* gbm_path, char* tile_file, char* gbr_path)
+{
+	char tile_file_name[256];
+	GbrParser::ExtractFileName(tile_file, tile_file_name, false);
 
-void ExtractFileName(char* path, char* file_name, bool include_bank) {
-	char* slash_pos = strrchr(path, '/');
+	char* slash_pos = strrchr(gbm_path, '/');
 	if(slash_pos == 0)
-		slash_pos = strrchr(path, '\\');
+		slash_pos = strrchr(gbm_path, '\\');
 	if(slash_pos != 0)
 		slash_pos ++;
 	else
-		slash_pos = path;
+		slash_pos = gbm_path;
 
-	char* dot_pos = include_bank ? strrchr(slash_pos, '.') : strchr(slash_pos, '.');
-	if(dot_pos == 0) {
- 		strcpy(file_name, slash_pos);
-	} else {
-		strncpy(file_name, slash_pos, dot_pos - slash_pos);
-		file_name[dot_pos - slash_pos] = '\0';
-	}
+	char path[256];
+	strncpy(path, gbm_path, slash_pos - gbm_path);
+	path[slash_pos - gbm_path] = '\0';
+	sprintf(gbr_path, "%s%s.gbr", path, tile_file_name);
 }
 
 int main(int argc, char* argv[])
 {
 	if(argc != 3) {
-		printf("usage: gbm2c file_in.gbm export_folder");
+		printf("usage: gbm2c file_in.gbm export_folder\n");
 		return 1;
 	}
 
 	FILE* file = fopen(argv[1], "rb");
 	if(!file) {
-		printf("Error reading file");
+		printf("Error reading file %s\n", argv[1]);
 		return 1;
 	}
 
@@ -174,7 +168,8 @@ int main(int argc, char* argv[])
 				READ(map_export_settings.file_name);
 				READ(map_export_settings.file_type);
 				READ(map_export_settings.section_name);
-				READ(map_export_settings.label_name);
+				//READ(map_export_settings.label_name);
+				(fread((char*)&map_export_settings.label_name, 40, 1, file)); //label_name must be 40 chars
 				READ(map_export_settings.bank);
 				READ(map_export_settings.plane_count);
 				READ(map_export_settings.plane_order);
@@ -194,6 +189,16 @@ int main(int argc, char* argv[])
 	}
 	fclose(file);
 
+	GbrParser::GBRInfo gbrInfo;
+	if(export_attributes) {
+		char gbr_path[256];
+		GetGBRPath(argv[1], map.tile_file, gbr_path);
+		if(!GbrParser::LoadGBR(gbr_path, &gbrInfo)) {
+			printf("Error reading gbr file %s\n", map.tile_file);
+			return 1;
+		}
+	}
+
 	//Extract bank
 	/*int bank = GetBank(argv[1]);
 	if(bank == 0) //for backwards compatibility, extract the bank from tile_export.name
@@ -204,20 +209,21 @@ int main(int argc, char* argv[])
 
 	//Adjust export file name and label name
 	if(strcmp(map_export_settings.file_name, "") == 0) { //Default value
-		ExtractFileName(argv[1], map_export_settings.file_name, false);  //Set argv[1] instead
+		GbrParser::ExtractFileName(argv[1], map_export_settings.file_name, false);  //Set argv[1] instead
 	}
 
 	if(strcmp(map_export_settings.label_name, "") == 0) { //Default value
-		ExtractFileName(argv[1], map_export_settings.label_name, false);  //Set argv[1] instead
+		GbrParser::ExtractFileName(argv[1], map_export_settings.label_name, false);  //Set argv[1] instead
 	}
+	GbrParser::Replace(map_export_settings.label_name, ' ', '_'); //Ensure the label_name doesn't contain any spaces
 
 	char export_file_name[256]; //For both .h and .c
 	char export_file[512];
-	ExtractFileName(map_export_settings.file_name, export_file_name, false); //For backwards compatibility the header will be taken from the export filename (and not argv[1])
+	GbrParser::ExtractFileName(map_export_settings.file_name, export_file_name, false); //For backwards compatibility the header will be taken from the export filename (and not argv[1])
 	sprintf(export_file, "%s/%s.h", argv[2], export_file_name);
 	file = fopen(export_file, "w");
 	if(!file) {
-		printf("Error writing file");
+		printf("Error writing file\n");
 		return 1;
 	}
 
@@ -235,17 +241,17 @@ int main(int argc, char* argv[])
 
 	fclose(file);
 
-	ExtractFileName(argv[1], export_file_name, true);
+	GbrParser::ExtractFileName(argv[1], export_file_name, true);
 	sprintf(export_file, "%s/%s.gbm.c", argv[2], export_file_name);
 	file = fopen(export_file, "w");
 	if(!file) {
-		printf("Error writing file");
+		printf("Error writing file\n");
 		return 1;
 	}
 	
 	fprintf(file, "#pragma bank %d\n", bank);
 
-	fprintf(file, "#include <gb/gb.h>\n");
+	fprintf(file, "#include <gbdk/platform.h>\n");
 
 	fprintf(file, "const unsigned char %s_map[] = {", map_export_settings.label_name);
 	for(INTEGER i = 0; i < map.width * map.height; ++i) {
@@ -267,18 +273,16 @@ int main(int argc, char* argv[])
 				fprintf(file, "\n\t");
 
 			MapTileData data = map_tiles_data[i];
-			//Bit 4 is not used, so I am gonna use it to indicate using default palette
-			bool use_default = data.gbc_palette == 0;
-			bool vram_bank = map_tiles_data[i].tile_number > 255;
-			fprintf(file, "0x%02x", (use_default ? 0 : data.gbc_palette - 1) | (vram_bank << 3) | (use_default << 4) | (data.h_flip << 5) | (data.v_flip << 6));
+			bool vram_bank = data.tile_number > 255;
+			//gbc_palette 0 is used by GBMB to indicate Default palette (the one stores in the tile)
+			unsigned char pal_idx = (data.gbc_palette == 0 ? gbrInfo.palette_order[gbrInfo.tile_pal.color_set[data.tile_number]] : data.gbc_palette - 1);
+			fprintf(file, "0x%02x", pal_idx | (vram_bank << 3) | (data.h_flip << 5) | (data.v_flip << 6));
 		}
 		fprintf(file, "\n};\n");
 	}
 
 	char tile_file[256];
-	int tile_file_size = strchr(map.tile_file, '.') - map.tile_file;
-	strncpy(tile_file, map.tile_file, tile_file_size);
-	tile_file[tile_file_size] = '\0';
+	GbrParser::ExtractFileName(map.tile_file, tile_file, false);
 	fprintf(file, "#include \"TilesInfo.h\"\n");
 	fprintf(file, "extern const void __bank_%s;\n", tile_file);
 	fprintf(file, "extern const struct TilesInfo %s;\n", tile_file);
@@ -288,16 +292,16 @@ int main(int argc, char* argv[])
 
 	fprintf(file, "const void __at(%d) __bank_%s;\n", bank, map_export_settings.label_name);
 	fprintf(file, "const struct MapInfo %s = {\n", map_export_settings.label_name);
-	fprintf(file, "\t%s_map, //map\n", map_export_settings.label_name);
-	fprintf(file, "\t%d, //width\n", map.width);
-	fprintf(file, "\t%d, //height\n", map.height);
-	if(export_attributes) {
-		fprintf(file, "\t%s_attributes, //attributes\n", map_export_settings.label_name);
+	fprintf(file, "\t.data = %s_map, //map\n", map_export_settings.label_name);
+	fprintf(file, "\t.width = %d, //width\n", map.width);
+	fprintf(file, "\t.height = %d, //height\n", map.height);
+	if (export_attributes) { 
+		fprintf(file, "\t.attributes = %s_attributes, //attributes\n", map_export_settings.label_name);
 	} else {
-		fprintf(file, "\t%s, //attributes\n", "0");
+		fprintf(file, "\t.attributes = 0, //attributes\n");
 	}
-	fprintf(file, "\tBANK(%s), //tiles bank\n", tile_file);
-	fprintf(file, "\t&%s, //tiles info\n", tile_file);
+	fprintf(file, "\t.tiles_bank = BANK(%s), //tiles bank\n", tile_file);
+	fprintf(file, "\t.tiles = &%s, //tiles info\n", tile_file);
 	fprintf(file, "};");
 
 	return 0;

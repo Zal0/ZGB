@@ -36,6 +36,7 @@
     <ClInclude Include="include\Sound.h" />
     <ClInclude Include="include\Sprite.h" />
     <ClInclude Include="include\SpriteManager.h" />
+    <ClInclude Include="include\SRAM.h" />
     <ClInclude Include="include\Stack.h" />
     <ClInclude Include="include\TilesInfo.h" />
     <ClInclude Include="include\Vector.h" />
@@ -56,6 +57,7 @@
     <ClCompile Include="src\Sound.c" />
     <ClCompile Include="src\Sprite.c" />
     <ClCompile Include="src\SpriteManager.c" />
+    <ClCompile Include="src\SRAM.c" />
     <ClCompile Include="src\Stack.c" />
     <ClCompile Include="src\Vector.c" />
     <ClCompile Include="src\Print.c" />
@@ -64,7 +66,6 @@
   <ItemGroup>
     <None Include="src\Makefile" />
     <None Include="src\MakefileCommon" />
-    <None Include="src\timer_isr_wrapper.s" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A820F4AF-3BAD-4781-86FB-C055E213A91D}</ProjectGuid>
@@ -115,10 +116,18 @@
     <Import Project="color.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugColor|Win32'" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseColor|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeOutput />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugColor|Win32'">
+    <NMakeOutput />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <NMakeOutput />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseColor|Win32'">
+    <NMakeOutput />
+  </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

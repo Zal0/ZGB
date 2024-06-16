@@ -1,62 +1,139 @@
 #include "Music.h"
+#include "Sound.h"
+
+#define FORCE_CUT_SFX
 
 #ifdef MUSIC_DRIVER_HUGE
-BYTE hUGE_paused = TRUE;
-const hUGESong_t * hUGE_current_track;
-UBYTE hUGE_current_track_bank;
-
-void MusicCallback() __nonbanked {
-    if (hUGE_paused) 
-			return;
-
-    UBYTE __save = _current_bank;
-    SWITCH_ROM_MBC1(hUGE_current_track_bank);
-    hUGE_dosound();
-    SWITCH_ROM_MBC1(__save);
-}
-
-void hUGE_mute(UBYTE mute) {
-    hUGE_mute_channel(HT_CH1, mute);
-    hUGE_mute_channel(HT_CH2, mute);
-    hUGE_mute_channel(HT_CH3, mute);
-    hUGE_mute_channel(HT_CH4, mute);
-}
+#undef MUSIC_DRIVER_GBT
 #endif
 
-#ifdef MUSIC_DRIVER_GBT
-#include "BankManager.h"
+volatile UINT8 music_paused = 1;
+volatile UINT8 music_mute_mask = MUTE_MASK_NONE;
+volatile UINT8 sfx_priority = SFX_PRIORITY_MINIMAL;
 
-void MusicCallback() __nonbanked {
-	if(last_music)
-	{
-		gbt_update();
-		REFRESH_BANK;
+void* last_music = NULL;
+UINT8 last_music_bank = SFX_STOP_BANK;
+
+UINT8 stop_music_on_new_state = 1;
+
+
+#if defined(MUSIC_DRIVER_HUGE)
+inline void __SetMusicMuteMask(UINT8 mask) {
+	hUGE_mute_mask = mask;
+	hUGE_reset_wave();
+}
+#elif defined(MUSIC_DRIVER_GBT)
+inline void __SetMusicMuteMask(UINT8 mask) {
+	gbt_enable_channels(0xF & ~(mask));
+	gbt_reset_ch3_instrument();
+}
+#elif defined(MUSIC_DRIVER_BANJO)
+void __InitMusicDriver(void) NONBANKED {
+	UBYTE __save = CURRENT_BANK;
+	SWITCH_ROM(1);
+	banjo_check_hardware();
+	banjo_init(MODE_SN);
+	SWITCH_ROM(__save);
+}
+void __StopMusic(void) NONBANKED {
+	if (last_music_bank == SFX_STOP_BANK)
+		return;
+
+	UBYTE music_bank = last_music_bank; // save current music bank
+	last_music_bank = SFX_STOP_BANK;    // prevent running music updates from the interrupt
+	last_music = NULL;                  // clear the last music pointer
+
+	UBYTE __save = CURRENT_BANK, __save2 = MAP_FRAME2;
+	SWITCH_ROM(1);
+	SWITCH_ROM2(music_bank);
+	banjo_song_stop();
+	SWITCH_ROM2(__save2);
+	SWITCH_ROM(__save);
+}
+void __SetMusicMuteMask(UINT8 mask) NONBANKED {
+	if (last_music_bank == SFX_STOP_BANK)
+		return;
+	UBYTE __save = CURRENT_BANK, __save2 = MAP_FRAME2;
+	SWITCH_ROM(1);
+	SWITCH_ROM2(last_music_bank);
+	if (mask & CHANNEL_1) banjo_mute_song_channel(0); else banjo_unmute_song_channel(0);
+	if (mask & CHANNEL_2) banjo_mute_song_channel(1); else banjo_unmute_song_channel(1);
+	if (mask & CHANNEL_3) banjo_mute_song_channel(2); else banjo_unmute_song_channel(2);
+	if (mask & CHANNEL_4) banjo_mute_song_channel(3); else banjo_unmute_song_channel(3);
+	SWITCH_ROM2(__save2);
+	SWITCH_ROM(__save);
+}
+#else
+#define __SetMusicMuteMask(A)
+#endif
+
+
+void MUSIC_isr(void) NONBANKED {
+	static UINT8 old_mute_mask = ~MUTE_MASK_NONE;
+	if (old_mute_mask != music_mute_mask) {
+		__SetMusicMuteMask(music_mute_mask); 
+		old_mute_mask = music_mute_mask;
 	}
-}
-#endif
 
-void* last_music = 0;
-void __PlayMusic(void* music, unsigned char bank, unsigned char loop) {
-loop;
+	if (sfx_play_bank != SFX_STOP_BANK) {
+		if (!sfx_play_isr()) {
+#ifdef FORCE_CUT_SFX
+			sfx_sound_cut_mask(music_mute_mask);
+#endif
+			__SetMusicMuteMask(MUTE_MASK_NONE);
+			music_mute_mask = old_mute_mask = MUTE_MASK_NONE;
+
+			sfx_priority = SFX_PRIORITY_MINIMAL;
+			sfx_play_bank = SFX_STOP_BANK;
+		}
+	}
+
+	if (music_paused)
+		return;
+	if (last_music_bank == SFX_STOP_BANK)
+		return;
+
+#if defined(MUSIC_DRIVER_HUGE)
+	UBYTE __save = CURRENT_BANK;
+	SWITCH_ROM(last_music_bank);
+	hUGE_dosound();
+	SWITCH_ROM(__save);
+#elif defined(MUSIC_DRIVER_GBT)
+	UBYTE __save = CURRENT_BANK;
+	gbt_update();
+	SWITCH_ROM(__save);
+#elif defined(MUSIC_DRIVER_BANJO)
+	UBYTE __save = CURRENT_BANK, __save2 = MAP_FRAME2;
+	SWITCH_ROM(1);
+	SWITCH_ROM2(last_music_bank);
+	banjo_update_song();
+	SWITCH_ROM2(__save2);
+	SWITCH_ROM(__save);
+#endif
+}
+
+void __PlayMusic(void* music, UINT8 bank, UINT8 loop) NONBANKED {
+	bank; loop;
 	if(music != last_music) {
-		last_music = music;
-#ifdef MUSIC_DRIVER_GBT
+		last_music_bank = SFX_STOP_BANK;
+		UBYTE __save = CURRENT_BANK;
+#if defined(MUSIC_DRIVER_GBT)
 		gbt_play(music, bank, 7);
 		gbt_loop(loop);
-		REFRESH_BANK;
+#elif defined(MUSIC_DRIVER_HUGE)
+		INIT_SOUND();
+		SWITCH_ROM(bank);
+		hUGE_init(music);
+#elif defined(MUSIC_DRIVER_BANJO)
+		UBYTE __save2 = MAP_FRAME2;
+		SWITCH_ROM(1);
+		SWITCH_ROM2(bank);
+		banjo_play_song(music, loop);
+		SWITCH_ROM2(__save2);
 #endif
-#ifdef MUSIC_DRIVER_HUGE
-		NR52_REG = 0x80;
-		NR51_REG = 0xFF;
-		NR50_REG = 0x77;
-
-		hUGE_paused = 1;
-    hUGE_current_track = music; hUGE_current_track_bank = bank;
-    UBYTE __save = _current_bank;
-    SWITCH_ROM_MBC1(hUGE_current_track_bank);
-    hUGE_init(hUGE_current_track);
-    SWITCH_ROM_MBC1(__save);
-		hUGE_paused = 0;
-#endif
+		SWITCH_ROM(__save);
+		last_music = music;
+		last_music_bank = bank;
 	}
+	music_paused = 0;
 }

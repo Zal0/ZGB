@@ -80,6 +80,9 @@
     <ClInclude Include="include\SGB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\SRAM.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Sprite.c">
@@ -133,12 +136,12 @@
     <ClCompile Include="src\SGB.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\SRAM.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Makefile" />
     <None Include="src\MakefileCommon" />
-    <None Include="src\timer_isr_wrapper.s">
-      <Filter>Source Files</Filter>
-    </None>
   </ItemGroup>
 </Project>

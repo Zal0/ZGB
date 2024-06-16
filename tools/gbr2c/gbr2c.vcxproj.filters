@@ -18,5 +18,13 @@
     <ClCompile Include="gbr2c.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="gbrParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="gbrParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

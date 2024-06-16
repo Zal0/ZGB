@@ -1,25 +1,23 @@
 #ifndef OAMMANAGER_H
 #define OAMMANAGER_H
-#include <gb/gb.h> 
-#include "MetaSpriteInfo.h"
 
-struct OAMData {
-	UINT8 y;
-	UINT8 x;
-	UINT8 idx;
-	UINT8 flags;
-};
+#include <gbdk/platform.h>
 
-#define OAMS  ((UINT8*)((UINT16)oam & 0xFF00))
-#define OAM(A) ((struct OAMData*)(oams + (A << 2)))
+#if defined(NINTENDO)
+	#define OAM_ENTRY_SIZE sizeof(OAM_item_t)
+	#define OAM_OFFSET_SIZE OAM_ENTRY_SIZE
+#elif defined(SEGA)
+	#define OAM_ENTRY_SIZE 3
+	#define OAM_OFFSET_SIZE 1
+#endif
 
-void SwapOAMs();
-void ClearOAMs();
+#define OAMS   (oam)
+#define OAM(A) (oam + ((A) * OAM_OFFSET_SIZE))
 
-extern UINT8 next_oam_sprite_x;
-extern UINT8 next_oam_sprite_y;
-extern UINT8 next_oam_sprite_idx;
-extern UINT8 next_oam_sprite_flags;
-void FlushOAMSprite();
+extern UINT8* oam;
+
+void SwapOAMs(void);
+void ClearOAMs(void);
+void InitOAMs(void);
 
 #endif

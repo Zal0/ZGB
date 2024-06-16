@@ -1,85 +1,159 @@
-#include "SpriteManager.h"
-
-#include "Scroll.h"
-#include "BankManager.h"
 #include <string.h>
+
 #include "main.h"
+
+#include "SpriteManager.h"
+#include "Scroll.h"
 #include "ZGBMain.h"
+#include "Flip.h"
+#include "Palette.h"
+
+#if defined(NINTENDO)
+	#define LAST_SPRITE_IDX 128
+#elif defined(SEGA)
+	#define LAST_SPRITE_IDX 255
+#endif
 
 //Pool
-UINT8 sprite_manager_sprites_mem[N_SPRITE_MANAGER_SPRITES * sizeof(Sprite)];
+Sprite sprite_manager_sprites_mem[N_SPRITE_MANAGER_SPRITES];
 Sprite* sprite_manager_sprites[N_SPRITE_MANAGER_SPRITES];
 DECLARE_STACK(sprite_manager_sprites_pool, N_SPRITE_MANAGER_SPRITES);
 
 //Current sprites
-DECLARE_VECTOR(sprite_manager_updatables, N_SPRITE_MANAGER_SPRITES);
+VECTOR_DECLARE(sprite_manager_updatables, N_SPRITE_MANAGER_SPRITES);
 
 UINT8 sprite_manager_removal_check;
 
-UINT8 last_sprite_loaded = 0;
+INT16 last_sprite_loaded = 0;
 UINT8 last_sprite_pal_loaded = 0;
 
-void SpriteManagerReset() {
-	UINT8 i;
-
+void SpriteManagerReset(void) {
+#if defined(NINTENDO)
+	last_sprite_loaded = LAST_SPRITE_IDX;
+#elif defined(SEGA)
 	last_sprite_loaded = 0;
+#endif
 	last_sprite_pal_loaded = 0;
 
+	UINT8 __save = CURRENT_BANK;
 	//Call Destroy on all sprites still on the list
-	for(i = 0u; i != sprite_manager_updatables[0]; ++ i) {
-		THIS = sprite_manager_sprites[sprite_manager_updatables[i + 1]];
-		PUSH_BANK(spriteBanks[THIS->type]);
-				spriteDestroyFuncs[THIS->type]();
-		POP_BANK;
+	for(UINT8 i = 0u; i != VECTOR_LEN(sprite_manager_updatables); ++ i) {
+		THIS = sprite_manager_sprites[VECTOR_GET(sprite_manager_updatables, i)];
+		SWITCH_ROM(spriteBanks[THIS->type]);
+		spriteDestroyFuncs[THIS->type]();
 	}
+	SWITCH_ROM(__save);
 
 	//place all sprites on the pool
 	StackClear(sprite_manager_sprites_pool);
-	for(i = 0; i != N_SPRITE_MANAGER_SPRITES; ++i) {
-		sprite_manager_sprites[i] = (Sprite*)&sprite_manager_sprites_mem[sizeof(Sprite) * (UINT16)i];
-		StackPush(sprite_manager_sprites_pool, i);		
+	for(UINT8 i = 0; i != N_SPRITE_MANAGER_SPRITES; ++i) {
+		sprite_manager_sprites[i] = &sprite_manager_sprites_mem[i];
+		StackPush(sprite_manager_sprites_pool, i);
 	}
 	ClearOAMs();
 
-	memset(spriteIdxs, 255, N_SPRITE_TYPES);
+	memset(spriteIdxs, LAST_SPRITE_IDX, N_SPRITE_TYPES);
+	memset(spriteIdxsH, LAST_SPRITE_IDX, N_SPRITE_TYPES);
+	memset(spriteIdxsV, LAST_SPRITE_IDX, N_SPRITE_TYPES);
+	memset(spriteIdxsHV, LAST_SPRITE_IDX, N_SPRITE_TYPES);
 
 	//Clear the list of updatable sprites
-	sprite_manager_updatables[0] = 0;
+	VECTOR_CLEAR(sprite_manager_updatables);
 	sprite_manager_removal_check = 0;
 }
 
-extern UWORD ZGB_Fading_SPal[32];
 void SpriteManagerLoad(UINT8 sprite_type) {
-#ifdef CGB
-	UINT8 i;
+	if (spriteIdxs[sprite_type] != LAST_SPRITE_IDX) // Already loaded
+		return;
+#if defined(NINTENDO)
+	if (last_sprite_loaded < -127) // No room for this sprite
+		return;
+#elif defined(SEGA)
+	if (last_sprite_loaded > LAST_SPRITE_IDX) // No room for this sprite
+		return;
 #endif
-	PUSH_BANK(spriteDataBanks[sprite_type])
-	
+
+	UINT8 __save = CURRENT_BANK;
+	SWITCH_ROM(spriteDataBanks[sprite_type]);
+
 	const struct MetaSpriteInfo* data = spriteDatas[sprite_type];
 	UINT8 n_tiles = data->num_tiles;
 	UINT8 n_pals = data->num_palettes;
 
-	spriteIdxs[sprite_type] = last_sprite_loaded;
-	set_sprite_data(last_sprite_loaded, n_tiles, data->data);
-	last_sprite_loaded += n_tiles;
+#if defined(NINTENDO)
+	last_sprite_loaded -= n_tiles;
+#endif
 
-#ifdef CGB
-	for(i = 0; i != last_sprite_pal_loaded; ++ i)
-	{
-		if(strncmp(&ZGB_Fading_SPal[i << 2], data->palettes, n_pals << 3) == 0)
+#if defined(NINTENDO)
+	spriteIdxs[sprite_type] = last_sprite_loaded;
+	spriteIdxsH[sprite_type] = last_sprite_loaded;
+	spriteIdxsV[sprite_type] = last_sprite_loaded;
+	spriteIdxsHV[sprite_type] = last_sprite_loaded;
+
+	UINT8 end = last_sprite_loaded + n_tiles;
+	if((end - 1u) >= (UINT8)last_sprite_loaded) {
+		set_sprite_native_data(last_sprite_loaded, n_tiles, data->data);
+	} else {
+		set_sprite_native_data(last_sprite_loaded, n_tiles - end, data->data);
+		set_sprite_native_data(0, end, data->data + ((n_tiles - end) << 4));
+	}
+#elif defined(SEGA)
+	spriteIdxs[sprite_type] = last_sprite_loaded;
+	spriteIdxsH[sprite_type] = last_sprite_loaded;
+	spriteIdxsV[sprite_type] = last_sprite_loaded;
+	spriteIdxsHV[sprite_type] = last_sprite_loaded;
+	if (last_sprite_loaded + n_tiles <= LAST_SPRITE_IDX) {
+		#if DEFAULT_COLOR_DEPTH == 4
+		set_sprite_native_data(last_sprite_loaded, n_tiles, data->data);
+		#else
+		set_sprite_data(last_sprite_loaded, n_tiles, data->data);
+		#endif
+	}
+	last_sprite_loaded += n_tiles;
+	if (spriteFlips[sprite_type] & FLIP_X) {
+		if (last_sprite_loaded + n_tiles <= LAST_SPRITE_IDX) {
+			spriteIdxsV[sprite_type] = last_sprite_loaded;
+			set_sprite_data_flip(last_sprite_loaded, n_tiles, data->data, FLIP_X);
+		}
+		last_sprite_loaded += n_tiles;
+	}
+	if (spriteFlips[sprite_type] & FLIP_Y) {
+		if (last_sprite_loaded + n_tiles <= LAST_SPRITE_IDX) {
+			spriteIdxsH[sprite_type] = last_sprite_loaded;
+			set_sprite_data_flip(last_sprite_loaded, n_tiles, data->data, FLIP_Y);
+		}
+		last_sprite_loaded += n_tiles;
+	}
+	if (spriteFlips[sprite_type] & FLIP_XY) {
+		if (last_sprite_loaded + n_tiles <= LAST_SPRITE_IDX) {
+			spriteIdxsHV[sprite_type] = last_sprite_loaded;
+			set_sprite_data_flip(last_sprite_loaded, n_tiles, data->data, FLIP_X | FLIP_Y);
+		}
+		last_sprite_loaded += n_tiles;
+	}
+#endif
+
+#if defined(SEGA) || (defined(NINTENDO) && defined(CGB))
+	#if defined(CGB)
+	UINT8 i;
+	for (i = 0; i != last_sprite_pal_loaded; ++i) {
+		if (memcmp(ZGB_Fading_SPal + (i * N_PALETTE_COLORS), data->palettes, n_pals * PALETTE_SIZE) == 0)
 			break;
 	}
 
 	//Load palettes
 	spritePalsOffset[sprite_type] = i;
-	if(i == last_sprite_pal_loaded)
-	{
-		SetPalette(SPRITES_PALETTE, last_sprite_pal_loaded, n_pals, data->palettes, _current_bank);
-		last_sprite_pal_loaded += n_pals;
+	if (i == last_sprite_pal_loaded) {
+	#else
+	spritePalsOffset[sprite_type] = 0;
+	#endif
+		last_sprite_pal_loaded += SetPalette(SPRITES_PALETTE, last_sprite_pal_loaded, n_pals, data->palettes, CURRENT_BANK);
+	#if defined(CGB)
 	}
+	#endif
 #endif
 
-	POP_BANK
+	SWITCH_ROM(__save);
 }
 
 Sprite* cachedSprite; //This has to be declared outside because of an LCC bug (easy to see with the Princess' Axe)
@@ -88,10 +162,7 @@ Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y) {
 	UINT8 sprite_idx;
 	UINT16 spriteIdxTmp; //Yes, another bug in the compiler forced me to change the type here to UINT16 instead of UINT8
 
-	if(spriteIdxs[sprite_type] == 255)
-	{
-		SpriteManagerLoad(sprite_type);
-	}
+	SpriteManagerLoad(sprite_type);
 
 	sprite_idx = StackPop(sprite_manager_sprites_pool);
 	sprite = sprite_manager_sprites[sprite_idx];
@@ -112,10 +183,13 @@ Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y) {
 	cachedSprite = THIS;
 	spriteIdxTmp = THIS_IDX;
 	THIS = sprite;
-	THIS_IDX = sprite_manager_updatables[0] - 1;
-	PUSH_BANK(spriteBanks[sprite->type]);
-		spriteStartFuncs[sprite->type]();
-	POP_BANK;
+	THIS_IDX = VECTOR_LEN(sprite_manager_updatables) - 1;
+
+	UINT8 __save = CURRENT_BANK;
+	SWITCH_ROM(spriteBanks[sprite->type]);
+	spriteStartFuncs[sprite->type]();
+	SWITCH_ROM(__save);
+
 	//And now they must be restored
 	THIS = cachedSprite;
 	THIS_IDX = spriteIdxTmp;
@@ -124,14 +198,13 @@ Sprite* SpriteManagerAdd(UINT8 sprite_type, UINT16 x, UINT16 y) {
 
 void SpriteManagerRemove(int idx) {
 	sprite_manager_removal_check = 1;
-	sprite_manager_sprites[sprite_manager_updatables[idx + 1]]->marked_for_removal = 1;
+	sprite_manager_sprites[VECTOR_GET(sprite_manager_updatables, idx)]->marked_for_removal = 1;
 }
 
 void SpriteManagerRemoveSprite(Sprite* sprite) {
-	UINT8 i;
 	Sprite* s;
-	for(i = 0u; i != sprite_manager_updatables[0]; ++i) {
-		s = sprite_manager_sprites[sprite_manager_updatables[i + 1]];
+	for(UINT8 i = 0u; i != VECTOR_LEN(sprite_manager_updatables); ++i) {
+		s = sprite_manager_sprites[VECTOR_GET(sprite_manager_updatables, i)];
 		if(s == sprite) {
 			SpriteManagerRemove(i);
 			break;
@@ -139,58 +212,79 @@ void SpriteManagerRemoveSprite(Sprite* sprite) {
 	}
 }
 
-void SpriteManagerFlushRemove() {
+void SpriteManagerFlushRemove(void) {
 	//We must remove sprites in inverse order because everytime we remove one the vector shrinks and displaces all elements
-	for(THIS_IDX = sprite_manager_updatables[0] - 1u; (UINT8)(THIS_IDX + 1u) != 0u; THIS_IDX --) {
-		THIS = sprite_manager_sprites[sprite_manager_updatables[THIS_IDX + 1u]];
+	UINT8 __save = CURRENT_BANK;
+	for(THIS_IDX = VECTOR_LEN(sprite_manager_updatables) - 1u; (UINT8)(THIS_IDX + 1u) != 0u; THIS_IDX --) {
+		THIS = sprite_manager_sprites[VECTOR_GET(sprite_manager_updatables, THIS_IDX)];
 		if(THIS->marked_for_removal) {
-			StackPush(sprite_manager_sprites_pool, sprite_manager_updatables[THIS_IDX + 1u]);
+			StackPush(sprite_manager_sprites_pool, VECTOR_GET(sprite_manager_updatables, THIS_IDX));
 			VectorRemovePos(sprite_manager_updatables, THIS_IDX);
-				
-			PUSH_BANK(spriteBanks[THIS->type]);
-				spriteDestroyFuncs[THIS->type]();
-			POP_BANK;
+
+			SWITCH_ROM(spriteBanks[THIS->type]);
+			spriteDestroyFuncs[THIS->type]();
 		}
 	}
 	sprite_manager_removal_check = 0;
+	SWITCH_ROM(__save);
 }
 
-void SetBank(UINT8 bank)
-{
-bank;
-__asm
-	ldhl	sp,	#2
-	ld	a, (hl)
-//*bank_stack = bank;
-	ld  (#__current_bank), a
-//SWITCH_ROM_MBC1(bank);
-	ld (#0x2000), a
-__endasm;
-}
-
-extern UINT8* oam;
-extern UINT8* oam0;
-extern UINT8* oam1;
+UINT8 enable_flickering = 1;
 UINT8 THIS_IDX = 0;
 Sprite* THIS = 0;
-void SpriteManagerUpdate() {
-	SPRITEMANAGER_ITERATE(THIS_IDX, THIS) {
-		if(!THIS->marked_for_removal) {
-			//No need to call push and pop here, just change the current bank
-			SetBank(spriteBanks[THIS->type]);
+void SpriteManagerUpdate(void) {
+	static UINT8 __save, i, target_idx;
 
-			spriteUpdateFuncs[THIS->type]();
+	__save = CURRENT_BANK;
 
-			if(THIS == scroll_target)
-				RefreshScroll();
-
-			DrawSprite(); //this needs to be done using the sprite bank because the animation array is stored there
+	// render scroll target first to give it priority over the others 
+	if (enable_flickering) {
+		if ((scroll_target) && (!scroll_target->marked_for_removal)) {
+			for (target_idx = 0; target_idx != VECTOR_LEN(sprite_manager_updatables); ++target_idx) {
+				if ((THIS = sprite_manager_sprites[VECTOR_GET(sprite_manager_updatables, target_idx)]) == scroll_target) {
+					i = THIS_IDX; // save THIS_IDX from the last iteration
+					THIS_IDX = target_idx;
+					SWITCH_ROM(spriteBanks[THIS->type]);
+					spriteUpdateFuncs[THIS->type](); // call sprite update func
+					RefreshScroll();
+					DrawSprite(); // this needs to be done using the sprite bank because the animation array is stored there
+					THIS_IDX = i; // restore THIS_IDX
+					break;
+				}
+			
+			}
+		} else {
+			target_idx = N_SPRITE_MANAGER_SPRITES;
 		}
+	} else {
+		target_idx = N_SPRITE_MANAGER_SPRITES;
+		THIS_IDX = 0;
 	}
 
+	// render other sprites roundrobin 
+	if (THIS_IDX >= VECTOR_LEN(sprite_manager_updatables)) THIS_IDX = 0;
+	for (i = VECTOR_LEN(sprite_manager_updatables); i != 0; --i) {
+		THIS = sprite_manager_sprites[VECTOR_GET(sprite_manager_updatables, THIS_IDX)];
+		if ((THIS_IDX != target_idx) && (!THIS->marked_for_removal)) {
+			SWITCH_ROM(spriteBanks[THIS->type]);
+			spriteUpdateFuncs[THIS->type](); // call sprite update func
+			if (THIS == scroll_target) {
+				RefreshScroll();
+			}
+			DrawSprite(); // this needs to be done using the sprite bank because the animation array is stored there
+		}
+		if (++THIS_IDX >= VECTOR_LEN(sprite_manager_updatables)) THIS_IDX = 0;
+	}
+	++THIS_IDX;
+
+	SWITCH_ROM(__save);
+
+	// hide unused sprites and swap shadow OAMs
 	SwapOAMs();
 
-	if(sprite_manager_removal_check) {
+	// remove sprites pending for remove
+	if (sprite_manager_removal_check) {
 		SpriteManagerFlushRemove();
 	}
+
 }

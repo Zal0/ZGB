@@ -1,0 +1,23 @@
+
+# For windows run: install.bat
+#
+# The info below is for For Linux and Mac OS
+#
+#
+# The following command will *temporarily* set the ZGB environment var
+# in your current shell session (run it from the same directory as this file).
+#
+# Run: source install.txt
+#
+# Or run: export ZGB_PATH=`pwd`/common
+#
+# Recommended but not required:
+# Add the full path to ZGB/common to your shell path defaults as ZGB_PATH.
+# How to do this will depend on which command shell you use.
+#
+# After setting up the environment variable you can try building the example template:
+#
+# Run: cd examples/template/src; make
+
+export ZGB_PATH=`pwd`/common
+

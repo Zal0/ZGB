@@ -1,143 +1,247 @@
 ZGB_PATH_UNIX := $(subst ',,$(subst \,/,'$(ZGB_PATH)'))
-GBDK_HOME := $(ZGB_PATH_UNIX)/../env/gbdk
-PATH := $(ZGB_PATH_UNIX)/../env/make-3.81-bin/bin;$(ZGB_PATH_UNIX)/../env/gbdk/bin;$(ZGB_PATH_UNIX)/../env/msys/bin;$(PATH)
+ifndef GBDK_HOME
+	GBDK_HOME := $(ZGB_PATH_UNIX)/../../gbdk
+	PATH := $(ZGB_PATH_UNIX)/../env/make-3.81-bin/bin;$(ZGB_PATH_UNIX)/../env/gbdk/bin;$(ZGB_PATH_UNIX)/../env/msys/bin;$(PATH)
+endif
+GBDK_HOME_UNIX := $(subst ',,$(subst \,/,'$(GBDK_HOME)'))
 
-#--- Default build will be release. Can be overiden passing BUILD_TYPE = debug as a parameter
-BUILD_TYPE = Release
+#--- Default build will be Release. Can be overiden passing BUILD_TYPE = Debug as a parameter
+ifndef BUILD_TYPE
+	BUILD_TYPE = Release
+endif
 
-#--- Default player will be huge tracker HUGETRACKER/GBT_PLAYER
+#--- Default sprite size is 8x16
 ifeq ($(DEFAULT_SPRITES_SIZE), )
 	DEFAULT_SPRITES_SIZE = SPRITES_8x16
 endif
-
-ifeq ($(MUSIC_PLAYER), )
-	MUSIC_PLAYER = HUGETRACKER
+ifndef CUSTOM_DATA_SIZE
+	CUSTOM_DATA_SIZE = 8
 endif
 
-OBJDIR = ../$(BUILD_TYPE)
-OBJDIR_RES = ../$(BUILD_TYPE)/res
-OBJDIR_ZGB = ../$(BUILD_TYPE)/zgb
-BINDIR = ../bin
+# Configure platform specific link and binary making flags here:
+BINFLAGS_gb      = 
+BINFLAGS_pocket  = 
+BINFLAGS_duck    = 
+BINFLAGS_gbc     = -Wm-yc
+BINFLAGS_sms     = 
+BINFLAGS_gg      = 
+BINFLAGS_nes     = 
 
-SDCC = sdcc
-SDASGB = sdasgb
-SDLDGB = sdldgb
-MAKEBIN = makebin
-IHXCHECK = ihxcheck
-PNG2ASSET = png2asset
-BANKPACK = bankpack
+# Append current platform extension type to output and intermediate directories
+OBJDIR = ../obj/$(subst Verbose,,$(BUILD_TYPE))/$(EXT)
+OBJDIR_RES = $(OBJDIR)/res
+OBJDIR_ZGB = $(OBJDIR)/zgb
+BINDIR = ../bin/$(EXT)
+
+# See bottom of Makefile for directory auto-creation
+MKDIRS = $(BINDIR) $(OBJDIR) $(OBJDIR_RES) $(OBJDIR_RES)/sprites $(OBJDIR_ZGB)
+
+
+LCC = $(GBDK_HOME_UNIX)/bin/lcc
+SDAR = $(GBDK_HOME_UNIX)/bin/sdar
+PNG2ASSET = $(GBDK_HOME_UNIX)/bin/png2asset
+
+ifndef EMULATOR
+	# The default emulator is Emulicious
+	EMULATOR = $(ZGB_PATH_UNIX)/../env/emulicious/Emulicious
+endif
 
 GBR2C = $(ZGB_PATH_UNIX)/../tools/gbr2c/gbr2c
 GBR2PNG = $(ZGB_PATH_UNIX)/../tools/gbr2png/gbr2png
 GBM2C = $(ZGB_PATH_UNIX)/../tools/gbm2c/gbm2c
-MOD2GBT = $(ZGB_PATH_UNIX)/../env/mod2gbt
-UGE2SOURCE = $(ZGB_PATH_UNIX)/../env/uge2source
-BGB = $(ZGB_PATH_UNIX)/../env/bgb/bgb
-ROMVIEW = $(ZGB_PATH_UNIX)/../env/romview/romview
-SRC2SYM = $(ZGB_PATH_UNIX)/../env/src2sym.pl
+PNG2FONT = python $(ZGB_PATH_UNIX)/../tools/png2font/png2font.py
+MOD2GBT = $(ZGB_PATH_UNIX)/../tools/mod2gbt/mod2gbt
+UGE2SOURCE = $(ZGB_PATH_UNIX)/../tools/uge2source/uge2source
+VGM2DATA = $(ZGB_PATH_UNIX)/../tools/vgm2data/vgm2data
+WAV2DATA = python $(ZGB_PATH_UNIX)/../tools/wav2data/wav2data.py
+FXHAMMER2DATA = $(ZGB_PATH_UNIX)/../tools/fxhammer2data/fxhammer2data
+FUR2JSON = python $(ZGB_PATH_UNIX)/../tools/banjo/furnace2json.py 
+JSON2SMS = python $(ZGB_PATH_UNIX)/../tools/banjo/json2sms.py
 
-CFLAGS += -Wa-n -mgbz80 --no-std-crt0 --fsigned-char --use-stdout -Dnonbanked= -I$(GBDK_HOME)/include -D__PORT_gbz80 -D__TARGET_gb -I$(GBDK_HOME)/include/asm $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include
-CFLAGS += -DFILE_NAME=$(basename $(<F)) -MMD
+ADDR_gb = -Wl-g.STACK=0xDF00 -Wl-g_mirror_OAM=0xDF00 -Wl-g_font_recode_table=0xDFA0 -Wb-reserve=1:1000
+ADDR_duck = $(ADDR_gb)
+ADDR_ap = $(ADDR_gb)
+ADDR_gg = -Wl-g.STACK=0xDEA0 -Wl-g_mirror_OAM=0xDF00 -Wl-g_font_recode_table=0xDEA0 -Wb-reserve=1:1400 -Wb-banktype=1:CODE
+ADDR_sms = $(ADDR_gg)
 
-#since I am placing my OAM mirror at the end of the ram (0xDF00-0xDFFF) I need to move the stack to 0xDEFF
-LNAMES=-g _shadow_OAM=0xC000 -g .STACK=0xDEFF -g .refresh_OAM=0xFF80 -b _DATA=0xc0a0 -b _CODE=0x0200
-LFLAGS=-n -m -j -w -i -k $(GBDK_HOME)/lib/small/asxxxx/gbz80/ -l gbz80.lib -k $(GBDK_HOME)/lib/small/asxxxx/gb/ -l gb.lib -k $(OBJDIR_ZGB)/ -l zgb.lib $(LNAMES)
+CFLAGS_gb = -DDEFAULT_COLOR_DEPTH=2
+CFLAGS_gbc = $(CFLAGS_gb) -DCGB
+CFLAGS_duck = $(CFLAGS_gb)
+CFLAGS_pocket = $(CFLAGS_gb)
+CFLAGS_gg = -Wf--nmos-z80 -DDEFAULT_COLOR_DEPTH=4
+CFLAGS_sms = $(CFLAGS_gg)
 
-ifneq ($(strip $(N_BANKS)),)
-	BINFLAGS += -yt 1 -yo $(N_BANKS)
-endif
+#png2asset cross-platform flags
+PNG2ASSET_SPR_gg = -noflip -pack_mode sms -bpp 4 -keep_palette_order
+PNG2ASSET_SPR_sms = $(PNG2ASSET_SPR_gg)
+FLAGSPNG2ASSET_SPR += $(PNG2ASSET_SPR_$(EXT))
 
-# DMG/Color flags
-EXTENSION = gb
-ifneq (,$(findstring Color,$(BUILD_TYPE)))
-	BINFLAGS += -yc
-	CFLAGS += -DCGB
-	EXTENSION = gbc
-endif
+PNG2ASSET_BKG_gb = -noflip
+PNG2ASSET_BKG_duck = $(PNG2ASSET_BKG_gb)
+PNG2ASSET_BKG_gg = -noflip -pack_mode sms -bpp 4 -keep_palette_order
+PNG2ASSET_BKG_sms = $(PNG2ASSET_SPR_gg)
+FLAGSPNG2ASSET_BKG += $(PNG2ASSET_BKG_$(EXT))
 
-# SGB flags
-ifneq ($(wildcard ../res/borders), )
-	BINFLAGS +=-ys
-endif
+#png2font cross-platform flags
+PNG2FONT_gb = -p 2
+PNG2FONT_gbc = $(PNG2FONT_gb)
+PNG2FONT_duck = $(PNG2FONT_gb)
+PNG2FONT_pocket = $(PNG2FONT_gb)
+PNG2FONT_gg = -p 4
+PNG2FONT_sms = $(PNG2FONT_gg)
+FLAGSPNG2FONT += $(PNG2FONT_$(EXT))
 
-# gbt-player/Hugetracker flags
-ifeq ($(MUSIC_PLAYER), HUGETRACKER)
-	CFLAGS += -DMUSIC_DRIVER_HUGE
+#gbr2c cross-platform flags
+FLAGSGBR2C_gg = -bpp 4
+FLAGSGBR2C_sms = $(FLAGSGBR2C_gg)
+FLAGSGBR2C += $(FLAGSGBR2C_$(EXT)) 
+
+#fxhammer converter flags
+FLAGSFXHAMMER_gg = -m psg
+FLAGSFXHAMMER_sms = -m psg
+FLAGSFXHAMMER += $(FLAGSFXHAMMER_$(EXT))
+
+CFLAGS += $(TARGET) -Wf-MMD $(BUILD_DEFS) -I../include -I$(ZGB_PATH_UNIX)/include -I$(OBJDIR_RES) -DFILE_NAME=$(basename $(<F)) -DCUSTOM_DATA_SIZE=$(CUSTOM_DATA_SIZE) $(CFLAGS_$(EXT))
+
+# Tune Mapper and SGB settings
+ifneq ($(strip $(PLAT)),duck)
+	ifeq ($(wildcard savegame.c), )
+		# No savegame
+		BINFLAGS += -Wl-yt0x19
+	else
+		# Savegame
+		BINFLAGS += -Wl-yt0x1B -Wl-ya1
+		CFLAGS += -DUSE_SAVEGAME
+	endif
+
+	# set SGB flags if has border and not SMS/GG
+	ifneq ($(wildcard ../res/borders/$(EXT)), )
+		BINFLAGS += -Wm-ys
+		CFLAGS += -DUSE_SGB_BORDER 
+	endif
 else
-	CFLAGS += -DMUSIC_DRIVER_GBT
+	BINFLAGS += -Wl-yt0x19
 endif
 
+# Compose flags for final binary emission stage
+ifeq ($(strip $(N_BANKS)),)
+	NBANKS = A
+endif
+BINFLAGS += $(TARGET) -Wl-j -Wm-yS -autobank -Wl-yo$(N_BANKS) -Wb-ext=.rel $(ADDR_$(PLAT)) $(BINFLAGS_$(EXT)) -Wm-yn$(PROJECT_NAME)
+
+
+# Sprite sizes
 ifeq ($(DEFAULT_SPRITES_SIZE), SPRITES_8x16)
-	CFLAGS += -DLCDCF_OBJDEFAULT=LCDCF_OBJ16
-	CFLAGSPNG2ASSET += -spr8x16
+	FLAGSPNG2ASSET_SPR += -spr8x16
+	CFLAGS += -DDEFAULT_SPRITES_SIZE=16
 else
-	CFLAGS += -DLCDCF_OBJDEFAULT=LCDCF_OBJ8
-	CFLAGSPNG2ASSET += -spr8x8
+	FLAGSPNG2ASSET_SPR += -spr8x8
+	CFLAGS += -DDEFAULT_SPRITES_SIZE=8
 endif
+
 
 # Release/Debug flags
 ifneq (,$(findstring Debug,$(BUILD_TYPE)))
-	CFLAGS += --debug
-	LFLAGS += -y
+	CFLAGS += -debug
+	BINFLAGS += -debug
 	PROJECT_NAME := $(PROJECT_NAME)_Debug
 else
-	CFLAGS += -DNDEBUG
+	CFLAGS += -Wf'--max-allocs-per-node 50000' -DNDEBUG
 endif
+# Optional verbose output for lcc, linker and bankpack
+ifneq (,$(findstring Verbose,$(BUILD_TYPE)))
+	CFLAGS += -v
+	BINFLAGS += -Wl-p -Wb-v
+endif
+
 
 current_dir = $(shell pwd)
 
-ASMS_ZGB    = $(foreach dir,$(ZGB_PATH_UNIX)/src,$(notdir $(wildcard $(dir)/*.s)))
-CLASSES_ZGB = $(foreach dir,$(ZGB_PATH_UNIX)/src,$(notdir $(wildcard $(dir)/*.c)))
-ASMS        = $(foreach dir,.,$(notdir $(wildcard $(dir)/*.s))) 
-CLASSES     = $(foreach dir,.,$(notdir $(wildcard $(dir)/*.c))) 
-GBRS        = $(foreach dir,../res,$(notdir $(wildcard $(dir)/*.gbr)))
-GBMS        = $(foreach dir,../res,$(notdir $(wildcard $(dir)/*.gbm)))
-PNGS        = $(foreach dir,../res,$(notdir $(wildcard $(dir)/*.png)))
-SPRITES     = $(foreach dir,../res/sprites,$(notdir $(wildcard $(dir)/*.gbr)))
-SPRITES_PNG = $(foreach dir,../res/sprites,$(notdir $(wildcard $(dir)/*.png)))
-SGB_BORDERS = $(foreach dir,../res/borders,$(notdir $(wildcard $(dir)/*.png)))
-ifeq ($(MUSIC_PLAYER), GBT_PLAYER)
-	MUSICS_MOD = $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.mod)))
+
+# ZGB sources
+ASMS_ZGB         = $(foreach dir,$(ZGB_PATH_UNIX)/src,$(notdir $(wildcard $(dir)/*.s)))
+PLAT_AS_ZGB      = $(foreach dir,$(ZGB_PATH_UNIX)/src/$(PLAT),$(notdir $(wildcard $(dir)/*.s)))
+CLASSES_ZGB      = $(foreach dir,$(ZGB_PATH_UNIX)/src,$(notdir $(wildcard $(dir)/*.c)))
+PLAT_C_ZGB       = $(foreach dir,$(ZGB_PATH_UNIX)/src/$(PLAT),$(notdir $(wildcard $(dir)/*.c)))
+OBJECTS_ZGB      = $(foreach dir,$(ZGB_PATH_UNIX)/lib/$(PLAT),$(wildcard $(dir)/*.o))
+
+# Project sources
+ASMS             = $(foreach dir,.,$(notdir $(wildcard $(dir)/*.s))) 
+PLAT_AS          = $(foreach dir,./$(PLAT),$(notdir $(wildcard $(dir)/*.s))) 
+CLASSES          = $(foreach dir,.,$(notdir $(wildcard $(dir)/*.c)))
+PLAT_C           = $(foreach dir,./$(PLAT),$(notdir $(wildcard $(dir)/*.c)))
+INIT_C           = $(foreach dir,$(ZGB_PATH_UNIX)/src/init,$(notdir $(wildcard $(dir)/*.c)))
+# Project assets 
+GBRS             = $(foreach dir,../res,$(notdir $(wildcard $(dir)/*.gbr)))
+GBMS             = $(foreach dir,../res,$(notdir $(wildcard $(dir)/*.gbm)))
+PNGS             = $(foreach dir,../res,$(notdir $(wildcard $(dir)/*.png)))
+GBRS_PLAT        = $(foreach dir,../res/backgrounds/$(EXT),$(notdir $(wildcard $(dir)/*.gbr)))
+GBMS_PLAT        = $(foreach dir,../res/backgrounds/$(EXT),$(notdir $(wildcard $(dir)/*.gbm)))
+PNGS_PLAT        = $(foreach dir,../res/backgrounds/$(EXT),$(notdir $(wildcard $(dir)/*.png)))
+FONTS_PLAT       = $(foreach dir,../res/fonts/$(EXT),$(notdir $(wildcard $(dir)/*.png)))
+SPRITES          = $(foreach dir,../res/sprites,$(notdir $(wildcard $(dir)/*.gbr)))
+SPRITES_PLAT     = $(foreach dir,../res/sprites/$(EXT),$(notdir $(wildcard $(dir)/*.gbr)))
+SPRITES_PNG      = $(foreach dir,../res/sprites,$(notdir $(wildcard $(dir)/*.png)))
+SPRITES_PNG_PLAT = $(foreach dir,../res/sprites/$(EXT),$(notdir $(wildcard $(dir)/*.png)))
+VGMS_PLAT        = $(foreach dir,../res/sounds/$(EXT),$(notdir $(wildcard $(dir)/*.vgm)))
+WAVS_PLAT        = $(foreach dir,../res/sounds/$(EXT),$(notdir $(wildcard $(dir)/*.wav)))
+SAVS_PLAT        = $(foreach dir,../res/sounds/$(EXT),$(notdir $(wildcard $(dir)/*.sav)))
+SGB_BORDERS      = $(foreach dir,../res/borders/$(EXT),$(notdir $(wildcard $(dir)/*.png)))
+	
+# detect music driver
+ifeq ($(MUSIC_PLAYER), )
+	# detect music driver by presense of the music modules 
+	ifneq ($(wildcard ../res/music/$(EXT)/*.uge), )
+		CFLAGS += -DMUSIC_DRIVER_HUGE
+		MUSICS_UGE = $(foreach dir,../res/music/$(EXT),$(notdir $(wildcard $(dir)/*.uge)))
+	else 
+		ifneq ($(wildcard ../res/music/$(EXT)/*.mod), )
+			CFLAGS += -DMUSIC_DRIVER_GBT
+			MUSICS_MOD = $(foreach dir,../res/music/$(EXT),$(notdir $(wildcard $(dir)/*.mod)))
+		else
+			ifneq ($(wildcard ../res/music/$(EXT)/*.fur), )
+				CFLAGS += -DMUSIC_DRIVER_BANJO
+				MUSICS_FUR = $(foreach dir,../res/music/$(EXT),$(notdir $(wildcard $(dir)/*.fur)))
+			endif
+		endif
+	endif
 else
-	MUSICS_UGE = $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.uge)))
+	# legacy behavior: driver name is explicitly set in the project makefile
+	ifeq ($(MUSIC_PLAYER), GBT_PLAYER)
+		CFLAGS += -DMUSIC_DRIVER_GBT
+		MUSICS_MOD = $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.mod)))
+	else
+		ifeq ($(MUSIC_PLAYER), HUGETRACKER)
+			CFLAGS += -DMUSIC_DRIVER_HUGE
+			MUSICS_UGE = $(foreach dir,../res/music,$(notdir $(wildcard $(dir)/*.uge)))
+		endif
+	endif
 endif
-OBJS = $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.o) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.o) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.o) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.o) $(SGB_BORDERS:%.png=$(OBJDIR_RES)/borders/%.png.o) $(PNGS:%.png=$(OBJDIR_RES)/%.png.o) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.o) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.o) $(ASMS:%.s=$(OBJDIR)/%.o) $(CLASSES:%.c=$(OBJDIR)/%.o)
-OBJS_ZGB = $(ASMS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.o) $(OBJ_DIR_ZGB)
-OBJS_ZGB_LIB = $(subst $(subst ,, ),\n,$(ASMS_ZGB:%.s=%.o) $(CLASSES_ZGB:%.c=%.o))
+
+OBJS = $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.o) $(GBMS_PLAT:%.gbm=$(OBJDIR_RES)/%.gbm.o) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.o) $(GBRS_PLAT:%.gbr=$(OBJDIR_RES)/%.gbr.o) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.o) $(SPRITES_PLAT:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.o) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.o) $(SPRITES_PNG_PLAT:%.png=$(OBJDIR_RES)/sprites/%.png.o) $(SGB_BORDERS:%.png=$(OBJDIR_RES)/%.png.o) $(PNGS:%.png=$(OBJDIR_RES)/%.png.o) $(PNGS_PLAT:%.png=$(OBJDIR_RES)/%.png.o) $(FONTS_PLAT:%.png=$(OBJDIR_RES)/%.png.o) $(VGMS_PLAT:%.vgm=$(OBJDIR_RES)/%.vgm.o) $(WAVS_PLAT:%.wav=$(OBJDIR_RES)/%.wav.o) $(SAVS_PLAT:%.sav=$(OBJDIR_RES)/%.sav.o) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.o) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.o) $(MUSICS_FUR:%.fur=$(OBJDIR_RES)/%.fur.o) $(ASMS:%.s=$(OBJDIR)/%.o) $(PLAT_AS:%.s=$(OBJDIR)/%.o) $(CLASSES:%.c=$(OBJDIR)/%.o) $(PLAT_C:%.c=$(OBJDIR)/%.o) $(INIT_C:%.c=$(OBJDIR)/%.o)
+OBJS_ZGB = $(ASMS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.o) $(PLAT_AS_ZGB:%.s=$(OBJDIR_ZGB)/%.o) $(PLAT_C_ZGB:%.c=$(OBJDIR_ZGB)/%.o) $(OBJECTS_ZGB)
 
 RELS = $(OBJS:%.o=%.rel)
 
+# TODO: re-enable and fix Makefile.uptodate on a per-target basis
+BINS = $(BINDIR)/$(PROJECT_NAME).$(EXT) #$(OBJDIR)/Makefile.uptodate
+
+#always build targets
+.PHONY: $(TARGETS)
+
 #prevent gbr2c and gbm2c intermediate files from being deleted
-.SECONDARY: $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.c) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.c) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.c) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.c) $(SGB_BORDERS:%.png=$(OBJDIR_RES)/borders/%.png.c) $(PNGS:%.png=$(OBJDIR_RES)/%.png.c) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.c) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.c)
+.SECONDARY: $(GBMS:%.gbm=$(OBJDIR_RES)/%.gbm.c) $(GBMS_PLAT:%.gbm=$(OBJDIR_RES)/%.gbm.c) $(GBRS:%.gbr=$(OBJDIR_RES)/%.gbr.c) $(GBRS_PLAT:%.gbr=$(OBJDIR_RES)/%.gbr.c) $(SPRITES:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.c) $(SPRITES_PLAT:%.gbr=$(OBJDIR_RES)/sprites/%.gbr.c) $(SPRITES_PNG:%.png=$(OBJDIR_RES)/sprites/%.png.c) $(SPRITES_PNG_PLAT:%.png=$(OBJDIR_RES)/sprites/%.png.c) $(SGB_BORDERS:%.png=$(OBJDIR_RES)/%.png.c) $(PNGS:%.png=$(OBJDIR_RES)/%.png.c) $(PNGS_PLAT:%.png=$(OBJDIR_RES)/%.png.c) $(FONTS_PLAT:%.png=$(OBJDIR_RES)/%.png.c) $(VGMS_PLAT:%.vgm=$(OBJDIR_RES)/%.vgm.c) $(WAVS_PLAT:%.wav=$(OBJDIR_RES)/%.wav.c) $(SAVS_PLAT:%.sav=$(OBJDIR_RES)/%.sav.c) $(MUSICS_MOD:%.mod=$(OBJDIR_RES)/%.mod.c) $(MUSICS_UGE:%.uge=$(OBJDIR_RES)/%.uge.c) $(MUSICS_FUR:%.fur=$(OBJDIR_RES)/%.fur.c)
 
 #dependencies -------------------------------------------------------------------------------------------
 # option -MMD will generate .d files that can be included here for dependency checking (we can skip this on clean)
 ifneq ($(MAKECMDGOALS),clean)
 -include $(CLASSES:%.c=$(OBJDIR)/%.d) 
+-include $(INIT_C:%.c=$(OBJDIR)/%.d) 
 -include $(CLASSES_ZGB:%.c=$(OBJDIR_ZGB)/%.d)
+-include $(PLAT_C_ZGB:%.c=$(OBJDIR_ZGB)/%.d)
 endif
 #---------------------------------------------------------------------------------------------------------
 
-#folders---------------------------------------------
-$(BINDIR):
-	@echo Creating folder $(BINDIR)
-	@mkdir $(BINDIR)
-	
-$(OBJDIR):
-	@echo Creating folder $(OBJDIR)
-	@mkdir $(OBJDIR)
-
-$(OBJDIR_RES):
-	@echo Creating folder $(OBJDIR_RES)
-	@mkdir $(OBJDIR_RES)
-
-$(OBJDIR_RES)/sprites:
-	@echo Creating folder $(OBJDIR_RES)/sprites
-	@mkdir $(OBJDIR_RES)/sprites
-
-$(OBJDIR_RES)/borders:
-	@echo Creating folder $(OBJDIR_RES)/borders
-	@mkdir $(OBJDIR_RES)/borders
 
 #resources---------------------------------------------
 #a few notes of this rule (for future me)
@@ -148,89 +252,182 @@ $(OBJDIR_RES)/borders:
 .SECONDEXPANSION:
 $(OBJDIR_RES)/sprites/%.gbr.c: ../res/sprites/%.gbr $$(wildcard ../res/sprites/%.gbr.meta)
 	@$(GBR2PNG) $< $(OBJDIR_RES)/sprites
-	@$(PNG2ASSET) $(@D)/$(<F).png $(CFLAGSPNG2ASSET) `cat <$(@D)/$(<F).png.meta` -keep_palette_order -use_structs -c $@
+	@$(PNG2ASSET) $(@D)/$(<F).png $(FLAGSPNG2ASSET_SPR) `cat <$(@D)/$(<F).png.meta` -keep_palette_order -use_structs -c $@
+
+.SECONDEXPANSION:
+$(OBJDIR_RES)/sprites/%.gbr.c: ../res/sprites/$(EXT)/%.gbr $$(wildcard ../res/sprites/$(EXT)/%.gbr.meta)
+	@$(GBR2PNG) $< $(OBJDIR_RES)/sprites
+	@$(PNG2ASSET) $(@D)/$(<F).png $(FLAGSPNG2ASSET_SPR) `cat <$(@D)/$(<F).png.meta` -keep_palette_order -use_structs -c $@
 
 .SECONDEXPANSION:
 $(OBJDIR_RES)/sprites/%.png.c: ../res/sprites/%.png $$(wildcard ../res/sprites/%.png.meta)
-	@$(PNG2ASSET) $< $(CFLAGSPNG2ASSET) `cat <$<.meta` -b 255 -use_structs -c $@
+	@$(PNG2ASSET) $< $(FLAGSPNG2ASSET_SPR) `cat <$<.meta` -b 255 -use_structs -c $@
+
+.SECONDEXPANSION:
+$(OBJDIR_RES)/sprites/%.png.c: ../res/sprites/$(EXT)/%.png $$(wildcard ../res/sprites/$(EXT)/%.png.meta)
+	@$(PNG2ASSET) $< $(FLAGSPNG2ASSET_SPR) `cat <$<.meta` -b 255 -use_structs -c $@
 
 $(OBJDIR_RES)/%.gbm.c: ../res/%.gbm
 	@$(GBM2C) $< $(OBJDIR_RES)
 
-$(OBJDIR_RES)/%.gbr.c: ../res/%.gbr
-	@$(GBR2C) $< $(OBJDIR_RES)
+$(OBJDIR_RES)/%.gbm.c: ../res/backgrounds/$(EXT)/%.gbm
+	@$(GBM2C) $< $(OBJDIR_RES)
 
-$(OBJDIR_RES)/borders/%.png.c: ../res/borders/%.png $(OBJDIR_RES)/borders
+$(OBJDIR_RES)/%.gbr.c: ../res/%.gbr
+	@$(GBR2C) $< $(OBJDIR_RES) $(FLAGSGBR2C)
+
+$(OBJDIR_RES)/%.gbr.c: ../res/backgrounds/$(EXT)/%.gbr
+	@$(GBR2C) $< $(OBJDIR_RES) $(FLAGSGBR2C)
+
+$(OBJDIR_RES)/%.png.c: ../res/borders/$(EXT)/%.png
 	@$(PNG2ASSET) $< -b 255 -map -bpp 4 -max_palettes 4 -use_map_attributes -use_structs -pack_mode sgb -c $@
 
+.SECONDEXPANSION:
 $(OBJDIR_RES)/%.png.c: ../res/%.png $$(wildcard ../res/%.png.meta)
-	@$(PNG2ASSET) $< -b 255 -map -noflip -use_structs $(if $(wildcard $<.meta),`cat <$<.meta`) -c $@
+	@$(PNG2ASSET) $< -b 255 -map $(FLAGSPNG2ASSET_BKG) -use_structs $(if $(wildcard $<.meta),`cat <$<.meta`) -c $@
+
+.SECONDEXPANSION:
+$(OBJDIR_RES)/%.png.c: ../res/backgrounds/$(EXT)/%.png $$(wildcard ../res/backgrounds/$(EXT)/%.png.meta)
+	@$(PNG2ASSET) $< -b 255 -map $(FLAGSPNG2ASSET_BKG) -use_structs $(if $(wildcard $<.meta),`cat <$<.meta`) -c $@
+
+.SECONDEXPANSION:
+$(OBJDIR_RES)/%.png.c: ../res/fonts/$(EXT)/%.png $$(wildcard ../res/fonts/$(EXT)/%.png.meta)
+	@$(PNG2FONT) -b 255 $(FLAGSPNG2FONT) $(if $(wildcard $<.meta),`cat <$<.meta`) -o $@ $<
+
+.SECONDEXPANSION:
+$(OBJDIR_RES)/%.vgm.c: ../res/sounds/$(EXT)/%.vgm $$(wildcard ../res/sounds/$(EXT)/%.vgm.meta)
+	@$(VGM2DATA) -b 255 $(if $(wildcard $<.meta),`cat <$<.meta`) -o $@ $<
+
+.SECONDEXPANSION:
+$(OBJDIR_RES)/%.wav.c: ../res/sounds/$(EXT)/%.wav $$(wildcard ../res/sounds/$(EXT)/%.wav.meta)
+	@$(WAV2DATA) -b 255 $(if $(wildcard $<.meta),`cat <$<.meta`) -o $@ $<
+
+.SECONDEXPANSION:
+$(OBJDIR_RES)/%.sav.c: ../res/sounds/$(EXT)/%.sav $$(wildcard ../res/sounds/$(EXT)/%.sav.meta)
+	@$(FXHAMMER2DATA) $(FLAGSFXHAMMER) -b 255 $(if $(wildcard $<.meta),`cat <$<.meta`) -o $@ $<
 
 $(OBJDIR_RES)/%.mod.c: ../res/music/%.mod
-	@$(MOD2GBT) $< $(basename $(basename $(notdir $<)))_mod 255 > /dev/null
-	@mv output.c $@
+	@$(MOD2GBT) $< $@ $(basename $(basename $(notdir $<)))_mod 255 > /dev/null
+
+$(OBJDIR_RES)/%.mod.c: ../res/music/$(EXT)/%.mod
+	@$(MOD2GBT) $< $@ $(basename $(basename $(notdir $<)))_mod 255 > /dev/null
 
 $(OBJDIR_RES)/%.uge.c: ../res/music/%.uge
 	@$(UGE2SOURCE) $< -b 255 $(basename $(basename $(notdir $<)))_uge $@
 
+$(OBJDIR_RES)/%.uge.c: ../res/music/$(EXT)/%.uge
+	@$(UGE2SOURCE) $< -b 255 $(basename $(basename $(notdir $<)))_uge $@
+
+$(OBJDIR_RES)/%.fur.c: ../res/music/$(EXT)/%.fur
+	@$(FUR2JSON) -o $(basename $@).json $< > /dev/null
+	@$(JSON2SMS) -a LIT -b 255 -i $(basename $(basename $(notdir $<)))_fur -o $@ $(basename $@).json > /dev/null
+
 $(OBJDIR_RES)/%.o: $(OBJDIR_RES)/%.c
 	@echo compiling resource $<
-	@$(SDCC) $(CFLAGS) -c -o $@ $<
+	@$(LCC) $(CFLAGS) -c -o $@ $<
 	
-#ZGB---------------------------------------------	
-$(OBJDIR_ZGB):
-	@echo Creating folder $(OBJDIR_ZGB)
-	@mkdir $(OBJDIR_ZGB)
+# ZGB ---------------------------------------------	
 
-$(OBJDIR)/zgb/%.o: $(ZGB_PATH_UNIX)/src/%.s
+$(OBJDIR_ZGB)/%.o: $(ZGB_PATH_UNIX)/src/%.s
 	@echo compiling $<
-	@$(SDASGB) -plosgffn -I"libc" -I$(GBDK_HOME)/lib/small/asxxxx/gb -c -o $@ $<
+	@$(LCC) $(CFLAGS) -c -o $@ $<
 
-$(OBJDIR)/zgb/%.o: $(ZGB_PATH_UNIX)/src/%.c
+$(OBJDIR_ZGB)/%.o: $(ZGB_PATH_UNIX)/src/%.c
 	@echo compiling $<
-	@$(SDCC) $(CFLAGS) -c -o $@ $<
+	@$(LCC) $(CFLAGS) -c -o $@ $<
 
+$(OBJDIR_ZGB)/%.o: $(ZGB_PATH_UNIX)/src/$(PLAT)/%.s
+	@echo compiling $<
+	@$(LCC) $(CFLAGS) -c -o $@ $<
+
+$(OBJDIR_ZGB)/%.o: $(ZGB_PATH_UNIX)/src/$(PLAT)/%.c
+	@echo compiling $<
+	@$(LCC) $(CFLAGS) -c -o $@ $<
+
+ifneq ($(OS),Windows_NT)
+# SDAR utility has problems with the windows version
 $(OBJDIR_ZGB)/zgb.lib: $(OBJDIR_ZGB) $(OBJS_ZGB) 
-	@echo creating zgb.lib
+	@echo creating zgb.lib    
 	@rm -f $(OBJDIR_ZGB)/zgb.lib
-	@echo -e "$(OBJS_ZGB_LIB)" >> $(OBJDIR_ZGB)/zgb.lib
+	@for file in $(OBJS_ZGB) ; do \
+		$(SDAR) -ru $@ $${file} ; \
+	done
+else
+# fall back to the old style library which is just the object file list
+$(OBJDIR_ZGB)/zgb.lib: $(OBJDIR_ZGB) $(OBJS_ZGB) 
+	@echo creating zgb.lib    
+	@rm -f $(OBJDIR_ZGB)/zgb.lib
+	@if [ -n "$(OBJECTS_ZGB)" ] ; then \
+		cp $(OBJECTS_ZGB) $(OBJDIR_ZGB)/ ; \
+	fi
+	@echo -e "$(subst $(subst ,, ),\n,$(notdir $(OBJS_ZGB)))" >> $@
+endif
 
-#Project files------------------------------------
+
+# Project files ------------------------------------
 $(OBJDIR)/%.o: %.s
 	@echo compiling $<
-	@$(SDASGB) -plosgffn -I"libc" -c -o $@ $<
+	@$(LCC) $(CFLAGS) -c -o $@ $<
+
+$(OBJDIR)/%.o: $(PLAT)/%.s
+	@echo compiling $<
+	@$(LCC) $(CFLAGS) -c -o $@ $<
+
+$(OBJDIR)/%.o: $(ZGB_PATH_UNIX)/src/init/%.c
+	@echo compiling $<
+	@$(LCC) $(CFLAGS) -c -o $@ $<
 
 $(OBJDIR)/%.o: %.c
 	@echo compiling $<
-	@$(SDCC) $(CFLAGS) -c -o $@ $<	
+	@$(LCC) $(CFLAGS) -c -o $@ $<	
 
-$(BINDIR)/$(PROJECT_NAME).$(EXTENSION): $(OBJDIR) $(OBJDIR_ZGB)/zgb.lib $(OBJDIR_RES) $(OBJDIR_RES)/sprites $(BINDIR) $(OBJS)
+$(OBJDIR)/%.o: $(PLAT)/%.c
+	@echo compiling $<
+	@$(LCC) $(CFLAGS) -c -o $@ $<	
+
+$(OBJDIR)/savegame.o: savegame.c
+	@echo compiling savegame on SRAM bank 0
+	@$(LCC) $(CFLAGS) -Wf-ba0 -c -o $@ $<
+
+$(BINDIR)/$(PROJECT_NAME).$(EXT): $(OBJDIR) $(OBJDIR_ZGB)/zgb.lib $(OBJDIR_RES) $(OBJDIR_RES)/sprites $(BINDIR) $(OBJS)
 	@echo Linking
-	@$(BANKPACK) -ext=.rel -min=1 -yt1 $(OBJS) $(OBJS_ZGB)
-	@$(SDLDGB) $(LFLAGS) $(OBJDIR)/rom.ihx $(GBDK_HOME)/lib/small/asxxxx/gb/crt0.o $(RELS) $(ZGB_PATH_UNIX)/lib/hUGEDriver.obj.o
-	@$(IHXCHECK) $(OBJDIR)/rom.ihx -e
-	@$(MAKEBIN) -Z $(BINFLAGS) $(OBJDIR)/rom.ihx $(OBJDIR)/rom.$(EXTENSION)
-	@$(ROMVIEW) $(OBJDIR)/rom.$(EXTENSION) 255
-	@cp $(OBJDIR)/rom.$(EXTENSION) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
-#	@perl $(SRC2SYM) $(OBJDIR)/$(PROJECT_NAME).noi > $(BINDIR)/$(PROJECT_NAME).sym
-	@rm -f *.adb
+	@$(LCC) $(BINFLAGS) -Wl-k$(OBJDIR_ZGB)/ -Wl-lzgb.lib -o $(OBJDIR)/rom.$(EXT) $(OBJS)
+	@cp $(OBJDIR)/rom.$(EXT) $(BINDIR)/$(PROJECT_NAME).$(EXT)
+	@cp $(OBJDIR)/rom.sym $(BINDIR)/$(PROJECT_NAME).sym
+	@if test -f "$(OBJDIR)/rom.cdb" ; then \
+		cp $(OBJDIR)/rom.cdb $(BINDIR)/$(PROJECT_NAME).cdb ; \
+	fi
+	@echo Done!
 
 build_lib: $(OBJDIR) $(OBJS)
 
-build_gb: $(BINDIR)/$(PROJECT_NAME).$(EXTENSION)
+
+# TODO: re-enable and fix Makefile.uptodate on a per-target basis (may need to alter dir creation some)
+# $(OBJDIR)/Makefile.uptodate: Makefile
+# 	@echo Makefile has been modified, forcing a rebuild
+# 	@make clean BUILD_TYPE=$(BUILD_TYPE)
+# 	@mkdir -p $(OBJDIR)
+# 	@touch $@
 
 clean:
 	@echo Cleaning $(PROJECT_NAME)
-	@rm -rf $(BINDIR)
-	@rm  -f $(OBJDIR)/*.*
-	@rm -rf .map
-	@rm -rf .lst
-	@rm -rf $(OBJDIR_ZGB)
-	@rm -rf $(OBJDIR_RES)
+	@for target in $(TARGETS); do \
+		$(MAKE) $$target-clean; \
+	done
 
 run: all
-	@if test -f $(BINDIR)/$(PROJECT_NAME).$(EXTENSION); then \
-		echo Running $(BINDIR)/$(PROJECT_NAME).$(EXTENSION); \
-		$(BGB) $(BINDIR)/$(PROJECT_NAME).$(EXTENSION); \
+	@if test -f $(BINDIR)/$(PROJECT_NAME).$(EXT); then \
+		echo Running $(BINDIR)/$(PROJECT_NAME).$(EXT); \
+		$(EMULATOR) $(BINDIR)/$(PROJECT_NAME).$(EXT); \
 	fi
 
+# Include available build targets
+# include Makefile.targets
+include $(ZGB_PATH)/src/Makefile.targets
+
+
+# create necessary directories after Makefile is parsed but before build
+# info prevents the command from being pasted into the makefile
+ifneq ($(strip $(EXT)),)           # Only make the directories if EXT has been set by a target
+$(info $(shell mkdir -p $(MKDIRS)))
+endif
