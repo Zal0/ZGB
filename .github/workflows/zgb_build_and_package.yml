@@ -41,9 +41,15 @@ jobs:
         if: matrix.name == 'ZGB-Linux-x64'
         run: |
           cd CrossZGB
-          curl -Lo gbdk.tar.gz https://github.com/gbdk-2020/gbdk-2020/releases/download/pre-release/gbdk-linux64.tar.gz
+          # GBDK
+          curl -Lo gbdk.tar.gz https://github.com/gbdk-2020/gbdk-2020/releases/download/4.3.0/gbdk-linux64.tar.gz
           tar xvfz gbdk.tar.gz
           rm -f gbdk.tar.gz
+          # ZGB env package 
+          curl -Lo env.zip https://github.com/gbdk-2020/CrossZGB/releases/download/build-assets/CrossZGB_env_mac_linux_2024.0.zip
+          unzip env.zip
+          rm -f env.zip
+          # clean up git files
           cd ZGB
           rm -rf .git .gitignore .github
           cd ..
@@ -53,9 +59,15 @@ jobs:
         if: matrix.name == 'ZGB-MacOS-x64'
         run: |
           cd CrossZGB
-          curl -Lo gbdk.tar.gz https://github.com/gbdk-2020/gbdk-2020/releases/download/pre-release/gbdk-linux64.tar.gz
+          # GBDK
+          curl -Lo gbdk.tar.gz https://github.com/gbdk-2020/gbdk-2020/releases/download/4.3.0/gbdk-linux64.tar.gz
           tar xvfz gbdk.tar.gz
           rm -f gbdk.tar.gz
+          # ZGB env package 
+          curl -Lo env.zip https://github.com/gbdk-2020/CrossZGB/releases/download/build-assets/CrossZGB_env_mac_linux_2024.0.zip
+          unzip env.zip
+          rm -f env.zip
+          # clean up git files
           cd ZGB
           rm -rf .git .gitignore .github
           cd ../..
@@ -64,9 +76,15 @@ jobs:
         if: matrix.name == 'ZGB-MacOS-arm64'
         run: |
           cd CrossZGB
-          curl -Lo gbdk.tar.gz https://github.com/gbdk-2020/gbdk-2020/releases/download/pre-release/gbdk-macos-arm64.tar.gz
+          # GBDK
+          curl -Lo gbdk.tar.gz https://github.com/gbdk-2020/gbdk-2020/releases/download/4.3.0/gbdk-macos-arm64.tar.gz
           tar xvfz gbdk.tar.gz
           rm -f gbdk.tar.gz
+          # ZGB env package 
+          curl -Lo env.zip https://github.com/gbdk-2020/CrossZGB/releases/download/build-assets/CrossZGB_env_mac_linux_2024.0.zip
+          unzip env.zip
+          rm -f env.zip
+          # clean up git files          
           cd ZGB
           rm -rf .git .gitignore .github
           cd ../..
@@ -75,9 +93,15 @@ jobs:
         if: matrix.name == 'ZGB-Windows-x64'
         run: |
           cd CrossZGB
-          curl -Lo gbdk.zip https://github.com/gbdk-2020/gbdk-2020/releases/download/pre-release/gbdk-win64.zip
+          # GBDK
+          curl -Lo gbdk.zip https://github.com/gbdk-2020/gbdk-2020/releases/download/4.3.0/gbdk-win64.zip
           7z x gbdk.zip
           del gbdk.zip
+          # ZGB env package 
+          curl -Lo env.zip https://github.com/gbdk-2020/CrossZGB/releases/download/build-assets/CrossZGB_env_windows_2024.0.zip
+          7z x env.zip
+          del env.zip
+          # clean up git files                   
           cd ZGB
           Remove-Item -Path ".git" -Recurse -Force
           Remove-Item -Path ".github" -Recurse -Force
@@ -88,9 +112,15 @@ jobs:
         if: matrix.name == 'ZGB-Windows-x32'
         run: |
           cd CrossZGB
-          curl -Lo gbdk.zip https://github.com/gbdk-2020/gbdk-2020/releases/download/pre-release/gbdk-win64.zip
+          # GBDK
+          curl -Lo gbdk.zip https://github.com/gbdk-2020/gbdk-2020/releases/download/4.3.0/gbdk-win64.zip
           7z x gbdk.zip
           del gbdk.zip
+          # ZGB env package 
+          curl -Lo env.zip https://github.com/gbdk-2020/CrossZGB/releases/download/build-assets/CrossZGB_env_windows_2024.0.zip
+          7z x env.zip
+          del env.zip
+          # clean up git files                   
           cd ZGB
           Remove-Item -Path ".git" -Recurse -Force
           Remove-Item -Path ".github" -Recurse -Force
